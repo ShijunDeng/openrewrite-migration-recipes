@@ -21,6 +21,10 @@ class MigrateKafkaClientsTest implements RewriteTest {
             "com.huawei.clouds.openrewrite.kafka.UpgradeKafkaClientsDependencyTo4_1_2";
     private static final String MIGRATION_RECIPE =
             "com.huawei.clouds.openrewrite.kafka.MigrateKafkaClientsTo4_1_2";
+    private static final String AUTOMATIC_RECIPE =
+            "com.huawei.clouds.openrewrite.kafka.MigrateDeterministicKafkaClientSourceAndConfig";
+    private static final String AUDIT_RECIPE =
+            "com.huawei.clouds.openrewrite.kafka.AuditKafkaClient4Compatibility";
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -51,6 +55,12 @@ class MigrateKafkaClientsTest implements RewriteTest {
                         public class MockConsumer<K,V> {
                             public void setException(org.apache.kafka.common.KafkaException e) {}
                             public void setPollException(org.apache.kafka.common.KafkaException e) {}
+                        }
+                        """,
+                        """
+                        package org.apache.kafka.clients.consumer;
+                        public interface Consumer<K,V> {
+                            Object poll(long timeout);
                         }
                         """,
                         """
@@ -334,6 +344,21 @@ class MigrateKafkaClientsTest implements RewriteTest {
     }
 
     @Test
+    void leavesGeneratedJavaAndPropertiesUntouched() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(AUTOMATIC_RECIPE)),
+                java(
+                        "import org.apache.kafka.clients.admin.DescribeTopicsResult; class Generated { Object f(DescribeTopicsResult r) { return r.values(); } }",
+                        source -> source.path("target/generated-sources/Generated.java")
+                ),
+                properties(
+                        "metrics.jmx.blacklist=kafka.consumer:type=*\nauto.include.jmx.reporter=true\n",
+                        source -> source.path("build/generated-resources/kafka.properties")
+                )
+        );
+    }
+
+    @Test
     void marksPropertiesRisksPrecisely() {
         rewriteRun(
                 spec -> spec.recipe(new FindKafkaClientPropertiesRisks()),
@@ -418,15 +443,77 @@ class MigrateKafkaClientsTest implements RewriteTest {
     }
 
     @Test
-    void discoversAndValidatesBothRecipes() {
-        Environment environment = environment();
-        Recipe dependency = environment.activateRecipes(DEPENDENCY_RECIPE);
-        Recipe migration = environment.activateRecipes(MIGRATION_RECIPE);
+    void recommendedAutomaticPathIsIdempotent() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE))
+                        .cycles(2).expectedCyclesThatMakeChanges(1),
+                pomXml(pomWithVersion("3.6.2"), pomWithVersion("4.1.2")),
+                java(
+                        "import org.apache.kafka.clients.admin.DescribeTopicsResult; class Safe { Object f(DescribeTopicsResult r) { return r.values(); } }",
+                        "import org.apache.kafka.clients.admin.DescribeTopicsResult; class Safe { Object f(DescribeTopicsResult r) { return r.topicNameValues(); } }"
+                )
+        );
+    }
 
-        assertTrue(environment.listRecipes().stream().anyMatch(r -> DEPENDENCY_RECIPE.equals(r.getName())));
-        assertTrue(environment.listRecipes().stream().anyMatch(r -> MIGRATION_RECIPE.equals(r.getName())));
-        assertTrue(dependency.validate().isValid(), () -> dependency.validate().failures().toString());
-        assertTrue(migration.validate().isValid(), () -> migration.validate().failures().toString());
+    @Test
+    void recommendedRecipeCombinesStrictBuildSourceConfigAutoAndPreciseMarks() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE))
+                        .cycles(2).expectedCyclesThatMakeChanges(1),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>app</artifactId><version>1</version>
+                          <properties><java.version>8</java.version></properties>
+                          <dependencies><dependency><groupId>org.apache.kafka</groupId><artifactId>kafka-clients</artifactId><version>3.6.2</version></dependency></dependencies>
+                        </project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>app</artifactId><version>1</version>
+                          <properties><!--~~(Kafka clients 4.1 requires Java 11 or newer; align compiler, test JVM and production runtime)~~>--><java.version>8</java.version></properties>
+                          <dependencies><dependency><groupId>org.apache.kafka</groupId><artifactId>kafka-clients</artifactId><version>4.1.2</version></dependency></dependencies>
+                        </project>
+                        """
+                ),
+                java(
+                        """
+                        import org.apache.kafka.clients.admin.DescribeTopicsResult;
+                        import org.apache.kafka.clients.consumer.Consumer;
+                        class Combined {
+                            Object topics(DescribeTopicsResult result) { return result.values(); }
+                            void records(Consumer<String, String> consumer) { consumer.poll(1000L); }
+                        }
+                        """,
+                        """
+                        import org.apache.kafka.clients.admin.DescribeTopicsResult;
+                        import org.apache.kafka.clients.consumer.Consumer;
+                        class Combined {
+                            Object topics(DescribeTopicsResult result) { return result.topicNameValues(); }
+                            void records(Consumer<String, String> consumer) { /*~~(Consumer.poll(long) was removed; use poll(Duration), noting that Duration polling does not wait beyond the timeout for initial assignment)~~>*/consumer.poll(1000L); }
+                        }
+                        """
+                ),
+                properties(
+                        """
+                        metrics.jmx.blacklist=kafka.producer:type=*
+                        transactional.id=orders-writer
+                        """,
+                        """
+                        metrics.jmx.exclude=kafka.producer:type=*
+                        ~~(Kafka 4 strengthens transaction fencing and adds abortable transaction errors; verify stable transactional.id ownership, timeouts, abort paths and rolling deployment)~~>transactional.id=orders-writer
+                        """,
+                        source -> source.path("config/producer.properties")
+                )
+        );
+    }
+
+    @Test
+    void discoversAndValidatesEveryPublicRecipe() {
+        Environment environment = environment();
+        for (String name : new String[]{DEPENDENCY_RECIPE, AUTOMATIC_RECIPE, AUDIT_RECIPE, MIGRATION_RECIPE}) {
+            Recipe recipe = environment.activateRecipes(name);
+            assertTrue(environment.listRecipes().stream().anyMatch(r -> name.equals(r.getName())), name);
+            assertTrue(recipe.validate().isValid(), () -> name + ": " + recipe.validate().failures());
+        }
     }
 
     private static String pomWithVersion(String version) {

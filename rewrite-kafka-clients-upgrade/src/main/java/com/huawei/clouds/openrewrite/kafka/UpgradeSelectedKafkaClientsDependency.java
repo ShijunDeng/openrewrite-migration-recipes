@@ -18,7 +18,10 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** Upgrade only kafka-clients versions whose exact values remain visible in the spreadsheet. */
 public final class UpgradeSelectedKafkaClientsDependency extends Recipe {
@@ -26,13 +29,19 @@ public final class UpgradeSelectedKafkaClientsDependency extends Recipe {
             "2.4.1", "2.5.1", "3.1.2", "3.4.0", "3.4.1",
             "3.5.1", "3.6.0", "3.6.1", "3.6.2", "3.7.0"
     );
-    private static final String TARGET_VERSION = "4.1.2";
-    private static final String COORDINATE_PREFIX = "org.apache.kafka:kafka-clients:";
-    private static final Set<String> GRADLE_CONFIGURATIONS = Set.of(
+    static final String TARGET_VERSION = "4.1.2";
+    static final String GROUP = "org.apache.kafka";
+    static final String ARTIFACT = "kafka-clients";
+    static final String COORDINATE_PREFIX = "org.apache.kafka:kafka-clients:";
+    private static final Pattern PROPERTY_REFERENCE = Pattern.compile("\\$\\{([^}]+)}");
+    static final Set<String> GRADLE_CONFIGURATIONS = Set.of(
             "api", "implementation", "compile", "compileOnly", "compileOnlyApi", "runtime", "runtimeOnly",
             "annotationProcessor", "testCompile", "testCompileOnly", "testImplementation", "testRuntime",
             "testRuntimeOnly", "testFixturesApi", "testFixturesImplementation", "testFixturesRuntimeOnly",
             "kapt", "ksp"
+    );
+    static final Set<String> GENERATED_DIRECTORIES = Set.of(
+            "target", "build", "out", "dist", "generated", ".gradle", ".idea", "node_modules"
     );
 
     @Override
@@ -55,6 +64,9 @@ public final class UpgradeSelectedKafkaClientsDependency extends Recipe {
                     return tree;
                 }
                 Path path = source.getSourcePath();
+                if (!isProjectPath(path) || path.getFileName() == null) {
+                    return tree;
+                }
                 String fileName = path.getFileName().toString();
                 if (tree instanceof Xml.Document document && "pom.xml".equals(fileName)) {
                     return upgradePom(document, ctx);
@@ -64,14 +76,14 @@ public final class UpgradeSelectedKafkaClientsDependency extends Recipe {
                         @Override
                         public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext executionContext) {
                             J.MethodInvocation m = super.visitMethodInvocation(method, executionContext);
-                            if (!GRADLE_CONFIGURATIONS.contains(m.getSimpleName())) {
+                            if (!isGradleDependencyInvocation(getCursor(), m)) {
                                 return m;
                             }
                             String group = invocationMapValue(m, "group");
                             String name = invocationMapValue(m, "name");
                             String version = invocationMapValue(m, "version");
                             if ("org.apache.kafka".equals(group) && "kafka-clients".equals(name) &&
-                                isSourceVersion(version)) {
+                                isSourceVersion(version) && !hasGradleVariant(m)) {
                                 return m.withArguments(m.getArguments().stream().map(argument ->
                                         argument instanceof G.MapEntry entry && "version".equals(mapKey(entry)) &&
                                         entry.getValue() instanceof J.Literal literal
@@ -106,38 +118,54 @@ public final class UpgradeSelectedKafkaClientsDependency extends Recipe {
 
     private static Xml.Document upgradePom(Xml.Document document, ExecutionContext ctx) {
         Map<String, String> properties = new HashMap<>();
-        document.getRoot().getChild("properties").ifPresent(tag -> tag.getChildren().forEach(property ->
-                property.getValue().ifPresent(value -> properties.put(property.getName(), value))));
+        document.getRoot().getChild("properties").ifPresent(tag -> tag.getChildren().stream()
+                .filter(Xml.Tag.class::isInstance).map(Xml.Tag.class::cast).forEach(property ->
+                        property.getValue().ifPresent(value -> properties.put(property.getName(), value.trim()))));
 
         Set<String> eligibleProperties = new HashSet<>();
+        Set<String> shadowedProperties = new HashSet<>();
+        Map<String, Integer> allReferences = new HashMap<>();
+        Map<String, Integer> clientReferences = new HashMap<>();
         new XmlIsoVisitor<ExecutionContext>() {
             @Override
+            public Xml.CharData visitCharData(Xml.CharData charData, ExecutionContext executionContext) {
+                collectReferences(charData.getText(), allReferences);
+                return super.visitCharData(charData, executionContext);
+            }
+
+            @Override
+            public Xml.Attribute visitAttribute(Xml.Attribute attribute, ExecutionContext executionContext) {
+                collectReferences(attribute.getValueAsString(), allReferences);
+                return super.visitAttribute(attribute, executionContext);
+            }
+
+            @Override
             public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext executionContext) {
-                Xml.Tag t = super.visitTag(tag, executionContext);
-                if (isKafkaClientsDependency(t)) {
-                    propertyName(t.getChildValue("version").orElse(null)).filter(name ->
-                            isSourceVersion(properties.get(name))).ifPresent(eligibleProperties::add);
+                if (isOwnedKafkaClientsDependency(getCursor(), tag)) {
+                    propertyName(tag.getChildValue("version").orElse(null)).ifPresent(name -> {
+                        clientReferences.merge(name, 1, Integer::sum);
+                        if (isSourceVersion(properties.get(name))) {
+                            eligibleProperties.add(name);
+                        }
+                    });
                 }
-                return t;
+                if (isPropertiesChild(getCursor(), tag) && !isProjectPropertiesChild(getCursor(), tag)) {
+                    shadowedProperties.add(tag.getName());
+                }
+                return super.visitTag(tag, executionContext);
             }
         }.visitNonNull(document, ctx);
 
         Map<String, Boolean> exclusiveProperties = new HashMap<>();
-        String source = document.printAll();
-        eligibleProperties.forEach(name -> {
-            String token = "${" + name + "}";
-            int references = 0;
-            for (int offset = source.indexOf(token); offset >= 0; offset = source.indexOf(token, offset + token.length())) {
-                references++;
-            }
-            exclusiveProperties.put(name, references == 1);
-        });
+        eligibleProperties.removeAll(shadowedProperties);
+        eligibleProperties.forEach(name -> exclusiveProperties.put(name,
+                clientReferences.getOrDefault(name, 0).equals(allReferences.getOrDefault(name, -1))));
 
         return (Xml.Document) new XmlIsoVisitor<ExecutionContext>() {
             @Override
             public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext executionContext) {
                 Xml.Tag t = super.visitTag(tag, executionContext);
-                if (isKafkaClientsDependency(t)) {
+                if (isOwnedKafkaClientsDependency(getCursor(), t)) {
                     String version = t.getChildValue("version").orElse(null);
                     if (isSourceVersion(version)) {
                         return t.withChildValue("version", TARGET_VERSION);
@@ -148,7 +176,7 @@ public final class UpgradeSelectedKafkaClientsDependency extends Recipe {
                         return t.withChildValue("version", TARGET_VERSION);
                     }
                 }
-                if (eligibleProperties.contains(t.getName()) &&
+                if (isProjectPropertiesChild(getCursor(), t) && eligibleProperties.contains(t.getName()) &&
                     exclusiveProperties.getOrDefault(t.getName(), false) &&
                     isSourceVersion(t.getValue().orElse(null))) {
                     return t.withValue(TARGET_VERSION);
@@ -158,23 +186,82 @@ public final class UpgradeSelectedKafkaClientsDependency extends Recipe {
         }.visitNonNull(document, ctx);
     }
 
-    private static boolean isKafkaClientsDependency(Xml.Tag tag) {
-        return "dependency".equals(tag.getName()) &&
-               "org.apache.kafka".equals(tag.getChildValue("groupId").orElse(null)) &&
-               "kafka-clients".equals(tag.getChildValue("artifactId").orElse(null));
+    static boolean hasClientCoordinates(Xml.Tag tag) {
+        return "dependency".equals(tag.getName()) && GROUP.equals(tag.getChildValue("groupId").orElse(null)) &&
+               ARTIFACT.equals(tag.getChildValue("artifactId").orElse(null));
     }
 
-    private static java.util.Optional<String> propertyName(String version) {
-        if (version != null && version.startsWith("${") && version.endsWith("}") && version.length() > 3) {
-            return java.util.Optional.of(version.substring(2, version.length() - 1));
+    static boolean isStandardJar(Xml.Tag tag) {
+        boolean standardType = tag.getChildValue("type").map(String::trim).filter(value -> !value.isEmpty())
+                .map("jar"::equals).orElse(true);
+        boolean noClassifier = tag.getChildValue("classifier").map(String::trim)
+                .filter(value -> !value.isEmpty()).isEmpty();
+        return standardType && noClassifier;
+    }
+
+    static boolean isMavenDependencyBlock(Cursor cursor, Xml.Tag tag) {
+        if (!"dependency".equals(tag.getName())) {
+            return false;
         }
-        return java.util.Optional.empty();
+        Cursor parent = cursor.getParentTreeCursor();
+        if (!(parent.getValue() instanceof Xml.Tag dependencies) || !"dependencies".equals(dependencies.getName())) {
+            return false;
+        }
+        Cursor owner = parent.getParentTreeCursor();
+        if (isProjectOrProfileOwner(owner)) {
+            return true;
+        }
+        if (owner == null || !(owner.getValue() instanceof Xml.Tag ownerTag) ||
+            !"dependencyManagement".equals(ownerTag.getName())) {
+            return false;
+        }
+        return isProjectOrProfileOwner(owner.getParentTreeCursor());
+    }
+
+    private static boolean isOwnedKafkaClientsDependency(Cursor cursor, Xml.Tag tag) {
+        return isMavenDependencyBlock(cursor, tag) && hasClientCoordinates(tag) && isStandardJar(tag);
+    }
+
+    private static Optional<String> propertyName(String version) {
+        Matcher matcher = PROPERTY_REFERENCE.matcher(version == null ? "" : version.trim());
+        return matcher.matches() ? Optional.of(matcher.group(1)) : Optional.empty();
+    }
+
+    private static void collectReferences(String text, Map<String, Integer> references) {
+        Matcher matcher = PROPERTY_REFERENCE.matcher(text);
+        while (matcher.find()) {
+            references.merge(matcher.group(1), 1, Integer::sum);
+        }
+    }
+
+    private static boolean isPropertiesChild(Cursor cursor, Xml.Tag tag) {
+        Cursor parent = cursor.getParentTreeCursor();
+        return parent.getValue() instanceof Xml.Tag properties && "properties".equals(properties.getName()) &&
+               !"properties".equals(tag.getName());
+    }
+
+    private static boolean isProjectPropertiesChild(Cursor cursor, Xml.Tag tag) {
+        if (!isPropertiesChild(cursor, tag)) {
+            return false;
+        }
+        Cursor properties = cursor.getParentTreeCursor();
+        Cursor owner = properties.getParentTreeCursor();
+        return isProjectOwner(owner);
     }
 
     private static boolean isDirectGradleDependencyLiteral(Cursor cursor) {
         Cursor parent = cursor.getParentTreeCursor();
         return parent.getValue() instanceof J.MethodInvocation invocation &&
-               GRADLE_CONFIGURATIONS.contains(invocation.getSimpleName());
+               isGradleDependencyInvocation(parent, invocation);
+    }
+
+    static boolean isGradleDependencyInvocation(Cursor cursor, J.MethodInvocation invocation) {
+        if (!GRADLE_CONFIGURATIONS.contains(invocation.getSimpleName())) return false;
+        for (Cursor current = cursor.getParent(); current != null; current = current.getParent()) {
+            if (current.getValue() instanceof J.MethodInvocation ancestor &&
+                "dependencies".equals(ancestor.getSimpleName())) return true;
+        }
+        return false;
     }
 
     private static String mapValue(G.MapLiteral map, String key) {
@@ -194,7 +281,7 @@ public final class UpgradeSelectedKafkaClientsDependency extends Recipe {
     private static G.MapLiteral upgradeMap(G.MapLiteral map) {
         if (!"org.apache.kafka".equals(mapValue(map, "group")) ||
             !"kafka-clients".equals(mapValue(map, "name")) ||
-            !isSourceVersion(mapValue(map, "version"))) {
+            !isSourceVersion(mapValue(map, "version")) || hasVariantKey(map)) {
             return map;
         }
         return map.withElements(map.getElements().stream().map(entry ->
@@ -210,6 +297,20 @@ public final class UpgradeSelectedKafkaClientsDependency extends Recipe {
             return identifier.getSimpleName();
         }
         return null;
+    }
+
+    static boolean hasGradleVariant(J.MethodInvocation invocation) {
+        return invocation.getArguments().stream().anyMatch(argument ->
+                argument instanceof G.MapEntry entry && isVariantKey(mapKey(entry)) ||
+                argument instanceof G.MapLiteral map && hasVariantKey(map));
+    }
+
+    private static boolean hasVariantKey(G.MapLiteral map) {
+        return map.getElements().stream().anyMatch(entry -> isVariantKey(mapKey(entry)));
+    }
+
+    private static boolean isVariantKey(String key) {
+        return Set.of("classifier", "ext", "type").contains(key);
     }
 
     private static J.Literal upgradeCoordinate(J.Literal literal) {
@@ -235,7 +336,33 @@ public final class UpgradeSelectedKafkaClientsDependency extends Recipe {
                 valueSource == null ? null : valueSource.replace(value, TARGET_VERSION));
     }
 
-    private static boolean isSourceVersion(String version) {
-        return version != null && SOURCE_VERSIONS.contains(version);
+    static boolean isSourceVersion(String version) {
+        return version != null && SOURCE_VERSIONS.contains(version.trim());
+    }
+
+    static boolean isProjectPath(Path path) {
+        for (Path segment : path) {
+            if (GENERATED_DIRECTORIES.contains(segment.toString())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isProjectOrProfileOwner(Cursor owner) {
+        if (isProjectOwner(owner)) return true;
+        if (owner == null || !(owner.getValue() instanceof Xml.Tag profile) ||
+            !"profile".equals(profile.getName())) return false;
+        Cursor profiles = owner.getParentTreeCursor();
+        Cursor project = profiles == null ? null : profiles.getParentTreeCursor();
+        return profiles != null && profiles.getValue() instanceof Xml.Tag profilesTag &&
+               "profiles".equals(profilesTag.getName()) && isProjectOwner(project);
+    }
+
+    private static boolean isProjectOwner(Cursor owner) {
+        if (owner == null || !(owner.getValue() instanceof Xml.Tag project) ||
+            !"project".equals(project.getName())) return false;
+        Cursor document = owner.getParentTreeCursor();
+        return document != null && document.getValue() instanceof Xml.Document;
     }
 }

@@ -2,64 +2,40 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.kafka
 packageName: com.huawei.clouds.openrewrite.kafka
-description: Upgrade spreadsheet-selected Apache Kafka clients to 4.1.2 with deterministic source/configuration migrations and review markers.
+description: Upgrade spreadsheet-selected Apache Kafka clients to 4.1.2 with deterministic Java/configuration changes and exact source, runtime and build review markers.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.kafka.UpgradeKafkaClientsDependencyTo4_1_2
 displayName: Upgrade kafka-clients to 4.1.2
-description: Upgrade only exact spreadsheet-selected org.apache.kafka:kafka-clients versions in direct Maven and Gradle declarations; leave ranges, dynamic versions, BOM-managed declarations, unlisted versions, and other Kafka artifacts unchanged.
-tags:
-  - apache-kafka
-  - kafka-clients
-  - java
-  - dependency-upgrade
+description: Upgrade only exact spreadsheet-visible org.apache.kafka:kafka-clients versions in standard Maven and Gradle declarations; preserve ranges, dynamic values, custom artifacts, BOM-owned versions and unlisted releases.
+tags: [apache-kafka, kafka-clients, java, dependency-upgrade]
 recipeList:
   - com.huawei.clouds.openrewrite.kafka.UpgradeSelectedKafkaClientsDependency
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kafka.MigrateKafkaClientsTo4_1_2
-displayName: Migrate Apache Kafka clients to 4.1.2
-description: Upgrade selected kafka-clients declarations, apply one-to-one Kafka 4.1 API and property replacements, and mark behavior-sensitive migration work.
-tags:
-  - apache-kafka
-  - kafka-clients
-  - java
-  - source-migration
+name: com.huawei.clouds.openrewrite.kafka.MigrateDeterministicKafkaClientSourceAndConfig
+displayName: Migrate deterministic Kafka client 4.1 source and configuration
+description: Apply only one-to-one removed API, package, exception and JMX property replacements whose target is explicit in the Kafka 4.1 guide.
+tags: [apache-kafka, kafka-clients, java, configuration, source-migration]
 recipeList:
-  - com.huawei.clouds.openrewrite.kafka.UpgradeKafkaClientsDependencyTo4_1_2
-  - org.openrewrite.java.ChangeMethodName:
-      methodPattern: org.apache.kafka.clients.admin.DescribeTopicsResult values()
-      newMethodName: topicNameValues
-  - org.openrewrite.java.ChangeMethodName:
-      methodPattern: org.apache.kafka.clients.admin.DescribeTopicsResult all()
-      newMethodName: allTopicNames
-  - org.openrewrite.java.ChangeMethodName:
-      methodPattern: org.apache.kafka.clients.admin.DeleteTopicsResult values()
-      newMethodName: topicNameValues
-  - org.openrewrite.java.ChangeMethodName:
-      methodPattern: org.apache.kafka.clients.consumer.MockConsumer setException(org.apache.kafka.common.KafkaException)
-      newMethodName: setPollException
-  - org.openrewrite.java.ChangeMethodName:
-      methodPattern: org.apache.kafka.clients.admin.UpdateFeaturesOptions dryRun(boolean)
-      newMethodName: validateOnly
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerLoginCallbackHandler
-      newFullyQualifiedTypeName: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerValidatorCallbackHandler
-      newFullyQualifiedTypeName: org.apache.kafka.common.security.oauthbearer.OAuthBearerValidatorCallbackHandler
-  - org.openrewrite.properties.ChangePropertyKey:
-      oldPropertyKey: metrics.jmx.blacklist
-      newPropertyKey: metrics.jmx.exclude
-      relaxedBinding: false
-      regex: false
-  - org.openrewrite.properties.ChangePropertyKey:
-      oldPropertyKey: metrics.jmx.whitelist
-      newPropertyKey: metrics.jmx.include
-      relaxedBinding: false
-      regex: false
-  - org.openrewrite.properties.DeleteProperty:
-      propertyKey: auto.include.jmx.reporter
-      relaxedBinding: false
+  - com.huawei.clouds.openrewrite.kafka.MigrateDeterministicKafkaClientSourceAndConfig
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.kafka.AuditKafkaClient4Compatibility
+displayName: Locate Kafka client 4.1 compatibility work
+description: Mark removed and behavior-sensitive Java APIs, producer/consumer/transaction settings, unsupported Java baselines, unresolved version owners and adjacent Kafka components.
+tags: [apache-kafka, kafka-clients, java, search, manual-review]
+recipeList:
   - com.huawei.clouds.openrewrite.kafka.FindKafkaClientJavaMigrationRisks
   - com.huawei.clouds.openrewrite.kafka.FindKafkaClientPropertiesRisks
+  - com.huawei.clouds.openrewrite.kafka.FindKafkaClientBuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.kafka.MigrateKafkaClientsTo4_1_2
+displayName: Migrate Apache Kafka clients to 4.1.2
+description: Upgrade selected declarations, apply deterministic Kafka 4.1 Java/property changes, and mark remaining API, default, protocol, transaction, Java and component decisions.
+tags: [apache-kafka, kafka-clients, java, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.kafka.UpgradeKafkaClientsDependencyTo4_1_2
+  - com.huawei.clouds.openrewrite.kafka.MigrateDeterministicKafkaClientSourceAndConfig
+  - com.huawei.clouds.openrewrite.kafka.AuditKafkaClient4Compatibility
