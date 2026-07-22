@@ -17,19 +17,30 @@ preconditions:
   - org.openrewrite.FindSourceFiles:
       filePattern: package.json;**/package.json
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.dependencies[?(@.d3 =~ '^[<>=~^ ]*(?:5\.16\.0|6\.(?:6\.2|7\.0)|7\.(?:1\.1|8\.(?:2|4|5)))(?:[-+ <>=~^|].*)?$')].d3
-      value: '"7.9.0"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.devDependencies[?(@.d3 =~ '^[<>=~^ ]*(?:5\.16\.0|6\.(?:6\.2|7\.0)|7\.(?:1\.1|8\.(?:2|4|5)))(?:[-+ <>=~^|].*)?$')].d3
-      value: '"7.9.0"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.peerDependencies[?(@.d3 =~ '^[<>=~^ ]*(?:5\.16\.0|6\.(?:6\.2|7\.0)|7\.(?:1\.1|8\.(?:2|4|5)))(?:[-+ <>=~^|].*)?$')].d3
-      value: '"7.9.0"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.optionalDependencies[?(@.d3 =~ '^[<>=~^ ]*(?:5\.16\.0|6\.(?:6\.2|7\.0)|7\.(?:1\.1|8\.(?:2|4|5)))(?:[-+ <>=~^|].*)?$')].d3
-      value: '"7.9.0"'
+  - com.huawei.clouds.openrewrite.d3.UpgradeSelectedD3Dependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.d3.MigrateDeterministicD3SourceTo7
+displayName: Migrate deterministic D3 source calls to D3 7
+description: Rename explicit D3 namespace histogram and scan calls to their official one-to-one D3 6 replacements without editing comments or strings.
+tags: [d3, javascript, typescript, source-migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.d3.MigrateDeterministicD3Source
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.d3.AuditD3SourceCompatibility
+displayName: Audit D3 6 and 7 source compatibility
+description: Mark removed APIs and behavior changes that require event, collection, geometry, module, formatting, DOM, SSR, null or rendering decisions.
+tags: [d3, javascript, typescript, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.d3.FindD3SourceMigrationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.d3.MigrateD3To7_9_0
+displayName: Migrate D3 applications to 7.9.0
+description: Upgrade selected D3 dependency declarations, apply official one-to-one source renames, and precisely mark context-dependent D3 6/7 migration risks.
+tags: [d3, javascript, typescript, visualization, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.d3.UpgradeD3To7_9_0
+  - com.huawei.clouds.openrewrite.d3.MigrateDeterministicD3SourceTo7
+  - com.huawei.clouds.openrewrite.d3.AuditD3SourceCompatibility
