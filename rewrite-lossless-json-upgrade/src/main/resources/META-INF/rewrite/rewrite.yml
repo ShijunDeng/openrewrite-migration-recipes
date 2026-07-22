@@ -7,7 +7,7 @@ description: Upgrade lossless-json with explicit module-system, TypeScript, pars
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.losslessjson.UpgradeLosslessJsonTo4_0_1
 displayName: Upgrade lossless-json to 4.0.1
-description: Update the spreadsheet-selected direct lossless-json 2.0.8 and 2.0.11 declarations in package.json to 4.0.1 without changing source code, lockfiles, overrides, non-registry references, or newer versions.
+description: Update only exact, caret, or tilde direct lossless-json declarations anchored to spreadsheet-selected 2.0.8 and 2.0.11 in package.json to 4.0.1.
 tags:
   - lossless-json
   - json
@@ -16,23 +16,23 @@ tags:
   - typescript
   - nodejs
   - dependency-upgrade
-preconditions:
-  - org.openrewrite.FindSourceFiles:
-      filePattern: package.json;**/package.json
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.dependencies[?(@['lossless-json'] =~ '^[<>=~^ ]*v?2\.0\.(?:8|11)(?:[-+ <>=~^|].*)?$')]['lossless-json']
-      value: '"4.0.1"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.devDependencies[?(@['lossless-json'] =~ '^[<>=~^ ]*v?2\.0\.(?:8|11)(?:[-+ <>=~^|].*)?$')]['lossless-json']
-      value: '"4.0.1"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.peerDependencies[?(@['lossless-json'] =~ '^[<>=~^ ]*v?2\.0\.(?:8|11)(?:[-+ <>=~^|].*)?$')]['lossless-json']
-      value: '"4.0.1"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.optionalDependencies[?(@['lossless-json'] =~ '^[<>=~^ ]*v?2\.0\.(?:8|11)(?:[-+ <>=~^|].*)?$')]['lossless-json']
-      value: '"4.0.1"'
+  - com.huawei.clouds.openrewrite.losslessjson.UpgradeSelectedLosslessJsonDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.losslessjson.MigrateLosslessJsonTo4_0_1
+displayName: Migrate lossless-json to 4.0.1
+description: Apply the strict dependency upgrade, remove a provably redundant DefinitelyTyped declaration, and mark exact manifest and JavaScript/TypeScript migration risks.
+tags:
+  - lossless-json
+  - json
+  - bigint
+  - javascript
+  - typescript
+  - nodejs
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.losslessjson.UpgradeLosslessJsonTo4_0_1
+  - com.huawei.clouds.openrewrite.losslessjson.RemoveRedundantLosslessJsonTypes
+  - com.huawei.clouds.openrewrite.losslessjson.FindLosslessJsonManifestRisks
+  - com.huawei.clouds.openrewrite.losslessjson.FindLosslessJsonJavaScriptRisks
