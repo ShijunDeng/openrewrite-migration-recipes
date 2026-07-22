@@ -39,7 +39,7 @@
 | [`rewrite-kafka-clients-upgrade`](rewrite-kafka-clients-upgrade) | `com.huawei.clouds.openrewrite.kafka.MigrateKafkaClientsTo4_1_2` | 将 Kafka Clients 升级到 4.1.2，并迁移明确移除的 Admin API 与 JMX 配置键 |
 | [`rewrite-jakarta-servlet-api-upgrade`](rewrite-jakarta-servlet-api-upgrade) | `com.huawei.clouds.openrewrite.jakartaservlet.MigrateJakartaServletApiTo6_1_0` | 将 Jakarta Servlet API 升级到 6.1.0，并迁移 javax namespace 与有明确替代的删除 API |
 | [`rewrite-mybatis-spring-upgrade`](rewrite-mybatis-spring-upgrade) | `com.huawei.clouds.openrewrite.mybatisspring.MigrateMyBatisSpringTo4_0_0` | 严格升级 MyBatis-Spring 4.0.0，迁移 Batch 6 包、XSD、scanner XML 与确定性异常构造，并标记平台/API 风险 |
-| [`rewrite-marked-upgrade`](rewrite-marked-upgrade) | `com.huawei.clouds.openrewrite.marked.UpgradeMarkedTo17_0_6` | 将表格列出的 Marked 4.x/5.x 声明升级到 17.0.6，且不降级后续版本 |
+| [`rewrite-marked-upgrade`](rewrite-marked-upgrade) | `com.huawei.clouds.openrewrite.marked.MigrateMarkedTo17_0_6` | 严格升级 Marked 17.0.6，清理可证明冗余的类型依赖与 renderer 过渡开关，并标记 ESM、Node、扩展、异步、token 和 XSS 风险 |
 | [`rewrite-ngx-echarts-upgrade`](rewrite-ngx-echarts-upgrade) | `com.huawei.clouds.openrewrite.ngxecharts.UpgradeNgxEchartsTo20_0_2` | 将 ngx-echarts 5.x–20.0.1 声明升级到 20.0.2，并说明 Angular/ECharts 配套迁移边界 |
 | [`rewrite-flyway-core-upgrade`](rewrite-flyway-core-upgrade) | `com.huawei.clouds.openrewrite.flyway.MigrateFlywayTo11_14_1` | 严格升级 Flyway Core/插件到 11.14.1，补齐确定的数据库模块并迁移配置、Java API、callback 文件；高风险数据库操作仅标记 |
 | [`rewrite-date-fns-upgrade`](rewrite-date-fns-upgrade) | `com.huawei.clouds.openrewrite.datefns.MigrateDateFnsTo4_1_0` | 严格升级 date-fns 4.1.0，自动迁移确定性的命名导入/CommonJS/公开子路径，并标记 ESM、内部路径、区间、时区与 companion 风险 |

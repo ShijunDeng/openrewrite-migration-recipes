@@ -11,12 +11,17 @@
   </parent>
   <artifactId>rewrite-marked-upgrade</artifactId>
   <name>OpenRewrite Marked Upgrade</name>
-  <description>Configuration-based OpenRewrite recipe for upgrading selected marked declarations to 17.0.6.</description>
+  <description>OpenRewrite recipes for upgrading selected Marked declarations and migrating Marked 17 compatibility boundaries.</description>
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-marked-upgrade</url>
   <dependencies>
     <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-json</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-javascript</artifactId>
+      <version>${rewrite.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openrewrite</groupId>

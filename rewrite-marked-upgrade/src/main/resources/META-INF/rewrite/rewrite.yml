@@ -7,30 +7,30 @@ description: Upgrade selected Marked declarations with explicit JavaScript runti
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.marked.UpgradeMarkedTo17_0_6
 displayName: Upgrade Marked to 17.0.6
-description: Update the spreadsheet-selected direct marked declarations in package.json to 17.0.6 without changing aliases, workspace references, lockfiles, tags, or newer versions.
+description: Update only spreadsheet-selected exact, caret, or tilde single direct marked declarations in package.json to 17.0.6.
 tags:
   - marked
   - markdown
   - javascript
   - nodejs
   - dependency-upgrade
-preconditions:
-  - org.openrewrite.FindSourceFiles:
-      filePattern: package.json;**/package.json
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.dependencies[?(@.marked =~ '^[<>=~^ ]*v?(?:4\.(?:0\.(?:10|12|17)|1\.0|2\.(?:3|12)|3\.0)|5\.1\.[01])(?:[-+ <>=~^|].*)?$')].marked
-      value: '"17.0.6"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.devDependencies[?(@.marked =~ '^[<>=~^ ]*v?(?:4\.(?:0\.(?:10|12|17)|1\.0|2\.(?:3|12)|3\.0)|5\.1\.[01])(?:[-+ <>=~^|].*)?$')].marked
-      value: '"17.0.6"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.peerDependencies[?(@.marked =~ '^[<>=~^ ]*v?(?:4\.(?:0\.(?:10|12|17)|1\.0|2\.(?:3|12)|3\.0)|5\.1\.[01])(?:[-+ <>=~^|].*)?$')].marked
-      value: '"17.0.6"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.optionalDependencies[?(@.marked =~ '^[<>=~^ ]*v?(?:4\.(?:0\.(?:10|12|17)|1\.0|2\.(?:3|12)|3\.0)|5\.1\.[01])(?:[-+ <>=~^|].*)?$')].marked
-      value: '"17.0.6"'
+  - com.huawei.clouds.openrewrite.marked.UpgradeSelectedMarkedDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.marked.MigrateMarkedTo17_0_6
+displayName: Migrate Marked to 17.0.6
+description: Apply the strict dependency upgrade, safe built-in types cleanup, deterministic renderer-flag migration, and precise manifest/JavaScript/TypeScript risk markers.
+tags:
+  - marked
+  - markdown
+  - javascript
+  - typescript
+  - nodejs
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.marked.UpgradeMarkedTo17_0_6
+  - com.huawei.clouds.openrewrite.marked.RemoveRedundantMarkedTypes
+  - com.huawei.clouds.openrewrite.marked.MigrateDeterministicMarked17Source
+  - com.huawei.clouds.openrewrite.marked.FindMarked17ManifestRisks
+  - com.huawei.clouds.openrewrite.marked.FindMarked17JavaScriptRisks
