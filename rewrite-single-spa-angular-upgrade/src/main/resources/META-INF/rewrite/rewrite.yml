@@ -1,0 +1,35 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.singlespaangular
+packageName: com.huawei.clouds.openrewrite.singlespaangular
+description: Upgrade workbook-selected single-spa-angular declarations with conservative Angular workspace and source migration plus explicit compatibility review markers.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.singlespaangular.UpgradeSingleSpaAngularTo9_2_0
+displayName: Upgrade single-spa-angular to 9.2.0
+description: Update only workbook-selected exact, caret, or tilde direct single-spa-angular declarations in package.json to 9.2.0.
+tags:
+  - single-spa-angular
+  - angular
+  - javascript
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.singlespaangular.UpgradeSelectedSingleSpaAngularDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.singlespaangular.MigrateSingleSpaAngularTo9_2_0
+displayName: Migrate single-spa-angular to 9.2.0
+description: Apply the strict dependency upgrade, safe public-entry and Angular workspace migrations, and precise manifest, workspace, and source review markers.
+tags:
+  - single-spa-angular
+  - angular
+  - javascript
+  - typescript
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.singlespaangular.UpgradeSingleSpaAngularTo9_2_0
+  - com.huawei.clouds.openrewrite.singlespaangular.MigrateDeterministicSingleSpaAngularSource
+  - com.huawei.clouds.openrewrite.singlespaangular.MigrateSingleSpaAngularWorkspace
+  - com.huawei.clouds.openrewrite.singlespaangular.FindSingleSpaAngularManifestRisks
+  - com.huawei.clouds.openrewrite.singlespaangular.FindSingleSpaAngularWorkspaceRisks
+  - com.huawei.clouds.openrewrite.singlespaangular.FindSingleSpaAngularSourceRisks

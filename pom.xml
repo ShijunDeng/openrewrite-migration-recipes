@@ -110,6 +110,7 @@
     <module>rewrite-angular-architects-module-federation-upgrade</module>
     <module>rewrite-springfox-swagger2-upgrade</module>
     <module>rewrite-grafana-upgrade</module>
+    <module>rewrite-single-spa-angular-upgrade</module>
   </modules>
 
   <dependencyManagement>
