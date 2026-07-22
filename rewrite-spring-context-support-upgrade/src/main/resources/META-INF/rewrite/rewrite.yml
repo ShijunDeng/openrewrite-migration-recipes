@@ -1,0 +1,66 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springcontextsupport
+packageName: com.huawei.clouds.openrewrite.springcontextsupport
+description: Strictly upgrade Spring Context Support to 6.2.19, migrate deterministic Jakarta namespaces, and locate behavior-sensitive Spring 6 changes.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springcontextsupport.UpgradeSpringContextSupportTo6_2_19
+displayName: Upgrade selected Spring Context Support declarations to 6.2.19
+description: Upgrade only exact spreadsheet source versions of org.springframework:spring-context-support when Maven or Gradle version ownership is local and unambiguous.
+tags:
+  - spring
+  - spring-context-support
+  - java
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.springcontextsupport.UpgradeSelectedSpringContextSupportDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springcontextsupport.MigrateDeterministicSpring6JakartaNamespaces
+displayName: Migrate deterministic Spring 6 Jakarta namespaces
+description: Migrate exact JavaMail, Activation, Inject, and Jakarta Annotation namespace moves in maintained Java and structured configuration.
+tags:
+  - spring
+  - jakarta-ee
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springcontextsupport.MigrateSpring6JakartaNamespaces
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springcontextsupport.FindSpringContextSupport6BuildMigrationRisks
+displayName: Find Spring Context Support 6.2 build migration risks
+description: Mark Java 17 baselines, external owners, mixed Spring versions, and exact cache, mail, Quartz, FreeMarker, JCache, and Caffeine integration dependencies.
+tags:
+  - spring
+  - build
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springcontextsupport.FindSpringContextSupport6BuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springcontextsupport.FindSpringContextSupport6SourceAndConfigRisks
+displayName: Find Spring Context Support 6.2 source and configuration risks
+description: Mark removed Ehcache, remoting, EJB, and parameter-name APIs plus typed mail, Quartz, cache, SpEL, async, bean, and compatibility configuration risks.
+tags:
+  - spring
+  - java
+  - configuration
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springcontextsupport.FindSpringContextSupport6MigrationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springcontextsupport.MigrateSpringContextSupportTo6_2_19
+displayName: Migrate Spring Context Support applications to 6.2.19
+description: Strictly upgrade the selected dependency, apply proven-equivalent Spring 6 Jakarta namespace changes, and mark build, cache, mail, Quartz, FreeMarker, async, bean, parameter, placeholder, and SpEL decisions.
+tags:
+  - spring
+  - spring-context-support
+  - jakarta-ee
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springcontextsupport.UpgradeSpringContextSupportTo6_2_19
+  - com.huawei.clouds.openrewrite.springcontextsupport.MigrateDeterministicSpring6JakartaNamespaces
+  - com.huawei.clouds.openrewrite.springcontextsupport.FindSpringContextSupport6BuildMigrationRisks
+  - com.huawei.clouds.openrewrite.springcontextsupport.FindSpringContextSupport6SourceAndConfigRisks

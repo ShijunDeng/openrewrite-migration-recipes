@@ -93,6 +93,7 @@
     <module>rewrite-jul-to-slf4j-upgrade</module>
     <module>rewrite-swiper-upgrade</module>
     <module>rewrite-antv-x6-upgrade</module>
+    <module>rewrite-spring-context-support-upgrade</module>
   </modules>
 
   <dependencyManagement>
