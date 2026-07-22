@@ -59,6 +59,7 @@
     <module>rewrite-okhttp-upgrade</module>
     <module>rewrite-d3-upgrade</module>
     <module>rewrite-vue-i18n-upgrade</module>
+    <module>rewrite-kafka-clients-upgrade</module>
   </modules>
 
   <dependencyManagement>
@@ -86,6 +87,11 @@
       <dependency>
         <groupId>org.openrewrite</groupId>
         <artifactId>rewrite-json</artifactId>
+        <version>${rewrite.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.openrewrite</groupId>
+        <artifactId>rewrite-properties</artifactId>
         <version>${rewrite.version}</version>
       </dependency>
       <dependency>

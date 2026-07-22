@@ -1,0 +1,49 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.kafka
+packageName: com.huawei.clouds.openrewrite.kafka
+description: Upgrade Apache Kafka clients with source and configuration migrations for removed 4.x APIs.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.kafka.UpgradeKafkaClientsDependencyTo4_1_2
+displayName: Upgrade kafka-clients to 4.1.2
+description: Upgrade org.apache.kafka:kafka-clients declarations in Maven and Gradle builds without changing application source or configuration.
+tags:
+  - apache-kafka
+  - kafka-clients
+  - java
+  - dependency-upgrade
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.apache.kafka
+      artifactId: kafka-clients
+      newVersion: 4.1.2
+      overrideManagedVersion: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.kafka.MigrateKafkaClientsTo4_1_2
+displayName: Migrate Apache Kafka clients to 4.1.2
+description: Upgrade kafka-clients and migrate removed DescribeTopicsResult methods and JMX reporter property names.
+tags:
+  - apache-kafka
+  - kafka-clients
+  - java
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.kafka.UpgradeKafkaClientsDependencyTo4_1_2
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.kafka.clients.admin.DescribeTopicsResult values()
+      newMethodName: topicNameValues
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.kafka.clients.admin.DescribeTopicsResult all()
+      newMethodName: allTopicNames
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: metrics.jmx.blacklist
+      newPropertyKey: metrics.jmx.exclude
+      relaxedBinding: false
+      regex: false
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: metrics.jmx.whitelist
+      newPropertyKey: metrics.jmx.include
+      relaxedBinding: false
+      regex: false
