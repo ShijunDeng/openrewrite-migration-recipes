@@ -20,6 +20,11 @@
     </dependency>
     <dependency>
       <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-javascript</artifactId>
+      <version>${rewrite.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-test</artifactId>
       <scope>test</scope>
     </dependency>

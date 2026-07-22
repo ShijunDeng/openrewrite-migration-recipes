@@ -32,7 +32,7 @@
 | [`rewrite-jasypt-spring-boot-starter-upgrade`](rewrite-jasypt-spring-boot-starter-upgrade) | `com.huawei.clouds.openrewrite.jasypt.MigrateJasyptSpringBootStarterTo4_0_3` | 严格升级到 4.0.3，自动迁移配置键和自动配置包，并定位 Java/Boot 基线、历史密文、密钥及扩展点风险 |
 | [`rewrite-angular-cdk-upgrade`](rewrite-angular-cdk-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularCdkTo20_2_14` | 将 `@angular/cdk` 升级到 20.2.14，且不降级后续版本 |
 | [`rewrite-hibernate-core-upgrade`](rewrite-hibernate-core-upgrade) | `com.huawei.clouds.openrewrite.hibernate.MigrateHibernateCoreTo7_2_12` | 将 Hibernate Core 5.x 依赖和常见源码 API 迁到 7.2.12.Final |
-| [`rewrite-vue-router-upgrade`](rewrite-vue-router-upgrade) | `com.huawei.clouds.openrewrite.vuerouter.UpgradeVueRouterTo5_0_3` | 将 Vue Router 3.x/4.x 的 `package.json` 声明升级到 5.0.3，且不降级后续版本 |
+| [`rewrite-vue-router-upgrade`](rewrite-vue-router-upgrade) | `com.huawei.clouds.openrewrite.vuerouter.MigrateVueRouterTo5_0_3` | 严格升级 Vue Router，自动迁移 unplugin/路由/滚动/配置的确定性变化并精确标记 Vue 2、导航与 SSR 风险 |
 | [`rewrite-okhttp-upgrade`](rewrite-okhttp-upgrade) | `com.huawei.clouds.openrewrite.okhttp.MigrateOkHttpTo5_3_0` | 严格升级 OkHttp，迁移 `OkHttpClient.clone()`，并标记 internal、Kotlin、MockWebServer、alpha 与连接行为风险 |
 | [`rewrite-d3-upgrade`](rewrite-d3-upgrade) | `com.huawei.clouds.openrewrite.d3.MigrateD3To7_9_0` | 严格升级 D3 7.9.0，自动迁移 `histogram`/`bin` 与 `scan`/`leastIndex`，并标记 event、pointer、collections、Voronoi、ESM、格式及渲染语义风险 |
 | [`rewrite-vue-i18n-upgrade`](rewrite-vue-i18n-upgrade) | `com.huawei.clouds.openrewrite.vuei18n.UpgradeVueI18nTo11_3_0` | 将 Vue I18n 7.x–10.x/早期 11.x 声明升级到 11.3.0，且不降级后续版本 |

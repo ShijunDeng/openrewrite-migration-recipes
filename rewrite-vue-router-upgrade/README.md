@@ -1,67 +1,106 @@
-# Vue Router upgrade to 5.0.3
+# Vue Router 3/4 升级到 5.0.3
 
-本模块对应 `开源软件升级.xlsx` 中的 `vue-router`，合并处理 `3.0.6`、`3.1.6`、`3.4.3`、`3.5.1`、`3.5.2`、`3.5.3`、`3.5.4`、`3.6.2`、`3.6.5` 以及 `4.0.12 …（共 16 个版本）`，目标版本为 `5.0.3`。
-
-配方名称：
+本模块对应 `开源软件升级.xlsx` 中的 npm 包 `vue-router`，目标版本为 `5.0.3`。严格升级只接受表格中可见且能够还原为单个 semver 的源版本：
 
 ```text
-com.huawei.clouds.openrewrite.vuerouter.UpgradeVueRouterTo5_0_3
+3.0.6, 3.1.6, 3.4.3, 3.5.1, 3.5.2,
+3.5.3, 3.5.4, 3.6.2, 3.6.5, 4.0.12
 ```
 
-## 自动处理范围
+表格的 `4.0.12 ...（共16个版本）` 没有披露其余 15 个具体版本，因此本模块不会把它解释成“任意 4.x”。配方分为：
 
-配方仅修改根目录或 workspace 子目录 `package.json` 的 `dependencies`、`devDependencies`、`peerDependencies` 和 `optionalDependencies`，把 3.x、4.x、5.0.0、5.0.1、5.0.2 声明设置为 `5.0.3`。
+- `com.huawei.clouds.openrewrite.vuerouter.UpgradeVueRouterTo5_0_3`：严格依赖升级；
+- `com.huawei.clouds.openrewrite.vuerouter.MigrateVueRouterTo5_0_3`：推荐配方，追加确定性 source/config 迁移、合并依赖清理和精确风险标记。
 
-它不会降级 5.0.4+、5.1.x、6.x，不会覆盖 `workspace:*`、npm alias、Git、file 或无法判断上下界的 `*`/`latest`，也不会直接修改 lockfile。配方不自动改写 JavaScript、TypeScript、Vue SFC、构建配置或 SSR 入口，因为 3→4 的变化依赖应用 history 模式、route records 和渲染结构，盲目文本替换不安全。
+## 处理契约
+
+| 输入或风险 | 严格配方 | 推荐配方 | 级别 |
+| --- | --- | --- | --- |
+| 顶层四个直接依赖区中的 `vue-router`，值为表格版本的 exact、`^exact`、`~exact` 单值 | 设置为精确 `5.0.3` | 同左 | **AUTO** |
+| comparator、OR、hyphen、wildcard、多约束 | 不修改 | 在原 value 标记人工选择约束与 lockfile 重建 | **NO-OP / MARK** |
+| workspace、npm alias、Git/GitHub、file/link、URL、tag、变量、空白、`v`/`=`、prerelease、build metadata | 不修改 | 在原 value 标记所有权/发布策略 | **NO-OP / MARK** |
+| 未列出的 2/3/4/5 版本 | 不修改 | 非目标声明标记人工选版；目标 exact/caret/tilde 保持 | **NO-OP / MARK** |
+| overrides/resolutions/catalog、lockfile、普通 JSON、相似包名 | 不修改 | 不修改 | **NO-OP** |
+| `unplugin-vue-router/vite` | 不处理 | 改为 `vue-router/vite` | **AUTO** |
+| `unplugin-vue-router` root utilities/types | 不处理 | 改为 `vue-router/unplugin` | **AUTO** |
+| `unplugin-vue-router/data-loaders[/basic]`、`.../pinia-colada` | 不处理 | 分别改为 `vue-router/experimental`、`vue-router/experimental/pinia-colada` | **AUTO** |
+| 其余 unplugin subpath、tsconfig paths/aliases | 不处理 | 保留并精确标记 | **MARK** |
+| tsconfig/jsconfig 两个旧 Volar plugin path、根 `include`/`compilerOptions.types` 中精确 `unplugin-vue-router/client` entry | 不处理 | 改为 `vue-router/volar/*`；只在已知类型入口删除 client entry，其他数组保留并标记 | **AUTO / MARK** |
+| 目标 Router 已选定，唯一普通 `unplugin-vue-router` owner 位于 dependencies/devDependencies | 不处理 | 删除合并后的依赖，保留格式/空对象 | **AUTO** |
+| `createRouter(...)`/旧 Router 构造内的 exact `*`/`/*` route record，且同一 object 有 component/components/redirect/children | 不处理 | 改为 `/:pathMatch(.*)*`；形似 route 的普通对象不改 | **AUTO** |
+| `scrollBehavior` 内返回对象的 `x`/`y` property | 不处理 | 改为 `left`/`top`，同时标记完整滚动回归边界 | **AUTO + MARK** |
+| Vue 2、Vue <3.5、旧 compiler/SSR/plugin、Pinia/Colada peer | 不处理 | 在精确 manifest value 标记 | **MARK** |
+| Vue Router 3 构造/options/API、navigation callback/guard、route syntax、template、SSR、history state、experimental 5.0.3 | 不处理 | 在精确 AST/template/config 节点标记 | **MARK** |
+
+依赖区只包括根 `dependencies`、`devDependencies`、`peerDependencies`、`optionalDependencies`。配方不会写 lockfile，也不会自动选择 history、SSR、guard 返回值、sanitization 或业务 redirect。
 
 ## 不兼容修改点
 
-| 版本跨度内的变化 | 影响与迁移建议 |
+| 跨越变化 | AUTO | MARK 后需要完成的决策 |
+| --- | --- | --- |
+| Router 3 面向 Vue 2；5.0.3 peer 是 Vue `^3.5.0` | 无 | 先完成 Vue 3.5 runtime/compiler/test/SSR/UI 库迁移；标记 Vue 2 compiler、server renderer、Vite Vue2 plugin |
+| `new Router`/`new VueRouter`、`Vue.use` 被 `createRouter`、`app.use(router)` 替代 | 无 | 标记 default import、construction、install；结合应用创建方式迁移，不能只替换名字 |
+| `mode`→history factory；`base` 移到 factory；`fallback` 删除 | 无 | 分别标记；根据 browser/hash/memory、子目录部署、server fallback 和 SSR 选择 |
+| catch-all 与 path-to-regexp 语法变化 | 只迁移可证明是 route record 的 exact `*`/`/*` | 标记其余 `*`、自定义/匿名/repeatable/optional params；验证 route ranking、resolve/push encoding |
+| `currentRoute` 变成 ref；`router.app` 删除；`resolve(...).route` shape 变化 | 无 | 标记 instance field/API；`useRoute()`、`this.$route` 不误报 |
+| `onReady`→Promise `isReady`；`match`、`getMatchedComponents` 删除 | 无 | 标记调用；SSR push URL 后 await ready，从 `currentRoute.value.matched` 读取 record components |
+| push/replace callbacks 删除，导航始终异步 | 无 | 只标记有额外 callback arguments 的调用；迁到 await/Promise 并区分 navigation failure |
+| 5.0.3 开始警告三参数 guard 的 `next` | 无 | 标记三参数 beforeEach/beforeResolve/beforeEnter；改为 return location/false/undefined 或 throw，保持所有 async/error branch |
+| scroll `{x,y}`→`{left,top}` | 精确 property 改名 | 标记完整 scrollBehavior；回归 saved position、hash、delay、前进后退、初始导航与 hydration |
+| RouterLink 删除 append/event/tag/exact；RouterView transition/keep-alive/slot 结构变化 | 无 | 在 Vue/HTML opening structure 标记；现代 `custom`/`v-slot` 和 `RouterView v-slot` 不误报 |
+| route location `parent`、手工 `history.state`、编码与 redirect 语义变化 | 无 | 标记直接 history state read；其余依赖真实 route corpus、浏览器历史、深链和 SSR 测试 |
+| v5 将 unplugin-vue-router 合并入 core | 官方精确 entry point、Volar path、client reference 和唯一依赖 owner 自动迁移 | custom alias/runtime/types/unknown entry 保留并标记；重新生成 route-map declarations |
+| v5 普通 Router 4（未用 file routing）通常无代码 breaking change | 依赖升级 | 现代 createRouter/两参数以下 guard/普通 path 不标记；IIFE devtools externalization 仍需 CDN 场景验证 |
+| 5.0.3 experimental loader breaking changes | 无 | 标记 removed `selectNavigationResult`/`NAVIGATION_RESULTS_KEY`/`MatchMiss`、deprecated `NavigationResult`、新 `miss()` throw/never 语义 |
+| 5.0.3 package `type: module` 但仍提供公开 CJS require export | 无 | 只标记 `src`/`dist` deep implementation imports，不把普通 `require('vue-router')`误判为 ESM break |
+
+## 测试矩阵
+
+| 维度 | 覆盖 |
 | --- | --- |
-| Vue Router 3 面向 Vue 2；5.0.3 的 peer dependency 是 Vue `^3.5.0` | 3.x 项目必须先完成 Vue 2→Vue 3 迁移并将 Vue 升至 3.5；不能只改 router 版本后安装 |
-| `new VueRouter(...)` 改为 `createRouter(...)` | 改为命名导入；删除 `Vue.use(VueRouter)`，在 Vue 3 application 上调用 `app.use(router)` |
-| `mode` 被 `history` factory 替代，`base` 移到 factory 参数 | `history`→`createWebHistory(base)`，`hash`→`createWebHashHistory(base)`，`abstract`/SSR→`createMemoryHistory(base)`；删除已移除的 `fallback` |
-| catch-all `*`/`/*` 和旧 `path-to-regexp` 语法被移除 | 使用 `/:pathMatch(.*)*`；为匿名参数命名，检查自定义正则、repeatable/optional params、`sensitive` 与 `strict` |
-| `router.currentRoute` 变成 Vue `ref` | 直接访问 router instance 时使用 `router.currentRoute.value`；`useRoute()` 和 `this.$route` 不受此项影响 |
-| `onReady`→返回 Promise 的 `isReady`，所有导航均异步 | SSR 先 push 请求 URL 并等待 `isReady()`；客户端首屏如需避免初始 transition，也应等待后再 mount |
-| `router.match`、`getMatchedComponents`、`router.app` 被移除 | 使用 `router.resolve`；从 `currentRoute.value.matched` 取组件；应用实例由调用方显式持有 |
-| `push`/`replace` 的完成和失败 callback 被移除 | `await router.push/replace`，依据 Promise 与 navigation failure API 处理结果；不存在的 named route 或缺少 required params 现在会抛错 |
-| `scrollBehavior` 的 `{x,y}` 改为 `{left,top}` | 同时回归 saved position、anchor/hash、异步滚动与浏览器前进后退 |
-| `<router-link>` 删除 `append`、`event`、`tag`、`exact` | 相对路径由应用拼接；自定义元素/事件/active 状态改用 `custom` + `v-slot`/`useLink` |
-| `<router-view>` 与 transition/keep-alive 组合方式变化 | 使用 `RouterView` 的 `v-slot="{ Component }"`，在 slot 内渲染 `<component :is="Component">`，回归缓存 key、transition 与 nested views |
-| route location 的 `parent` 被移除，编码规则调整 | 从 `matched` 取父记录；重新验证 path/fullPath、hash、params/query 的 encode/decode 与含 `/` 参数 |
-| 手工写 `history.state` 可能覆盖 Router 状态 | 优先 `router.push`，必须 replace 时合并现有 `history.state`，否则 scroll/previous-location 信息会丢失 |
-| v4→v5 对未使用 file-based routing 的项目没有常规 breaking change | 直接升级依赖即可，但浏览器 IIFE bundle 不再内含 `@vue/devtools-api`；CDN/IIFE 使用方式必须单独验证 |
-| v5 把 `unplugin-vue-router` 合并进 core | 移除该依赖；Vite 插件改到 `vue-router/vite`，其他 bundler 与 utilities 改到 `vue-router/unplugin`，Volar 改到 `vue-router/volar/*` |
-| file-based route/data-loader entry points 变化 | auto routes 使用 `vue-router/auto-routes`；loader 改到 `vue-router/experimental` 或 `experimental/pinia-colada`；删除 `unplugin-vue-router/client` types reference |
-| 5.0.3 将 package 标记为 `type: module` | 目标包仍提供公开 CJS `require` export，但禁止依赖未导出的内部文件；验证 Jest/Vitest、SSR externalization、bundler condition resolution 与 Node ESM/CJS 边界 |
-| 5.0.3 的 experimental loader API 有 breaking changes | `miss()` 改为内部抛出且返回 `never`，删除 `selectNavigationResult`，`NavigationResult` constructor 废弃并改用 `reroute()`；实验 API 必须逐调用点审计 |
-| 5.0.3 开始警告 navigation guard 的 `next()` callback | guard 改为直接 return location/false/undefined 或 throw；在进入 v6 前清理 deprecated API |
+| XLSX | 10 个可见源版本 × exact/caret/tilde；四个直接依赖区；target 和防降级/no-invention |
+| npm spec | complex range、protocol、alias、Git、file/link、URL、tag、variable、decorated、prerelease/build 均严格 no-op，推荐配方 marker |
+| JSON scope | workspace 子包、nested dependency-like objects、catalog、lockfile、普通 JSON、相似包名、格式与空对象 |
+| manifest | unplugin 唯一 owner 删除和 duplicate/nested/protocol/peer 保留；Vue2/Vue3.2/3.4、compiler、SSR、Pinia、Colada marker；Vue3.5 aligned no-op |
+| deterministic source | 5 个官方 import mappings、catch-all、method/arrow scroll coordinates、unknown subpath/no-route/no-coordinate no-op、幂等 |
+| JS/TS marker | default/new/install/options、ready/match/components/currentRoute/app/resolve、callbacks/guards、route regex、scroll/history、deep imports、experimental APIs |
+| template/config | RouterLink、RouterView、SFC legacy script、client reference；modern slot/link、unrelated HTML、注释误报边界；Volar/paths 幂等 |
+| real repositories | 6 个固定提交/tag/gitHead 的 manifest 与真实 source/config 形态执行推荐配方，覆盖 upgrade、marker、no-op、AUTO import/config |
+| quality | strict/recommended discover + validate；manifest/source/config/template two-cycle idempotency；模块 clean verify |
 
-完整变更以 Vue Router 官方 [3→4 migration guide](https://router.vuejs.org/guide/migration/)、[4→5 migration guide](https://router.vuejs.org/guide/migration/v4-to-v5)、[5.0.3 release notes](https://github.com/vuejs/router/releases/tag/v5.0.3) 和 [5.0.3 package manifest](https://github.com/vuejs/router/blob/v5.0.3/packages/router/package.json) 为准。
+## 固定官方依据
 
-## 测试样本来源
+目标 tag `v5.0.3` peeled commit 固定为 [`2b4d6121824cab3810d7dffae560c015b5f988cd`](https://github.com/vuejs/router/commit/2b4d6121824cab3810d7dffae560c015b5f988cd)：
 
-- [PanJiaChen/vue-element-admin](https://github.com/PanJiaChen/vue-element-admin/blob/6858a9ad67483025f6a9432a926beb9327037be3/package.json) 的 Vue 2 + 精确 Vue Router 3 声明
-- [vuejs/vue-hackernews-2.0](https://github.com/vuejs/vue-hackernews-2.0/blob/98399b55c6f1da4197840ba76189795b3e95be0f/package.json) 的官方 SSR 示例及 caret 版本声明
-- [lin-xin/vue-manage-system](https://github.com/lin-xin/vue-manage-system/blob/6a7019ec1a74cc05297d18647a5f944c242d468a/package.json) 的 Vue 3 + Vue Router 4 + Pinia 真实组合
-- [Vue Router 5.0.3 官方 manifest](https://github.com/vuejs/router/blob/v5.0.3/packages/router/package.json) 的 peer dependencies、`type: module` 与 package exports
-- [OpenRewrite ChangeValueTest](https://github.com/openrewrite/rewrite/blob/main/rewrite-json/src/test/java/org/openrewrite/json/ChangeValueTest.java) 与 [JsonPathMatcherTest](https://github.com/openrewrite/rewrite/blob/main/rewrite-json/src/test/java/org/openrewrite/json/JsonPathMatcherTest.java) 的 JSON 断言、filter expression 和 no-op 测试结构
+- [3→4 migration guide](https://github.com/vuejs/router/blob/2b4d6121824cab3810d7dffae560c015b5f988cd/packages/docs/guide/migration/index.md)；
+- [4→5/unplugin migration guide](https://github.com/vuejs/router/blob/2b4d6121824cab3810d7dffae560c015b5f988cd/packages/docs/guide/migration/v4-to-v5.md)；
+- [5.0.3 package manifest](https://github.com/vuejs/router/blob/2b4d6121824cab3810d7dffae560c015b5f988cd/packages/router/package.json) 与 [fixed changelog](https://github.com/vuejs/router/blob/2b4d6121824cab3810d7dffae560c015b5f988cd/packages/router/CHANGELOG.md)。
 
-16 个测试覆盖三种真实仓库形态、四个依赖区、精确/caret/tilde/range/`v` 前缀/prerelease、workspace 子包、目标前三个 patch，以及目标版本、新版本、非 registry 引用、2.x、通配符、lockfile、其他 JSON 和相似包名不修改。
+XLSX source tags 固定到 Vue Router 3 peeled commits：`3.0.6` [`d9d6e160`](https://github.com/vuejs/vue-router/commit/d9d6e160d6e3fda8a3c2792bdb42bfacf8e7d624)、`3.1.6` [`32bb16cd`](https://github.com/vuejs/vue-router/commit/32bb16cd755da8eb56cecaa207f45f1ee5606b7a)、`3.4.3` [`dcde7270`](https://github.com/vuejs/vue-router/commit/dcde7270a3178b79e8344c54cc17ce81ca088d60)、`3.5.1` [`670e5c09`](https://github.com/vuejs/vue-router/commit/670e5c09918169bded57b84f1aa238e895a27e2e)、`3.5.2` [`f28b22dc`](https://github.com/vuejs/vue-router/commit/f28b22dc806e7d798125b9ea35ef2a7fc4ab3256)、`3.5.3` [`0a9d1358`](https://github.com/vuejs/vue-router/commit/0a9d13589b5d7f4b6536b57aa9d2e3346f7f7d2f)、`3.5.4` [`4708574a`](https://github.com/vuejs/vue-router/commit/4708574a8c2a6d16937c4e69f44383a0593247f1)、`3.6.2` [`38d3689e`](https://github.com/vuejs/vue-router/commit/38d3689e765cc2f958efb89de806e77f78196e8f)、`3.6.5` [`4f934f71`](https://github.com/vuejs/vue-router/commit/4f934f712b0ce333419d475254e860f81d7014cd)，以及 Router 4 `4.0.12` [`798cab0d`](https://github.com/vuejs/router/commit/798cab0d1e21f9b4d45a2bd12b840d2c7415f38a)。
+
+## 固定真实仓用例与 OpenRewrite 参考
+
+- [zwave-js/zwave-js-ui npm 9.31.0 gitHead `a208bac5`](https://github.com/zwave-js/zwave-js-ui/blob/a208bac5e0e4da44e396b0feccb5d9d147bb975d/package.json) 与 [`src/router/index.js`](https://github.com/zwave-js/zwave-js-ui/blob/a208bac5e0e4da44e396b0feccb5d9d147bb975d/src/router/index.js)：`^3.6.5` 自动升级，Vue2/default Router/hash/next marker；
+- [johndatserakis/vue-navigation-bar npm 5.0.0 gitHead `807b63fd`](https://github.com/johndatserakis/vue-navigation-bar/blob/807b63fd3bbc275a994ea149e4a5bd2e1070fa39/package.json) 与 [`example/main.js`](https://github.com/johndatserakis/vue-navigation-bar/blob/807b63fd3bbc275a994ea149e4a5bd2e1070fa39/example/main.js)：`^4.0.12` 自动升级，现代 source no-op，旧 Vue/compiler peers marker；
+- [PanJiaChen/vue-element-admin `6858a9ad`](https://github.com/PanJiaChen/vue-element-admin/blob/6858a9ad67483025f6a9432a926beb9327037be3/package.json) 与 [`src/router/index.js`](https://github.com/PanJiaChen/vue-element-admin/blob/6858a9ad67483025f6a9432a926beb9327037be3/src/router/index.js)：未列 `3.0.2` 保持并标记，不扩张 XLSX；真实 Vue2/new Router/scroll 迁移；
+- [vuejs/vue-hackernews-2.0 `98399b55`](https://github.com/vuejs/vue-hackernews-2.0/blob/98399b55c6f1da4197840ba76189795b3e95be0f/package.json)、[`src/router/index.js`](https://github.com/vuejs/vue-hackernews-2.0/blob/98399b55c6f1da4197840ba76189795b3e95be0f/src/router/index.js) 与 [`entry-server.js`](https://github.com/vuejs/vue-hackernews-2.0/blob/98399b55c6f1da4197840ba76189795b3e95be0f/src/entry-server.js)：未列 `^3.0.1` no-op、history/fallback/SSR API 边界；
+- [lin-xin/vue-manage-system `6a7019ec`](https://github.com/lin-xin/vue-manage-system/blob/6a7019ec1a74cc05297d18647a5f944c242d468a/package.json) 与 [`src/router/index.ts`](https://github.com/lin-xin/vue-manage-system/blob/6a7019ec1a74cc05297d18647a5f944c242d468a/src/router/index.ts)：未列 `^4.2.5` no-op、custom regex 与三参数 guard marker；
+- [posva/unplugin-vue-router v0.19.0 peeled `d7051c1b`](https://github.com/posva/unplugin-vue-router/tree/d7051c1bf2049f3f1857171d76054c45d35f4906)：[`playground/src/main.ts`](https://github.com/posva/unplugin-vue-router/blob/d7051c1bf2049f3f1857171d76054c45d35f4906/playground/src/main.ts) data-loader import 与 [`playground/tsconfig.json`](https://github.com/posva/unplugin-vue-router/blob/d7051c1bf2049f3f1857171d76054c45d35f4906/playground/tsconfig.json) Volar/client/custom paths。
+
+测试结构参考 OpenRewrite 固定提交 [`rewrite@1b1804a5`](https://github.com/openrewrite/rewrite/commit/1b1804a5af7692612398fcce034a846b48b5b8cf) 的 [`ChangeValueTest`](https://github.com/openrewrite/rewrite/blob/1b1804a5af7692612398fcce034a846b48b5b8cf/rewrite-json/src/test/java/org/openrewrite/json/ChangeValueTest.java) / [`JsonPathMatcherTest`](https://github.com/openrewrite/rewrite/blob/1b1804a5af7692612398fcce034a846b48b5b8cf/rewrite-json/src/test/java/org/openrewrite/json/JsonPathMatcherTest.java)，以及 [`rewrite-javascript@9e3b820e`](https://github.com/openrewrite/rewrite-javascript/commit/9e3b820e6a44808b095bb7e3aab670fd67de99a5) 的 [`ImportTest`](https://github.com/openrewrite/rewrite-javascript/blob/9e3b820e6a44808b095bb7e3aab670fd67de99a5/rewrite-javascript/src/test/java/org/openrewrite/javascript/tree/ImportTest.java)、[`ObjectLiteralTest`](https://github.com/openrewrite/rewrite-javascript/blob/9e3b820e6a44808b095bb7e3aab670fd67de99a5/rewrite-javascript/src/test/java/org/openrewrite/javascript/tree/ObjectLiteralTest.java) 和 [`MethodInvocationTest`](https://github.com/openrewrite/rewrite-javascript/blob/9e3b820e6a44808b095bb7e3aab670fd67de99a5/rewrite-javascript/src/test/java/org/openrewrite/javascript/tree/MethodInvocationTest.java)。
 
 ## 使用与验证
 
 ```bash
 mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:dryRun \
   -Drewrite.recipeArtifactCoordinates=com.huawei.clouds.openrewrite:rewrite-vue-router-upgrade:1.0.0-SNAPSHOT \
-  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.vuerouter.UpgradeVueRouterTo5_0_3
+  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.vuerouter.MigrateVueRouterTo5_0_3
 ```
 
-确认 patch 后重建 lockfile。3.x 工程先按官方 Vue 2→3 与 Router 3→4 指南迁移，再升级到 v5；使用 file-based routing 的 v4 工程同步移除 `unplugin-vue-router` 并更新所有 entry point。运行 TypeScript check、production/SSR build、unit/E2E、所有 route/guard/redirect/scroll/transition/keep-alive 测试，并覆盖直接输入 URL、前进后退、404、深链接和 hydration。
+检查全部 `SearchResult`，完成 Vue 3.5/history/SSR/guard/file-routing 决策后重建 lockfile，并运行 typecheck、unit/E2E、production/SSR build、所有 route/guard/redirect/scroll/transition/keep-alive 测试，覆盖直接 URL、前进后退、404、深链接、CDN/IIFE 和 hydration。
 
-本模块自身验证：
+模块验证：
 
 ```bash
-mvn -pl rewrite-vue-router-upgrade -am clean verify
+mvn -f rewrite-vue-router-upgrade/pom.xml clean verify
 ```
