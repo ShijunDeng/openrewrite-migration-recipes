@@ -1,0 +1,33 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.ojdbc8
+packageName: com.huawei.clouds.openrewrite.ojdbc8
+description: Strict Oracle ojdbc8 upgrades with JDBC API, driver service, URL, wallet, UCP, and dependency-owner guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ojdbc8.MigrateOjdbc8To23_26_1_0_0
+displayName: Migrate Oracle ojdbc8 applications to 23.26.1.0.0
+description: Upgrade only workbook-selected ojdbc8 declarations, apply behavior-preserving JDBC rewrites, and mark exact source, configuration, module, service-loading, and dependency-graph risks.
+tags:
+  - oracle
+  - jdbc
+  - ojdbc8
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.ojdbc8.UpgradeOjdbc8To23_26_1_0_0
+  - com.huawei.clouds.openrewrite.ojdbc8.MigrateOjdbcDeterministicJava
+  - com.huawei.clouds.openrewrite.ojdbc8.MigrateOjdbcConfiguration
+  - com.huawei.clouds.openrewrite.ojdbc8.FindOjdbcModuleTextMigrationRisks
+  - com.huawei.clouds.openrewrite.ojdbc8.FindOjdbcJavaMigrationRisks
+  - com.huawei.clouds.openrewrite.ojdbc8.FindOjdbcBuildMigrationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ojdbc8.UpgradeOjdbc8To23_26_1_0_0
+displayName: Upgrade Oracle ojdbc8 to 23.26.1.0.0
+description: Upgrade only literal com.oracle.database.jdbc:ojdbc8 versions 19.19.0.0, 21.9.0.0, and 23.2.0.0 selected by the workbook, plus provably safe local family properties or BOM owners.
+tags:
+  - oracle
+  - jdbc
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.ojdbc8.UpgradeSelectedOjdbc8Dependency

@@ -102,6 +102,7 @@
     <module>rewrite-curator-client-upgrade</module>
     <module>rewrite-log4j-over-slf4j-upgrade</module>
     <module>rewrite-jcl-over-slf4j-upgrade</module>
+    <module>rewrite-ojdbc8-upgrade</module>
   </modules>
 
   <dependencyManagement>
