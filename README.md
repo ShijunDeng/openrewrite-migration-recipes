@@ -40,7 +40,7 @@
 | [`rewrite-jakarta-servlet-api-upgrade`](rewrite-jakarta-servlet-api-upgrade) | `com.huawei.clouds.openrewrite.jakartaservlet.MigrateJakartaServletApiTo6_1_0` | 将 Jakarta Servlet API 升级到 6.1.0，并迁移 javax namespace 与有明确替代的删除 API |
 | [`rewrite-mybatis-spring-upgrade`](rewrite-mybatis-spring-upgrade) | `com.huawei.clouds.openrewrite.mybatisspring.MigrateMyBatisSpringTo4_0_0` | 严格升级 MyBatis-Spring 4.0.0，迁移 Batch 6 包、XSD、scanner XML 与确定性异常构造，并标记平台/API 风险 |
 | [`rewrite-marked-upgrade`](rewrite-marked-upgrade) | `com.huawei.clouds.openrewrite.marked.MigrateMarkedTo17_0_6` | 严格升级 Marked 17.0.6，清理可证明冗余的类型依赖与 renderer 过渡开关，并标记 ESM、Node、扩展、异步、token 和 XSS 风险 |
-| [`rewrite-ngx-echarts-upgrade`](rewrite-ngx-echarts-upgrade) | `com.huawei.clouds.openrewrite.ngxecharts.UpgradeNgxEchartsTo20_0_2` | 将 ngx-echarts 5.x–20.0.1 声明升级到 20.0.2，并说明 Angular/ECharts 配套迁移边界 |
+| [`rewrite-ngx-echarts-upgrade`](rewrite-ngx-echarts-upgrade) | `com.huawei.clouds.openrewrite.ngxecharts.MigrateNgxEchartsTo20_0_2` | 严格升级 ngx-echarts，自动规范公开入口和旧模板输入，并精确标记 Angular、ECharts custom build、signal、SSR 与运行时风险 |
 | [`rewrite-flyway-core-upgrade`](rewrite-flyway-core-upgrade) | `com.huawei.clouds.openrewrite.flyway.MigrateFlywayTo11_14_1` | 严格升级 Flyway Core/插件到 11.14.1，补齐确定的数据库模块并迁移配置、Java API、callback 文件；高风险数据库操作仅标记 |
 | [`rewrite-date-fns-upgrade`](rewrite-date-fns-upgrade) | `com.huawei.clouds.openrewrite.datefns.MigrateDateFnsTo4_1_0` | 严格升级 date-fns 4.1.0，自动迁移确定性的命名导入/CommonJS/公开子路径，并标记 ESM、内部路径、区间、时区与 companion 风险 |
 | [`rewrite-uuid-upgrade`](rewrite-uuid-upgrade) | `com.huawei.clouds.openrewrite.uuid.MigrateUuidTo13_0_2` | 严格升级 uuid 13.0.2，自动迁移旧 ESM subpath 与冗余类型依赖，并标记 CommonJS、Node、状态语义、buffer 和 React Native 风险 |

@@ -1,65 +1,107 @@
-# ngx-echarts upgrade to 20.0.2
+# ngx-echarts 迁移到 20.0.2
 
-本模块对应 `开源软件升级.xlsx` 中的 `ngx-echarts`，覆盖 `5.2.2`、`6.0.1`、`7.0.2`、`7.1.0`、`8.0.1`、`14.0.0`、`15.0.0`、`15.0.2`、`15.0.3`、`16.0.0`，目标版本为 `20.0.2`。
-
-配方名称：
+本模块对应 `开源软件升级.xlsx` 中的 npm 包 `ngx-echarts`。目标版本为 `20.0.2`；严格升级仅接受表格中明确可见的源版本：
 
 ```text
-com.huawei.clouds.openrewrite.ngxecharts.UpgradeNgxEchartsTo20_0_2
+5.2.2, 6.0.1, 7.0.2, 7.1.0, 8.0.1,
+14.0.0, 15.0.0, 15.0.2, 15.0.3, 16.0.0
 ```
 
-## 自动处理范围
+推荐配方：
 
-配方只修改根目录或 workspace 子目录 `package.json` 的 `dependencies`、`devDependencies`、`peerDependencies`、`optionalDependencies` 中名为 `ngx-echarts` 的直接声明。它处理 5.x–19.x 和 20.0.0/20.0.1 的常见精确版本、caret/tilde/comparator/major wildcard/`v` 前缀，统一设置为 `20.0.2`。
+```text
+com.huawei.clouds.openrewrite.ngxecharts.MigrateNgxEchartsTo20_0_2
+```
 
-它不会降级 20.0.3+ 或 21.x/22.x，不会覆盖 `workspace:`、npm alias、Git、file、tag、无界范围，也不会修改 lockfile、Angular、ECharts、`@types/*`、TypeScript、HTML 或 SCSS。升级后必须由原包管理器重建锁文件。
+它组合严格依赖升级、确定性源码/模板迁移和精确 `SearchResult` 风险标记。低层配方仍可单独运行：
 
-目标包要求 Angular core `>=20.0.0`，所以旧工程不能只升级本依赖；Angular framework、CLI、CDK/Material、RxJS、TypeScript 与 Node 必须按 Angular 官方路径同步迁移。目标仍接受 ECharts `>=5.0.0`，本配方不会擅自把 ECharts 5 升到 6；表格中的 ECharts 升级应使用本仓库独立模块。
+- `UpgradeNgxEchartsTo20_0_2`：仅升级表格版本；
+- `MigrateDeterministicNgxEcharts20`：仅规范公开 import，并清理可证明无语义的旧 template input；
+- `AuditNgxEcharts20Source`：审计 TypeScript/ECharts build；
+- `AuditNgxEcharts20Project`：审计 manifest/workspace；
+- `AuditNgxEcharts20Templates`：审计模板输入、事件和浏览器生命周期。
 
-## 不兼容修改点
+## AUTO / MARK / NO-OP 契约
 
-| 版本跨度内的变化 | 影响与迁移建议 |
+| 输入或风险 | 推荐配方行为 | 级别 |
+| --- | --- | --- |
+| 任意 workspace `package.json` 顶层四个直接依赖区中的 `ngx-echarts`，值为表格版本的 exact、`^exact`、`~exact` | 设置为精确 `20.0.2` | **AUTO** |
+| comparator、OR、hyphen、wildcard、多约束 | 不改版本，在原 member 标记人工选择 Angular/ngx-echarts 兼容矩阵 | **NO-OP / MARK** |
+| workspace protocol、npm alias、Git/GitHub、file/link、URL、tag、变量、空白、`v`/`=`、prerelease/build | 不改版本，在原 member 标记所有权/发布策略 | **NO-OP / MARK** |
+| 未列版本、目标或后续版本 | 不修改；非目标直接声明标记人工确认，不把表格范围扩大成任意 major | **NO-OP / MARK** |
+| overrides/resolutions/catalog、lockfile、普通 JSON、相似包名 | 不修改 | **NO-OP** |
+| 从已知历史实现路径导入 20.0.2 仍公开的具名符号 | `ngx-echarts/lib/...` / `public-api` 改为 `ngx-echarts` 根入口；alias 与引号保持 | **AUTO** |
+| default/namespace/未知内部 deep import | 不猜测导出；unsupported deep import 精确标记 | **NO-OP / MARK** |
+| ngx-echarts host 上 literal `detectEventChanges="true|false"` | 删除已移除且为 literal 的 input | **AUTO** |
+| dynamic `detectEventChanges` 或同名第三方 component/字符串/HTML 注释 | dynamic binding 标记；其余不修改、不误报 | **MARK / NO-OP** |
+| `provideEcharts`、`NgxEchartsCoreModule`、`NgxEchartsService` | 在 import/call 节点标记，不自动构造缺失的 ECharts build | **MARK** |
+| `echarts`/`echarts/index.js`、`echarts/src`/`lib`、`echarts/core`、`echarts-gl` | 标记 full/deep entry、renderer/component 注册和 extension/bundler/SSR 边界 | **MARK** |
+| `NgxEchartsModule.forRoot` | 保留有效 API，在 owner call 标记 core/renderer/theme/locale/lazy/SSR 配置审查 | **MARK** |
+| Angular <20、旧 CLI/build、TypeScript <5.8、旧 Node、ECharts <5、ResizeObserver polyfill、SSR 包 | 在精确 manifest member 标记 | **MARK** |
+| `[options]`/`[merge]`/`[theme]`/`[initOpts]`/resize/loading 和 chart event | 在精确 binding/event 标记 strict type、signal、setOption、尺寸、zone 和 teardown 回归边界 | **MARK** |
+
+依赖 visitor 只认根 JSON object 下的 `dependencies`、`devDependencies`、`peerDependencies`、`optionalDependencies`；不会改 lockfile，也不会替用户选择 ECharts 5 或 6。
+
+## 不兼容修改点与自动化边界
+
+| 跨越变化 | 本模块处理 | 仍需人工决策 |
+| --- | --- | --- |
+| ngx-echarts major 与 Angular major 锁步；20.0.2 peer 为 `@angular/core >=20.0.0` | 旧 Angular/CLI/TypeScript/Node 精确标记 | 按 major 顺序运行 Angular 官方 migrations，统一 framework/CDK/Material/RxJS/Node/TypeScript |
+| v5 删除 `NgxEchartsCoreModule`，引入 `NgxEchartsModule.forRoot({ echarts })`；`detectEventChanges` 删除 | literal template input 自动删除；旧 class 精确标记 | 重建 root/feature/test provider ownership，检查 lazy loader 与多应用/微前端实例 |
+| v8 移除 `@juggle/resize-observer` peer | polyfill member 标记 | 按浏览器与 JSDOM 支持矩阵决定是否保留，并确保 directive 初始化前安装 |
+| v15 nullable inputs、loading 和 onDestroy 修复 | template binding 标记 | strict template/typecheck，验证 null、loading 初始化、subscription/observer teardown |
+| v16 chart EventEmitter 类型收紧并增加事件 | event binding 标记 | 使用 ECharts public event types，回归 selection/brush/legend/dataZoom/finished 顺序与 zone |
+| v17 导出 standalone directive 与 providers | 历史 public deep import 自动回根入口 | 选择 NgModule 或 standalone；不要在 recipe 中猜测 application bootstrap/provider scope |
+| v19 删除 `provideEcharts`，Angular 19 integration 禁止 ECharts `index.js` full entry | import/call 精确标记 | 从 `echarts/core`、`charts`、`components`、`features`、`renderers` 建 build，改用 `provideEchartsCore` |
+| custom build 必须注册 renderer | `echarts/core` 精确标记 | 至少注册 `CanvasRenderer` 或 `SVGRenderer`，并注册每个实际 chart/component/feature |
+| v20 升级 Angular 20、兼容 zoneless、改用 signal input/output 等现代模式 | manifest/template/event 标记 | 回归 zoned/zoneless change detection、readonly input 类型、event timing、DestroyRef/observer 生命周期 |
+| 20.0.1 theme fix、20.0.2 `echarts.initOpts` 类型更新 | theme/initOpts binding 标记 | 不依赖旧 theme bug；按 ECharts init option public type 修复 wrapper 和测试 |
+| `[merge]` 仍是 `setOption(..., notMerge=false)` 增量语义 | `[merge]` 精确标记 | 验证 series 删除、dataset、`notMerge`/`replaceMerge`、动画与大数据性能 |
+| directive 使用 `window`、ResizeObserver、canvas/SVG 和实际宿主尺寸 | SSR/input marker | server 不初始化 chart；验证 hydration、hidden tab/dialog、flex/grid、DPR、打印、反复 mount/dispose |
+| theme/locale/extension 与 ECharts exports/bundler 耦合 | ECharts deep/GL/global scripts 精确标记 | 验证 Webpack/Vite/Jest/Vitest、SSR externalization、production tree shaking、chunk 和 bundle size |
+
+## 测试矩阵
+
+| 维度 | 覆盖 |
 | --- | --- |
-| ngx-echarts major 与 Angular major 基本锁步 | 5.x–8.x/14.x–19.x 项目先逐大版本升级 Angular，再装 20.0.2；不能在 Angular 11/14/16 上直接运行目标包 |
-| v5 引入 `NgxEchartsModule.forRoot({ echarts })` 并移除 `NgxEchartsCoreModule` | 表格最低版本已是 5.2.2，但遗留 bootstrap/shared module 仍可能保留旧 core module；统一在 root provider 注入 ECharts |
-| v7 开始支持 ECharts 5，主题对象和 resize 行为演进 | 检查 ECharts option、theme、ResizeObserver、autoResize 和容器销毁时机；不要把 directive 升级等同于 ECharts 5→6 源码迁移 |
-| v8 移除 `@juggle/resize-observer` peer | 现代浏览器使用原生 ResizeObserver；旧浏览器、JSDOM 与测试 runner 如缺失该 API，需要应用自行提供兼容层 |
-| v15 inputs 开始允许 null，loading/onDestroy 修复改变边缘时序 | 开启 Angular strict templates 后重新检查 `[options]`、`[merge]`、`[loading]`、`[theme]` 的 nullability 与 teardown 测试 |
-| v16 chart EventEmitter 获得更精确类型并增加事件 | 旧的宽泛 handler 或手写事件接口可能 TypeScript 编译失败；使用 ECharts 官方 event 类型并覆盖 selection/brush/legend 事件 |
-| v17 导出 standalone `NgxEchartsDirective`、`provideEcharts`、`provideEchartsCore` | standalone 应用可直接 imports directive 并在 providers 注入 core；NgModule 应用仍可使用 `NgxEchartsModule.forRoot` |
-| v19 因 Angular 19 解析限制禁止从 `echarts/index.js` 整包导入 | 必须从 `echarts/core`、`echarts/charts`、`echarts/components`、`echarts/renderers` 构建所需集合，并调用 `echarts.use(...)` |
-| v19 删除 `provideEcharts` | 改为 `provideEchartsCore({ echarts })`；搜索 application config、standalone component providers 和测试 TestBed providers |
-| custom build 必须显式注册 renderer | tree-shaking 方案至少注册 `CanvasRenderer` 或 `SVGRenderer`，并逐项注册 chart/component/feature；遗漏时运行期会空白或警告 |
-| v20 迁到现代 Angular patterns 并支持 zoneless | 检查 signal/input lifecycle、DestroyRef、change detection、事件进入 Angular zone 的行为；在有 zone 与 zoneless 两种模式跑测试 |
-| 20.0.1 修复 `[theme]` input，20.0.2 更新 `echarts.initOpts` 类型 | 不应依赖旧 theme bug；TypeScript 中自定义 init options/wrapper 可能出现更严格类型错误，应按 ECharts `opts` 类型修复 |
-| directive 仍依赖有尺寸的宿主元素和浏览器渲染 API | SSR 时避免在 server 初始化 canvas/SVG；hydration 后再创建 chart，回归 hidden tab、flex/grid resize、DPR、打印和组件反复挂载 |
-| `[merge]` 使用 ECharts 增量 setOption 语义 | `merge` 不是完整替换；需要 `notMerge`/`replaceMerge` 的业务应直接控制 ECharts instance，并对 series 删除、dataset 和动画做回归 |
-| extension/theme 深层路径受 ECharts exports 与 bundler 影响 | 避免依赖未公开内部文件；验证 lazy import、Webpack/Vite chunk、SSR externalization、Jest/Vitest 和 production optimization |
-| 事件和 chart instance 生命周期跨多个 major 有调整 | 每次 init/dispose 只保留当前 instance；取消外部 listener/observer，覆盖 route cache、keep-alive、dialog/tab 与微前端卸载 |
+| XLSX | 10 个可见版本 × exact/caret/tilde；四个直接依赖区；workspace manifest；target/新版本和 no-invention |
+| npm spec | comparator、OR、hyphen、wildcard、protocol、alias、Git、file/link、URL、tag、variable、decorated、prerelease/build 严格 no-op |
+| JSON scope | overrides/resolutions/catalog、lockfile、普通 JSON、相似包；Angular/ECharts/toolchain/runtime 精确 marker 与无直接依赖反例 |
+| source AUTO | 5 类历史 public path，具名 import、alias、单双引号；default/namespace/internal/第三方反例；幂等 |
+| template AUTO | directive element/attribute、literal true/false；dynamic、comment、同名第三方 component、attribute string 反例；幂等 |
+| source MARK | removed provider/class/service、full/core/legacy ECharts entry、GL、aliased provider call、owned forRoot；同名本地 call 反例 |
+| template MARK | options/merge/theme/init/event 和真实模板；HTML comment/普通正文 no-op；marker 幂等 |
+| real repositories | 3 个固定 manifest before→after，Matx fixed source marker，NiceFish/Carey fixed template marker |
+| quality | 6 个公开 recipe discover/validate；strict/AUTO/MARK 两周期幂等；模块 clean verify |
 
-官方依据包括 [ngx-echarts v20.0.2 release](https://github.com/xieziyu/ngx-echarts/releases/tag/v20.0.2)、[CHANGELOG](https://github.com/xieziyu/ngx-echarts/blob/v20.0.2/CHANGELOG.md)、[v20.0.2 package manifest](https://github.com/xieziyu/ngx-echarts/blob/v20.0.2/projects/ngx-echarts/package.json) 与 [官方 README](https://github.com/xieziyu/ngx-echarts/tree/v20.0.2)。
+## 固定官方依据与真实仓用例
 
-## 测试样本来源
+目标 tag `v20.0.2` 固定到 ngx-echarts commit [`eb68a534`](https://github.com/xieziyu/ngx-echarts/tree/eb68a534164b401da3879f6b11d4099d25f1aeca)：
 
-- [damoqiongqiu/NiceFish](https://github.com/damoqiongqiu/NiceFish/blob/4454db9074a614ec9cdf3661cc5a05273d393b11/package.json) 的 Angular 16 + ngx-echarts 15.0.3 + ECharts 5 组合
-- [careydevelopment/careydevelopmentcrm](https://github.com/careydevelopment/careydevelopmentcrm/blob/7d6f44b88e3fcbb54673b896c2f68d48a9f58dd4/package.json) 的 Angular 11 + caret ngx-echarts 6.0.1 组合
-- [uilibrary/matx-angular](https://github.com/uilibrary/matx-angular/blob/6b16bbe0efa9c387e6d21141981fbfe01a8043e4/package.json) 的 Angular 14 + ngx-echarts 14.0.0 组合
-- [ngx-echarts 官方目标 manifest](https://github.com/xieziyu/ngx-echarts/blob/v20.0.2/projects/ngx-echarts/package.json) 的 Angular/ECharts peer 边界
-- OpenRewrite 官方 `ChangeValueTest` 与 `JsonPathMatcherTest` 的 JSONPath filter、格式保持和 no-op 测试结构
+- [`CHANGELOG.md`](https://github.com/xieziyu/ngx-echarts/blob/eb68a534164b401da3879f6b11d4099d25f1aeca/CHANGELOG.md) 固定了 v5/v8/v15–v20 的变化；
+- [20.0.2 manifest](https://github.com/xieziyu/ngx-echarts/blob/eb68a534164b401da3879f6b11d4099d25f1aeca/projects/ngx-echarts/package.json) 固定 Angular/ECharts peer；
+- [public API](https://github.com/xieziyu/ngx-echarts/blob/eb68a534164b401da3879f6b11d4099d25f1aeca/projects/ngx-echarts/src/public-api.ts)、[config](https://github.com/xieziyu/ngx-echarts/blob/eb68a534164b401da3879f6b11d4099d25f1aeca/projects/ngx-echarts/src/lib/config.ts)、[directive](https://github.com/xieziyu/ngx-echarts/blob/eb68a534164b401da3879f6b11d4099d25f1aeca/projects/ngx-echarts/src/lib/ngx-echarts.directive.ts) 固定实际导出和 signal/runtime 行为；
+- [官方 README custom build](https://github.com/xieziyu/ngx-echarts/blob/eb68a534164b401da3879f6b11d4099d25f1aeca/README.md#treeshaking-custom-build) 固定 `provideEchartsCore`、core subpath、`echarts.use` 和 renderer 要求。
 
-25 个测试覆盖三个真实工程、表格全部十个版本、四依赖区、范围/前缀、20.0.1→20.0.2、workspace 子包、相邻 Angular/ECharts 保持，以及目标 manifest、新版本、协议引用、旧 4.x、tag、lockfile、普通 JSON 和相似包名不修改。
+真实工程输入固定到：
+
+- [NiceFish `4454db90` manifest](https://github.com/damoqiongqiu/NiceFish/blob/4454db9074a614ec9cdf3661cc5a05273d393b11/package.json) 与 [chart template](https://github.com/damoqiongqiu/NiceFish/blob/4454db9074a614ec9cdf3661cc5a05273d393b11/src/app/manage/chart/chart.component.html)；
+- [Carey Development CRM `7d6f44b8` manifest](https://github.com/careydevelopment/careydevelopmentcrm/blob/7d6f44b88e3fcbb54673b896c2f68d48a9f58dd4/package.json) 与 [accounts chart](https://github.com/careydevelopment/careydevelopmentcrm/blob/7d6f44b88e3fcbb54673b896c2f68d48a9f58dd4/src/app/features/deals/charts/accounts-ranked/accounts-ranked.component.html)；
+- [Matx Angular `6b16bbe0` manifest](https://github.com/uilibrary/matx-angular/blob/6b16bbe0efa9c387e6d21141981fbfe01a8043e4/package.json)、[chart module](https://github.com/uilibrary/matx-angular/blob/6b16bbe0efa9c387e6d21141981fbfe01a8043e4/src/assets/examples/chart/chart-examples.module.ts) 与 [bar chart template](https://github.com/uilibrary/matx-angular/blob/6b16bbe0efa9c387e6d21141981fbfe01a8043e4/src/assets/examples/chart/echart-bar/echart-bar.component.html)。
+
+测试写法参考 OpenRewrite 固定提交 [`rewrite@1b1804a5`](https://github.com/openrewrite/rewrite/commit/1b1804a5af7692612398fcce034a846b48b5b8cf) 的 JSON/SearchResult 测试，以及 [`rewrite-javascript@9e3b820e`](https://github.com/openrewrite/rewrite-javascript/commit/9e3b820e6a44808b095bb7e3aab670fd67de99a5) 的 import/method AST 测试。
 
 ## 使用与验证
 
 ```bash
 mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:dryRun \
   -Drewrite.recipeArtifactCoordinates=com.huawei.clouds.openrewrite:rewrite-ngx-echarts-upgrade:1.0.0-SNAPSHOT \
-  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.ngxecharts.UpgradeNgxEchartsTo20_0_2
+  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.ngxecharts.MigrateNgxEchartsTo20_0_2
 ```
 
-确认 patch 后逐大版本完成 Angular migrations，选择 ECharts 5 或 6 的独立迁移路径，更新 `provideEchartsCore`/custom build 并重建 lockfile。运行 Angular production build、strict template/typecheck、unit/E2E、SSR/hydration、zoneless、ResizeObserver、主题、事件、增量 merge、路由切换、视觉快照和 bundle-size 测试。
+检查所有 `SearchResult`，完成 Angular 20 和 ECharts custom build 决策后重建 lockfile。运行 production build、strict template/typecheck、unit/E2E、SSR/hydration、zoned/zoneless、ResizeObserver、主题/locale、事件、merge、route/dialog resize、视觉快照和 bundle-size 测试。
 
-本模块自身验证：
+模块独立验证：
 
 ```bash
 mvn -f rewrite-ngx-echarts-upgrade/pom.xml clean verify

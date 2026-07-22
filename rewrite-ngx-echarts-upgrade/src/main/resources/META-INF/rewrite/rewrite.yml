@@ -2,34 +2,57 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.ngxecharts
 packageName: com.huawei.clouds.openrewrite.ngxecharts
-description: Upgrade ngx-echarts with explicit Angular and ECharts compatibility guidance.
+description: Upgrade ngx-echarts with strict dependency selection, deterministic public-entry migrations and precise Angular/ECharts compatibility audits.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.ngxecharts.UpgradeNgxEchartsTo20_0_2
-displayName: Upgrade ngx-echarts to 20.0.2
-description: Update older direct ngx-echarts declarations in package.json to 20.0.2 without downgrading newer versions or replacing non-registry references.
-tags:
-  - angular
-  - echarts
-  - ngx-echarts
-  - dependency-upgrade
-preconditions:
-  - org.openrewrite.FindSourceFiles:
-      filePattern: package.json;**/package.json
+displayName: Upgrade selected ngx-echarts declarations to 20.0.2
+description: Upgrade only exact, caret, or tilde source releases visible in the migration spreadsheet; compound ranges, protocols, aliases, variables, lockfiles and unlisted versions remain unchanged.
+tags: [angular, ngx-echarts, echarts, dependency-upgrade]
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.dependencies[?(@['ngx-echarts'] =~ '^[<>=~^ ]*v?(?:(?:[5-9]|1[0-9])(?:\.|$)|20\.0\.[01](?:[^0-9]|$)).*')]['ngx-echarts']
-      value: '"20.0.2"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.devDependencies[?(@['ngx-echarts'] =~ '^[<>=~^ ]*v?(?:(?:[5-9]|1[0-9])(?:\.|$)|20\.0\.[01](?:[^0-9]|$)).*')]['ngx-echarts']
-      value: '"20.0.2"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.peerDependencies[?(@['ngx-echarts'] =~ '^[<>=~^ ]*v?(?:(?:[5-9]|1[0-9])(?:\.|$)|20\.0\.[01](?:[^0-9]|$)).*')]['ngx-echarts']
-      value: '"20.0.2"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.optionalDependencies[?(@['ngx-echarts'] =~ '^[<>=~^ ]*v?(?:(?:[5-9]|1[0-9])(?:\.|$)|20\.0\.[01](?:[^0-9]|$)).*')]['ngx-echarts']
-      value: '"20.0.2"'
+  - com.huawei.clouds.openrewrite.ngxecharts.UpgradeSelectedNgxEchartsDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxecharts.MigrateDeterministicNgxEcharts20
+displayName: Migrate deterministic ngx-echarts 20 constructs
+description: Move proven public imports to the package root and remove only obsolete literal detectEventChanges inputs from ngx-echarts hosts.
+tags: [angular, ngx-echarts, typescript, html, source-migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.ngxecharts.MigrateDeterministicNgxEchartsSource
+  - com.huawei.clouds.openrewrite.ngxecharts.MigrateDeterministicNgxEchartsTemplates
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxecharts.AuditNgxEcharts20Source
+displayName: Audit ngx-echarts 20 source compatibility
+description: Mark removed providers/classes, unsupported full/deep imports, custom-core registration and forRoot ownership.
+tags: [angular, ngx-echarts, echarts, typescript, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.ngxecharts.FindNgxEchartsSourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxecharts.AuditNgxEcharts20Project
+displayName: Audit ngx-echarts 20 project compatibility
+description: Mark unresolved declarations, Angular/toolchain/runtime peers, ECharts selection, polyfills, SSR and global scripts.
+tags: [angular, ngx-echarts, dependencies, configuration, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.ngxecharts.FindNgxEchartsJsonRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxecharts.AuditNgxEcharts20Templates
+displayName: Audit ngx-echarts 20 template compatibility
+description: Mark removed dynamic inputs and behavior-sensitive chart inputs, events and host lifecycle boundaries.
+tags: [angular, ngx-echarts, html, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.ngxecharts.FindNgxEchartsTemplateRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxecharts.MigrateNgxEchartsTo20_0_2
+displayName: Migrate ngx-echarts applications to 20.0.2
+description: Upgrade spreadsheet-selected declarations, apply deterministic public-entry/template migrations, and mark every remaining Angular/ECharts/runtime decision.
+tags: [angular, ngx-echarts, echarts, typescript, html, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.ngxecharts.UpgradeNgxEchartsTo20_0_2
+  - com.huawei.clouds.openrewrite.ngxecharts.MigrateDeterministicNgxEcharts20
+  - com.huawei.clouds.openrewrite.ngxecharts.AuditNgxEcharts20Source
+  - com.huawei.clouds.openrewrite.ngxecharts.AuditNgxEcharts20Project
+  - com.huawei.clouds.openrewrite.ngxecharts.AuditNgxEcharts20Templates
