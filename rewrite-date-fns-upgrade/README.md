@@ -2,7 +2,13 @@
 
 本模块对应 `开源软件升级.xlsx` 中的 `date-fns`，精确处理 `2.23.0`、`2.25.0`、`2.28.0`、`2.29.3`、`2.30.0` 到 `4.1.0` 的升级。
 
-配方名称：
+推荐配方（依赖升级、确定性源码迁移与风险定位）：
+
+```text
+com.huawei.clouds.openrewrite.datefns.MigrateDateFnsTo4_1_0
+```
+
+只修改依赖时使用低层配方：
 
 ```text
 com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0
@@ -17,7 +23,7 @@ com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0
 - `peerDependencies`
 - `optionalDependencies`
 
-只有以表格所列版本为锚点的常见 npm semver 声明会被设置为精确版本 `4.1.0`，例如 `^2.30.0`、`~2.25.0`、`>= 2.28.0 < 3`、`2.23.0 || ^2.30.0` 和 `2.28.0-beta.1`。配方不会笼统匹配全部 2.x，未列出的 `2.22.1`、`2.24.0`、`2.27.0`、`2.29.2` 以及无法确定下界的 `2.x`、`>=2.0.0` 都保持不变。
+只有表格所列的精确标量及单一 npm 前缀声明会被设置为 `4.1.0`，例如 `2.30.0`、`^2.30.0`、`~2.25.0`、`=2.28.0` 和 `v2.23.0`。复杂 comparator、OR、hyphen range 和 prerelease（如 `>= 2.28.0 < 3`、`2.23.0 || ^2.30.0`、`2.25.0 - 2.30.0`、`2.28.0-beta.1`）都保持不变，因为它们表达的兼容集合不能从表格单值安全推断。配方也不会笼统匹配全部 2.x。
 
 配方有意不修改：
 
@@ -26,9 +32,25 @@ com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0
 - `overrides`、`resolutions`、`pnpm.overrides`，因为它们可能用于约束传递依赖而不是声明直接兼容性；
 - `package-lock.json`、pnpm/Yarn 锁文件和普通 JSON 文件；
 - `date-fns-tz`、`@date-fns/tz`、`@date-io/date-fns`、UI 日期适配器和相似包名；
-- JavaScript/TypeScript 源码、测试快照、Bundler/SSR/Jest 配置和日期格式字符串。
+- 无法证明一一对应的 JavaScript/TypeScript 源码、测试快照、Bundler/SSR/Jest 配置和日期格式字符串。
+
+推荐配方会在代码位置自动完成三类可证明的一一对应修改：`import addDays from "date-fns/addDays"` 改为命名导入、同形 CommonJS function subpath 改为解构，以及公开子路径末尾 `/index.js` 的移除。实现包含字符串/注释状态机，不会把文档、注释、模板字符串、别名默认导入或 `_lib` 内部路径当代码机械替换。
 
 执行配方后，应使用工程原有 npm、pnpm 或 Yarn 重建锁文件。对发布库而言，`peerDependencies` 表达的是兼容承诺，发布前应把精确版本调整为经过测试的范围。
+
+## 不兼容点与配方行为映射
+
+| 迁移点 | 状态 | 配方行为 | 主要测试 |
+| --- | --- | --- | --- |
+| 表格五个版本的直接 package.json 声明 | AUTO | 仅升级四个 dependency 区的安全标量/单一前缀；复杂范围 NO-OP | 五版本参数化、四区、range no-op |
+| function subpath 默认导出改命名导出 | AUTO | 仅当本地标识符与公开 function 子路径同名时改写 | Nextacular before→after、幂等 |
+| 同形 CommonJS function subpath | AUTO | `const addDays = require(...)` 改为解构并移除 `/index.js` | CommonJS before→after |
+| 公开 function/locale/fp 路径的 `/index.js` | AUTO | 精确移除公开路径物理文件后缀；`_lib` 不动 | named/dynamic import |
+| `_lib`、剩余默认子路径、CommonJS root | MARK | 在准确源码片段生成 `SearchResult`，不猜公开替代、loader 或 alias | date-fns-tz、CommonJS marker |
+| interval、step/duration、rounding 与错误语义 | MARK | 标记具体调用，要求补反向区间、非法输入和快照测试 | interval/rounding marker |
+| ESM-first、locale/constants、TZDate/UTCDate/tz context | MARK | 标记入口、常量/locale 与时区上下文调用 | source audit |
+| date-fns-tz、@date-fns/tz、DateIO/UI adapter | MARK | 标记 manifest key，按各自兼容矩阵升级 | companion marker |
+| lockfile、协议/alias、override、未列/目标/未来版本 | NO-OP | 不覆盖外部 owner、不降级、不推断 | lockfile/protocol/similar-package no-op |
 
 ## 不兼容修改点
 
@@ -56,7 +78,7 @@ com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0
 - date-fns 官方 [v4 发布说明](https://blog.date-fns.org/v40-with-time-zone-support/) 与 [v4.0.0 changelog](https://github.com/date-fns/date-fns/discussions/3889)：ESM-first 双包、泛型变化以及一等时区支持；
 - 官方 [v4.1.0 package manifest](https://github.com/date-fns/date-fns/blob/v4.1.0/package.json)：目标版本的 `type: module`、`.cjs` CommonJS 和条件 exports 结构。
 
-本配方只自动修改可安全确定的依赖声明。导入、类型、区间、locale、运行时校验和时区语义必须结合业务源码迁移。
+目标源码固定到 [`date-fns@v4.1.0` commit `313b902b`](https://github.com/date-fns/date-fns/tree/313b902b9a72c64501074db9bc2b9897d2db5140)，对照起点固定到 [`v2.30.0` commit `524b5c48`](https://github.com/date-fns/date-fns/tree/524b5c48e1d2064bc075e7a6d75b942fd8952139)。本配方只自动修改可安全确定的依赖声明与一一对应 module 形态；类型、区间、locale、运行时校验和时区语义通过 SearchResult 进入实际迁移 diff。
 
 ## 真实仓库测试来源
 
@@ -66,14 +88,14 @@ com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0
 - [Vuepic/vue-datepicker v4.2.3 @ b541061b](https://github.com/Vuepic/vue-datepicker/blob/b541061b3d2a90a74e4c821992b7aa88e10d533b/package.json)：Vue 组件库生产依赖 `date-fns: ^2.29.3`，并同时声明 `date-fns-tz: ^1.3.7`；
 - [marnusw/date-fns-tz v1.3.3 @ ab13900b](https://github.com/marnusw/date-fns-tz/blob/ab13900b2994d9c6fdaf29b86e70355b9037664d/package.json)：开发依赖 `date-fns: ^2.23.0` 与宽泛 peer range；其 [toDate 源码](https://github.com/marnusw/date-fns-tz/blob/ab13900b2994d9c6fdaf29b86e70355b9037664d/src/toDate/index.js) 证明旧 companion package 深度导入 `date-fns/_lib`，测试确保配置配方不会假装自动修复源码。
 
-测试结构参考 OpenRewrite 官方 [ChangeValueTest](https://github.com/openrewrite/rewrite/blob/main/rewrite-json/src/test/java/org/openrewrite/json/ChangeValueTest.java) 和 [JsonPathMatcherTest](https://github.com/openrewrite/rewrite/blob/main/rewrite-json/src/test/java/org/openrewrite/json/JsonPathMatcherTest.java)。覆盖四个依赖区、表格全部版本、caret/tilde/v-prefix/比较器/OR/hyphen/prerelease、monorepo 子包、伴随包保留、真实源码 no-op，以及目标/高版本/未列版本/宽范围/外部引用/override/lockfile/普通 JSON/相似包名等边界。
+测试结构固定参考 OpenRewrite [`ChangeValueTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-json/src/test/java/org/openrewrite/json/ChangeValueTest.java)、[`JsonPathMatcherTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-json/src/test/java/org/openrewrite/json/JsonPathMatcherTest.java) 和 [`FindAndReplaceTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-core/src/test/java/org/openrewrite/text/FindAndReplaceTest.java)。当前 33 个测试覆盖四个依赖区、表格全部版本、scalar prefix、复杂 range no-op、真实仓 before→after、CommonJS、public index、注释/字符串安全、marker、companion、幂等，以及目标/高版本/外部引用/override/lockfile/相似包名边界。
 
 ## 使用与验证
 
 ```bash
 mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:dryRun \
   -Drewrite.recipeArtifactCoordinates=com.huawei.clouds.openrewrite:rewrite-date-fns-upgrade:1.0.0-SNAPSHOT \
-  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0
+  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.datefns.MigrateDateFnsTo4_1_0
 ```
 
 确认 patch 后，用工程原有包管理器重建 lockfile，独立升级兼容的 `date-fns-tz`/UI adapter，再运行 lint、TypeScript/Flow 检查、unit/E2E、Node/SSR、Bundler、locale、DST、时区和日期快照测试。静态搜索 `date-fns/`、`date-fns/_lib`、`/index.js`、默认子路径导入以及捕获旧异常的代码，逐项迁移。

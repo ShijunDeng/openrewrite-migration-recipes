@@ -7,7 +7,7 @@ description: Upgrade selected date-fns declarations with explicit JavaScript and
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0
 displayName: Upgrade date-fns to 4.1.0
-description: Update selected direct date-fns 2.x declarations in package.json to 4.1.0 without changing aliases, workspace references, lockfiles, or unlisted versions.
+description: Update selected scalar direct date-fns 2.x declarations in package.json to 4.1.0 without changing compound ranges, aliases, workspace references, lockfiles, or unlisted versions.
 tags:
   - date-fns
   - javascript
@@ -17,19 +17,104 @@ preconditions:
   - org.openrewrite.FindSourceFiles:
       filePattern: package.json;**/package.json
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.dependencies[?(@['date-fns'] =~ '^[<>=~^ ]*v?2\.(?:23\.0|25\.0|28\.0|29\.3|30\.0)(?:[-+ <>=~^|].*)?$')]['date-fns']
-      value: '"4.1.0"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.devDependencies[?(@['date-fns'] =~ '^[<>=~^ ]*v?2\.(?:23\.0|25\.0|28\.0|29\.3|30\.0)(?:[-+ <>=~^|].*)?$')]['date-fns']
-      value: '"4.1.0"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.peerDependencies[?(@['date-fns'] =~ '^[<>=~^ ]*v?2\.(?:23\.0|25\.0|28\.0|29\.3|30\.0)(?:[-+ <>=~^|].*)?$')]['date-fns']
-      value: '"4.1.0"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.optionalDependencies[?(@['date-fns'] =~ '^[<>=~^ ]*v?2\.(?:23\.0|25\.0|28\.0|29\.3|30\.0)(?:[-+ <>=~^|].*)?$')]['date-fns']
-      value: '"4.1.0"'
+  - com.huawei.clouds.openrewrite.datefns.UpgradeSelectedDateFnsDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.datefns.MigrateDeterministicDateFnsSourceTo4
+displayName: Migrate deterministic date-fns v3/v4 source imports
+description: Convert exact function subpath default imports and CommonJS assignments to named exports and remove public /index.js suffixes.
+tags:
+  - date-fns
+  - javascript
+  - typescript
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.datefns.RewriteDeterministicDateFnsSource
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.datefns.AuditDateFns4SourceCompatibility
+displayName: Locate date-fns 4 source compatibility work
+description: Mark internal/deep imports, remaining default subpath imports, CommonJS entry points, interval/error semantic changes, locale/constants, and time-zone context calls requiring application review.
+tags:
+  - date-fns
+  - search
+  - manual-review
+preconditions:
+  - org.openrewrite.text.Find:
+      find: '["'']date-fns(?:/[^"'']*)?["'']'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"
+      contextSize: 0
+recipeList:
+  - org.openrewrite.text.Find:
+      find: '["'']date-fns/(?:_lib/|[^"'']+/index(?:[.]js)?["''])'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"
+      contextSize: 100
+  - org.openrewrite.text.Find:
+      find: '\bimport[ \t]+[A-Za-z_$][A-Za-z0-9_$]*[ \t]+from[ \t]*["'']date-fns/'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"
+      contextSize: 100
+  - org.openrewrite.text.Find:
+      find: '\brequire[ \t]*\([ \t]*["'']date-fns(?:/[^"'']*)?["''][ \t]*\)'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"
+      contextSize: 100
+  - org.openrewrite.text.Find:
+      find: '\b(?:areIntervalsOverlapping|getOverlappingDaysInIntervals|isWithinInterval|each[A-Za-z]+OfInterval|intervalToDuration|roundToNearestMinutes)[ \t]*\('
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"
+      contextSize: 100
+  - org.openrewrite.text.Find:
+      find: '\b(?:TZDate|UTCDate|tz)[ \t]*(?:<|\()|\bin[ \t]*:'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"
+      contextSize: 100
+  - org.openrewrite.text.Find:
+      find: '\b(?:daysInYear|millisecondsInMinute|secondsInDay|secondsInHour|secondsInMinute|monthsInYear)[ \t]*[,}]|["'']date-fns/locale(?:/[^"'']*)?["'']'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"
+      contextSize: 100
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.datefns.AuditDateFnsCompanionDependencies
+displayName: Locate date-fns companion packages requiring compatibility review
+description: Mark time-zone packages, DateIO adapters, and UI date adapters whose date-fns 4 compatibility is independently versioned.
+tags:
+  - date-fns
+  - dependency-review
+  - search
+recipeList:
+  - org.openrewrite.json.search.FindKey:
+      key: $.dependencies['date-fns-tz']
+  - org.openrewrite.json.search.FindKey:
+      key: $.devDependencies['date-fns-tz']
+  - org.openrewrite.json.search.FindKey:
+      key: $.dependencies['@date-fns/tz']
+  - org.openrewrite.json.search.FindKey:
+      key: $.dependencies['@date-io/date-fns']
+  - org.openrewrite.json.search.FindKey:
+      key: $.dependencies['@mui/x-date-pickers']
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.datefns.MigrateDateFnsTo4_1_0
+displayName: Migrate date-fns applications to 4.1.0
+description: Upgrade selected dependencies, migrate deterministic module imports, and mark internal exports, runtime semantics, time-zone context, locale, and companion-package work.
+tags:
+  - date-fns
+  - javascript
+  - typescript
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0
+  - com.huawei.clouds.openrewrite.datefns.MigrateDeterministicDateFnsSourceTo4
+  - com.huawei.clouds.openrewrite.datefns.AuditDateFns4SourceCompatibility
+  - com.huawei.clouds.openrewrite.datefns.AuditDateFnsCompanionDependencies

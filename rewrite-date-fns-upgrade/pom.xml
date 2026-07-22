@@ -11,7 +11,7 @@
   </parent>
   <artifactId>rewrite-date-fns-upgrade</artifactId>
   <name>OpenRewrite date-fns Upgrade</name>
-  <description>Configuration-based OpenRewrite recipe for upgrading selected date-fns 2.x versions to 4.1.0.</description>
+  <description>OpenRewrite recipes for upgrading date-fns dependencies and migrating deterministic v3/v4 source constructs.</description>
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-date-fns-upgrade</url>
   <dependencies>
     <dependency>

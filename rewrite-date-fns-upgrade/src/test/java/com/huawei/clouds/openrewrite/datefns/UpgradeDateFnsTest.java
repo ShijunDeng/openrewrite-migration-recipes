@@ -13,12 +13,20 @@ import static org.openrewrite.json.Assertions.json;
 import static org.openrewrite.test.SourceSpecs.text;
 
 class UpgradeDateFnsTest implements RewriteTest {
-    private static final String RECIPE_NAME =
+    private static final String DEPENDENCY_RECIPE =
             "com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0";
+    private static final String SOURCE_RECIPE =
+            "com.huawei.clouds.openrewrite.datefns.MigrateDeterministicDateFnsSourceTo4";
+    private static final String AUDIT_RECIPE =
+            "com.huawei.clouds.openrewrite.datefns.AuditDateFns4SourceCompatibility";
+    private static final String COMPANION_RECIPE =
+            "com.huawei.clouds.openrewrite.datefns.AuditDateFnsCompanionDependencies";
+    private static final String MIGRATION_RECIPE =
+            "com.huawei.clouds.openrewrite.datefns.MigrateDateFnsTo4_1_0";
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(environment().activateRecipes(RECIPE_NAME));
+        spec.recipe(environment().activateRecipes(DEPENDENCY_RECIPE));
     }
 
     @Test
@@ -165,7 +173,7 @@ class UpgradeDateFnsTest implements RewriteTest {
     }
 
     @Test
-    void upgradesCommonCaretTildeComparatorAndVPrefixForms() {
+    void upgradesScalarCaretTildeAndVPrefixButPreservesComparatorRange() {
         rewriteRun(json(
                 """
                 {
@@ -179,7 +187,7 @@ class UpgradeDateFnsTest implements RewriteTest {
                 {
                   "dependencies": {"date-fns": "4.1.0"},
                   "devDependencies": {"date-fns": "4.1.0"},
-                  "peerDependencies": {"date-fns": "4.1.0"},
+                  "peerDependencies": {"date-fns": ">= 2.28.0 < 3"},
                   "optionalDependencies": {"date-fns": "4.1.0"}
                 }
                 """,
@@ -188,7 +196,7 @@ class UpgradeDateFnsTest implements RewriteTest {
     }
 
     @Test
-    void upgradesOrHyphenAndPrereleaseFormsAnchoredOnListedVersions() {
+    void preservesCompoundHyphenPrereleaseAndComparatorForms() {
         rewriteRun(json(
                 """
                 {
@@ -196,14 +204,6 @@ class UpgradeDateFnsTest implements RewriteTest {
                   "devDependencies": {"date-fns": "2.25.0 - 2.30.0"},
                   "peerDependencies": {"date-fns": "2.28.0-beta.1"},
                   "optionalDependencies": {"date-fns": "  >=2.29.3 <4"}
-                }
-                """,
-                """
-                {
-                  "dependencies": {"date-fns": "4.1.0"},
-                  "devDependencies": {"date-fns": "4.1.0"},
-                  "peerDependencies": {"date-fns": "4.1.0"},
-                  "optionalDependencies": {"date-fns": "4.1.0"}
                 }
                 """,
                 spec -> spec.path("package.json")
@@ -409,12 +409,134 @@ class UpgradeDateFnsTest implements RewriteTest {
     }
 
     @Test
-    void discoversAndValidatesRecipe() {
-        Environment environment = environment();
-        Recipe recipe = environment.activateRecipes(RECIPE_NAME);
+    void recommendedRecipeMigratesRealNextacularDependencyAndDefaultSubpathImport() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE)),
+                json(
+                        "{\"dependencies\":{\"date-fns\":\"^2.30.0\",\"next\":\"^13.5.11\"}}",
+                        "{\"dependencies\":{\"date-fns\":\"4.1.0\",\"next\":\"^13.5.11\"}}",
+                        source -> source.path("package.json")
+                ),
+                text(
+                        "import formatDistance from 'date-fns/formatDistance';\n",
+                        "import { formatDistance } from 'date-fns/formatDistance';\n",
+                        source -> source.path("src/pages/account/billing.tsx")
+                )
+        );
+    }
 
-        assertTrue(environment.listRecipes().stream().anyMatch(candidate -> RECIPE_NAME.equals(candidate.getName())));
-        assertTrue(recipe.validate().isValid(), () -> recipe.validate().failures().toString());
+    @Test
+    void migratesExactCommonJsFunctionSubpath() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(SOURCE_RECIPE)),
+                text(
+                        "const addDays = require(\"date-fns/addDays/index.js\");\n",
+                        "const { addDays } = require(\"date-fns/addDays\");\n",
+                        source -> source.path("src/dates.cjs")
+                )
+        );
+    }
+
+    @Test
+    void removesPublicIndexSuffixFromNamedAndDynamicImports() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(SOURCE_RECIPE)),
+                text(
+                        """
+                        import { addDays } from 'date-fns/addDays/index.js';
+                        const locale = await import("date-fns/locale/en-US/index.js");
+                        """,
+                        """
+                        import { addDays } from 'date-fns/addDays';
+                        const locale = await import("date-fns/locale/en-US");
+                        """,
+                        source -> source.path("src/public-paths.mjs")
+                )
+        );
+    }
+
+    @Test
+    void leavesInternalAliasCommentsAndStringsUntouched() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(SOURCE_RECIPE)),
+                text(
+                        """
+                        import integer from 'date-fns/_lib/toInteger/index.js';
+                        import distance from 'date-fns/formatDistance';
+                        // import addDays from 'date-fns/addDays';
+                        const documentation = "import addDays from 'date-fns/addDays'";
+                        """,
+                        source -> source.path("src/unsafe.ts")
+                )
+        );
+    }
+
+    @Test
+    void marksIntervalAndRoundingSemanticsAtExactCalls() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(AUDIT_RECIPE)),
+                text(
+                        """
+                        import { intervalToDuration, roundToNearestMinutes } from 'date-fns';
+                        const duration = intervalToDuration({ start, end });
+                        const rounded = roundToNearestMinutes(date, { nearestTo: 60 });
+                        """,
+                        """
+                        import { intervalToDuration, roundToNearestMinutes } from 'date-fns';
+                        const duration = ~~>intervalToDuration({ start, end });
+                        const rounded = ~~>roundToNearestMinutes(date, { nearestTo: 60 });
+                        """,
+                        source -> source.path("src/interval.ts")
+                )
+        );
+    }
+
+    @Test
+    void marksCommonJsEntryForEsmFirstRuntimeReview() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(AUDIT_RECIPE)),
+                text(
+                        "const dateFns = require('date-fns');\n",
+                        "const dateFns = ~~>require('date-fns');\n",
+                        source -> source.path("server.cjs")
+                )
+        );
+    }
+
+    @Test
+    void marksRealTimezoneCompanionManifestKeys() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(COMPANION_RECIPE)),
+                json(
+                        "{\"dependencies\":{\"date-fns-tz\":\"^1.3.7\",\"@date-fns/tz\":\"^1.4.1\",\"date-fns\":\"4.1.0\"}}",
+                        "{\"dependencies\":{/*~~>*/\"date-fns-tz\":\"^1.3.7\",/*~~>*/\"@date-fns/tz\":\"^1.4.1\",\"date-fns\":\"4.1.0\"}}",
+                        source -> source.path("package.json")
+                )
+        );
+    }
+
+    @Test
+    void deterministicSourceRecipeIsIdempotent() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(SOURCE_RECIPE))
+                        .cycles(2).expectedCyclesThatMakeChanges(1),
+                text(
+                        "import addDays from 'date-fns/addDays/index.js';\n",
+                        "import { addDays } from 'date-fns/addDays';\n",
+                        source -> source.path("src/idempotent.ts")
+                )
+        );
+    }
+
+    @Test
+    void discoversAndValidatesEveryPublicRecipe() {
+        Environment environment = environment();
+        for (String name : new String[]{DEPENDENCY_RECIPE, SOURCE_RECIPE, AUDIT_RECIPE, COMPANION_RECIPE,
+                MIGRATION_RECIPE}) {
+            Recipe recipe = environment.activateRecipes(name);
+            assertTrue(environment.listRecipes().stream().anyMatch(candidate -> name.equals(candidate.getName())));
+            assertTrue(recipe.validate().isValid(), () -> name + ": " + recipe.validate().failures());
+        }
     }
 
     private static Environment environment() {
