@@ -25,7 +25,7 @@
     <rewrite.version>8.87.5</rewrite.version>
     <rewrite.java.dependencies.version>1.59.0</rewrite.java.dependencies.version>
     <jackson.version>2.22.1</jackson.version>
-    <fastjson.version>1.2.83</fastjson.version>
+    <fastjson.version>2.0.62</fastjson.version>
     <fastjson2.version>2.0.62</fastjson2.version>
     <junit.version>5.14.2</junit.version>
   </properties>
