@@ -5,9 +5,9 @@ packageName: com.huawei.clouds.openrewrite.shedlockjdbc
 description: Upgrade the ShedLock JdbcTemplate provider with explicit Java, Spring, SQL, and locking-semantics guidance.
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.shedlockjdbc.UpgradeShedLockJdbcTemplateTo7_2_1
-displayName: Upgrade ShedLock JdbcTemplate provider to 7.2.1
-description: Upgrade net.javacrumbs.shedlock:shedlock-provider-jdbc-template Maven and Gradle dependency declarations to 7.2.1 without changing provider configuration or database schema.
+name: com.huawei.clouds.openrewrite.shedlockjdbc.MigrateShedLockJdbcTemplateTo7_2_1
+displayName: Migrate ShedLock JdbcTemplate provider to 7.2.1
+description: Strictly upgrade spreadsheet-selected provider declarations, apply official deterministic source migrations, and mark runtime decisions.
 tags:
   - shedlock
   - spring
@@ -15,8 +15,21 @@ tags:
   - distributed-lock
   - dependency-upgrade
 recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: net.javacrumbs.shedlock
-      artifactId: shedlock-provider-jdbc-template
-      newVersion: 7.2.1
-      overrideManagedVersion: true
+  - com.huawei.clouds.openrewrite.shedlockjdbc.UpgradeShedLockJdbcTemplateTo7_2_1
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: net.javacrumbs.shedlock.provider.jdbctemplate.DatabaseProduct
+      newFullyQualifiedTypeName: net.javacrumbs.shedlock.provider.sql.DatabaseProduct
+  - com.huawei.clouds.openrewrite.shedlockjdbc.MigrateShedLockJdbcTemplate7Source
+  - com.huawei.clouds.openrewrite.shedlockjdbc.FindShedLockJdbcTemplate7MigrationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.shedlockjdbc.UpgradeShedLockJdbcTemplateTo7_2_1
+displayName: Strictly upgrade ShedLock JdbcTemplate provider to 7.2.1
+description: Upgrade only the four exact spreadsheet source versions while preserving shared properties and external dependency management.
+tags:
+  - shedlock
+  - jdbc
+  - dependency-upgrade
+  - strict
+recipeList:
+  - com.huawei.clouds.openrewrite.shedlockjdbc.UpgradeSelectedShedLockJdbcTemplateDependency
