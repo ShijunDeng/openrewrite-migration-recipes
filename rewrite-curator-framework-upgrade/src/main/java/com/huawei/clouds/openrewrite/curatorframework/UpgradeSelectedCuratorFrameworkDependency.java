@@ -14,6 +14,7 @@ import org.openrewrite.kotlin.tree.K;
 import org.openrewrite.xml.XmlIsoVisitor;
 import org.openrewrite.xml.tree.Xml;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,8 +27,8 @@ import java.util.regex.Pattern;
 public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
     private static final String GROUP = "org.apache.curator";
     private static final String ARTIFACT = "curator-framework";
-    private static final String SOURCE = "2.7.1";
-    private static final String TARGET = "5.7.1";
+    static final Set<String> SOURCE_VERSIONS = Set.of("2.7.1", "5.2.0", "5.3.0", "5.4.0");
+    static final String TARGET = "5.7.1";
     private static final String PREFIX = GROUP + ":" + ARTIFACT + ":";
     private static final Pattern PROPERTY_REFERENCE = Pattern.compile("\\$\\{([^}]+)}");
     private static final Set<String> GRADLE_CONFIGURATIONS = Set.of(
@@ -35,6 +36,10 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
             "annotationProcessor", "testCompile", "testCompileOnly", "testImplementation", "testRuntime",
             "testRuntimeOnly", "testFixturesApi", "testFixturesImplementation", "testFixturesRuntimeOnly",
             "kapt", "ksp"
+    );
+    private static final Set<String> GENERATED_DIRECTORIES = Set.of(
+            "target", "build", "out", "dist", "generated", "install", ".gradle", ".mvn", ".idea",
+            "node_modules"
     );
 
     @Override
@@ -44,7 +49,7 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
 
     @Override
     public String getDescription() {
-        return "Upgrade direct org.apache.curator:curator-framework 2.7.1 declarations and local properties " +
+        return "Upgrade direct org.apache.curator:curator-framework declarations selected by the workbook and local properties " +
                "used exclusively by standard Curator artifacts, without changing external management or unrelated consumers.";
     }
 
@@ -53,7 +58,7 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
         return new TreeVisitor<Tree, ExecutionContext>() {
             @Override
             public Tree visit(Tree tree, ExecutionContext ctx) {
-                if (!(tree instanceof SourceFile source)) {
+                if (!(tree instanceof SourceFile source) || generated(source.getSourcePath())) {
                     return tree;
                 }
                 String fileName = source.getSourcePath().getFileName().toString();
@@ -64,13 +69,14 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
                     return new GroovyIsoVisitor<ExecutionContext>() {
                         @Override
                         public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext executionContext) {
+                            boolean direct = isGradleDependencyInvocation(getCursor(), method);
                             J.MethodInvocation m = super.visitMethodInvocation(method, executionContext);
-                            if (!GRADLE_CONFIGURATIONS.contains(m.getSimpleName())) {
+                            if (!direct) {
                                 return m;
                             }
                             if (GROUP.equals(invocationMapValue(m, "group")) &&
                                 ARTIFACT.equals(invocationMapValue(m, "name")) &&
-                                SOURCE.equals(invocationMapValue(m, "version"))) {
+                                isSourceVersion(invocationMapValue(m, "version")) && !hasVariantKey(m)) {
                                 return m.withArguments(m.getArguments().stream().map(argument ->
                                         argument instanceof G.MapEntry entry && "version".equals(mapKey(entry)) &&
                                         entry.getValue() instanceof J.Literal literal
@@ -113,30 +119,24 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
         new XmlIsoVisitor<ExecutionContext>() {
             @Override
             public Xml.CharData visitCharData(Xml.CharData charData, ExecutionContext executionContext) {
-                Matcher matcher = PROPERTY_REFERENCE.matcher(charData.getText());
-                while (matcher.find()) {
-                    allReferences.merge(matcher.group(1), 1, Integer::sum);
-                }
+                collectReferences(charData.getText(), allReferences);
                 return super.visitCharData(charData, executionContext);
             }
 
             @Override
             public Xml.Attribute visitAttribute(Xml.Attribute attribute, ExecutionContext executionContext) {
-                Matcher matcher = PROPERTY_REFERENCE.matcher(attribute.getValueAsString());
-                while (matcher.find()) {
-                    allReferences.merge(matcher.group(1), 1, Integer::sum);
-                }
+                collectReferences(attribute.getValueAsString(), allReferences);
                 return super.visitAttribute(attribute, executionContext);
             }
 
             @Override
             public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext executionContext) {
                 Xml.Tag t = super.visitTag(tag, executionContext);
-                if (isPropertiesChild(getCursor(), t)) {
+                if (isMavenPropertyDefinition(getCursor(), t)) {
                     definitions.merge(t.getName(), 1, Integer::sum);
                     t.getValue().ifPresent(value -> propertyValues.put(t.getName(), value.trim()));
                 }
-                if (isStandardCuratorDependency(t)) {
+                if (isStandardCuratorDependency(getCursor(), t)) {
                     propertyName(t).ifPresent(name -> {
                         curatorReferences.merge(name, 1, Integer::sum);
                         if (ARTIFACT.equals(t.getChildValue("artifactId").orElse(null))) {
@@ -150,7 +150,8 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
 
         Set<String> safeProperties = new HashSet<>();
         frameworkReferences.forEach((name, count) -> {
-            if (count > 0 && SOURCE.equals(propertyValues.get(name)) && definitions.getOrDefault(name, 0) == 1 &&
+            if (count > 0 && SOURCE_VERSIONS.contains(propertyValues.get(name)) &&
+                definitions.getOrDefault(name, 0) == 1 &&
                 allReferences.getOrDefault(name, 0).equals(curatorReferences.getOrDefault(name, 0))) {
                 safeProperties.add(name);
             }
@@ -160,11 +161,12 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
             @Override
             public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext executionContext) {
                 Xml.Tag t = super.visitTag(tag, executionContext);
-                if (isPropertiesChild(getCursor(), t) && safeProperties.contains(t.getName()) &&
-                    t.getValue().filter(SOURCE::equals).isPresent()) {
+                if (isMavenPropertyDefinition(getCursor(), t) && safeProperties.contains(t.getName()) &&
+                    t.getValue().map(String::trim).filter(SOURCE_VERSIONS::contains).isPresent()) {
                     return t.withValue(TARGET);
                 }
-                if (isFrameworkDependency(t) && t.getChildValue("version").filter(SOURCE::equals).isPresent()) {
+                if (isFrameworkDependency(getCursor(), t) && t.getChildValue("version").map(String::trim)
+                        .filter(SOURCE_VERSIONS::contains).isPresent()) {
                     return t.withChildValue("version", TARGET);
                 }
                 return t;
@@ -172,18 +174,19 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
         }.visitNonNull(document, ctx);
     }
 
-    private static boolean isFrameworkDependency(Xml.Tag tag) {
-        return isStandardCuratorDependency(tag) && ARTIFACT.equals(tag.getChildValue("artifactId").orElse(null));
+    private static boolean isFrameworkDependency(Cursor cursor, Xml.Tag tag) {
+        return isStandardCuratorDependency(cursor, tag) &&
+               ARTIFACT.equals(tag.getChildValue("artifactId").orElse(null));
     }
 
-    private static boolean isStandardCuratorDependency(Xml.Tag tag) {
+    static boolean isStandardCuratorDependency(Cursor cursor, Xml.Tag tag) {
         if (!"dependency".equals(tag.getName()) ||
             !GROUP.equals(tag.getChildValue("groupId").orElse(null)) ||
             tag.getChild("classifier").isPresent()) {
             return false;
         }
         String type = tag.getChildValue("type").orElse("jar");
-        return "jar".equals(type);
+        return "jar".equals(type) && isProjectDependency(cursor, tag);
     }
 
     private static Optional<String> propertyName(Xml.Tag dependency) {
@@ -191,16 +194,28 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
         return matcher.matches() ? Optional.of(matcher.group(1)) : Optional.empty();
     }
 
-    private static boolean isPropertiesChild(Cursor cursor, Xml.Tag tag) {
+    static boolean isMavenPropertyDefinition(Cursor cursor, Xml.Tag tag) {
         Cursor parent = cursor.getParentTreeCursor();
-        return parent.getValue() instanceof Xml.Tag parentTag && "properties".equals(parentTag.getName()) &&
-               !"properties".equals(tag.getName());
+        if (!(parent.getValue() instanceof Xml.Tag parentTag) || !"properties".equals(parentTag.getName()) ||
+            "properties".equals(tag.getName())) return false;
+        Cursor ownerCursor = parent.getParentTreeCursor();
+        return isProjectOwner(ownerCursor) || isProfileOwner(ownerCursor);
     }
 
-    private static boolean isDirectDependencyLiteral(Cursor cursor) {
+    static boolean isDirectDependencyLiteral(Cursor cursor) {
         Cursor parent = cursor.getParentTreeCursor();
         return parent.getValue() instanceof J.MethodInvocation invocation &&
-               GRADLE_CONFIGURATIONS.contains(invocation.getSimpleName());
+               isGradleDependencyInvocation(parent, invocation);
+    }
+
+    static boolean isGradleDependencyInvocation(Cursor cursor, J.MethodInvocation invocation) {
+        if (!GRADLE_CONFIGURATIONS.contains(invocation.getSimpleName())) return false;
+        for (Cursor current = cursor.getParent(); current != null; current = current.getParent()) {
+            if (current.getValue() instanceof J.MethodInvocation ancestor) {
+                return "dependencies".equals(ancestor.getSimpleName());
+            }
+        }
+        return false;
     }
 
     private static String invocationMapValue(J.MethodInvocation invocation, String key) {
@@ -219,7 +234,7 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
 
     private static G.MapLiteral upgradeMap(G.MapLiteral map) {
         if (!GROUP.equals(mapValue(map, "group")) || !ARTIFACT.equals(mapValue(map, "name")) ||
-            !SOURCE.equals(mapValue(map, "version"))) {
+            !isSourceVersion(mapValue(map, "version")) || hasVariantKey(map)) {
             return map;
         }
         return map.withElements(map.getElements().stream().map(entry ->
@@ -235,19 +250,79 @@ public final class UpgradeSelectedCuratorFrameworkDependency extends Recipe {
     }
 
     private static J.Literal upgradeCoordinate(J.Literal literal) {
-        if (!(literal.getValue() instanceof String value) || !value.equals(PREFIX + SOURCE)) {
+        if (!(literal.getValue() instanceof String value) || !value.startsWith(PREFIX) ||
+            !SOURCE_VERSIONS.contains(value.substring(PREFIX.length()))) {
             return literal;
         }
         return replaceLiteral(literal, value, PREFIX + TARGET);
     }
 
     private static J.Literal upgradeVersionLiteral(J.Literal literal) {
-        return SOURCE.equals(literal.getValue()) ? replaceLiteral(literal, SOURCE, TARGET) : literal;
+        return literal.getValue() instanceof String version && SOURCE_VERSIONS.contains(version)
+                ? replaceLiteral(literal, version, TARGET) : literal;
     }
 
     private static J.Literal replaceLiteral(J.Literal literal, String oldValue, String newValue) {
         String valueSource = literal.getValueSource();
         return literal.withValue(newValue).withValueSource(
                 valueSource == null ? null : valueSource.replace(oldValue, newValue));
+    }
+
+    private static boolean isSourceVersion(String version) {
+        return version != null && SOURCE_VERSIONS.contains(version);
+    }
+
+    static boolean isProjectDependency(Cursor cursor, Xml.Tag tag) {
+        if (!"dependency".equals(tag.getName())) return false;
+        Cursor dependenciesCursor = cursor.getParentTreeCursor();
+        if (!(dependenciesCursor.getValue() instanceof Xml.Tag dependencies) ||
+            !"dependencies".equals(dependencies.getName())) return false;
+        Cursor ownerCursor = dependenciesCursor.getParentTreeCursor();
+        if (!(ownerCursor.getValue() instanceof Xml.Tag owner)) return false;
+        if (isProjectOwner(ownerCursor) || isProfileOwner(ownerCursor)) return true;
+        if (!"dependencyManagement".equals(owner.getName())) return false;
+        Cursor managedOwner = ownerCursor.getParentTreeCursor();
+        return isProjectOwner(managedOwner) || isProfileOwner(managedOwner);
+    }
+
+    private static boolean isProjectOwner(Cursor ownerCursor) {
+        if (!(ownerCursor.getValue() instanceof Xml.Tag owner) || !"project".equals(owner.getName())) {
+            return false;
+        }
+        return ownerCursor.getParentTreeCursor().getValue() instanceof Xml.Document;
+    }
+
+    private static boolean isProfileOwner(Cursor ownerCursor) {
+        if (!(ownerCursor.getValue() instanceof Xml.Tag owner) || !"profile".equals(owner.getName())) {
+            return false;
+        }
+        Cursor profilesCursor = ownerCursor.getParentTreeCursor();
+        if (!(profilesCursor.getValue() instanceof Xml.Tag profiles) || !"profiles".equals(profiles.getName())) {
+            return false;
+        }
+        Cursor projectCursor = profilesCursor.getParentTreeCursor();
+        return isProjectOwner(projectCursor);
+    }
+
+    private static void collectReferences(String text, Map<String, Integer> references) {
+        Matcher matcher = PROPERTY_REFERENCE.matcher(text);
+        while (matcher.find()) references.merge(matcher.group(1), 1, Integer::sum);
+    }
+
+    private static boolean hasVariantKey(J.MethodInvocation invocation) {
+        return invocation.getArguments().stream().filter(G.MapEntry.class::isInstance).map(G.MapEntry.class::cast)
+                .anyMatch(entry -> Set.of("classifier", "ext", "type").contains(mapKey(entry)));
+    }
+
+    private static boolean hasVariantKey(G.MapLiteral map) {
+        return map.getElements().stream()
+                .anyMatch(entry -> Set.of("classifier", "ext", "type").contains(mapKey(entry)));
+    }
+
+    static boolean generated(Path path) {
+        for (Path part : path.normalize()) {
+            if (GENERATED_DIRECTORIES.contains(part.toString())) return true;
+        }
+        return false;
     }
 }

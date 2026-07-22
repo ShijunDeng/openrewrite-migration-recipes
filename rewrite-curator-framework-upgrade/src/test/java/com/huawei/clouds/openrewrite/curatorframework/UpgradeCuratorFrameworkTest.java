@@ -9,13 +9,18 @@ import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openrewrite.gradle.Assertions.buildGradle;
 import static org.openrewrite.gradle.Assertions.buildGradleKts;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.test.SourceSpecs.text;
+import static org.openrewrite.xml.Assertions.xml;
+import static org.openrewrite.yaml.Assertions.yaml;
 
 class UpgradeCuratorFrameworkTest implements RewriteTest {
     private static final String RECIPE_NAME =
@@ -28,12 +33,19 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
         spec.recipe(environment().activateRecipes(RECIPE_NAME));
     }
 
-    @Test
-    void upgradesSpreadsheetSourceVersion() {
+    @ParameterizedTest(name = "upgrades workbook-visible source {0}")
+    @ValueSource(strings = {"2.7.1", "5.2.0", "5.3.0", "5.4.0"})
+    void upgradesEverySpreadsheetSourceVersion(String version) {
         rewriteRun(pomXml(
-                pomWithVersion("2.7.1"),
+                pomWithVersion(version),
                 pomWithVersion("5.7.1")
         ));
+    }
+
+    @Test
+    void sourceVersionWhitelistExactlyMatchesWorkbookCells() {
+        assertEquals(Set.of("2.7.1", "5.2.0", "5.3.0", "5.4.0"),
+                UpgradeSelectedCuratorFrameworkDependency.SOURCE_VERSIONS);
     }
 
     @Test
@@ -419,7 +431,7 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
     }
 
     @Test
-    void upgradesMavenPluginDependencyWithSameCoordinate() {
+    void leavesMavenPluginDependencyUntouched() {
         rewriteRun(pomXml(
                 """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>plugin-dependency</artifactId><version>1</version>
@@ -427,12 +439,54 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
                     <groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>2.7.1</version>
                   </dependency></dependencies></plugin></plugins></build>
                 </project>
-                """,
                 """
-                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>plugin-dependency</artifactId><version>1</version>
-                  <build><plugins><plugin><groupId>com.acme</groupId><artifactId>generator</artifactId><version>1</version><dependencies><dependency>
-                    <groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>5.7.1</version>
-                  </dependency></dependencies></plugin></plugins></build>
+        ));
+    }
+
+    @Test
+    void requiresRealMavenAndGradleDependencyOwnershipAndStandardVariants() {
+        rewriteRun(
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>fake</artifactId><version>1</version>
+                          <configuration><dependencies><dependency><groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>5.2.0</version></dependency></dependencies></configuration>
+                          <configuration><profiles><profile><dependencies><dependency><groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>5.3.0</version></dependency></dependencies></profile></profiles></configuration>
+                          <build><plugins><plugin><artifactId>fake</artifactId><configuration><project><dependencies><dependency><groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>5.4.0</version></dependency></dependencies></project></configuration></plugin></plugins></build>
+                        </project>
+                        """
+                ),
+                buildGradle(
+                        """
+                        implementation 'org.apache.curator:curator-framework:5.2.0'
+                        custom { implementation 'org.apache.curator:curator-framework:5.3.0' }
+                        dependencies {
+                            generatedFixture { implementation 'org.apache.curator:curator-framework:5.2.0' }
+                            implementation group: 'org.apache.curator', name: 'curator-framework', version: '5.4.0', classifier: 'tests'
+                            implementation([group: 'org.apache.curator', name: 'curator-framework', version: '5.2.0', ext: 'zip'])
+                        }
+                        """,
+                        source -> source.path("ownership.gradle")
+                ),
+                buildGradleKts(
+                        "implementation(\"org.apache.curator:curator-framework:5.4.0\")",
+                        source -> source.path("outside.gradle.kts")
+                ),
+                pomXml(pomWithVersion("5.3.0"), source -> source.path("target/generated/pom.xml")),
+                buildGradle(
+                        "dependencies { implementation 'org.apache.curator:curator-framework:5.4.0' }",
+                        source -> source.path("install/generated/dependencies.gradle")
+                )
+        );
+    }
+
+    @Test
+    void leavesDuplicateMavenPropertyDefinitionsUntouched() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>duplicates</artifactId><version>1</version>
+                  <properties><curator.version>5.2.0</curator.version></properties>
+                  <profiles><profile><id>alternate</id><properties><curator.version>5.3.0</curator.version></properties></profile></profiles>
+                  <dependencies><dependency><groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>${curator.version}</version></dependency></dependencies>
                 </project>
                 """
         ));
@@ -452,6 +506,8 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
 
     @Test
     void migratesRemovedListenerContainerConstructionToStandardManager() {
+        // Reduced from Apache Curator 2.7.0 ConnectionStateManager at 206a590:
+        // https://github.com/apache/curator/blob/206a59043cb94fe51dbd878b080f68d1c0b7595e/curator-framework/src/main/java/org/apache/curator/framework/state/ConnectionStateManager.java#L68
         rewriteRun(
                 spec -> spec
                         .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
@@ -519,6 +575,9 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
 
     @Test
     void marksRemovedRetryLoopClassificationForManualRetryDesign() {
+        // Real Curator 2.7.0 call shapes at the fixed 206a590 commit:
+        // https://github.com/apache/curator/blob/206a59043cb94fe51dbd878b080f68d1c0b7595e/curator-framework/src/main/java/org/apache/curator/framework/imps/CuratorFrameworkImpl.java#L512
+        // https://github.com/apache/curator/blob/206a59043cb94fe51dbd878b080f68d1c0b7595e/curator-framework/src/main/java/org/apache/curator/framework/imps/DeleteBuilderImpl.java#L254
         rewriteRun(
                 spec -> spec
                         .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
@@ -550,7 +609,7 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
 
                         class RetryClassifier {
                             boolean retry(int resultCode) {
-                                return /*~~>*/RetryLoop.shouldRetry(resultCode);
+                                return /*~~(RetryLoop.shouldRetry(int) was removed; let Curator and RetryPolicy drive retries or classify KeeperException.Code at the business boundary while preserving idempotency and interruption)~~>*/RetryLoop.shouldRetry(resultCode);
                             }
                         }
                         """
@@ -598,7 +657,7 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
 
                         class ListenerNotifier {
                             void notify(StandardListenerManager<Runnable> listeners) {
-                                /*~~>*/listeners.forEach(listener -> {
+                                /*~~(ListenerContainer.forEach used a Guava Function whose return value is discarded; migrate to StandardListenerManager.forEach with a Consumer only after removing return-null semantics and reviewing listener exceptions)~~>*/listeners.forEach(listener -> {
                                     listener.run();
                                     return null;
                                 });
@@ -611,6 +670,8 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
 
     @Test
     void marksDeprecatedCachesForCuratorCacheRedesign() {
+        // NodeCache is retained as a minimized real type from Apache Curator 2.7.0 at 206a590:
+        // https://github.com/apache/curator/blob/206a59043cb94fe51dbd878b080f68d1c0b7595e/curator-recipes/src/main/java/org/apache/curator/framework/recipes/cache/NodeCache.java#L63
         rewriteRun(
                 spec -> spec
                         .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
@@ -636,7 +697,7 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
                         import org.apache.curator.framework.recipes.cache.NodeCache;
 
                         class LegacyCacheOwner {
-                            /*~~>*/NodeCache cache;
+                            /*~~(NodeCache is a legacy cache API; migrate deliberately to CuratorCache SINGLE_NODE_CACHE and verify initialization, missing/deleted nodes, payloads, reconnect, and close ordering)~~>*/NodeCache cache;
                         }
                         """
                 )
@@ -682,7 +743,7 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
 
                         class DiscoveryExecutorOwner {
                             void configure(ServiceCacheBuilder<String> builder, CloseableExecutorService executor) {
-                                /*~~>*/builder.executorService(executor);
+                                /*~~(The CloseableExecutorService overload was removed; select a supported executor overload or default and explicitly verify executor ownership, shutdown ordering, rejection, thread leakage, and process exit)~~>*/builder.executorService(executor);
                             }
                         }
                         """
@@ -704,9 +765,213 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
                         """
                         <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>legacy-zookeeper</artifactId><version>1</version><dependencies>
                           <dependency><groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>5.7.1</version></dependency>
-                          <!--~~>--><dependency><groupId>org.apache.zookeeper</groupId><artifactId>zookeeper</artifactId><version>3.4.14</version></dependency>
+                          <dependency><groupId>org.apache.zookeeper</groupId><artifactId>zookeeper</artifactId><!--~~(Curator 5 no longer supports ZooKeeper 3.4.x; upgrade the owning client/BOM and ensemble plan, then verify TLS/SASL, ACLs, watches, sessions, container nodes, and rolling compatibility)~~>--><version>3.4.14</version></dependency>
                         </dependencies></project>
                         """
+                )
+        );
+    }
+
+    @Test
+    void marksAllOfficialRemovedApiFamiliesAndIgnoresSameNamedApplicationApis() {
+        rewriteRun(
+                spec -> spec
+                        .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .parser(JavaParser.fromJavaVersion().dependsOn(
+                                "package org.apache.curator.ensemble.exhibitor; public class ExhibitorEnsembleProvider {}",
+                                "package org.apache.curator; public interface ConnectionHandlingPolicy {}",
+                                "package org.apache.curator; public final class RetryLoop { public static boolean isRetryException(Throwable error) { return false; } }",
+                                "package org.apache.curator.framework.recipes.locks; public class Reaper {}",
+                                "package org.apache.curator.framework.recipes.locks; public class ChildReaper {}",
+                                "package org.apache.curator.framework.recipes.cache; public class PathChildrenCache {}",
+                                "package org.apache.curator.framework.recipes.cache; public class TreeCache {}",
+                                "package org.apache.curator.framework.recipes.nodes; public class GroupMember { public Object newPersistentEphemeralNode() { return null; } public Object newPathChildrenCache() { return null; } }",
+                                "package org.apache.curator.utils; public class CloseableExecutorService {}",
+                                "package org.apache.curator.x.discovery; import org.apache.curator.utils.CloseableExecutorService; public interface ServiceProviderBuilder<T> { ServiceProviderBuilder<T> executorService(CloseableExecutorService executor); }"
+                        )),
+                java(
+                        """
+                        package example;
+                        import org.apache.curator.ConnectionHandlingPolicy;
+                        import org.apache.curator.RetryLoop;
+                        import org.apache.curator.ensemble.exhibitor.ExhibitorEnsembleProvider;
+                        import org.apache.curator.framework.recipes.cache.PathChildrenCache;
+                        import org.apache.curator.framework.recipes.cache.TreeCache;
+                        import org.apache.curator.framework.recipes.locks.ChildReaper;
+                        import org.apache.curator.framework.recipes.locks.Reaper;
+                        import org.apache.curator.framework.recipes.nodes.GroupMember;
+                        import org.apache.curator.utils.CloseableExecutorService;
+                        import org.apache.curator.x.discovery.ServiceProviderBuilder;
+                        class LegacyBoundaries {
+                            ExhibitorEnsembleProvider exhibitor;
+                            ConnectionHandlingPolicy policy;
+                            Reaper reaper;
+                            ChildReaper childReaper;
+                            PathChildrenCache children;
+                            TreeCache tree;
+                            void configure(GroupMember group, ServiceProviderBuilder<String> provider,
+                                           CloseableExecutorService executor, Throwable failure) {
+                                group.newPersistentEphemeralNode();
+                                group.newPathChildrenCache();
+                                RetryLoop.isRetryException(failure);
+                                provider.executorService(executor);
+                            }
+                        }
+                        """,
+                        source -> source.path("src/main/java/example/LegacyBoundaries.java")
+                                .after(actual -> actual).afterRecipe(after -> {
+                                    String actual = after.printAll();
+                                    assertContains(actual, "removed Exhibitor support");
+                                    assertContains(actual, "ConnectionHandlingPolicy was removed");
+                                    assertContains(actual, "Reaper was removed");
+                                    assertContains(actual, "ChildReaper was removed");
+                                    assertContains(actual, "PathChildrenCache is a legacy cache API");
+                                    assertContains(actual, "TreeCache is a legacy cache API");
+                                    assertContains(actual, "GroupMember.newPersistentEphemeralNode was removed");
+                                    assertContains(actual, "GroupMember.newPathChildrenCache was removed");
+                                    assertContains(actual, "RetryLoop.isRetryException(Throwable) was removed");
+                                    assertContains(actual, "CloseableExecutorService overload was removed");
+                                })
+                ),
+                java(
+                        """
+                        package example;
+                        class LocalRetryLoop { static boolean isRetryException(Throwable error) { return false; } }
+                        class LocalGroupMember { Object newPathChildrenCache() { return null; } }
+                        class LocalApis { boolean run(Throwable error) { return LocalRetryLoop.isRetryException(error); } }
+                        """,
+                        source -> source.path("src/main/java/example/LocalApis.java")
+                )
+        );
+    }
+
+    @Test
+    void marksOwnedBuildAndParsedConfigurationRisksPrecisely() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME)),
+                buildGradle(
+                        """
+                        dependencies {
+                            implementation group: 'org.apache.curator', name: 'curator-framework', version: '5.7.1'
+                            implementation group: 'org.apache.curator', name: 'curator-recipes', version: '5.4.0'
+                            runtimeOnly group: 'org.apache.zookeeper', name: 'zookeeper', version: '3.4.14'
+                        }
+                        """,
+                        source -> source.path("owned.gradle").after(actual -> actual).afterRecipe(after -> {
+                            assertContains(after.printAll(), "explicit Curator companion is not aligned");
+                            assertContains(after.printAll(), "Curator 5 no longer supports ZooKeeper 3.4.x");
+                        })
+                ),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>ambiguous</artifactId><version>1</version><dependencies>
+                          <dependency><groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId></dependency>
+                          <dependency><groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>5.4.0</version><type>test-jar</type></dependency>
+                        </dependencies></project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>ambiguous</artifactId><version>1</version><dependencies>
+                          <!--~~(This Curator version is versionless, property-managed, ranged, dynamic, or otherwise not a fixed visible value; migrate its actual parent/BOM/catalog/property owner and verify that the complete Curator family resolves to 5.7.1)~~>--><dependency><groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId></dependency>
+                          <!--~~(This classified or non-JAR Curator/ZooKeeper artifact is outside deterministic runtime upgrade scope; verify that the target release publishes the same artifact shape before migrating it)~~>--><dependency><groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>5.4.0</version><type>test-jar</type></dependency>
+                        </dependencies></project>
+                        """,
+                        source -> source.path("ambiguous/pom.xml")
+                ),
+                buildGradle(
+                        """
+                        dependencies {
+                            implementation 'org.apache.curator:curator-framework:5.4.0:tests'
+                            runtimeOnly 'org.apache.curator:curator-framework:5.+'
+                        }
+                        """,
+                        """
+                        dependencies {
+                            implementation /*~~(This classified or non-JAR Curator/ZooKeeper artifact is outside deterministic runtime upgrade scope; verify that the target release publishes the same artifact shape before migrating it)~~>*/'org.apache.curator:curator-framework:5.4.0:tests'
+                            runtimeOnly /*~~(This Curator version is versionless, property-managed, ranged, dynamic, or otherwise not a fixed visible value; migrate its actual parent/BOM/catalog/property owner and verify that the complete Curator family resolves to 5.7.1)~~>*/'org.apache.curator:curator-framework:5.+'
+                        }
+                        """,
+                        source -> source.path("ambiguous.gradle")
+                ),
+                properties(
+                        "zookeeper.version=3.4.6\n",
+                        source -> source.path("src/main/resources/coordination.properties")
+                                .after(actual -> actual).afterRecipe(after ->
+                                        assertContains(after.printAll(), "Curator 5 cannot run with ZooKeeper 3.4.x"))
+                ),
+                yaml(
+                        "zookeeper:\n  version: 3.4.14\n",
+                        source -> source.path("src/main/resources/application.yml")
+                                .after(actual -> actual).afterRecipe(after ->
+                                        assertContains(after.printAll(), "Curator 5 cannot run with ZooKeeper 3.4.x"))
+                ),
+                xml(
+                        "<coordination><zookeeper-version>3.4.10</zookeeper-version></coordination>",
+                        source -> source.path("src/main/resources/coordination.xml")
+                                .after(actual -> actual).afterRecipe(after ->
+                                        assertContains(after.printAll(), "Curator 5 cannot run with ZooKeeper 3.4.x"))
+                ),
+                buildGradle(
+                        "implementation group: 'org.apache.curator', name: 'curator-recipes', version: '5.4.0'",
+                        source -> source.path("outside.gradle")
+                ),
+                properties(
+                        "# zookeeper.version=3.4.6\napplication.version=3.4.6\n",
+                        source -> source.path("src/main/resources/unrelated.properties")
+                ),
+                properties(
+                        "zookeeper.version=3.4.6\n",
+                        source -> source.path("install/generated/coordination.properties")
+                )
+        );
+    }
+
+    @Test
+    void recommendedRecipeSkipsGeneratedAndInstalledJavaSources() {
+        rewriteRun(
+                spec -> spec
+                        .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .parser(JavaParser.fromJavaVersion().dependsOn(
+                                "package org.apache.curator.framework.listen; public class ListenerContainer<T> { public ListenerContainer() {} }",
+                                "package org.apache.curator.framework.listen; public class StandardListenerManager<T> { public static <T> StandardListenerManager<T> standard() { return null; } }"
+                        )),
+                java(
+                        """
+                        import org.apache.curator.framework.listen.ListenerContainer;
+                        class GeneratedRegistry { ListenerContainer<Runnable> listeners = new ListenerContainer<>(); }
+                        """,
+                        source -> source.path("target/generated-sources/GeneratedRegistry.java")
+                ),
+                java(
+                        """
+                        import org.apache.curator.framework.listen.ListenerContainer;
+                        class InstalledRegistry { ListenerContainer<Runnable> listeners = new ListenerContainer<>(); }
+                        """,
+                        source -> source.path("install/sources/InstalledRegistry.java")
+                )
+        );
+    }
+
+    @Test
+    void recommendedAutoAndMarkersAreStableAcrossTwoCycles() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .cycles(2).expectedCyclesThatMakeChanges(1)
+                        .parser(JavaParser.fromJavaVersion().dependsOn(
+                                "package org.apache.curator; public class RetryLoop { public static boolean shouldRetry(int rc) { return false; } }"
+                        )),
+                pomXml(pomWithVersion("5.4.0"), pomWithVersion("5.7.1")),
+                java(
+                        """
+                        import org.apache.curator.RetryLoop;
+                        class RetryClassifier { boolean retry(int rc) { return RetryLoop.shouldRetry(rc); } }
+                        """,
+                        source -> source.after(actual -> actual).afterRecipe(after ->
+                                assertContains(after.printAll(), "RetryLoop.shouldRetry(int) was removed"))
+                ),
+                properties(
+                        "zookeeper.version=3.4.14\n",
+                        source -> source.after(actual -> actual).afterRecipe(after ->
+                                assertContains(after.printAll(), "Curator 5 cannot run with ZooKeeper 3.4.x"))
                 )
         );
     }
@@ -763,5 +1028,9 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
         return Environment.builder()
                 .scanRuntimeClasspath("com.huawei.clouds.openrewrite.curatorframework")
                 .build();
+    }
+
+    private static void assertContains(String actual, String expected) {
+        assertTrue(actual.contains(expected), () -> "Expected <" + expected + "> in:\n" + actual);
     }
 }

@@ -30,8 +30,17 @@ public final class ReplaceListenerContainerConstruction extends Recipe {
             private final JavaTemplate replacement = JavaTemplate.builder(
                     "StandardListenerManager.standard()"
             ).imports(NEW_TYPE)
-             .javaParser(JavaParser.fromJavaVersion().classpath("curator-framework"))
+             .javaParser(JavaParser.fromJavaVersion().dependsOn(
+                     "package org.apache.curator.framework.listen; " +
+                     "public final class StandardListenerManager<T> { " +
+                     "public static <T> StandardListenerManager<T> standard() { return null; } }"))
              .build();
+
+            @Override
+            public J.CompilationUnit visitCompilationUnit(J.CompilationUnit compilationUnit, ExecutionContext ctx) {
+                return UpgradeSelectedCuratorFrameworkDependency.generated(compilationUnit.getSourcePath())
+                        ? compilationUnit : (J.CompilationUnit) super.visitCompilationUnit(compilationUnit, ctx);
+            }
 
             @Override
             public J visitNewClass(J.NewClass newClass, ExecutionContext ctx) {
