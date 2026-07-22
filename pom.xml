@@ -115,6 +115,7 @@
     <module>rewrite-jsch-upgrade</module>
     <module>rewrite-jaxb-impl-upgrade</module>
     <module>rewrite-prettier-upgrade</module>
+    <module>rewrite-testing-library-jest-dom-upgrade</module>
   </modules>
 
   <dependencyManagement>

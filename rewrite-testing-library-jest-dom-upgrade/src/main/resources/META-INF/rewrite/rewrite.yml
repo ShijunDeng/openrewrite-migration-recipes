@@ -1,0 +1,37 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.testinglibraryjestdom
+packageName: com.huawei.clouds.openrewrite.testinglibraryjestdom
+description: Upgrade workbook-selected @testing-library/jest-dom declarations and migrate removed v5 entries with explicit runner, export-map, type, Node, and matcher guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.testinglibraryjestdom.UpgradeJestDomTo6_9_1
+displayName: Upgrade @testing-library/jest-dom to 6.9.1
+description: Update only the workbook-selected exact, caret, or tilde direct 5.17.0 declaration to 6.9.1.
+tags:
+  - testing-library
+  - jest-dom
+  - javascript
+  - typescript
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.testinglibraryjestdom.UpgradeSelectedJestDomDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.testinglibraryjestdom.MigrateJestDomTo6_9_1
+displayName: Migrate @testing-library/jest-dom to 6.9.1
+description: Apply the strict dependency upgrade, deterministic package/source entry migrations, and precise manifest/source risk markers.
+tags:
+  - testing-library
+  - jest-dom
+  - jest
+  - vitest
+  - javascript
+  - typescript
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.testinglibraryjestdom.UpgradeJestDomTo6_9_1
+  - com.huawei.clouds.openrewrite.testinglibraryjestdom.MigrateJestDomPackageConfiguration
+  - com.huawei.clouds.openrewrite.testinglibraryjestdom.MigrateRemovedJestDomEntries
+  - com.huawei.clouds.openrewrite.testinglibraryjestdom.FindJestDomManifestRisks
+  - com.huawei.clouds.openrewrite.testinglibraryjestdom.FindJestDomSourceRisks
