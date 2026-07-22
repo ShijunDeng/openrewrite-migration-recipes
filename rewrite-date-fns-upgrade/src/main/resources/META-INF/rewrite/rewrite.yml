@@ -1,0 +1,35 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.datefns
+packageName: com.huawei.clouds.openrewrite.datefns
+description: Upgrade selected date-fns declarations with explicit JavaScript and TypeScript migration guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0
+displayName: Upgrade date-fns to 4.1.0
+description: Update selected direct date-fns 2.x declarations in package.json to 4.1.0 without changing aliases, workspace references, lockfiles, or unlisted versions.
+tags:
+  - date-fns
+  - javascript
+  - typescript
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.dependencies[?(@['date-fns'] =~ '^[<>=~^ ]*v?2\.(?:23\.0|25\.0|28\.0|29\.3|30\.0)(?:[-+ <>=~^|].*)?$')]['date-fns']
+      value: '"4.1.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.devDependencies[?(@['date-fns'] =~ '^[<>=~^ ]*v?2\.(?:23\.0|25\.0|28\.0|29\.3|30\.0)(?:[-+ <>=~^|].*)?$')]['date-fns']
+      value: '"4.1.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.peerDependencies[?(@['date-fns'] =~ '^[<>=~^ ]*v?2\.(?:23\.0|25\.0|28\.0|29\.3|30\.0)(?:[-+ <>=~^|].*)?$')]['date-fns']
+      value: '"4.1.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.optionalDependencies[?(@['date-fns'] =~ '^[<>=~^ ]*v?2\.(?:23\.0|25\.0|28\.0|29\.3|30\.0)(?:[-+ <>=~^|].*)?$')]['date-fns']
+      value: '"4.1.0"'
