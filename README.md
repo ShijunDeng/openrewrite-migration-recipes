@@ -45,6 +45,7 @@
 | [`rewrite-date-fns-upgrade`](rewrite-date-fns-upgrade) | `com.huawei.clouds.openrewrite.datefns.UpgradeDateFnsTo4_1_0` | 将表格指定的 date-fns 2.x 声明升级到 4.1.0，保留未列版本和外部引用 |
 | [`rewrite-uuid-upgrade`](rewrite-uuid-upgrade) | `com.huawei.clouds.openrewrite.uuid.UpgradeUuidTo13_0_2` | 将表格指定的 uuid 8.x–11.x 声明升级到 13.0.2，保留协议引用和未列版本 |
 | [`rewrite-shedlock-spring-upgrade`](rewrite-shedlock-spring-upgrade) | `com.huawei.clouds.openrewrite.shedlockspring.MigrateShedLockSpringTo7_2_1` | 将 ShedLock Spring 升级到 7.2.1，并迁移 2.x 的 SchedulerLock 包名与字符串 duration 属性 |
+| [`rewrite-ng-dynamic-forms-core-upgrade`](rewrite-ng-dynamic-forms-core-upgrade) | `com.huawei.clouds.openrewrite.ngdynamicforms.UpgradeNgDynamicFormsCoreTo18_0_0` | 将 @ng-dynamic-forms/core 14.x–17.x 升级到 18.0.0，并说明 Angular/standalone/UI 配套迁移 |
 
 后续迁移应新增独立模块，例如：
 

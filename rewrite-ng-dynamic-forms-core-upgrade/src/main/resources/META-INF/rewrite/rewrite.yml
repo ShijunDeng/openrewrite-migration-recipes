@@ -1,0 +1,35 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.ngdynamicforms
+packageName: com.huawei.clouds.openrewrite.ngdynamicforms
+description: Upgrade NG Dynamic Forms with explicit Angular and UI-package compatibility guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngdynamicforms.UpgradeNgDynamicFormsCoreTo18_0_0
+displayName: Upgrade @ng-dynamic-forms/core to 18.0.0
+description: Update supported older direct @ng-dynamic-forms/core declarations in package.json to 18.0.0 without downgrading newer versions or replacing non-registry references.
+tags:
+  - angular
+  - dynamic-forms
+  - npm
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.dependencies[?(@['@ng-dynamic-forms/core'] =~ '^[<>=~^ ]*v?(?:1[4-7])(?:\.|$).*')]['@ng-dynamic-forms/core']
+      value: '"18.0.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.devDependencies[?(@['@ng-dynamic-forms/core'] =~ '^[<>=~^ ]*v?(?:1[4-7])(?:\.|$).*')]['@ng-dynamic-forms/core']
+      value: '"18.0.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.peerDependencies[?(@['@ng-dynamic-forms/core'] =~ '^[<>=~^ ]*v?(?:1[4-7])(?:\.|$).*')]['@ng-dynamic-forms/core']
+      value: '"18.0.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.optionalDependencies[?(@['@ng-dynamic-forms/core'] =~ '^[<>=~^ ]*v?(?:1[4-7])(?:\.|$).*')]['@ng-dynamic-forms/core']
+      value: '"18.0.0"'
