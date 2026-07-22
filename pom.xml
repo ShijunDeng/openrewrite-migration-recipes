@@ -53,6 +53,7 @@
     <module>rewrite-angular-forms-upgrade</module>
     <module>rewrite-angular-compiler-upgrade</module>
     <module>rewrite-jasypt-spring-boot-starter-upgrade</module>
+    <module>rewrite-angular-cdk-upgrade</module>
   </modules>
 
   <dependencyManagement>
