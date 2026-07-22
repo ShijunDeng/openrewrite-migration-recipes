@@ -33,6 +33,7 @@
 | [`rewrite-angular-cdk-upgrade`](rewrite-angular-cdk-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularCdkTo20_2_14` | 将 `@angular/cdk` 升级到 20.2.14，且不降级后续版本 |
 | [`rewrite-hibernate-core-upgrade`](rewrite-hibernate-core-upgrade) | `com.huawei.clouds.openrewrite.hibernate.MigrateHibernateCoreTo7_2_12` | 将 Hibernate Core 5.x 依赖和常见源码 API 迁到 7.2.12.Final |
 | [`rewrite-vue-router-upgrade`](rewrite-vue-router-upgrade) | `com.huawei.clouds.openrewrite.vuerouter.UpgradeVueRouterTo5_0_3` | 将 Vue Router 3.x/4.x 的 `package.json` 声明升级到 5.0.3，且不降级后续版本 |
+| [`rewrite-okhttp-upgrade`](rewrite-okhttp-upgrade) | `com.huawei.clouds.openrewrite.okhttp.UpgradeOkHttpTo5_3_0` | 将 OkHttp core/BOM 升级到 5.3.0，并提供 Maven JVM `okhttp-jvm` 坐标迁移入口 |
 
 后续迁移应新增独立模块，例如：
 

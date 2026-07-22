@@ -56,6 +56,7 @@
     <module>rewrite-angular-cdk-upgrade</module>
     <module>rewrite-hibernate-core-upgrade</module>
     <module>rewrite-vue-router-upgrade</module>
+    <module>rewrite-okhttp-upgrade</module>
   </modules>
 
   <dependencyManagement>

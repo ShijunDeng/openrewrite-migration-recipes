@@ -1,0 +1,52 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.okhttp
+packageName: com.huawei.clouds.openrewrite.okhttp
+description: Upgrade OkHttp dependencies while preserving explicit JVM and Android platform choices.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.okhttp.UpgradeOkHttpTo5_3_0
+displayName: Upgrade OkHttp to 5.3.0
+description: Upgrade com.squareup.okhttp3:okhttp and its BOM to 5.3.0 in Maven and Gradle builds without changing the platform artifact.
+tags:
+  - okhttp
+  - http-client
+  - java
+  - kotlin
+  - dependency-upgrade
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.squareup.okhttp3
+      artifactId: okhttp
+      newVersion: 5.3.0
+      overrideManagedVersion: true
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.squareup.okhttp3
+      artifactId: okhttp-bom
+      newVersion: 5.3.0
+      overrideManagedVersion: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.okhttp.MigrateMavenJvmOkHttpTo5_3_0
+displayName: Migrate Maven JVM projects to okhttp-jvm 5.3.0
+description: Upgrade OkHttp and replace the empty OkHttp 5 multiplatform metadata artifact with okhttp-jvm in Maven JVM projects.
+tags:
+  - okhttp
+  - maven
+  - jvm
+  - dependency-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.okhttp.UpgradeOkHttpTo5_3_0
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: com.squareup.okhttp3
+      oldArtifactId: okhttp
+      newGroupId: com.squareup.okhttp3
+      newArtifactId: okhttp-jvm
+      newVersion: 5.3.0
+      overrideManagedVersion: true
+      changeManagedDependency: true
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: com.squareup.okhttp3
+      artifactId: okhttp-jvm
+      newVersion: 5.3.0
+      overrideManagedVersion: true
