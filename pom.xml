@@ -77,6 +77,7 @@
     <module>rewrite-jakarta-annotation-api-upgrade</module>
     <module>rewrite-kubernetes-client-java-upgrade</module>
     <module>rewrite-jaxb-runtime-upgrade</module>
+    <module>rewrite-i18next-upgrade</module>
   </modules>
 
   <dependencyManagement>
