@@ -13,7 +13,7 @@
 
   <artifactId>rewrite-jedis-upgrade</artifactId>
   <name>OpenRewrite Jedis Upgrade</name>
-  <description>OpenRewrite recipes for strictly upgrading selected Jedis declarations and migrating deterministic Java source constructs to 7.2.1.</description>
+  <description>OpenRewrite recipes for strictly upgrading workbook-selected Jedis declarations, migrating deterministic Java APIs, and marking exact Jedis 7.2.1 compatibility decisions.</description>
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-jedis-upgrade</url>
 
   <dependencies>

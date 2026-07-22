@@ -2,17 +2,13 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.jedis
 packageName: com.huawei.clouds.openrewrite.jedis
-description: Upgrade Jedis with strict dependency selection, deterministic Java migrations, and explicit review markers for removed and behavior-changing APIs.
+description: Strictly upgrade workbook-selected Jedis declarations, migrate deterministic public Java APIs, and mark exact Jedis 7.2 compatibility decisions.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.jedis.UpgradeJedisTo7_2_1
-displayName: Upgrade selected Jedis declarations to 7.2.1
-description: Upgrade only direct Maven and Gradle redis.clients:jedis declarations whose literal source version is explicitly named by the spreadsheet.
-tags:
-  - jedis
-  - redis
-  - java
-  - dependency-upgrade
+displayName: Upgrade workbook-selected Jedis declarations to 7.2.1
+description: Upgrade only standard Maven and Gradle redis.clients:jedis declarations whose complete literal or safely isolated Maven-property value is one of the ten workbook-visible source versions.
+tags: [jedis, redis, java, dependency-upgrade]
 recipeList:
   - com.huawei.clouds.openrewrite.jedis.UpgradeSelectedJedisDependency
 ---
@@ -20,200 +16,42 @@ type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.jedis.MigrateDeterministicJedisSourceTo7
 displayName: Migrate deterministic Jedis source constructs to version 7
 description: Migrate removed binary client types, officially moved public types, version 7 pipeline and transaction base classes, and unambiguous literal host constructors.
-tags:
-  - jedis
-  - java
-  - source-migration
+tags: [jedis, redis, java, source-migration]
 recipeList:
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.BinaryJedis
-      newFullyQualifiedTypeName: redis.clients.jedis.Jedis
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.BinaryJedisCluster
-      newFullyQualifiedTypeName: redis.clients.jedis.JedisCluster
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.BitOP
-      newFullyQualifiedTypeName: redis.clients.jedis.args.BitOP
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.GeoUnit
-      newFullyQualifiedTypeName: redis.clients.jedis.args.GeoUnit
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.ListPosition
-      newFullyQualifiedTypeName: redis.clients.jedis.args.ListPosition
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.BitPosParams
-      newFullyQualifiedTypeName: redis.clients.jedis.params.BitPosParams
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.ScanParams
-      newFullyQualifiedTypeName: redis.clients.jedis.params.ScanParams
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.SortingParams
-      newFullyQualifiedTypeName: redis.clients.jedis.params.SortingParams
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.ZParams
-      newFullyQualifiedTypeName: redis.clients.jedis.params.ZParams
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.AccessControlLogEntry
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.AccessControlLogEntry
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.AccessControlUser
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.AccessControlUser
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.GeoRadiusResponse
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.GeoRadiusResponse
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.ScanResult
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.ScanResult
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.Slowlog
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.Slowlog
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.StreamConsumersInfo
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.StreamConsumersInfo
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.StreamEntry
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.StreamEntry
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.StreamGroupInfo
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.StreamGroupInfo
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.StreamInfo
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.StreamInfo
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.StreamPendingEntry
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.StreamPendingEntry
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.StreamPendingSummary
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.StreamPendingSummary
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.Tuple
-      newFullyQualifiedTypeName: redis.clients.jedis.resps.Tuple
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.PipelineBase
-      newFullyQualifiedTypeName: redis.clients.jedis.AbstractPipeline
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: redis.clients.jedis.TransactionBase
-      newFullyQualifiedTypeName: redis.clients.jedis.AbstractTransaction
-  - com.huawei.clouds.openrewrite.jedis.MigrateLiteralJedisHostConstructors
+  - com.huawei.clouds.openrewrite.jedis.MigrateDeterministicJedisSourceTo7
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.jedis.FindManualJedis7MigrationRisks
-displayName: Find Jedis 7 migration risks requiring manual review
-description: Mark removed sharding and internal APIs, ambiguous construction, pool and cluster generics, return and exception changes, pipeline and transaction changes, removed command options, module behavior, SSL, timeout, and resource-lifetime risks.
-tags:
-  - jedis
-  - java
-  - search
-  - manual-review
-preconditions:
-  - org.openrewrite.text.Find:
-      find: 'redis\.clients\.jedis|\b(?:Jedis|Pipeline|Transaction|SetParams|ScanParams)\b'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
+displayName: Find exact Jedis 7 Java migration risks
+description: Mark attributed sharding, construction, pool, cluster, pipeline, transaction, command-return, exception, module, and extension nodes whose replacement needs application intent.
+tags: [jedis, redis, java, search, manual-review]
 recipeList:
-  - org.openrewrite.text.Find:
-      find: '\b(?:ShardedJedisPool|ShardedJedis|BinaryShardedJedis|ShardedJedisPipeline|JedisShardInfo|ShardInfo|JedisSharding|ShardedPipeline|ShardedConnectionProvider)\b'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '\bnew[ \t]+(?:Jedis|JedisPool)[ \t]*\([ \t]*(?!["'']rediss?://[^"'']+["''][ \t]*\))[^,)]*\)'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '\bnew[ \t]+(?:Jedis|JedisPool|JedisCluster|JedisSentinelPool|UnifiedJedis)[ \t]*\([^;\r\n]{0,1200}\b(?:ssl|SSL|timeout|Timeout|password|clientName|maxAttempts)\b[^;\r\n]{0,1200}\)'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '\bGenericObjectPoolConfig[ \t]*<[ \t]*Jedis[ \t]*>(?=[\s\S]{0,4000}\bJedisCluster\b)|\.getClusterNodes[ \t]*\(|\.getConnectionFromSlot[ \t]*\('
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '\.(?:getResource|returnResource|returnBrokenResource)[ \t]*\('
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '\b(?:pipeline|pipelined)\.(?:multi|exec|discard)[ \t]*\(|\b(?:transaction|tx)\.execGetResponse[ \t]*\(|\b(?:transaction|tx)\.(?:watch|unwatch)[ \t]*\('
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '\.(?:scriptExists|blpop|brpop|bzpopmin|bzpopmax|blmpop|bzmpop|configGet|zdiff|zdiffWithScores|zinter|zinterWithScores|zunion|zunionWithScores)[ \t]*\('
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '\b(?:JedisNoReachableClusterNodeException|JedisClusterMaxAttemptsException|JedisExhaustedPoolException|AbortedTransactionException)\b|catch[ \t]*\([ \t]*(?:JedisDataException|IllegalStateException)\b'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '\bSetParams\b[^;\r\n]{0,500}\.get[ \t]*\(|\.xpending[ \t]*\([^;\r\n]{0,800},[^;\r\n]{0,800},[^;\r\n]{0,800},[^;\r\n]{0,800},[^;\r\n]{0,800},'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: 'redis\.clients\.jedis\.(?:graph|gears)\.|\.(?:ftSearch|ftAggregate|ftProfile|setDefaultSearchDialect)[ \t]*\('
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '\b(?:extends|implements)[ \t]+(?:Connection|JedisCluster|Pipeline|Transaction|AbstractPipeline|AbstractTransaction)\b|redis\.clients\.jedis\.(?:commands|util|builders|providers)\.'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.java"
-      contextSize: 0
+  - com.huawei.clouds.openrewrite.jedis.FindJedis7JavaMigrationRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.jedis.FindManualJedis7BuildBaselineRisks
-displayName: Find Jedis 7 build baseline risks requiring manual review
-description: Mark Java levels below 8 and explicit SLF4J API or Commons Pool declarations that must be checked against the fixed Jedis 7.2.1 build.
-tags:
-  - jedis
-  - build
-  - search
-  - manual-review
+displayName: Find exact Jedis 7 build and platform risks
+description: Mark exact non-target or centrally managed Jedis, Java levels below 8, explicit SLF4J/Commons Pool owners, and Spring Redis integration boundaries.
+tags: [jedis, redis, build, search, manual-review]
 recipeList:
-  - org.openrewrite.text.Find:
-      find: '<(?:maven\.compiler\.(?:source|target)|source|target)>[ \t]*(?:1\.[0-7]|[0-7])[ \t]*</|<(?:groupId)>org\.slf4j</groupId>[\s\S]{0,300}<artifactId>slf4j-api</artifactId>|<groupId>org\.apache\.commons</groupId>[\s\S]{0,300}<artifactId>commons-pool2</artifactId>'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/pom.xml"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '(?:sourceCompatibility|targetCompatibility|languageVersion)[ \t]*(?:=|\.set\(|\.of\()[ \t]*["'']?(?:1\.[0-7]|[0-7])\b|["'']org\.slf4j:slf4j-api:|["'']org\.apache\.commons:commons-pool2:'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.gradle;**/*.gradle.kts"
-      contextSize: 0
+  - com.huawei.clouds.openrewrite.jedis.FindJedis7BuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jedis.AuditJedis7Compatibility
+displayName: Audit Jedis 7.2 compatibility without changing source
+description: Run only attributed Java and exact Maven/Gradle build compatibility markers without changing dependencies or APIs.
+tags: [jedis, redis, audit, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.jedis.FindJedis7JavaMigrationRisks
+  - com.huawei.clouds.openrewrite.jedis.FindJedis7BuildRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.jedis.MigrateJedisTo7_2_1
 displayName: Migrate Jedis applications to 7.2.1
-description: Strictly upgrade selected Jedis declarations, migrate source changes proven safe by fixed upstream APIs, and mark behavior, topology, security, pool, command, and build-baseline risks.
-tags:
-  - jedis
-  - redis
-  - java
-  - source-migration
+description: Strictly upgrade workbook-selected Jedis, migrate only deterministic public source constructs, and mark exact topology, behavior, security, pool, command, extension, and platform decisions.
+tags: [jedis, redis, java, source-migration]
 recipeList:
-  - com.huawei.clouds.openrewrite.jedis.UpgradeJedisTo7_2_1
+  - com.huawei.clouds.openrewrite.jedis.UpgradeSelectedJedisDependency
   - com.huawei.clouds.openrewrite.jedis.MigrateDeterministicJedisSourceTo7
-  - com.huawei.clouds.openrewrite.jedis.FindManualJedis7MigrationRisks
-  - com.huawei.clouds.openrewrite.jedis.FindManualJedis7BuildBaselineRisks
+  - com.huawei.clouds.openrewrite.jedis.FindJedis7JavaMigrationRisks
+  - com.huawei.clouds.openrewrite.jedis.FindJedis7BuildRisks

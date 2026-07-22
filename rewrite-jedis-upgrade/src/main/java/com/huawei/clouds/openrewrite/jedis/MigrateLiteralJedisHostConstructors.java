@@ -58,14 +58,7 @@ public final class MigrateLiteralJedisHostConstructors extends Recipe {
             }
 
             private boolean isOfficialJedisType(J.NewClass n, String className, String targetType) {
-                if (targetType.equals(className) || TypeUtils.isOfClassType(n.getType(), targetType)) {
-                    return true;
-                }
-                J.CompilationUnit cu = getCursor().firstEnclosing(J.CompilationUnit.class);
-                return cu != null && cu.getImports().stream().anyMatch(anImport -> {
-                    String imported = anImport.getQualid().printTrimmed(getCursor());
-                    return targetType.equals(imported) || "redis.clients.jedis.*".equals(imported);
-                });
+                return targetType.equals(className) || TypeUtils.isOfClassType(n.getType(), targetType);
             }
         };
     }
