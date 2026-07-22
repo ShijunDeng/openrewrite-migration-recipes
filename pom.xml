@@ -105,6 +105,7 @@
     <module>rewrite-ojdbc8-upgrade</module>
     <module>rewrite-react-resizable-upgrade</module>
     <module>rewrite-pbr-upgrade</module>
+    <module>rewrite-chalk-upgrade</module>
   </modules>
 
   <dependencyManagement>
