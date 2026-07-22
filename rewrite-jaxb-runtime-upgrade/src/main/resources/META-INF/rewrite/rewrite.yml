@@ -7,18 +7,14 @@ description: Upgrade Eclipse JAXB Runtime and migrate the type-safe portion of J
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.jaxbruntime.UpgradeJaxbRuntimeTo4_0_8
 displayName: Upgrade JAXB Runtime to 4.0.8
-description: Upgrade the exact org.glassfish.jaxb:jaxb-runtime Maven or Gradle dependency to 4.0.8 without changing source namespaces or companion APIs.
+description: Upgrade only spreadsheet-listed 2.3.7, 2.3.8, and 4.0.1 org.glassfish.jaxb:jaxb-runtime Maven or Gradle literals (or safely isolated Maven properties) to 4.0.8.
 tags:
   - jaxb
   - xml-binding
   - java
   - dependency-upgrade
 recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: org.glassfish.jaxb
-      artifactId: jaxb-runtime
-      newVersion: 4.0.8
-      overrideManagedVersion: false
+  - com.huawei.clouds.openrewrite.jaxbruntime.UpgradeSelectedJaxbRuntimeDependency
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.jaxbruntime.MigrateJaxbBindingsToJakarta3
@@ -100,37 +96,10 @@ tags:
   - java
   - source-migration
 recipeList:
+  - com.huawei.clouds.openrewrite.jaxbruntime.FindJaxbJavaMigrationRisks
   - com.huawei.clouds.openrewrite.jaxbruntime.UpgradeJaxbRuntimeTo4_0_8
-  - org.openrewrite.java.dependencies.ChangeDependency:
-      oldGroupId: javax.xml.bind
-      oldArtifactId: jaxb-api
-      newGroupId: jakarta.xml.bind
-      newArtifactId: jakarta.xml.bind-api
-      newVersion: 4.0.5
-      overrideManagedVersion: true
-      changeManagedDependency: true
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: jakarta.xml.bind
-      artifactId: jakarta.xml.bind-api
-      newVersion: 4.0.5
-      overrideManagedVersion: true
-  - org.openrewrite.java.dependencies.ChangeDependency:
-      oldGroupId: javax.activation
-      oldArtifactId: javax.activation-api
-      newGroupId: jakarta.activation
-      newArtifactId: jakarta.activation-api
-      newVersion: 2.1.4
-      overrideManagedVersion: true
-      changeManagedDependency: true
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: jakarta.activation
-      artifactId: jakarta.activation-api
-      newVersion: 2.1.4
-      overrideManagedVersion: true
-  - org.openrewrite.java.ChangePackage:
-      oldPackageName: javax.xml.bind
-      newPackageName: jakarta.xml.bind
-      recursive: true
+  - com.huawei.clouds.openrewrite.jaxbruntime.MigrateExplicitJaxbCompanionDependencies
+  - com.huawei.clouds.openrewrite.jaxbruntime.MigrateJaxbXmlBindNamespace
   - org.openrewrite.java.ChangePackage:
       oldPackageName: javax.activation
       newPackageName: jakarta.activation
@@ -158,3 +127,5 @@ recipeList:
       oldFullyQualifiedTypeName: com.sun.xml.bind.objectIdentitityCycleDetection
       newFullyQualifiedTypeName: org.glassfish.jaxb.objectIdentitityCycleDetection
   - com.huawei.clouds.openrewrite.jaxbruntime.MigrateJaxbBindingsToJakarta3
+  - com.huawei.clouds.openrewrite.jaxbruntime.FindJaxbBuildMigrationRisks
+  - com.huawei.clouds.openrewrite.jaxbruntime.FindJaxbConfigurationMigrationRisks

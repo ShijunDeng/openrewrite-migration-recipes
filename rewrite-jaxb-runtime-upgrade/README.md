@@ -1,6 +1,6 @@
 # JAXB Runtime 2.3.x 升级到 4.0.8
 
-本模块对应表格中的 `org.glassfish.jaxb:jaxb-runtime`，处理 `2.3.7`、`2.3.8` 到 `4.0.8` 的迁移。它不是普通补丁升级：JAXB Runtime 2.3.x 实现的是仍使用 `javax.xml.bind.*` 的 JAXB 2 API，而 4.0.8 实现 Jakarta XML Binding 4，应用、生成代码、Activation、XJC 配置和 JPMS 模块必须落在同一套 Jakarta 命名空间。
+本模块对应表格中的 `org.glassfish.jaxb:jaxb-runtime`，精确处理 `2.3.7`、`2.3.8`、`4.0.1` 到 `4.0.8` 的三条迁移。前两条是从 JAXB 2/Javax 到 Jakarta XML Binding 4 的跨大版本迁移；`4.0.1` 则是 4.0.x 内的补丁升级。
 
 推荐先执行完整配方并审查 dry-run：
 
@@ -20,16 +20,18 @@ com.huawei.clouds.openrewrite.jaxbruntime.UpgradeJaxbRuntimeTo4_0_8
 com.huawei.clouds.openrewrite.jaxbruntime.MigrateJaxbBindingsToJakarta3
 ```
 
-## 自动处理范围
+## AUTO / MARK / NO-OP 边界
 
-依赖窄配方只匹配 Maven/Gradle 的精确坐标 `org.glassfish.jaxb:jaxb-runtime` 并更新到 `4.0.8`，支持 Maven 直接版本、版本属性、`dependencyManagement`，以及 Gradle 字符串、Map 和本地版本变量。它保留 scope、optional 等声明，不修改 `jaxb-core`、`jaxb-xjc`、`com.sun.xml.bind:jaxb-impl` 等相似坐标，也不会把 4.0.9 及后续版本降级。
+**AUTO**：依赖窄配方只匹配 Maven/Gradle 的精确坐标 `org.glassfish.jaxb:jaxb-runtime`，且仅把字面量 `2.3.7`、`2.3.8`、`4.0.1` 更新为 `4.0.8`。它支持 Maven 直接版本、`dependencyManagement`、仅被目标依赖引用的本 POM 属性，以及 Gradle Groovy/Kotlin 字符串和 Groovy Map 字面量。它保留 scope、optional 等声明。完整配方还迁移显式 legacy JAXB/Activation API 坐标、类型安全的 `javax` 包、一个有直接替代的 RI 类型、六个 RI 属性键，以及标准 `xjb`/`jxb`/`xsd` binding 声明。
 
-未写版本、由外部 parent/BOM 管理的依赖不会被强行加版本。此时应升级拥有版本的 parent/BOM，或者在本项目自己的 `dependencyManagement` 显式覆盖；这能避免配方悄悄破坏平台对整套 Jakarta EE 依赖的对齐。
+**MARK**：推荐配方用 `SearchResult` 标记 Java 11 以下构建、旧/未对齐 companion API、core/XJC/JXC 与生成插件、移除的 Validator API、严格 lexical parsing、RI internals、provider/reflection、共享 Marshaller/Unmarshaller、Java serialization、JPMS、OSGi、service 文件、native-image metadata，以及未覆盖扩展名中的 binding 配置。包含已删除 `javax.xml.bind.Validator` 的编译单元会整体保留 Javax 类型并标记，待先改成 `SchemaFactory`/`setSchema` 后再迁移；配方绝不会制造不存在的 `jakarta.xml.bind.Validator`。标记只进入 diff，不替用户选择插件、BOM、provider 或兼容策略。
+
+**NO-OP**：未列入表格的版本、目标/未来版本、范围/动态/无法解析版本、相似坐标、外部 parent/BOM 管理或无版本依赖、被元数据/插件/其他依赖共同使用的 Maven 属性、Gradle 变量/插值、version catalog 均保持不变。已有 Jakarta API 若版本不对齐只标记，不强制覆盖；此时应修改真正拥有版本的 BOM/属性，避免拆散 Jakarta EE 平台。
 
 完整配方额外执行以下高置信度修改：
 
-- `javax.xml.bind:jaxb-api` → `jakarta.xml.bind:jakarta.xml.bind-api:4.0.5`，并把已有的 2.x/3.x Jakarta API 坐标更新到 4.0.5；
-- `javax.activation:javax.activation-api` → `jakarta.activation:jakarta.activation-api:2.1.4`，并更新已有 Jakarta Activation API；
+- 显式 `javax.xml.bind:jaxb-api` → `jakarta.xml.bind:jakarta.xml.bind-api:4.0.5`；已有 Jakarta API/BOM 对齐问题只标记；
+- 显式 `javax.activation:javax.activation-api` → `jakarta.activation:jakarta.activation-api:2.1.4`；已有 Jakarta Activation/BOM 对齐问题只标记；
 - 递归迁移 Java 的 `javax.xml.bind.*` → `jakarta.xml.bind.*` 与 `javax.activation.*` → `jakarta.activation.*`；
 - RI 扩展 `com.sun.xml.bind.marshaller.NamespacePrefixMapper` → `org.glassfish.jaxb.runtime.marshaller.NamespacePrefixMapper`；
 - 更新 2.x 与 4.x 中有一一对应关系的 RI Marshaller 属性：`namespacePrefixMapper`、`indentString`、`characterEscapeHandler`、`xmlDeclaration`、`xmlHeaders`、`objectIdentitityCycleDetection` 的前缀从 `com.sun.xml.bind` 改为 `org.glassfish.jaxb`；
@@ -39,7 +41,7 @@ com.huawei.clouds.openrewrite.jaxbruntime.MigrateJaxbBindingsToJakarta3
 
 ## 4.0.8 官方依赖基线
 
-`jaxb-runtime:4.0.8` 的发布 tag 是 [`4.0.8-RI`](https://github.com/eclipse-ee4j/jaxb-ri/tree/4.0.8-RI)，发布提交为 [`8ff4b1e`](https://github.com/eclipse-ee4j/jaxb-ri/commit/8ff4b1e53cd918630c61cb8565db365809683a8f)。其 [runtime POM](https://repo1.maven.org/maven2/org/glassfish/jaxb/jaxb-runtime/4.0.8/jaxb-runtime-4.0.8.pom) 依赖 `jaxb-core:4.0.8`；官方 [4.0.8 BOM](https://repo1.maven.org/maven2/org/glassfish/jaxb/jaxb-bom/4.0.8/jaxb-bom-4.0.8.pom) 对齐以下版本：
+`jaxb-runtime:4.0.8` 的 annotated tag `4.0.8-RI` 解引用到固定发布提交 [`8ff4b1e`](https://github.com/eclipse-ee4j/jaxb-ri/commit/8ff4b1e53cd918630c61cb8565db365809683a8f)。其 [runtime POM](https://repo1.maven.org/maven2/org/glassfish/jaxb/jaxb-runtime/4.0.8/jaxb-runtime-4.0.8.pom) 依赖 `jaxb-core:4.0.8`；官方 [4.0.8 BOM](https://repo1.maven.org/maven2/org/glassfish/jaxb/jaxb-bom/4.0.8/jaxb-bom-4.0.8.pom) 对齐以下版本：
 
 | 组件 | 4.0.8 BOM 版本 | 用途 |
 | --- | --- | --- |
@@ -143,16 +145,16 @@ rg -n 'javax\.xml\.bind|javax\.activation|java\.sun\.com/xml/ns/jaxb|com\.sun\.x
 - [Google Cloud healthcare-data-harmonization](https://github.com/GoogleCloudPlatform/healthcare-data-harmonization/blob/a69ff9619ae665ce475f6206ebc1fb459f69fbc2/wstl1/tools/XmlToJson/src/main/java/com/google/cloud/healthcare/etl/xmltojson/XmlToJsonCDARev2.java) 的 `JAXBContext`、Marshaller RI property 与 `NamespacePrefixMapper`；
 - [Eclipse Paho MQTT Spy](https://github.com/eclipse-paho/paho.mqtt-spy/blob/737699afbabaf01520302080a6f8b910f121ab2f/spy-common/src/main/resources/spy-bindings.xjb) 的真实外部 binding 文件。
 
-实现与测试模式参考 OpenRewrite Apache 2 核心的 [ChangePackage](https://github.com/openrewrite/rewrite/blob/main/rewrite-java/src/test/java/org/openrewrite/java/ChangePackageTest.java)、[Gradle ChangeDependency](https://github.com/openrewrite/rewrite/blob/main/rewrite-gradle/src/test/java/org/openrewrite/gradle/ChangeDependencyTest.java)、[FindAndReplace](https://github.com/openrewrite/rewrite/blob/main/rewrite-core/src/test/java/org/openrewrite/text/FindAndReplaceTest.java) 与 [`rewrite-java-dependencies` UpgradeDependencyVersion](https://github.com/openrewrite/rewrite-java-dependencies/blob/main/src/test/java/org/openrewrite/java/dependencies/UpgradeDependencyVersionTest.java)。OpenRewrite 官方也有 [JavaxXmlBindMigrationToJakartaXmlBind](https://docs.openrewrite.org/recipes/java/migrate/jakarta/javaxxmlbindmigrationtojakartaxmlbind) 行为资料；该 recipe pack 使用 Moderne Source Available License，本模块没有复制其代码或引入该依赖，只组合 Apache 2.0 OpenRewrite recipes。
+实现与测试模式参考 OpenRewrite `v8.87.5` 固定提交 `b3008cc4` 的 [ChangePackage](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/test/java/org/openrewrite/java/ChangePackageTest.java)、[Gradle ChangeDependency](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-gradle/src/test/java/org/openrewrite/gradle/ChangeDependencyTest.java)、[FindAndReplace](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-core/src/test/java/org/openrewrite/text/FindAndReplaceTest.java)，以及 `rewrite-java-dependencies v1.59.0` 固定提交 `decb8dbb` 的 [UpgradeDependencyVersion 测试](https://github.com/openrewrite/rewrite-java-dependencies/blob/decb8dbb2b5b726f8815efc51c85c34a60268bb0/src/test/java/org/openrewrite/java/dependencies/UpgradeDependencyVersionTest.java)。OpenRewrite 官方也有 [JavaxXmlBindMigrationToJakartaXmlBind](https://docs.openrewrite.org/recipes/java/migrate/jakarta/javaxxmlbindmigrationtojakartaxmlbind) 行为资料；该 recipe pack 使用 Moderne Source Available License，本模块没有复制其代码或引入该依赖，只组合 Apache 2.0 OpenRewrite recipes。
 
 官方规范与实现资料：
 
 - [Jakarta XML Binding 4.0 Specification](https://jakarta.ee/specifications/xml-binding/4.0/jakarta-xml-binding-spec-4.0.html)；
 - [JAXB API 4.0.0 release changes](https://github.com/jakartaee/jaxb-api/releases/tag/4.0.0)；
-- [Eclipse JAXB RI 4.0.x release documentation](https://eclipse-ee4j.github.io/jaxb-ri/4.0.5/docs/release-documentation.html)，包括 Java 11、JAR/JPMS、XJC、schemagen、thread-safety 与 RI extensions；
-- [4.0.8 source tag](https://github.com/eclipse-ee4j/jaxb-ri/tree/4.0.8-RI) 与 [4.0.8 BOM](https://repo1.maven.org/maven2/org/glassfish/jaxb/jaxb-bom/4.0.8/jaxb-bom-4.0.8.pom)。
+- 4.0.8 固定提交中的 [JPMS descriptor](https://github.com/eclipse-ee4j/jaxb-ri/blob/8ff4b1e53cd918630c61cb8565db365809683a8f/jaxb-ri/runtime/impl/src/main/java/module-info.java)、[thread-safety FAQ](https://github.com/eclipse-ee4j/jaxb-ri/blob/8ff4b1e53cd918630c61cb8565db365809683a8f/jaxb-ri/docs/release-documentation/src/docbook/faq.xml) 与 [RI runtime properties](https://github.com/eclipse-ee4j/jaxb-ri/blob/8ff4b1e53cd918630c61cb8565db365809683a8f/jaxb-ri/docs/release-documentation/src/docbook/jaxb-ri-extensions-runtime-properties.xml)；
+- [4.0.8 BOM](https://repo1.maven.org/maven2/org/glassfish/jaxb/jaxb-bom/4.0.8/jaxb-bom-4.0.8.pom)。
 
-测试覆盖表格全部版本、Maven 直接/属性/dependencyManagement、Gradle 字符串/Map/变量、scope/optional 保留、目标/后续版本和相似坐标/no-version no-op、JAXB/Activation API 坐标、源码 import/annotations/全限定类型、RI 扩展类型与属性、外部 binding/inline XSD/default namespace、XJC 厂商扩展 URI 保留、无关 XML 防误伤、完整组合与 recipe validation，共 32 个场景。
+测试覆盖表格全部三个来源版本、Maven 直接/隔离属性/dependencyManagement、Gradle Groovy/Kotlin 字符串与 Map、共享属性/元数据 token/XML attribute/BOM/no-version/range/dynamic/变量/catalog no-op、companion 依赖的显式字面量与保守边界、幂等性、源码 import/annotations/RI 类型与属性、已删除 Validator 的保守处理、binding 迁移，以及 Java/build/provider/JPMS/OSGi/native-image/XJC/serialization 风险标记，共 55 个场景。
 
 ## 使用与验证
 

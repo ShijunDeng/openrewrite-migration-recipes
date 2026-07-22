@@ -10,9 +10,11 @@ import org.openrewrite.test.RewriteTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openrewrite.gradle.Assertions.buildGradle;
+import static org.openrewrite.gradle.Assertions.buildGradleKts;
 import static org.openrewrite.gradle.toolingapi.Assertions.withToolingApi;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.test.SourceSpecs.text;
 import static org.openrewrite.xml.Assertions.xml;
 
 class JaxbRuntimeUpgradeTest implements RewriteTest {
@@ -32,6 +34,11 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
     @Test
     void upgradesSpreadsheetVersion2_3_7() {
         rewriteRun(pomXml(runtimePom("2.3.7"), runtimePom("4.0.8")));
+    }
+
+    @Test
+    void upgradesSpreadsheetVersion4_0_1() {
+        rewriteRun(pomXml(runtimePom("4.0.1"), runtimePom("4.0.8")));
     }
 
     @Test
@@ -155,7 +162,33 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
     }
 
     @Test
-    void upgradesGradleVersionVariableFrom2_3_8() {
+    void leavesGradleMapWithoutLiteralVersionAndDynamicVersionUntouched() {
+        rewriteRun(buildGradle(
+                """
+                plugins { id 'java-library' }
+                dependencies {
+                    runtimeOnly group: 'org.glassfish.jaxb', name: 'jaxb-runtime'
+                    implementation 'org.glassfish.jaxb:jaxb-runtime:2.+'
+                }
+                """
+        ));
+    }
+
+    @Test
+    void leavesVersionCatalogUntouched() {
+        rewriteRun(text(
+                """
+                [versions]
+                jaxb = "2.3.8"
+                [libraries]
+                jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version.ref = "jaxb" }
+                """,
+                source -> source.path("gradle/libs.versions.toml")
+        ));
+    }
+
+    @Test
+    void leavesGradleVersionVariableUntouched() {
         rewriteRun(buildGradle(
                 """
                 plugins { id 'java' }
@@ -164,13 +197,27 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
                 dependencies {
                     runtimeOnly "org.glassfish.jaxb:jaxb-runtime:${jaxbRuntimeVersion}"
                 }
+                """
+        ));
+    }
+
+    @Test
+    void upgradesKotlinDslLiteralButNotVariable() {
+        rewriteRun(buildGradleKts(
+                """
+                plugins { java }
+                val jaxbVersion = "2.3.8"
+                dependencies {
+                    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.1")
+                    runtimeOnly("org.glassfish.jaxb:jaxb-runtime:$jaxbVersion")
+                }
                 """,
                 """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                def jaxbRuntimeVersion = '4.0.8'
+                plugins { java }
+                val jaxbVersion = "2.3.8"
                 dependencies {
-                    runtimeOnly "org.glassfish.jaxb:jaxb-runtime:${jaxbRuntimeVersion}"
+                    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.8")
+                    runtimeOnly("org.glassfish.jaxb:jaxb-runtime:$jaxbVersion")
                 }
                 """
         ));
@@ -196,7 +243,60 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
     void leavesTargetAndNewerRuntimeVersionsUntouched() {
         rewriteRun(
                 pomXml(runtimePom("4.0.8")),
-                pomXml(runtimePom("4.0.9"), spec -> spec.path("newer-pom.xml"))
+                pomXml(runtimePom("4.0.9"), spec -> spec.path("newer-pom.xml")),
+                pomXml(runtimePom("2.3.6"), spec -> spec.path("unlisted-pom.xml")),
+                pomXml(runtimePom("[2.3,3.0)"), spec -> spec.path("range-pom.xml")),
+                pomXml(runtimePom("LATEST"), spec -> spec.path("dynamic-pom.xml"))
+        );
+    }
+
+    @Test
+    void leavesSharedMavenPropertyUntouched() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shared</artifactId><version>1</version>
+                  <properties><shared.version>2.3.8</shared.version></properties>
+                  <name>JAXB ${shared.version} compatibility suite</name>
+                  <dependencies>
+                    <dependency><groupId>org.glassfish.jaxb</groupId><artifactId>jaxb-runtime</artifactId><version>${shared.version}</version></dependency>
+                  </dependencies>
+                </project>
+                """
+        ));
+    }
+
+    @Test
+    void leavesPropertyUsedByMetadataTokenUntouched() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>metadata</artifactId><version>1</version>
+                  <properties><jaxb.version>2.3.8</jaxb.version><build.label>jaxb-${jaxb.version}</build.label></properties>
+                  <dependencies><dependency><groupId>org.glassfish.jaxb</groupId><artifactId>jaxb-runtime</artifactId><version>${jaxb.version}</version></dependency></dependencies>
+                </project>
+                """
+        ));
+    }
+
+    @Test
+    void leavesPropertyUsedByXmlAttributeUntouched() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>attribute</artifactId><version>1</version>
+                  <properties><jaxb.version>2.3.8</jaxb.version></properties><dependencies>
+                    <dependency><groupId>org.glassfish.jaxb</groupId><artifactId>jaxb-runtime</artifactId><version>${jaxb.version}</version></dependency>
+                  </dependencies><build><plugins><plugin><groupId>example</groupId><artifactId>metadata</artifactId>
+                    <configuration><label value="${jaxb.version}"/></configuration>
+                  </plugin></plugins></build>
+                </project>
+                """
+        ));
+    }
+
+    @Test
+    void dependencyUpgradeIsIdempotent() {
+        rewriteRun(
+                spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1),
+                pomXml(runtimePom("4.0.1"), runtimePom("4.0.8"))
         );
     }
 
@@ -253,12 +353,13 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
     }
 
     @Test
-    void comprehensiveRecipeUpgradesExistingJakartaCoordinateWithJavaxPackages() {
+    void comprehensiveRecipeMarksExistingMisalignedJakartaApiWithoutOverridingIt() {
         rewriteRun(
                 spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE)),
                 pomXml(
                         apiPom("jakarta.xml.bind", "jakarta.xml.bind-api", "2.3.3"),
-                        apiPom("jakarta.xml.bind", "jakarta.xml.bind-api", "4.0.5")
+                        apiPomWithDependencyMarker("jakarta.xml.bind", "jakarta.xml.bind-api", "2.3.3",
+                                "JAXB Runtime 4.0.8 BOM aligns jakarta.xml.bind-api to 4.0.5")
                 )
         );
     }
@@ -313,12 +414,64 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
     }
 
     @Test
-    void comprehensiveRecipeUpgradesExistingJakartaActivationApi() {
+    void companionMigrationChangesGroovyMapAndKotlinLiteral() {
+        rewriteRun(
+                spec -> spec.recipe(new MigrateExplicitJaxbCompanionDependencies()),
+                buildGradle(
+                        "dependencies { implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1' }",
+                        "dependencies { implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '4.0.5' }"
+                ),
+                buildGradleKts(
+                        "dependencies { implementation(\"javax.activation:javax.activation-api:1.2.0\") }",
+                        "dependencies { implementation(\"jakarta.activation:jakarta.activation-api:2.1.4\") }"
+                )
+        );
+    }
+
+    @Test
+    void companionMigrationLeavesSharedPropertyAndManagedVersionlessDeclarationUntouched() {
+        rewriteRun(
+                spec -> spec.recipe(new MigrateExplicitJaxbCompanionDependencies()),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shared-api</artifactId><version>1</version>
+                          <properties><shared.version>2.3.1</shared.version></properties><name>compat-${shared.version}</name>
+                          <dependencyManagement><dependencies><dependency><groupId>javax.xml.bind</groupId><artifactId>jaxb-api</artifactId><version>2.3.1</version></dependency></dependencies></dependencyManagement>
+                          <dependencies>
+                            <dependency><groupId>javax.xml.bind</groupId><artifactId>jaxb-api</artifactId><version>${shared.version}</version></dependency>
+                            <dependency><groupId>javax.xml.bind</groupId><artifactId>jaxb-api</artifactId></dependency>
+                          </dependencies>
+                        </project>
+                        """
+                )
+        );
+    }
+
+    @Test
+    void companionMigrationLeavesGradleVariablesRangesAndCatalogAliasesUntouched() {
+        rewriteRun(
+                spec -> spec.recipe(new MigrateExplicitJaxbCompanionDependencies()),
+                buildGradle(
+                        """
+                        def apiVersion = '2.3.1'
+                        dependencies {
+                            implementation "javax.xml.bind:jaxb-api:${apiVersion}"
+                            runtimeOnly 'javax.activation:javax.activation-api:[1.2,2.0)'
+                            implementation libs.jaxb.api
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void comprehensiveRecipeMarksExistingMisalignedJakartaActivationApi() {
         rewriteRun(
                 spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE)),
                 pomXml(
                         apiPom("jakarta.activation", "jakarta.activation-api", "1.2.2"),
-                        apiPom("jakarta.activation", "jakarta.activation-api", "2.1.4")
+                        apiPomWithDependencyMarker("jakarta.activation", "jakarta.activation-api", "1.2.2",
+                                "JAXB Runtime 4.0.8 BOM aligns jakarta.activation-api to 2.1.4")
                 )
         );
     }
@@ -398,6 +551,33 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
     }
 
     @Test
+    void comprehensiveRecipeKeepsRemovedValidatorForManualReplacement() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE)),
+                java(
+                        """
+                        import javax.xml.bind.JAXBContext;
+                        import javax.xml.bind.Validator;
+                        class Validation {
+                            Validator legacy(JAXBContext context) throws Exception {
+                                return context.createValidator();
+                            }
+                        }
+                        """,
+                        """
+                        import javax.xml.bind.JAXBContext;
+                        /*~~(JAXB Validator was removed; attach javax.xml.validation.Schema to Marshaller/Unmarshaller instead)~~>*/import javax.xml.bind.Validator;
+                        class Validation {
+                            Validator legacy(JAXBContext context) throws Exception {
+                                return /*~~(Removed JAXB validation API; use SchemaFactory and Marshaller/Unmarshaller#setSchema)~~>*/context.createValidator();
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
     void migratesGoogleHealthcareStyleNamespacePrefixMapperAndProperty() {
         // Reduced from GoogleCloudPlatform/healthcare-data-harmonization at a69ff9619ae665ce475f6206ebc1fb459f69fbc2:
         // https://github.com/GoogleCloudPlatform/healthcare-data-harmonization/blob/a69ff9619ae665ce475f6206ebc1fb459f69fbc2/wstl1/tools/XmlToJson/src/main/java/com/google/cloud/healthcare/etl/xmltojson/XmlToJsonCDARev2.java
@@ -469,7 +649,7 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
     }
 
     @Test
-    void leavesBusinessStringsAndSimilarPackagesUntouched() {
+    void leavesBusinessStringsUnchangedButMarksProviderLikeValues() {
         rewriteRun(
                 spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE)),
                 java(
@@ -477,6 +657,13 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
                         class UnrelatedStrings {
                             String documentation = "javax.xml.bind.JAXBContext";
                             String applicationKey = "com.sun.xml.bind.namespace-prefix-mapper";
+                            javax.xml.parsers.DocumentBuilder parser;
+                        }
+                        """,
+                        """
+                        class UnrelatedStrings {
+                            String documentation = /*~~(Old JAXB provider lookup/reflection name is incompatible with JAXB 4 ServiceLoader/JAXBContextFactory discovery)~~>*/"javax.xml.bind.JAXBContext";
+                            String applicationKey = /*~~(Unmapped JAXB RI internal class/property string; verify the 4.0.8 replacement instead of prefix-replacing it)~~>*/"com.sun.xml.bind.namespace-prefix-mapper";
                             javax.xml.parsers.DocumentBuilder parser;
                         }
                         """
@@ -603,6 +790,19 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
     }
 
     @Test
+    void bindingMigrationIsIdempotent() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(BINDING_RECIPE))
+                        .cycles(2).expectedCyclesThatMakeChanges(1),
+                xml(
+                        "<jxb:bindings version=\"2.1\" xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\"/>",
+                        "<jxb:bindings version=\"3.0\" xmlns:jxb=\"https://jakarta.ee/xml/ns/jaxb\"/>",
+                        source -> source.path("src/main/resources/idempotent.xjb")
+                )
+        );
+    }
+
+    @Test
     void preservesXjcVendorExtensionNamespaceWhileMigratingStandardBindingNamespace() {
         rewriteRun(
                 spec -> spec.recipe(environment().activateRecipes(BINDING_RECIPE)),
@@ -717,5 +917,13 @@ class JaxbRuntimeUpgradeTest implements RewriteTest {
                   <dependency><groupId>%s</groupId><artifactId>%s</artifactId><version>%s</version></dependency>
                 </dependencies></project>
                 """.formatted(groupId, artifactId, version);
+    }
+
+    private static String apiPomWithDependencyMarker(String groupId, String artifactId, String version, String marker) {
+        return """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>jaxb-api-app</artifactId><version>1</version><dependencies>
+                  <!--~~(%s)~~>--><dependency><groupId>%s</groupId><artifactId>%s</artifactId><version>%s</version></dependency>
+                </dependencies></project>
+                """.formatted(marker, groupId, artifactId, version);
     }
 }
