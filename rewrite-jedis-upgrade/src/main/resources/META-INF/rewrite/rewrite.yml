@@ -1,0 +1,21 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.jedis
+packageName: com.huawei.clouds.openrewrite.jedis
+description: Upgrade Redis Jedis clients with explicit compatibility guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jedis.UpgradeJedisTo7_2_1
+displayName: Upgrade Jedis to 7.2.1
+description: Upgrade redis.clients:jedis declarations in Maven and Gradle builds to 7.2.1.
+tags:
+  - jedis
+  - redis
+  - java
+  - dependency-upgrade
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: redis.clients
+      artifactId: jedis
+      newVersion: 7.2.1
+      overrideManagedVersion: true

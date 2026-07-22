@@ -41,6 +41,7 @@
     <module>rewrite-echarts-upgrade</module>
     <module>rewrite-fastjson-upgrade</module>
     <module>rewrite-ngx-translate-http-loader-upgrade</module>
+    <module>rewrite-jedis-upgrade</module>
   </modules>
 
   <dependencyManagement>
