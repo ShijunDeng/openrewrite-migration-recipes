@@ -63,6 +63,7 @@
 | [`rewrite-angular-gridster2-upgrade`](rewrite-angular-gridster2-upgrade) | `com.huawei.clouds.openrewrite.angulargridster2.UpgradeAngularGridster2To20_2_4` | 将 angular-gridster2 12/13/16 升级到 20.2.4，并说明 Angular/RxJS peer、standalone、布局、拖拽、responsive 与 SSR 迁移边界 |
 | [`rewrite-netflix-eureka-client-upgrade`](rewrite-netflix-eureka-client-upgrade) | `com.huawei.clouds.openrewrite.netflixeureka.UpgradeNetflixEurekaClientTo2_0_4` | 将原生 Netflix Eureka Client 1.10.18 升级到 2.0.4，并说明 Jakarta、HTTP transport、配置、生命周期、TLS 与协议兼容边界 |
 | [`rewrite-spring-cloud-eureka-client-upgrade`](rewrite-spring-cloud-eureka-client-upgrade) | `com.huawei.clouds.openrewrite.springcloudeureka.UpgradeEurekaClientTo4_2_0` | 将 Spring Cloud Netflix Eureka Client starter 2.1/3.1 升级到 4.2.0，并说明 Boot/Cloud release train、Java 17、Jakarta、配置、LoadBalancer 与 AOT 迁移边界 |
+| [`rewrite-spring-data-elasticsearch-upgrade`](rewrite-spring-data-elasticsearch-upgrade) | `com.huawei.clouds.openrewrite.springdataelasticsearch.MigrateSpringDataElasticsearchTo6_0_5` | 将表格指定的 Spring Data Elasticsearch 4.2/4.4 依赖升级到 6.0.5，并说明 Spring 7、Elasticsearch 9、客户端、查询、mapping、repository 与集群迁移边界 |
 
 后续迁移应新增独立模块，例如：
 

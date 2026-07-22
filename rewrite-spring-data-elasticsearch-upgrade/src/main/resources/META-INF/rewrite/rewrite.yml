@@ -1,0 +1,232 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springdataelasticsearch
+packageName: com.huawei.clouds.openrewrite.springdataelasticsearch
+description: Upgrade Spring Data Elasticsearch while making the Elasticsearch client and Spring generation boundaries explicit.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearchDependencyTo6_0_5
+displayName: Upgrade Spring Data Elasticsearch dependency to 6.0.5
+description: Upgrade only the spreadsheet-listed org.springframework.data:spring-data-elasticsearch Maven and Gradle versions to 6.0.5 without overriding an externally managed version or changing source code.
+tags:
+  - spring-data
+  - elasticsearch
+  - java
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_2_4To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_2_8To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_2_12To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_4_8To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_4_12To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_4_14To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_2_4To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_2_8To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_2_12To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_4_8To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_4_12To6_0_5
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_4_14To6_0_5
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.MigrateSpringDataElasticsearchTo6_0_5
+displayName: Migrate Spring Data Elasticsearch applications to 6.0.5
+description: Apply the conservative dependency upgrade; the Spring, Jakarta, Elasticsearch server, client, query, mapping, repository, and reactive migrations require application-specific validation and are intentionally not rewritten without type and runtime context.
+tags:
+  - spring-data
+  - elasticsearch
+  - java
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearchDependencyTo6_0_5
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_2_4To6_0_5
+displayName: Upgrade Spring Data Elasticsearch 4.2.4 to 6.0.5
+description: Upgrade only org.springframework.data:spring-data-elasticsearch 4.2.4 declarations to 6.0.5.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.2.4
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_2_8To6_0_5
+displayName: Upgrade Spring Data Elasticsearch 4.2.8 to 6.0.5
+description: Upgrade only org.springframework.data:spring-data-elasticsearch 4.2.8 declarations to 6.0.5.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.2.8
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_2_12To6_0_5
+displayName: Upgrade Spring Data Elasticsearch 4.2.12 to 6.0.5
+description: Upgrade only org.springframework.data:spring-data-elasticsearch 4.2.12 declarations to 6.0.5.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.2.12
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_4_8To6_0_5
+displayName: Upgrade Spring Data Elasticsearch 4.4.8 to 6.0.5
+description: Upgrade only org.springframework.data:spring-data-elasticsearch 4.4.8 declarations to 6.0.5.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.4.8
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_4_12To6_0_5
+displayName: Upgrade Spring Data Elasticsearch 4.4.12 to 6.0.5
+description: Upgrade only org.springframework.data:spring-data-elasticsearch 4.4.12 declarations to 6.0.5.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.4.12
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeSpringDataElasticsearch4_4_14To6_0_5
+displayName: Upgrade Spring Data Elasticsearch 4.4.14 to 6.0.5
+description: Upgrade only org.springframework.data:spring-data-elasticsearch 4.4.14 declarations to 6.0.5.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.4.14
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_2_4To6_0_5
+displayName: Upgrade managed Spring Data Elasticsearch 4.2.4 to 6.0.5
+description: Upgrade Maven dependencyManagement entries for org.springframework.data:spring-data-elasticsearch 4.2.4 to 6.0.5.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.2.4
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_2_8To6_0_5
+displayName: Upgrade managed Spring Data Elasticsearch 4.2.8 to 6.0.5
+description: Upgrade Maven dependencyManagement entries for org.springframework.data:spring-data-elasticsearch 4.2.8 to 6.0.5.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.2.8
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_2_12To6_0_5
+displayName: Upgrade managed Spring Data Elasticsearch 4.2.12 to 6.0.5
+description: Upgrade Maven dependencyManagement entries for org.springframework.data:spring-data-elasticsearch 4.2.12 to 6.0.5.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.2.12
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_4_8To6_0_5
+displayName: Upgrade managed Spring Data Elasticsearch 4.4.8 to 6.0.5
+description: Upgrade Maven dependencyManagement entries for org.springframework.data:spring-data-elasticsearch 4.4.8 to 6.0.5.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.4.8
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_4_12To6_0_5
+displayName: Upgrade managed Spring Data Elasticsearch 4.4.12 to 6.0.5
+description: Upgrade Maven dependencyManagement entries for org.springframework.data:spring-data-elasticsearch 4.4.12 to 6.0.5.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.4.12
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springdataelasticsearch.UpgradeManagedSpringDataElasticsearch4_4_14To6_0_5
+displayName: Upgrade managed Spring Data Elasticsearch 4.4.14 to 6.0.5
+description: Upgrade Maven dependencyManagement entries for org.springframework.data:spring-data-elasticsearch 4.4.14 to 6.0.5.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      version: 4.4.14
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.data
+      artifactId: spring-data-elasticsearch
+      newVersion: 6.0.5
+      overrideManagedVersion: false
