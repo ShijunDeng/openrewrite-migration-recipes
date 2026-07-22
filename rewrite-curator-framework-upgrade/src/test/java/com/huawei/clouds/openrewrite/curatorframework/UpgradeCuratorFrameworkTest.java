@@ -199,9 +199,6 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
                 """,
                 """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>profile-property</artifactId><version>1</version>
-                  <properties>
-                    <curator.version>5.7.1</curator.version>
-                  </properties>
                   <profiles><profile><id>legacy</id><activation><activeByDefault>true</activeByDefault></activation><properties><curator.version>5.7.1</curator.version></properties><dependencies><dependency>
                     <groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>${curator.version}</version>
                   </dependency></dependencies></profile></profiles>
@@ -267,25 +264,19 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
     }
 
     @Test
-    void upgradesGradleInterpolatedVersionVariable() {
+    void leavesGradleInterpolatedVersionVariableForItsOwner() {
         rewriteRun(buildGradle(
                 """
                 plugins { id 'java' }
                 repositories { mavenCentral() }
                 def curatorVersion = '2.7.1'
                 dependencies { implementation "org.apache.curator:curator-framework:${curatorVersion}" }
-                """,
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                def curatorVersion = '5.7.1'
-                dependencies { implementation "org.apache.curator:curator-framework:${curatorVersion}" }
                 """
         ));
     }
 
     @Test
-    void upgradesGradleMapVersionVariable() {
+    void leavesGradleMapVersionVariableForItsOwner() {
         rewriteRun(buildGradle(
                 """
                 plugins { id 'java' }
@@ -294,27 +285,22 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
                 dependencies {
                     runtimeOnly group: 'org.apache.curator', name: 'curator-framework', version: curatorVersion
                 }
-                """,
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                def curatorVersion = '5.7.1'
-                dependencies {
-                    runtimeOnly group: 'org.apache.curator', name: 'curator-framework', version: curatorVersion
-                }
                 """
         ));
     }
 
     @Test
-    void leavesGradleKotlinStringNotationWithoutSemanticModelUntouched() {
-        // UpgradeDependencyVersion relies on Gradle's dependency model. A parser-only
-        // Kotlin DSL test has no GradleProject marker and must fail safe.
+    void upgradesLiteralGradleKotlinStringNotationWithoutSemanticModel() {
         rewriteRun(buildGradleKts(
                 """
                 plugins { java }
                 repositories { mavenCentral() }
                 dependencies { implementation("org.apache.curator:curator-framework:2.7.1") }
+                """,
+                """
+                plugins { java }
+                repositories { mavenCentral() }
+                dependencies { implementation("org.apache.curator:curator-framework:5.7.1") }
                 """
         ));
     }
@@ -334,6 +320,27 @@ class UpgradeCuratorFrameworkTest implements RewriteTest {
     @Test
     void preservesTargetVersion() {
         rewriteRun(pomXml(pomWithVersion("5.7.1")));
+    }
+
+    @ParameterizedTest(name = "does not guess spreadsheet-external version {0}")
+    @ValueSource(strings = {"2.7.0", "4.2.0"})
+    void doesNotUpgradeSpreadsheetExternalVersions(String version) {
+        rewriteRun(pomXml(pomWithVersion(version)));
+    }
+
+    @Test
+    void leavesPropertyEmbeddedInUnrelatedMetadataUntouched() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shared-metadata</artifactId><version>1</version>
+                  <properties><curator.version>2.7.1</curator.version></properties>
+                  <name>coordination-${curator.version}</name>
+                  <dependencies><dependency>
+                    <groupId>org.apache.curator</groupId><artifactId>curator-framework</artifactId><version>${curator.version}</version>
+                  </dependency></dependencies>
+                </project>
+                """
+        ));
     }
 
     @ParameterizedTest(name = "does not downgrade newer version {0}")
