@@ -1,0 +1,21 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.jasypt
+packageName: com.huawei.clouds.openrewrite.jasypt
+description: Upgrade Jasypt Spring Boot integration with explicit compatibility guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jasypt.UpgradeJasyptSpringBootStarterTo4_0_3
+displayName: Upgrade Jasypt Spring Boot Starter to 4.0.3
+description: Upgrade com.github.ulisesbocchio:jasypt-spring-boot-starter declarations in Maven and Gradle builds to 4.0.3.
+tags:
+  - jasypt
+  - spring-boot
+  - java
+  - dependency-upgrade
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.github.ulisesbocchio
+      artifactId: jasypt-spring-boot-starter
+      newVersion: 4.0.3
+      overrideManagedVersion: true

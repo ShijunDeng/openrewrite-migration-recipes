@@ -29,6 +29,7 @@
 | [`rewrite-angular-core-upgrade`](rewrite-angular-core-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularCoreTo20_3_26` | 将 `@angular/core` 升级到 20.3.26 |
 | [`rewrite-angular-forms-upgrade`](rewrite-angular-forms-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularFormsTo20_3_26` | 将 `@angular/forms` 升级到 20.3.26 |
 | [`rewrite-angular-compiler-upgrade`](rewrite-angular-compiler-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularCompilerTo20_3_26` | 将 `@angular/compiler` 升级到 20.3.26 |
+| [`rewrite-jasypt-spring-boot-starter-upgrade`](rewrite-jasypt-spring-boot-starter-upgrade) | `com.huawei.clouds.openrewrite.jasypt.UpgradeJasyptSpringBootStarterTo4_0_3` | 将 Jasypt Spring Boot Starter 升级到 4.0.3 |
 
 后续迁移应新增独立模块，例如：
 
