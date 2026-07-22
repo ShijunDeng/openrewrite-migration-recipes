@@ -1,0 +1,25 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.reactresizable
+packageName: com.huawei.clouds.openrewrite.reactresizable
+description: Upgrade react-resizable with strict workbook version ownership, deterministic custom-handle ref wiring, and explicit source, peer graph, lockfile, CSS, callback, and constraint review guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.reactresizable.UpgradeReactResizableTo3_1_3
+displayName: Upgrade react-resizable to 3.1.3
+description: Upgrade only direct package.json react-resizable declarations at the workbook-visible version 1.11.1 to 3.1.3.
+tags: [react, react-resizable, javascript, dependency-upgrade]
+recipeList:
+  - com.huawei.clouds.openrewrite.reactresizable.UpgradeSelectedReactResizableDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.reactresizable.MigrateReactResizableTo3_1_3
+displayName: Migrate react-resizable applications to 3.1.3
+description: Strictly upgrade the workbook-selected dependency, attach refs to deterministic inline native custom handles, and mark exact handle, callback, constraints, peer graph, private import, lockfile, and CSS boundaries requiring review.
+tags: [react, react-resizable, javascript, typescript, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.reactresizable.UpgradeReactResizableTo3_1_3
+  - com.huawei.clouds.openrewrite.reactresizable.MigrateDeterministicReactResizableHandles
+  - com.huawei.clouds.openrewrite.reactresizable.FindReactResizableSourceRisks
+  - com.huawei.clouds.openrewrite.reactresizable.FindReactResizableProjectRisks
+  - com.huawei.clouds.openrewrite.reactresizable.FindReactResizableResourceRisks

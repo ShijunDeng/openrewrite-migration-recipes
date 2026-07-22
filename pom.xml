@@ -103,6 +103,7 @@
     <module>rewrite-log4j-over-slf4j-upgrade</module>
     <module>rewrite-jcl-over-slf4j-upgrade</module>
     <module>rewrite-ojdbc8-upgrade</module>
+    <module>rewrite-react-resizable-upgrade</module>
   </modules>
 
   <dependencyManagement>
