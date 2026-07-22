@@ -1,0 +1,19 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.prettier.UpgradePrettierTo3_6_2
+displayName: Upgrade workbook-selected Prettier dependencies to 3.6.2
+description: >-
+  Upgrades only exact, caret, or tilde direct package.json owners at 1.19.1 or 2.8.8.
+recipeList:
+  - com.huawei.clouds.openrewrite.prettier.UpgradeSelectedPrettierDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.prettier.MigratePrettierTo3_6_2
+displayName: Migrate Prettier 1.19.1 or 2.8.8 to 3.6.2
+description: Run the strict workbook dependency update, deterministic configuration migration, and precise manifest, configuration, and source risk detection.
+recipeList:
+  - com.huawei.clouds.openrewrite.prettier.UpgradePrettierTo3_6_2
+  - com.huawei.clouds.openrewrite.prettier.MigratePrettierConfigOption
+  - com.huawei.clouds.openrewrite.prettier.FindPrettierManifestRisks
+  - com.huawei.clouds.openrewrite.prettier.FindPrettierConfigRisks
+  - com.huawei.clouds.openrewrite.prettier.FindPrettierSourceRisks

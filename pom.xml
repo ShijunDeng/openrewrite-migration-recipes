@@ -114,6 +114,7 @@
     <module>rewrite-markdown-it-upgrade</module>
     <module>rewrite-jsch-upgrade</module>
     <module>rewrite-jaxb-impl-upgrade</module>
+    <module>rewrite-prettier-upgrade</module>
   </modules>
 
   <dependencyManagement>
