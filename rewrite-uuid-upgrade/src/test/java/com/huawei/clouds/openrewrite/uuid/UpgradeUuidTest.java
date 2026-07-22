@@ -183,10 +183,21 @@ class UpgradeUuidTest implements RewriteTest {
         rewriteRun(packageVersion("package.json", oldVersion));
     }
 
-    @ParameterizedTest(name = "upgrades supported npm range {0}")
+    @ParameterizedTest(name = "upgrades supported scalar npm declaration {0}")
     @ValueSource(strings = {
             "^8.3.2",
             "~9.0.0",
+            "^9.0.1",
+            "~10.0.0",
+            "^11.0.3",
+            "~11.1.0"
+    })
+    void upgradesSafeScalarDeclarations(String oldVersion) {
+        rewriteRun(packageVersion("package.json", oldVersion));
+    }
+
+    @ParameterizedTest(name = "leaves ambiguous npm declaration {0} unchanged")
+    @ValueSource(strings = {
             ">=9.0.1 <10",
             "10.0.0 - 11.1.0",
             "9.0.0 || ^11.0.3",
@@ -196,8 +207,11 @@ class UpgradeUuidTest implements RewriteTest {
             "  >= 10.0.0 < 13",
             "=11.1.0"
     })
-    void upgradesCommonRangesDerivedFromSelectedVersions(String oldVersion) {
-        rewriteRun(packageVersion("package.json", oldVersion));
+    void leavesCompoundOrNonCanonicalDeclarationsUntouched(String declaration) {
+        rewriteRun(json(
+                "{\"dependencies\":{\"uuid\":\"" + declaration + "\"}}",
+                source -> source.path("package.json")
+        ));
     }
 
     @Test
@@ -207,7 +221,7 @@ class UpgradeUuidTest implements RewriteTest {
                 {
                   "dependencies": {"uuid": "8.3.2"},
                   "devDependencies": {"uuid": "^9.0.1"},
-                  "peerDependencies": {"uuid": ">=10.0.0 <12"},
+                  "peerDependencies": {"uuid": "^10.0.0"},
                   "optionalDependencies": {"uuid": "~11.0.3"}
                 }
                 """,

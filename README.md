@@ -43,7 +43,7 @@
 | [`rewrite-ngx-echarts-upgrade`](rewrite-ngx-echarts-upgrade) | `com.huawei.clouds.openrewrite.ngxecharts.UpgradeNgxEchartsTo20_0_2` | 将 ngx-echarts 5.x–20.0.1 声明升级到 20.0.2，并说明 Angular/ECharts 配套迁移边界 |
 | [`rewrite-flyway-core-upgrade`](rewrite-flyway-core-upgrade) | `com.huawei.clouds.openrewrite.flyway.MigrateFlywayTo11_14_1` | 严格升级 Flyway Core/插件到 11.14.1，补齐确定的数据库模块并迁移配置、Java API、callback 文件；高风险数据库操作仅标记 |
 | [`rewrite-date-fns-upgrade`](rewrite-date-fns-upgrade) | `com.huawei.clouds.openrewrite.datefns.MigrateDateFnsTo4_1_0` | 严格升级 date-fns 4.1.0，自动迁移确定性的命名导入/CommonJS/公开子路径，并标记 ESM、内部路径、区间、时区与 companion 风险 |
-| [`rewrite-uuid-upgrade`](rewrite-uuid-upgrade) | `com.huawei.clouds.openrewrite.uuid.UpgradeUuidTo13_0_2` | 将表格指定的 uuid 8.x–11.x 声明升级到 13.0.2，保留协议引用和未列版本 |
+| [`rewrite-uuid-upgrade`](rewrite-uuid-upgrade) | `com.huawei.clouds.openrewrite.uuid.MigrateUuidTo13_0_2` | 严格升级 uuid 13.0.2，自动迁移旧 ESM subpath 与冗余类型依赖，并标记 CommonJS、Node、状态语义、buffer 和 React Native 风险 |
 | [`rewrite-shedlock-spring-upgrade`](rewrite-shedlock-spring-upgrade) | `com.huawei.clouds.openrewrite.shedlockspring.MigrateShedLockSpringTo7_2_1` | 严格升级 ShedLock Spring 7.2.1，自动迁移旧 SchedulerLock 包名、duration 与 interceptMode，并标记 AOP、provider、异步及构建兼容风险 |
 | [`rewrite-ng-dynamic-forms-core-upgrade`](rewrite-ng-dynamic-forms-core-upgrade) | `com.huawei.clouds.openrewrite.ngdynamicforms.UpgradeNgDynamicFormsCoreTo18_0_0` | 将 @ng-dynamic-forms/core 14.x–17.x 升级到 18.0.0，并说明 Angular/standalone/UI 配套迁移 |
 | [`rewrite-tweenjs-upgrade`](rewrite-tweenjs-upgrade) | `com.huawei.clouds.openrewrite.tweenjs.UpgradeTweenJsTo23_1_1` | 将表格指定的 @tweenjs/tween.js 19/20 声明升级到 23.1.1，并说明模块与时间轴行为变化 |

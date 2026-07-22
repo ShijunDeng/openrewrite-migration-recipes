@@ -2,36 +2,51 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.uuid
 packageName: com.huawei.clouds.openrewrite.uuid
-description: Upgrade selected uuid declarations with explicit ESM, runtime, browser, TypeScript, and timestamp UUID migration guidance.
+description: Upgrade selected uuid declarations and migrate applications across the ESM, exports, runtime, TypeScript, and state-semantics changes through uuid 13.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.uuid.UpgradeUuidTo13_0_2
 displayName: Upgrade uuid to 13.0.2
-description: Update the spreadsheet-selected direct uuid declarations in package.json to 13.0.2 without changing aliases, workspace references, lockfiles, overrides, source code, or newer versions.
-tags:
-  - uuid
-  - rfc9562
-  - javascript
-  - typescript
-  - nodejs
-  - dependency-upgrade
+description: Upgrade only spreadsheet-selected exact, caret, or tilde direct uuid declarations without changing compound ranges, aliases, protocols, lockfiles, or unlisted versions.
+tags: [uuid, rfc9562, javascript, typescript, dependency-upgrade]
 preconditions:
   - org.openrewrite.FindSourceFiles:
       filePattern: package.json;**/package.json
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.dependencies[?(@.uuid =~ '^[<>=~^ ]*v?(?:8\.3\.2|9\.0\.[01]|10\.0\.0|11\.(?:0\.3|1\.0))(?:[-+ <>=~^|].*)?$')].uuid
-      value: '"13.0.2"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.devDependencies[?(@.uuid =~ '^[<>=~^ ]*v?(?:8\.3\.2|9\.0\.[01]|10\.0\.0|11\.(?:0\.3|1\.0))(?:[-+ <>=~^|].*)?$')].uuid
-      value: '"13.0.2"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.peerDependencies[?(@.uuid =~ '^[<>=~^ ]*v?(?:8\.3\.2|9\.0\.[01]|10\.0\.0|11\.(?:0\.3|1\.0))(?:[-+ <>=~^|].*)?$')].uuid
-      value: '"13.0.2"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.optionalDependencies[?(@.uuid =~ '^[<>=~^ ]*v?(?:8\.3\.2|9\.0\.[01]|10\.0\.0|11\.(?:0\.3|1\.0))(?:[-+ <>=~^|].*)?$')].uuid
-      value: '"13.0.2"'
+  - com.huawei.clouds.openrewrite.uuid.UpgradeSelectedUuidDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.uuid.MigrateDeterministicUuidSourceTo13
+displayName: Migrate deterministic uuid source imports to 13
+description: Convert legacy uuid/v1, v3, v4, and v5 default ESM imports and re-exports to root named exports while preserving aliases and formatting.
+tags: [uuid, javascript, typescript, esm, source-migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.uuid.MigrateLegacyUuidImports
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.uuid.RemoveRedundantUuidTypesFor13
+displayName: Remove redundant uuid DefinitelyTyped dependency
+description: Remove one ordinary @types/uuid devDependency only when uuid 13.0.2 safely owns declarations in the same manifest.
+tags: [uuid, typescript, dependency-cleanup]
+recipeList:
+  - com.huawei.clouds.openrewrite.uuid.RemoveRedundantUuidTypes
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.uuid.AuditUuid13Compatibility
+displayName: Audit uuid 13 compatibility
+description: Mark skipped dependency declarations, ESM and exports changes, runtime baselines, timestamp state semantics, buffer bounds, and React Native ordering at exact review sites.
+tags: [uuid, javascript, typescript, esm, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.uuid.FindUuidManifestMigrationRisks
+  - com.huawei.clouds.openrewrite.uuid.FindUuidSourceMigrationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.uuid.MigrateUuidTo13_0_2
+displayName: Migrate uuid applications to 13.0.2
+description: Strictly upgrade selected uuid declarations, migrate deterministic ESM imports, remove safely redundant types, and mark context-dependent uuid 13 risks.
+tags: [uuid, rfc9562, javascript, typescript, esm, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.uuid.UpgradeUuidTo13_0_2
+  - com.huawei.clouds.openrewrite.uuid.MigrateDeterministicUuidSourceTo13
+  - com.huawei.clouds.openrewrite.uuid.RemoveRedundantUuidTypesFor13
+  - com.huawei.clouds.openrewrite.uuid.AuditUuid13Compatibility
