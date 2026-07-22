@@ -16,6 +16,12 @@ updates:
       maven-plugins:
         patterns:
           - "org.apache.maven.plugins:*"
+    ignore:
+      # Major versions in this repository often represent the intentionally old
+      # API surface consumed by a migration fixture, not a production dependency.
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: github-actions
     directory: /
@@ -25,3 +31,7 @@ updates:
       time: "02:30"
       timezone: Asia/Shanghai
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
