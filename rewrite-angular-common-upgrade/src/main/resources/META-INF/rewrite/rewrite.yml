@@ -17,15 +17,21 @@ preconditions:
   - org.openrewrite.FindSourceFiles:
       filePattern: package.json;**/package.json
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.dependencies['@angular/common']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.devDependencies['@angular/common']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.peerDependencies['@angular/common']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.optionalDependencies['@angular/common']
-      value: '"20.3.26"'
+  - com.huawei.clouds.openrewrite.angular.UpgradeSelectedAngularCommonDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.MigrateAngularCommonTo20_3_26
+displayName: Migrate @angular/common applications to 20.3.26
+description: Upgrade spreadsheet-selected exact, caret, or tilde dependencies, apply deterministic source/configuration changes, and precisely mark choices that require application knowledge.
+tags:
+  - angular
+  - angular-common
+  - typescript
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.UpgradeSelectedAngularCommonDependency
+  - com.huawei.clouds.openrewrite.angular.MigrateDeterministicAngularCommonSource
+  - com.huawei.clouds.openrewrite.angular.RemoveRedundantEnableIvy
+  - com.huawei.clouds.openrewrite.angular.FindAngularCommonJsonRisks
+  - com.huawei.clouds.openrewrite.angular.FindAngularCommonTypeScriptRisks
+  - com.huawei.clouds.openrewrite.angular.FindAngularCommonTemplateRisks
