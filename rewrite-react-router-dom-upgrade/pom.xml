@@ -11,12 +11,17 @@
   </parent>
   <artifactId>rewrite-react-router-dom-upgrade</artifactId>
   <name>OpenRewrite React Router DOM Upgrade</name>
-  <description>Configuration-based OpenRewrite recipe for upgrading react-router-dom 4.3.1 to 6.30.4.</description>
+  <description>OpenRewrite recipes for upgrading spreadsheet-selected react-router-dom versions to 6.30.4.</description>
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-react-router-dom-upgrade</url>
   <dependencies>
     <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-json</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-javascript</artifactId>
+      <version>${rewrite.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openrewrite</groupId>

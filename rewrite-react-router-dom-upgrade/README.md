@@ -1,71 +1,116 @@
-# React Router DOM 4.3.1 升级到 6.30.4
+# React Router DOM 升级到 6.30.4
 
-本模块对应 `开源软件升级.xlsx` 中的 npm 包 `react-router-dom`，将直接声明的 `4.3.1`（包括 `^4.3.1`、`~4.3.1` 和以 `4.3.1` 为边界的常见 range）升级到 `6.30.4`。
+本模块对应 `开源软件升级.xlsx` 中的 npm 包 `react-router-dom`。它把表格明确可见的源版本升级到 `6.30.4`，自动完成少量可证明的配置/源码修改，并把其余不兼容点精确标记在需要人工决策的 JSON、import、JSX tag/attribute、调用或 route-object property 上。
 
-配方名称：
+## 表格边界
+
+表格可见的源版本为：
+
+| 可见源版本 | 目标版本 | 自动接受的声明 |
+| --- | --- | --- |
+| `4.3.1` | `6.30.4` | `4.3.1`、`^4.3.1`、`~4.3.1` |
+| `5.2.0` | `6.30.4` | `5.2.0`、`^5.2.0`、`~5.2.0` |
+| `5.2.1` | `6.30.4` | `5.2.1`、`^5.2.1`、`~5.2.1` |
+| `5.3.0` | `6.30.4` | `5.3.0`、`^5.3.0`、`~5.3.0` |
+| `5.3.1` | `6.30.4` | `5.3.1`、`^5.3.1`、`~5.3.1` |
+| `5.3.2` | `6.30.4` | `5.3.2`、`^5.3.2`、`~5.3.2` |
+| `5.3.4` | `6.30.4` | `5.3.4`、`^5.3.4`、`~5.3.4` |
+| `6.10.0` | `6.30.4` | `6.10.0`、`^6.10.0`、`~6.10.0` |
+| `6.14.0` | `6.30.4` | `6.14.0`、`^6.14.0`、`~6.14.0` |
+| `6.14.2 ...（共15个版本）` | `6.30.4` | 只接受可见基准 `6.14.2`、`^6.14.2`、`~6.14.2` |
+
+最后一格是折叠展示；模块不会猜测被隐藏的另外 14 个版本。range、`v`/`=` 前缀、prerelease、build metadata、tag、变量和协议引用都不自动升级，而是在推荐配方中标记。
+
+## 配方
+
+只升级依赖：
 
 ```text
 com.huawei.clouds.openrewrite.reactrouterdom.UpgradeReactRouterDomTo6_30_4
 ```
 
-## 自动处理范围
+推荐的完整迁移清单：
 
-配方仅修改根目录或 workspace 子目录 `package.json` 的 `dependencies`、`devDependencies`、`peerDependencies` 和 `optionalDependencies`，把可确定来自 `4.3.1` 的 registry semver 声明设置为精确版本 `6.30.4`。
+```text
+com.huawei.clouds.openrewrite.reactrouterdom.MigrateReactRouterDomTo6_30_4
+```
 
-它不会修改其他 4.x/5.x、目标或更高版本，不会覆盖 `workspace:`、npm alias、Git、file/link、URL/tarball、tag、变量等非 registry 声明；也不会修改 `overrides`、`resolutions`、lockfile、shrinkwrap 或其他 JSON。配方有意保留 `react-router`、`history`、`connected-react-router`、`react-router-config` 和旧 `@types`，因为是否删除或升级这些包依赖实际源码和运行架构，自动联动可能破坏应用。
+推荐配方依次执行严格依赖升级、确定性 package.json 清理、确定性源码修改、JSON 风险扫描和 TypeScript/JavaScript/JSX/TSX 风险扫描。
 
-本模块只安全地改变依赖字符串，不改写 JavaScript/TypeScript/JSX/TSX。4.3.1→6.30.4 跨越路由匹配、渲染、导航和 SSR/data router 架构，简单的符号替换不能证明行为等价；应把生成的依赖 patch 当成迁移清单入口，而不是可直接上线的完整源码迁移。
+## AUTO / MARK / NO-OP 矩阵
 
-## 不兼容修改点
+| 输入 | 行为 | 原因与验证重点 |
+| --- | --- | --- |
+| 四个直接依赖区中的表格白名单 exact/`^`/`~` | **AUTO**：改为精确 `6.30.4` | 输入和目标确定；所有 30 个声明均有参数化测试 |
+| 目标包已是 `6.30.4` 且直接声明 `@types/react-router-dom` | **AUTO**：删除旧 types 包 | 6.30.4 自带 `.d.ts`；保留可能仍被独立 `react-router` 消费的 `@types/react-router` 并标记 |
+| 从 `react-router-dom` 导入的 `<NavLink exact>`，包括 alias 和赋值形式 | **AUTO**：`exact` 改为 `end` | 官方 v5→v6 指南给出一一对应重命名；不会匹配本地或其他库同名组件 |
+| `StaticRouter` 是 `react-router-dom` 唯一 named import | **AUTO**：模块改为 `react-router-dom/server` | 官方明确移动入口；mixed import 不能只换模块，转为 MARK |
+| `Switch`、`Redirect`、`Prompt`、`Routes`、`RouterProvider`、`StaticRouter`、`ConnectedRouter` | **MARK**：标记具体 JSX tag | 排名、children、redirect history、blocker、SSR/hydration 或外部 history 语义需业务判断 |
+| `Route` 的 `component`/`render`/`children`/`exact`/`strict`/`sensitive`/`path` 和 data-route props | **MARK**：标记具体 JSX attribute | `element`、hooks、`/*`、相对路由、pattern、loader/action/error/lazy 生命周期不可机械等价 |
+| `NavLink activeClassName/activeStyle/strict`，`Link component`，导航 `to/state`，Router integration props | **MARK**：标记具体 attribute | 样式 callback、可访问性、相对 URL、history state、basename/SSR 行为需回归 |
+| `useHistory`/history methods、`withRouter`、matching APIs、blockers、redirect helpers | **MARK**：标记具体 call | push/replace/state/POP、pattern/result、状态机和 redirect 安全需业务测试 |
+| `react-router-config`、data-router factory 与其直接 route-object fields | **MARK**：标记 call/property | route tree 必须整体迁移并验证 nesting、Outlet、数据生命周期、错误与 SSR |
+| 老 React/ReactDOM、Node、直接 `react-router`、history/Redux/config/compat/types companions、中央版本所有者 | **MARK**：标记具体 JSON value | 要跨 package、运行环境或架构协同处理 |
+| 未列出的 scalar、range、protocol、central owner、nested metadata、lockfile/shrinkwrap、非 package JSON | **NO-OP**（推荐配方对可识别风险加 MARK） | 防止猜测折叠版本、覆盖版本策略或污染生成文件 |
+| `Route exact/component`、mixed `StaticRouter` import、`Switch`/Redirect/history 等非确定性源码 | **NO-OP + MARK** | 保留原代码并给出决策提示，不生成表面可编译但行为错误的 patch |
+| 本地或其他包的同名 `Route`/`Switch`/`NavLink`/`useHistory` | **NO-OP** | import-aware 反例测试防止误报和误改 |
 
-| 变化 | 影响与迁移建议 |
+## 主要不兼容修改点
+
+| 变化 | 处理建议 |
 | --- | --- |
-| React Router v6 大量使用 Hooks | React 与 ReactDOM 必须至少为 `16.8`。官方建议先独立升级 React 并发布验证，再迁移 Router；class component 需要包装函数组件或重构后才能使用 Router hooks |
-| 大型 v4/v5 应用不宜一次切换 | 官方建议先到 v5.1，消除旧 render API、floating Route 和 `withRouter`，或使用 `react-router-dom-v5-compat` 让 v5/v6 路由逐段共存；完成后删除 compat 包 |
-| `<Switch>` 改为 `<Routes>` | `<Routes>` 按最佳匹配选择而不是按声明顺序 first-match；因此 404、静态/动态路径优先级可能改变。其直接子节点必须是 `<Route>` 或 fragment，自定义 `PrivateRoute` 要改成 route element/wrapper |
-| `<Route exact>` 被移除 | v6 默认进行完整 segment 匹配；需要在另一个组件中继续匹配 descendant routes 的父 route 使用尾部 `/*`。不要机械删除 `exact` 而不验证 index 与嵌套路由 |
-| `component`/`render`/旧 `children` rendering API 改为 `element` | `component={Page}`→`element={<Page />}`，`render={props => ...}`→普通 element，并在组件内用 hooks 取 params/location；自有 props 直接传入元素。v6 的 `children` 用于嵌套 route definitions，不再等价于旧 render prop |
-| `<Redirect>` 改为 `<Navigate>` 或服务端 redirect | `<Navigate to="..." replace />` 用于 render-time 客户端导航；`<Routes>` 内 redirect 通常写成 `<Route path="old" element={<Navigate ... />} />`。首屏重定向优先在服务端完成，data router 的 loader/action 使用 `redirect()` |
-| `useHistory`/`history` 改为 `useNavigate` | `history.push(to)`→`navigate(to)`，`replace`→`navigate(to,{replace:true})`，`go(n)`→`navigate(n)`；不能继续依赖外部 `history` object 的 listen/block/length 细节。命令式导航还需回归 state、relative、replace 和 transition 行为 |
-| `withRouter` 被移除 | 函数组件改用 `useLocation`、`useNavigate`、`useParams`、`useMatch`；class/第三方组件需要自建受控 HOC 把 hook 结果作为 props 注入。盲目删除 HOC 会丢失更新触发和 route props |
-| `useRouteMatch` 改为 `useMatch` | `useMatch` 必须给出 pattern；旧 `match.path`/`match.url` 拼接通常改为相对 path/link，参数读取用 `useParams`，URL resolution 可用 `useResolvedPath` |
-| route/link 默认采用相对层级语义 | 子 route path 与 `<Link to>` 会相对父 route；嵌套 UI 应由父 route 的 `<Outlet>` 渲染。检查旧代码中 `match.path`/`match.url` 字符串拼接、开头 `/`、`..`、index route、pathless layout 和 splat，否则可能得到不同 URL/层级 |
-| route path 语法与 `path-to-regexp` 不同 | v6 不接受 regexp path、自定义 regexp group 或 path 数组，应把这些变体拆成多条 route；6.30.4 支持 `?` optional segment，但其排名/嵌套语义仍需回归。旧 strict/sensitive 配置要按 v6 route API 重新表达 |
-| `<NavLink>` API 变化 | `exact`→`end`；`activeClassName`/`activeStyle` 被删除，改用 `className`/`style` callback 的 `isActive`/`isPending`。回归尾斜杠、根路径、大小写和 pending 状态 |
-| `<Prompt>` 被移除 | v6.30.4 可用 `useBlocker` 实现应用内导航确认，浏览器 unload 另配 `useBeforeUnload`；`unstable_usePrompt` 依赖 `window.confirm` 且多次前进/后退时跨浏览器行为不可靠。必须明确 blocker 的 proceed/reset 状态机 |
-| 导航与 location state 约定变化 | v6 `<Link state>`/`navigate(...,{state})` 取代把 state 放进 `to` object 的部分旧写法；`<Navigate>` 默认 push 而旧 `<Redirect>` 常见语义不同，需明确 `replace`。验证 search/hash、编码、basename 和 back/forward |
-| `react-router-config`/静态 route config 迁移 | 使用 `useRoutes`、`createRoutesFromElements` 或 data router route objects；`renderRoutes`、`matchRoutes` 的参数/返回假设不可直接沿用。route object 的 `Component` 与 JSX `<Route component>` 不是同一 API |
-| `connected-react-router` 与自建 history 集成 | v6 不鼓励应用直接维护外部 history；应评估移除 `connected-react-router`、Redux router reducer/middleware 和直接 `history.push`，改用 Router context/hooks。若暂时保留，先验证其明确支持的 Router major，不能只提升 DOM 包 |
-| v6.4+ 引入 data routers | `createBrowserRouter`/`RouterProvider` 才提供 loader、action、fetcher、errorElement、defer 等数据 API；不能假定把现有 `<BrowserRouter>` 换名就获得这些能力。Router 应在 React tree 外创建，嵌套路由使用 `Outlet`，并设计 revalidation/error boundary |
-| SSR 入口和流程变化 | declarative SSR 使用 `react-router-dom/server` 的 `StaticRouter`；data router SSR 使用 `createStaticHandler`、`createStaticRouter`、`StaticRouterProvider`，同时传递 hydration data。重定向/状态码/headers 必须在发 HTML 前处理，客户端 route tree 与 hydration data 必须一致 |
-| lazy/Suspense 与 data-router lazy 含义不同 | `React.lazy` 仍负责 component bundle；route `lazy` 返回 route module 字段并在匹配后执行。重新检查 chunk error、loader 并发、fallback/hydration fallback 和错误边界，不要混用两类 contract |
-| v7 future flags 会产生告警 | 6.28+ 会提示尚未选择的 v7 行为。逐项验证并显式启用/禁用 `v7_relativeSplatPath`、`v7_startTransition` 等适用 flags，尤其回归 splat 下相对链接与 fetcher persistence，为后续 v7 降低风险 |
-| 6.30.3/6.30.4 包含 redirect/path 修复 | 6.30.3 校验 redirect location 以修复 open-redirect XSS；6.30.4 把 decodePath 移出匹配热路径并规范化 redirect 的双斜杠。若应用曾依赖外部协议、协议相对或 `//` redirect，必须做安全与行为回归 |
-| TypeScript 类型随包发布 | v6 包含自身 `.d.ts`，旧 `@types/react-router-dom` 代表 v4/v5 API，通常应在源码迁移完成后删除；升级 TS 后检查 JSX element、route object、loader/action data 和 module resolution 错误，不要用 `skipLibCheck` 掩盖双版本类型 |
-| Node、bundler 与公开入口 | 6.30.4 manifest 要求 Node `>=14`，声明 `main`、`module`、types，并提供 `server.js`/`server.mjs`。升级构建/SSR/Jest 工具后验证 CJS/ESM resolution、tree shaking 和 browser/server 分包；只用 `react-router-dom` 与 `react-router-dom/server` 等公开入口，不依赖 `dist` 深路径 |
+| React Hooks 前提 | v6 大量使用 Hooks，先把 React/ReactDOM 升到 `>=16.8`，独立部署验证后再动 Router |
+| 渐进迁移 | 大型 v4/v5 应用先到 v5.1，清理旧 render API、floating/custom Route 和 `withRouter`；必要时用 `react-router-dom-v5-compat` 分段迁移，完成后删除 compat |
+| `Switch`→`Routes` | v6 采用 best-match ranking，不再 first-match；直接 child 只能是 `Route`/fragment。回归静态/动态优先级、PrivateRoute 和 404 |
+| `Route` rendering | `component`/`render` 改为 `element`，route 数据改用 hooks；`children` 在 v6 表示嵌套定义，父 element 通过 `Outlet` 渲染子路由 |
+| exact/descendant routes | v6 默认按 segment 完整匹配，但在另一个组件中继续渲染 descendant `Routes` 的父 path 需要尾部 `/*`，不能机械删除 `exact` |
+| path semantics | route/link 默认相对父 route；复杂 regexp、自定义 regexp group、path array、旧 strict 行为需要重构。检查 splat、optional segment、大小写、尾斜杠和 basename |
+| Redirect/Navigate | render-time 客户端导航用 `Navigate`，loader/action 用 `redirect()`，首屏 redirect 优先服务端处理；v5 `Redirect` 默认 replace，而 v6 `Navigate` 默认 push |
+| history/navigation | `useHistory` 改为 `useNavigate`；push、replace、go 的映射虽明确，但 state、relative、pending navigation、listen/block 和外部 history 架构必须整体验证 |
+| matching | `useRouteMatch`→`useMatch` 后 pattern 必填；`matchPath` 参数顺序、`end`/`caseSensitive` options 和返回 shape 均改变 |
+| Link/NavLink | `exact`→`end`；`activeClassName`/`activeStyle` 改 callback；`Link component` 被移除；state 应作为单独 prop。回归 ref、target、取消点击和可访问性 |
+| blockers | `Prompt` 被移除。应用内导航用 `useBlocker` 或谨慎使用 `unstable_usePrompt`，unload 另用 `useBeforeUnload`，明确 proceed/reset 状态机 |
+| route config/data routers | `react-router-config` 转为 `useRoutes`/route objects；v6.4+ data API 需要 `create*Router`+`RouterProvider`，重新设计 loader/action/error/revalidation/fetcher/lazy |
+| SSR | `StaticRouter` 从 `react-router-dom/server` 导入；data-router SSR 使用 static handler/router/provider，并在发送 HTML 前处理 status、headers、redirect 与 hydration data |
+| types/module resolution | 6.30.4 自带 types，旧 DefinitelyTyped 包会暴露 v4/v5 API；manifest 同时提供 browser/server 与 CJS/ESM 入口，禁止依赖 `dist` 私有路径 |
+| runtime/security | 目标 manifest 要求 Node `>=14`。6.30.3 校验 redirect location，6.30.4 规范化 redirect 双斜杠；测试外部/协议相对 URL、状态码和 open-redirect/XSS 边界 |
 
-这些变化必须以固定目标标签下的官方 [v5→v6 upgrade guide](https://github.com/remix-run/react-router/blob/react-router%406.30.4/docs/upgrading/v5.md)、[6.30.4 changelog](https://github.com/remix-run/react-router/blob/react-router%406.30.4/CHANGELOG.md#v6304)、[6.30.4 package manifest](https://github.com/remix-run/react-router/blob/react-router%406.30.4/packages/react-router-dom/package.json)、[SSR guide](https://github.com/remix-run/react-router/blob/react-router%406.30.4/docs/guides/ssr.md) 与 [useBlocker API](https://github.com/remix-run/react-router/blob/react-router%406.30.4/docs/hooks/use-blocker.md) 为准。
+## 固定证据
 
-## 真实代码样本
+目标 tag `react-router@6.30.4`/`react-router-dom@6.30.4` 固定到提交 [`72973b6493d27014aa76a23a95e3ca186616c4fd`](https://github.com/remix-run/react-router/commit/72973b6493d27014aa76a23a95e3ca186616c4fd)。实现与说明依据该提交下的：
 
-- [s-yadav/class-to-function-with-react-hooks@f8853e0c](https://github.com/s-yadav/class-to-function-with-react-hooks/blob/f8853e0cf38a919c7688da73576f1c995ebf7f25/package.json) 使用精确 `4.3.1`、React 16.8 和 CRA 2；其 [routes.js](https://github.com/s-yadav/class-to-function-with-react-hooks/blob/f8853e0cf38a919c7688da73576f1c995ebf7f25/src/routes.js) 使用 `{path, component}` route config，迁移时要转换为 element/route objects。
-- [ohansemmanuel/nav-state-react-router@e38f9f03](https://github.com/ohansemmanuel/nav-state-react-router/blob/e38f9f039d1119c3a2f8a82ddecc16c23883bac0/package.json) 使用 `^4.3.1`、React 16.4、Redux 和 CRA 1；其 [App.js](https://github.com/ohansemmanuel/nav-state-react-router/blob/e38f9f039d1119c3a2f8a82ddecc16c23883bac0/src/containers/App.js) 含典型 `<Switch>`、`exact`、`component` API，并且必须先把 React 升到 16.8+。
-- [supasate/connected-react-router@d822fb9a basic example](https://github.com/supasate/connected-react-router/blob/d822fb9afd12e9d32e8353a04c1c6b4b5ba95f72/examples/basic/package.json) 同时声明 `connected-react-router`、外部 `history`、`react-router` 和 `react-router-dom ^4.3.1`；其 [routes](https://github.com/supasate/connected-react-router/blob/d822fb9afd12e9d32e8353a04c1c6b4b5ba95f72/examples/basic/src/routes/index.js) 使用 `Switch/component`，而 [App](https://github.com/supasate/connected-react-router/blob/d822fb9afd12e9d32e8353a04c1c6b4b5ba95f72/examples/basic/src/App.js) 将外部 history 传给 `ConnectedRouter`，证明只改依赖无法安全完成源码迁移。
-- JSONPath 与断言结构参考 OpenRewrite 官方 [ChangeValueTest](https://github.com/openrewrite/rewrite/blob/main/rewrite-json/src/test/java/org/openrewrite/json/ChangeValueTest.java) 和 [JsonPathMatcherTest](https://github.com/openrewrite/rewrite/blob/main/rewrite-json/src/test/java/org/openrewrite/json/JsonPathMatcherTest.java)。
+- [v5→v6 upgrade guide](https://github.com/remix-run/react-router/blob/72973b6493d27014aa76a23a95e3ca186616c4fd/docs/upgrading/v5.md)
+- [6.30.4 changelog](https://github.com/remix-run/react-router/blob/72973b6493d27014aa76a23a95e3ca186616c4fd/CHANGELOG.md)
+- [react-router-dom package.json](https://github.com/remix-run/react-router/blob/72973b6493d27014aa76a23a95e3ca186616c4fd/packages/react-router-dom/package.json)
+- [SSR guide](https://github.com/remix-run/react-router/blob/72973b6493d27014aa76a23a95e3ca186616c4fd/docs/guides/ssr.md)
+- [useBlocker documentation](https://github.com/remix-run/react-router/blob/72973b6493d27014aa76a23a95e3ca186616c4fd/docs/hooks/use-blocker.md)
 
-25 个测试覆盖 3 个固定提交真实样本、精确/caret/tilde/range/`v` 前缀/prerelease/build metadata、四个依赖区、根包与多级 workspace，以及目标/新版本、相邻 4.x、v5、协议/alias/tag/变量、lockfile/shrinkwrap、其他 JSON、相似包名、override/resolution、嵌套配置和非字符串声明的严格 no-op。
+OpenRewrite 测试结构参考固定提交中的 [ChangeValueTest](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-json/src/test/java/org/openrewrite/json/ChangeValueTest.java)、[JsonPathMatcherTest](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-json/src/test/java/org/openrewrite/json/JsonPathMatcherTest.java) 和 rewrite-javascript 的 [ImportTest](https://github.com/openrewrite/rewrite-javascript/blob/9e3b820e6a44808b095bb7e3aab670fd67de99a5/rewrite-javascript/src/test/java/org/openrewrite/javascript/tree/ImportTest.java)：每个变换同时提供 before/after、idempotence 和同名误报反例。
+
+## 真实仓库用例
+
+- [`s-yadav/class-to-function-with-react-hooks@f8853e0c`](https://github.com/s-yadav/class-to-function-with-react-hooks/tree/f8853e0cf38a919c7688da73576f1c995ebf7f25) 的 package 使用精确 `4.3.1`、React 16.8；routes 使用 `{path, component}` 静态配置。
+- [`ohansemmanuel/nav-state-react-router@e38f9f03`](https://github.com/ohansemmanuel/nav-state-react-router/tree/e38f9f039d1119c3a2f8a82ddecc16c23883bac0) 使用 `^4.3.1`、React 16.4，并含 `Switch`、`Route exact/component`；测试同时覆盖依赖 AUTO 和精确 MARK。
+- [`supasate/connected-react-router@d822fb9a`](https://github.com/supasate/connected-react-router/tree/d822fb9afd12e9d32e8353a04c1c6b4b5ba95f72) basic example 同时依赖 connected router、外部 history、react-router 与 DOM 包，并把 history 传入 `ConnectedRouter`。
+- [`orcuntuna/react-turkce-kaynak@c1a5cdd3`](https://github.com/orcuntuna/react-turkce-kaynak/blob/c1a5cdd3ff89cccdc454b3832b4e54f66bc1c848/README.md) 的真实教学片段包含 `Switch`、`Route exact`、`Link`、`useHistory` 和 `history.push`。
+- [`CareLuLu/react-native-web-ui-components@249b7cd1`](https://github.com/CareLuLu/react-native-web-ui-components/blob/249b7cd1ccf42975525ac917c22eec4d3475f290/README.md) 的 SSR 片段包含从旧 DOM 入口导入的 `StaticRouter`、`Switch` 和 route rendering API。
+- [`JofArnold/NavLink@9662a48f`](https://github.com/JofArnold/21d8176377ef5a7d55a7b9221b852e63) 与 [`Klerith/Navbar`](https://gist.github.com/Klerith/0270b5fd6652d6f31705b877cb970d4b) 提供 `exact`、`strict`、`activeClassName`、`activeStyle` 的真实组合，用于证明只有 `exact→end` 自动修改，其余保留并标记。
+
+测试套件当前包含 88 个执行用例：62 个依赖边界/真实 package 用例、6 个确定性 AUTO/幂等/误报用例、16 个精确 MARK/NO-OP/真实源码用例，以及 4 个 YAML 发现与组合用例。
 
 ## 使用与验证
+
+推荐先 dry run：
 
 ```bash
 mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:dryRun \
   -Drewrite.recipeArtifactCoordinates=com.huawei.clouds.openrewrite:rewrite-react-router-dom-upgrade:1.0.0-SNAPSHOT \
-  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.reactrouterdom.UpgradeReactRouterDomTo6_30_4
+  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.reactrouterdom.MigrateReactRouterDomTo6_30_4
 ```
 
-大型项目优先按官方路径分阶段：React 升至 16.8+；Router 到 v5.1 并消除旧 API；必要时引入 v5 compat；最后切到 v6.30.4 并删除 compat/旧类型/不再使用的 history 集成。确认 dependency patch 后重建 lockfile，运行 TypeScript、lint、unit/component/E2E、production build 与 SSR/hydration 测试，并覆盖深链接、404、redirect、relative/splat、basename、导航阻断、浏览器前进后退、data loaders/actions/errors 和安全 redirect。
+审查 AUTO patch 和每个 `~~(...)~~>` 标记后，重建 lockfile，并运行 TypeScript、lint、unit/component/E2E、production build 与 SSR/hydration 测试；至少覆盖 deep link、404、redirect、relative/splat、basename、back/forward、navigation blocking、loader/action/error 和安全 redirect。
 
-本模块自身验证：
+模块验证：
 
 ```bash
 mvn -f rewrite-react-router-dom-upgrade/pom.xml clean verify
