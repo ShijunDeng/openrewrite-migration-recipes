@@ -1,0 +1,35 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.bootstrap
+packageName: com.huawei.clouds.openrewrite.bootstrap
+description: Upgrade Bootstrap dependencies and surface template, style, JavaScript, package-manager, Sass, wrapper, runtime, browser, and accessibility decisions.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bootstrap.UpgradeBootstrapTo5_3_6
+displayName: Upgrade selected Bootstrap dependencies to 5.3.6
+description: Update only XLSX-visible exact, caret, or tilde direct bootstrap declarations in package.json while preserving declaration style.
+tags:
+  - bootstrap
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.bootstrap.UpgradeSelectedBootstrapDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bootstrap.MigrateBootstrapTo5_3_6
+displayName: Migrate Bootstrap applications to 5.3.6
+description: Apply the strict dependency upgrade, deterministic markup and imported JavaScript migrations, and precise manifest, lockfile, configuration, template, Sass, CSS, browser, runtime, and accessibility markers.
+tags:
+  - bootstrap
+  - javascript
+  - typescript
+  - html
+  - css
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.bootstrap.UpgradeBootstrapTo5_3_6
+  - com.huawei.clouds.openrewrite.bootstrap.MigrateDeterministicBootstrapMarkup
+  - com.huawei.clouds.openrewrite.bootstrap.MigrateDeterministicBootstrapSource
+  - com.huawei.clouds.openrewrite.bootstrap.FindBootstrapJsonRisks
+  - com.huawei.clouds.openrewrite.bootstrap.FindBootstrapJavaScriptRisks
+  - com.huawei.clouds.openrewrite.bootstrap.FindBootstrapTemplateStyleRisks
+  - com.huawei.clouds.openrewrite.bootstrap.FindBootstrapTextLockRisks

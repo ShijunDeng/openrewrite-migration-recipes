@@ -95,6 +95,7 @@
     <module>rewrite-antv-x6-upgrade</module>
     <module>rewrite-spring-context-support-upgrade</module>
     <module>rewrite-typescript-upgrade</module>
+    <module>rewrite-bootstrap-upgrade</module>
   </modules>
 
   <dependencyManagement>
