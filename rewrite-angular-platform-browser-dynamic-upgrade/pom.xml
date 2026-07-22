@@ -11,12 +11,17 @@
   </parent>
   <artifactId>rewrite-angular-platform-browser-dynamic-upgrade</artifactId>
   <name>OpenRewrite Angular Platform Browser Dynamic Upgrade</name>
-  <description>Configuration-based OpenRewrite recipe for upgrading @angular/platform-browser-dynamic to 20.3.26.</description>
+  <description>OpenRewrite recipes for upgrading @angular/platform-browser-dynamic and migrating Angular 20 JIT bootstrap boundaries.</description>
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-angular-platform-browser-dynamic-upgrade</url>
   <dependencies>
     <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-json</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-javascript</artifactId>
+      <version>${rewrite.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openrewrite</groupId>

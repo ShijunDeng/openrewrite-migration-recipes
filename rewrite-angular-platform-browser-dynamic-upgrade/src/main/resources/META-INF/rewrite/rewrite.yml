@@ -2,30 +2,47 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.angular
 packageName: com.huawei.clouds.openrewrite.angular
-description: Upgrade Angular packages with explicit lockstep and CLI migration guidance.
+description: Upgrade Angular packages with explicit dependency, AOT, JIT, compiler, testing, CSP and SSR migration boundaries.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.angular.UpgradeAngularPlatformBrowserDynamicTo20_3_26
-displayName: Upgrade @angular/platform-browser-dynamic to 20.3.26
-description: Update direct @angular/platform-browser-dynamic declarations in package.json to 20.3.26. The package is deprecated in Angular 20 and should subsequently be removed.
-tags:
-  - angular
-  - angular-platform-browser-dynamic
-  - nodejs
-  - dependency-upgrade
-preconditions:
-  - org.openrewrite.FindSourceFiles:
-      filePattern: package.json;**/package.json
+displayName: Upgrade selected @angular/platform-browser-dynamic declarations to 20.3.26
+description: Upgrade only spreadsheet-visible exact, caret, or tilde direct declarations; preserve complex ranges, protocols, metadata, lockfiles and unlisted versions.
+tags: [angular, angular-platform-browser-dynamic, nodejs, dependency-upgrade]
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.dependencies['@angular/platform-browser-dynamic']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.devDependencies['@angular/platform-browser-dynamic']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.peerDependencies['@angular/platform-browser-dynamic']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.optionalDependencies['@angular/platform-browser-dynamic']
-      value: '"20.3.26"'
+  - com.huawei.clouds.openrewrite.angular.UpgradeSelectedAngularPlatformBrowserDynamicDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.MigrateDeterministicAngularPlatformBrowserDynamicSourceTo20
+displayName: Migrate deterministic Angular browser-dynamic bootstrap source
+description: Replace a sole platformBrowserDynamic import/call with platformBrowser only when every binding use is understood.
+tags: [angular, angular-platform-browser-dynamic, typescript, source-migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.MigrateDeterministicAngularPlatformBrowserDynamicSource
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.AuditAngularPlatformBrowserDynamic20Source
+displayName: Audit Angular 20 browser-dynamic source compatibility
+description: Mark remaining JIT platform/compiler/testing imports, runtime compilation, dynamic templates, entry components and component factory ownership.
+tags: [angular, angular-platform-browser-dynamic, typescript, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.FindAngularPlatformBrowserDynamicSourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.AuditAngularPlatformBrowserDynamic20Project
+displayName: Audit Angular 20 browser-dynamic project compatibility
+description: Mark unresolved declarations, package lockstep, incompatible toolchains, ngcc, disabled AOT/Ivy/strict templates, custom builders and SSR targets.
+tags: [angular, angular-platform-browser-dynamic, configuration, dependencies, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.FindAngularPlatformBrowserDynamicProjectRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.MigrateAngularPlatformBrowserDynamicTo20_3_26
+displayName: Migrate Angular browser-dynamic applications to 20.3.26
+description: Strictly upgrade selected declarations, switch provably safe bootstrap bindings to platformBrowser, and mark all remaining JIT/AOT/compiler/project decisions.
+tags: [angular, angular-platform-browser-dynamic, typescript, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.UpgradeAngularPlatformBrowserDynamicTo20_3_26
+  - com.huawei.clouds.openrewrite.angular.MigrateDeterministicAngularPlatformBrowserDynamicSourceTo20
+  - com.huawei.clouds.openrewrite.angular.AuditAngularPlatformBrowserDynamic20Source
+  - com.huawei.clouds.openrewrite.angular.AuditAngularPlatformBrowserDynamic20Project
