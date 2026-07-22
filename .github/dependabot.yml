@@ -8,6 +8,14 @@ updates:
       time: "02:00"
       timezone: Asia/Shanghai
     open-pull-requests-limit: 5
+    # Product-library versions are migration inputs/targets copied from the
+    # approved spreadsheet. Updating them independently changes recipe
+    # semantics, so Dependabot is limited to the recipe toolchain and build.
+    allow:
+      - dependency-name: "org.openrewrite:*"
+      - dependency-name: "org.openrewrite.recipe:*"
+      - dependency-name: "org.junit.jupiter:*"
+      - dependency-name: "org.apache.maven.plugins:*"
     groups:
       openrewrite:
         patterns:
