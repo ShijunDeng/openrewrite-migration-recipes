@@ -1,13 +1,13 @@
-package io.github.shijundeng.rewrite.fastjson;
+package com.huawei.clouds.openrewrite.fastjson;
 
 final class JacksonJsonSupport {
-    static final String HELPER_PACKAGE = "io.github.shijundeng.fastjson";
+    static final String HELPER_PACKAGE = "com.huawei.clouds.openrewrite.fastjson";
     static final String HELPER_SIMPLE_NAME = "JacksonJson";
     static final String HELPER_FQN = HELPER_PACKAGE + "." + HELPER_SIMPLE_NAME;
-    static final String HELPER_RELATIVE_PATH = "io/github/shijundeng/fastjson/JacksonJson.java";
+    static final String HELPER_RELATIVE_PATH = "com/huawei/clouds/openrewrite/fastjson/JacksonJson.java";
 
     static final String TEMPLATE_STUB = """
-            package io.github.shijundeng.fastjson;
+            package com.huawei.clouds.openrewrite.fastjson;
 
             import com.fasterxml.jackson.core.type.TypeReference;
             import com.fasterxml.jackson.databind.JsonNode;
@@ -55,7 +55,7 @@ final class JacksonJsonSupport {
             """;
 
     static final String HELPER_SOURCE = """
-            package io.github.shijundeng.fastjson;
+            package com.huawei.clouds.openrewrite.fastjson;
 
             import com.fasterxml.jackson.core.JsonProcessingException;
             import com.fasterxml.jackson.core.type.TypeReference;

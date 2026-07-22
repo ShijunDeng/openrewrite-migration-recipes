@@ -1,4 +1,4 @@
-package io.github.shijundeng.rewrite.fastjson;
+package com.huawei.clouds.openrewrite.fastjson;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.java.JavaParser;
@@ -58,7 +58,7 @@ class MigrateFastjsonApiTest implements RewriteTest {
 
                         import com.alibaba.fastjson.JSONArray;
                         import com.alibaba.fastjson.JSONObject;
-                        import io.github.shijundeng.fastjson.JacksonJson;
+                        import com.huawei.clouds.openrewrite.fastjson.JacksonJson;
 
                         import java.util.List;
 
@@ -121,7 +121,7 @@ class MigrateFastjsonApiTest implements RewriteTest {
 
                         import com.alibaba.fastjson.JSONArray;
                         import com.alibaba.fastjson.JSONObject;
-                        import io.github.shijundeng.fastjson.JacksonJson;
+                        import com.huawei.clouds.openrewrite.fastjson.JacksonJson;
 
                         class Trees {
                             JSONObject object() {

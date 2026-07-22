@@ -1,4 +1,4 @@
-package io.github.shijundeng.rewrite.fastjson;
+package com.huawei.clouds.openrewrite.fastjson;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.Recipe;
@@ -10,7 +10,7 @@ class RecipeDiscoveryTest {
     @Test
     void discoversAndValidatesPublicRecipe() {
         Environment environment = Environment.builder()
-                .scanRuntimeClasspath("io.github.shijundeng.rewrite.fastjson")
+                .scanRuntimeClasspath("com.huawei.clouds.openrewrite.fastjson")
                 .scanYamlResources()
                 .build();
 

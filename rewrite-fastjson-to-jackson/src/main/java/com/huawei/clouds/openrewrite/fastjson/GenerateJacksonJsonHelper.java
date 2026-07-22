@@ -1,4 +1,4 @@
-package io.github.shijundeng.rewrite.fastjson;
+package com.huawei.clouds.openrewrite.fastjson;
 
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.ScanningRecipe;

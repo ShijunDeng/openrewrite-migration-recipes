@@ -1,4 +1,4 @@
-package io.github.shijundeng.rewrite.fastjson;
+package com.huawei.clouds.openrewrite.fastjson;
 
 import org.openrewrite.Recipe;
 import org.openrewrite.java.ChangeType;

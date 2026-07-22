@@ -1,4 +1,4 @@
-package io.github.shijundeng.rewrite.fastjson;
+package com.huawei.clouds.openrewrite.fastjson;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.java.JavaParser;
@@ -39,7 +39,7 @@ class MigrateFastjsonToJacksonTest implements RewriteTest {
                         package example;
 
                         import com.fasterxml.jackson.databind.node.ObjectNode;
-                        import io.github.shijundeng.fastjson.JacksonJson;
+                        import com.huawei.clouds.openrewrite.fastjson.JacksonJson;
 
                         class Example {
                             ObjectNode read(String json) {
@@ -112,7 +112,7 @@ class MigrateFastjsonToJacksonTest implements RewriteTest {
                                         """
                                         package example;
 
-                                        import io.github.shijundeng.fastjson.JacksonJson;
+                                        import com.huawei.clouds.openrewrite.fastjson.JacksonJson;
 
                                         class JsonService {
                                             String write(Object value) {
