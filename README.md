@@ -62,6 +62,7 @@
 | [`rewrite-react-upgrade`](rewrite-react-upgrade) | `com.huawei.clouds.openrewrite.react.UpgradeReactTo19_2_7` | 将表格指定的 React 16/17/18/19.0 声明升级到 19.2.7，并说明 JSX、类型、StrictMode、Suspense、SSR/RSC 与 renderer 同版约束 |
 | [`rewrite-angular-gridster2-upgrade`](rewrite-angular-gridster2-upgrade) | `com.huawei.clouds.openrewrite.angulargridster2.UpgradeAngularGridster2To20_2_4` | 将 angular-gridster2 12/13/16 升级到 20.2.4，并说明 Angular/RxJS peer、standalone、布局、拖拽、responsive 与 SSR 迁移边界 |
 | [`rewrite-netflix-eureka-client-upgrade`](rewrite-netflix-eureka-client-upgrade) | `com.huawei.clouds.openrewrite.netflixeureka.UpgradeNetflixEurekaClientTo2_0_4` | 将原生 Netflix Eureka Client 1.10.18 升级到 2.0.4，并说明 Jakarta、HTTP transport、配置、生命周期、TLS 与协议兼容边界 |
+| [`rewrite-spring-cloud-eureka-client-upgrade`](rewrite-spring-cloud-eureka-client-upgrade) | `com.huawei.clouds.openrewrite.springcloudeureka.UpgradeEurekaClientTo4_2_0` | 将 Spring Cloud Netflix Eureka Client starter 2.1/3.1 升级到 4.2.0，并说明 Boot/Cloud release train、Java 17、Jakarta、配置、LoadBalancer 与 AOT 迁移边界 |
 
 后续迁移应新增独立模块，例如：
 

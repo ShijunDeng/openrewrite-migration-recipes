@@ -85,6 +85,7 @@
     <module>rewrite-react-upgrade</module>
     <module>rewrite-angular-gridster2-upgrade</module>
     <module>rewrite-netflix-eureka-client-upgrade</module>
+    <module>rewrite-spring-cloud-eureka-client-upgrade</module>
   </modules>
 
   <dependencyManagement>
