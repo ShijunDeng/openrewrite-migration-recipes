@@ -40,6 +40,7 @@
     <module>rewrite-hibernate-validator-upgrade</module>
     <module>rewrite-echarts-upgrade</module>
     <module>rewrite-fastjson-upgrade</module>
+    <module>rewrite-ngx-translate-http-loader-upgrade</module>
   </modules>
 
   <dependencyManagement>

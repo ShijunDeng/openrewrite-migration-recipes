@@ -1,0 +1,32 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.ngxtranslate
+packageName: com.huawei.clouds.openrewrite.ngxtranslate
+description: Upgrade ngx-translate packages with explicit Angular compatibility guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxtranslate.UpgradeNgxTranslateHttpLoaderTo17
+displayName: Upgrade @ngx-translate/http-loader to 17.0.0
+description: Update direct @ngx-translate/http-loader declarations in package.json to 17.0.0. Lock files must be regenerated with the project's package manager.
+tags:
+  - ngx-translate
+  - http-loader
+  - angular
+  - nodejs
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.dependencies['@ngx-translate/http-loader']
+      value: '"17.0.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.devDependencies['@ngx-translate/http-loader']
+      value: '"17.0.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.peerDependencies['@ngx-translate/http-loader']
+      value: '"17.0.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.optionalDependencies['@ngx-translate/http-loader']
+      value: '"17.0.0"'
