@@ -267,6 +267,11 @@ public final class FindShedLockSpring7JavaRisks extends Recipe {
                 JavaType.Method methodType = m.getMethodType();
                 JavaType.FullyQualified owner = methodType == null ? null :
                         TypeUtils.asFullyQualified(methodType.getDeclaringType());
+                if (owner == null && m.getSelect() != null) {
+                    // JDK 17 can still attribute the static owner even though virtual-thread factory
+                    // methods were added in JDK 21 and therefore have no JavaType.Method there.
+                    owner = TypeUtils.asFullyQualified(m.getSelect().getType());
+                }
                 String ownerName = owner == null ? "" : owner.getFullyQualifiedName();
                 if ("lock".equals(m.getSimpleName()) && owner != null && TypeUtils.isAssignableTo(LOCK_PROVIDER, owner)) {
                     return SearchResult.found(m,
@@ -277,9 +282,11 @@ public final class FindShedLockSpring7JavaRisks extends Recipe {
                     return SearchResult.found(m,
                             "Lock extension replaces the active SimpleLock and uses thread-local context; verify one-time unlock, provider support and thread hand-off");
                 }
-                if (("ofVirtual".equals(m.getSimpleName()) && "java.lang.Thread".equals(ownerName)) ||
-                    ("newVirtualThreadPerTaskExecutor".equals(m.getSimpleName()) &&
-                     "java.util.concurrent.Executors".equals(ownerName))) {
+                boolean threadFactory = "ofVirtual".equals(m.getSimpleName()) &&
+                                        isStaticOwner(m, ownerName, "java.lang.Thread", "Thread");
+                boolean executorFactory = "newVirtualThreadPerTaskExecutor".equals(m.getSimpleName()) &&
+                                          isStaticOwner(m, ownerName, "java.util.concurrent.Executors", "Executors");
+                if (threadFactory || executorFactory) {
                     return SearchResult.found(m,
                             "Virtual-thread hand-off detected; verify the lock covers actual task completion and do not rely on LockAssert/LockExtender ThreadLocal state across threads");
                 }
@@ -292,6 +299,29 @@ public final class FindShedLockSpring7JavaRisks extends Recipe {
                 }
                 Expression select = invocation.getSelect();
                 return select == null || "this".equals(select.printTrimmed(getCursor()));
+            }
+
+            private boolean isStaticOwner(J.MethodInvocation invocation, String attributedOwner,
+                                          String fullyQualifiedOwner, String simpleOwner) {
+                if (fullyQualifiedOwner.equals(attributedOwner)) {
+                    return true;
+                }
+                if (!attributedOwner.isEmpty() || invocation.getSelect() == null) {
+                    return false;
+                }
+                String select = invocation.getSelect().printTrimmed(getCursor());
+                if (fullyQualifiedOwner.equals(select)) {
+                    return true;
+                }
+                if (!simpleOwner.equals(select)) {
+                    return false;
+                }
+                if (fullyQualifiedOwner.startsWith("java.lang.")) {
+                    return true;
+                }
+                J.CompilationUnit compilationUnit = getCursor().firstEnclosing(J.CompilationUnit.class);
+                return compilationUnit != null && compilationUnit.getImports().stream()
+                        .anyMatch(anImport -> fullyQualifiedOwner.equals(anImport.getQualid().printTrimmed()));
             }
         };
     }

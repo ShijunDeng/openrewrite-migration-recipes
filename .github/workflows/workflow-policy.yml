@@ -1,0 +1,44 @@
+name: Workflow Policy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  immutable-actions:
+    name: Workflow Policy / Immutable Actions
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Require full commit SHAs for actions
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          invalid = []
+          pattern = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)")
+          for workflow in sorted(Path(".github/workflows").glob("*.y*ml")):
+              for number, line in enumerate(workflow.read_text(encoding="utf-8").splitlines(), 1):
+                  match = pattern.match(line)
+                  if not match:
+                      continue
+                  action = match.group(1)
+                  if action.startswith("./"):
+                      continue
+                  reference = action.rsplit("@", 1)[-1] if "@" in action else ""
+                  if not re.fullmatch(r"[0-9a-f]{40}", reference):
+                      invalid.append(f"{workflow}:{number}: {action}")
+
+          if invalid:
+              raise SystemExit("Actions must use immutable 40-character commit SHAs:\n" + "\n".join(invalid))
+          PY
