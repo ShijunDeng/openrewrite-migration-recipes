@@ -1,0 +1,25 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.log4joverslf4j
+packageName: com.huawei.clouds.openrewrite.log4joverslf4j
+description: Upgrade log4j-over-slf4j with strict workbook ownership and explicit SLF4J 2 provider, recursive bridge, Log4j 1 API/configuration, runtime, and build guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.log4joverslf4j.UpgradeLog4jOverSlf4jTo2_0_17
+displayName: Upgrade log4j-over-slf4j to 2.0.17
+description: Upgrade only locally owned standard org.slf4j:log4j-over-slf4j dependency and dependency-management declarations at workbook-visible versions 1.7.30, 1.7.32, or 1.7.36 to 2.0.17.
+tags: [slf4j, log4j, logging, dependency-upgrade]
+recipeList:
+  - com.huawei.clouds.openrewrite.log4joverslf4j.UpgradeSelectedLog4jOverSlf4jDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.log4joverslf4j.MigrateLog4jOverSlf4jTo2_0_17
+displayName: Migrate log4j-over-slf4j applications to 2.0.17
+description: Strictly upgrade the bridge, replace deterministic legacy binder access, and mark exact recursive bridge, provider, Log4j 1 API/configuration, Java runtime, and dependency ownership risks.
+tags: [slf4j, log4j, logging, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.log4joverslf4j.UpgradeLog4jOverSlf4jTo2_0_17
+  - com.huawei.clouds.openrewrite.log4joverslf4j.MigrateStaticBinderAccess
+  - com.huawei.clouds.openrewrite.log4joverslf4j.FindLog4jOverSlf4jJavaRisks
+  - com.huawei.clouds.openrewrite.log4joverslf4j.FindLog4jOverSlf4jConfigurationRisks
+  - com.huawei.clouds.openrewrite.log4joverslf4j.FindLog4jOverSlf4jBuildRisks
