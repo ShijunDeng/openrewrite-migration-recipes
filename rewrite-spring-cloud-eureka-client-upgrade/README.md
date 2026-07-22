@@ -1,205 +1,170 @@
-# Spring Cloud Netflix Eureka Client 4.2.0 升级模块
+# Spring Cloud Netflix Eureka Client 4.2.0 迁移配方
 
-本模块提供声明式 OpenRewrite 配方，将 Maven/Gradle 中**显式声明版本**的
-`org.springframework.cloud:spring-cloud-starter-netflix-eureka-client` 升级到 `4.2.0`。
-
-推荐应用迁移配方：
+推荐组合配方：
 
 ```text
 com.huawei.clouds.openrewrite.springcloudeureka.MigrateEurekaClientTo4_2_0
 ```
 
-只升级依赖、不修改源码时使用：
+只执行严格依赖升级：
 
 ```text
 com.huawei.clouds.openrewrite.springcloudeureka.UpgradeEurekaClientTo4_2_0
 ```
 
-## 自动处理范围
+表格中只有以下四种迁移，不推断表格中未显示或被折叠的版本：
 
-- Maven 普通依赖、`dependencyManagement`、profile 中的依赖及 `${property}` 版本属性。
-- Gradle Groovy DSL 的字符串、map notation 和版本变量。
-- 表格中的 `2.1.5.RELEASE`、`3.1.2`、`3.1.5`、`3.1.7` 均有独立 Maven 与 Gradle 用例。
-- 保留 scope、optional、type、classifier、exclusions 及相邻依赖。
-- `overrideManagedVersion: false`：BOM/父 POM 管理的无版本依赖仍然无版本，不制造局部版本覆盖。
-- `Migrate...` 自动删除 4.2 已移除且已不再需要的 `@EnableEurekaClient`，同时清理其 import。
-- `Migrate...` 对旧 `org.springframework.cloud.netflix.ribbon.*` 和 `com.netflix.loadbalancer.*` 类型添加 OpenRewrite 搜索标记，阻止 Ribbon 风险静默混入迁移结果。
+| 精确源版本 | 目标版本 |
+| --- | --- |
+| `2.1.5.RELEASE` | `4.2.0` |
+| `3.1.2` | `4.2.0` |
+| `3.1.5` | `4.2.0` |
+| `3.1.7` | `4.2.0` |
 
-除上述确定性注解删除和 Ribbon 告警外，配方不会猜测性修改 Java 源码、配置文件或 Eureka Server，也不会自动升级 Spring Boot 或 Spring Cloud BOM。这些变更需要按下文检查表作为一次发布列车迁移完成。
+## 自动修改（AUTO）
 
-## Spec 与配方能力映射
+- 仅升级完整坐标
+  `org.springframework.cloud:spring-cloud-starter-netflix-eureka-client` 的四个精确源版本。
+- 支持 Maven 直接版本、`dependencyManagement`、profile 中直接依赖、只供该 starter
+  使用的根级 Maven 属性，以及 Gradle Groovy 字符串/map 和 Kotlin 字符串字面量。
+- 保留 scope、optional、type、classifier、exclusions、Gradle configuration 及相邻依赖。
+- 删除目标源码中已经不存在、普通 Boot 应用也不再需要的
+  `org.springframework.cloud.netflix.eureka.EnableEurekaClient` annotation/import。
+- 删除 4.2.0 官方配置元数据中已经移除的 `ribbon.eureka.enabled`，同时支持
+  `.properties` 与嵌套 YAML；该开关没有等价的 LoadBalancer 新键。
 
-| 不兼容点 | 配方行为 | 自动化状态 | 代表测试 |
-| --- | --- | --- | --- |
-| starter 2.1/3.1 → 4.2.0 | `UpgradeDependencyVersion`，保留 BOM 管理边界 | 自动修复 | `upgradesEverySpreadsheetMavenVersion`、`upgradesEverySpreadsheetGradleVersion` |
-| `@EnableEurekaClient` 在目标版移除 | 删除 annotation 和未使用 import | 自动修复 | `migrationRecipeRemovesObsoleteEnableEurekaClientFromRealSource` |
-| Ribbon 在目标 release train 移除 | 标记 `org.springframework.cloud.netflix.ribbon.*` 与 `com.netflix.loadbalancer.*` 使用点 | 自动检测，需按业务负载策略重写 | `migrationRecipeMarksRibbonRuleForManualLoadBalancerPort` |
-| Boot/Cloud release train 与 Java 17 | 不猜测父 POM、BOM、Toolchain 或镜像 | 人工决策；运行配方前后必须验证 | BOM no-op 与 README 兼容矩阵 |
-| Jakarta、HTTP client、Feign、TLS、Config Data、AOT | 当前不做跨框架猜测性改写 | 人工迁移；后续可拆专用组合配方 | 源码/配置 fail-safe 测试 |
+## 只标记、由人工决策（MARK）
 
-只有“自动修复”行表示迁移配方会直接产出目标代码；“自动检测”会在源码中生成 OpenRewrite 搜索标记，不能视为已经完成替换。
+组合配方使用 `SearchResult` 在原位置标出以下风险：
 
-## 必须整列升级，而不是只升级一个 starter
+- Java 低于 17、Spring Boot 不在 3.4.x、Spring Cloud BOM 不在 2024.0.x；
+- Javax Servlet/Persistence/Validation/Annotation 与 Boot 3.4 的 Jakarta 边界；
+- Netflix Ribbon artifact、`IRule`/`ServerList`/Ribbon annotation，以及需要重新实现的
+  Spring Cloud LoadBalancer retry、zone、hint、cache、sticky、health-check 策略；
+- 已移除的 `MutableDiscoveryClientOptionalArgs`；直接构造 `CloudEurekaClient` 时新增的
+  `TransportClientFactories` 选择；自定义 Eureka config/health/transport SPI；
+- `EurekaClient` registry/lifecycle 调用及 `ApplicationInfoManager` 手工状态修改；
+- `@LoadBalanced`、`@FeignClient`、`@RefreshScope` 与显式
+  `@EnableDiscoveryClient` 的服务 ID、代理和 refresh 语义；
+- legacy bootstrap、Config Data/discovery-first Config Client 的初始化顺序；特别标出
+  `bootstrap.yml` 中会导致实例过早以 `UNKNOWN` 注册的 healthcheck；
+- 注册/拉取、health/status/home URL、region/zone/defaultZone、lease/heartbeat/fetch、
+  refresh、hostname/IP/instance ID、多网卡/NAT/IPv4/IPv6；
+- TLS、Basic Auth、代理、key/trust store、RestTemplate/RestClient/WebClient/Jersey、
+  HttpClient 4→5 与 timeout/连接池；
+- AOT/native、随机端口、build-time service ID 与 `spring.cloud.refresh.enabled=false`。
 
-`4.2.0` 是 Spring Cloud Netflix 2024.0.0（Moorgate）发布列车的一部分。官方兼容关系为 Spring Cloud `2024.0.x` 对应 Spring Boot `3.4.x`，Spring Boot 3 要求 Java 17+。因此，实际项目应优先导入 `org.springframework.cloud:spring-cloud-dependencies:2024.0.0`，让 Eureka、Cloud Commons、LoadBalancer、OpenFeign、Config 等组件保持同一发布列车。
+## 保持不动（NO-OP）
 
-| 起点 | 常见发布列车/Boot 基线 | Java 基线 | 目标组合 |
-| --- | --- | --- | --- |
-| Eureka starter `2.1.x.RELEASE` | Greenwich / Boot 2.1.x | Java 8 | Cloud 2024.0.0 + Boot 3.4.x + Java 17+ |
-| Eureka starter `3.1.x` | Cloud 2021.0.x / Boot 2.6.x 或 2.7.x | Java 8+（项目常用 11/17） | Cloud 2024.0.0 + Boot 3.4.x + Java 17+ |
-| Eureka starter `4.2.0` | Cloud 2024.0.0 / Boot 3.4.x | Java 17+ | 本模块目标 |
+- 任何未列入表格的旧版、版本范围、动态版本、目标版和未来版；
+- 外部 parent/BOM/platform 管理的无版本 starter；配方不会制造局部 `4.2.0` 覆盖；
+- 同时控制 OpenFeign、Cloud BOM 或其他依赖/插件的共享 Maven 属性；
+- 未解析 Maven 属性、Gradle 插值/变量和 version catalog alias；
+- Eureka Server starter、底层 `com.netflix.eureka:eureka-client` 和相似 artifact；
+- Ribbon `IRule` 到 LoadBalancer supplier 的业务策略、legacy bootstrap 到 Config Data 的
+  初始化策略、`MutableDiscoveryClientOptionalArgs` 到某一种 transport，以及
+  `CloudEurekaClient` 构造参数都不会猜测性改写；
+- `eureka.client.serviceUrl.defaultZone` 的 `defaultZone` 是区分大小写的 Map key，不会
+  机械改成 `default-zone`；
+- Boot、Cloud BOM、Java toolchain、容器镜像、Jakarta、HTTP transport 和 Eureka Server
+  不自动升级，只标记待整列迁移。
 
-以 Maven 为例，推荐让 BOM 负责版本并删除 starter 上的显式 `<version>`：
+这些 no-op 是安全边界。特别是只把 starter 写成 4.2.0、却继续运行 Boot 2/Cloud
+2021 或 Greenwich，通常会得到无法支持的混合 classpath。
 
-```xml
-<properties>
-  <java.version>17</java.version>
-  <spring-cloud.version>2024.0.0</spring-cloud.version>
-</properties>
-<dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-dependencies</artifactId>
-      <version>${spring-cloud.version}</version>
-      <type>pom</type>
-      <scope>import</scope>
-    </dependency>
-  </dependencies>
-</dependencyManagement>
-<dependencies>
-  <dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-  </dependency>
-</dependencies>
-```
+## 不兼容修改点
 
-Gradle 也应使用 Spring Cloud BOM/平台后声明无版本依赖。若工程已经这样做，本配方有意不增加 `4.2.0`；应升级 BOM，而不是覆盖其中单个模块。
+### 1. 发布列车、Boot 与 Java
 
-> 截至本模块编写时，官方支持表已将 2024.0 标记为超出 OSS 支持范围；`4.2.0` 是本次表格指定目标。生产采用前仍需根据组织策略评估迁到当前受支持发布列车，并完成漏洞扫描。
+目标 `4.2.0` 属于 Spring Cloud `2024.0.0` 发布列车；该固定版本的官方 build 使用
+Spring Boot `3.4.0`，运行基线为 Java 17。实际工程应由
+`org.springframework.cloud:spring-cloud-dependencies:2024.0.x` 管理 Eureka、Commons、
+LoadBalancer、OpenFeign 和 Config，而不是长期保留 starter 局部显式版本。
 
-## 需要人工处理的不兼容修改点
+### 2. Java API 与 HTTP transport
 
-### 1. Spring Boot 3、Spring Framework 6 与 Jakarta
+- `@EnableEurekaClient` 在目标源码树中已删除，starter classpath 会触发客户端自动配置。
+- `MutableDiscoveryClientOptionalArgs` 已删除。4.2.0 提供 RestTemplate、RestClient、
+  WebClient 等 transport-specific optional args；Jersey 也需要按 classpath/开关选择。
+- `CloudEurekaClient` 构造器新增 `TransportClientFactories`。直接 `new` 的业务代码不应
+  自动插入 `null`；优先使用自动配置，或明确构造选定 transport。
+- 自定义 `HealthCheckHandler`、`EurekaClientConfig`、`EurekaInstanceConfig`、transport
+  factory、事件监听和 shutdown 代码必须重新编译并做断连/失败测试。
 
-- Java 至少升级到 17；编译插件、运行镜像、CI 和生产 JVM 必须同步。
-- Boot 3 基于 Spring Framework 6/Jakarta EE 10。业务代码和依赖中的 `javax.servlet.*`、`javax.persistence.*`、`javax.validation.*`、`javax.annotation.*` 等需要迁到对应 `jakarta.*` API；不能仅保留旧 `javax.servlet:servlet-api` 排除项就认为迁移完成。
-- 检查自定义 servlet/filter/listener、JPA 实体、Bean Validation、Spring Security 5→6 和 Actuator 路径/暴露策略。
-- 若自定义 `RestTemplate` 的 Apache HTTP Client，请从旧 `org.apache.httpcomponents:httpclient` 迁到 HttpComponents Client 5 坐标和 API。
+### 3. Ribbon 与 Spring Cloud LoadBalancer
 
-### 2. 自动注册与注解
+目标发布列车不包含 Netflix Ribbon。迁移 `@RibbonClient`、`IRule`、`ServerList` 时应先
+记录原有 rule、retry、zone、ping、缓存和 server filtering 行为，再用
+`spring-cloud-starter-loadbalancer`、`ServiceInstanceListSupplier` 等目标 API 重建。
+`@LoadBalanced RestTemplate`/RestClient/WebClient 还需确认阻塞或 reactive 实现、bean
+qualifier、service-ID URI 及无实例时的异常行为。
 
-- starter 在 classpath 时客户端会自动注册并拉取注册表，普通 Boot 应用不再需要 `@EnableEurekaClient`；该注解在 4.2.x 中不存在，`Migrate...` 会自动删除它。
-- `@EnableDiscoveryClient` 通常也不是必需的。只有确实需要显式控制多个 Discovery 实现时再保留/评估。
-- 全局关闭发现可用 `spring.cloud.discovery.enabled=false`，仅关闭 Eureka 可用 `eureka.client.enabled=false`。
-- 分别验证 `eureka.client.register-with-eureka` 和 `eureka.client.fetch-registry`。很多“客户端”样例把二者设为 `false`，升级后会启动但既不注册也不发现服务。
-- 如项目使用通用服务注册自动配置开关，也应复核 `spring.cloud.service-registry.auto-registration.enabled` 及 Actuator service-registry endpoint 的权限。
+### 4. Bootstrap、Config Data 与 refresh
 
-### 3. 配置加载：bootstrap 与 Config Data
+Boot 2.4+ 的推荐方式是 `spring.config.import=optional:configserver:`。继续使用 legacy
+bootstrap 时必须显式保留 `spring-cloud-starter-bootstrap` 或对应启用开关，并确认
+Eureka `defaultZone` 在 discovery-first Config Client 请求之前可用。不要在
+`bootstrap.yml` 启用 `eureka.client.healthcheck.enabled`。refresh 可能短暂注销客户端；
+AOT/native 必须关闭 Spring Cloud refresh。
 
-- Spring Boot 2.4 起默认使用 `spring.config.import=optional:configserver:`；此方式不需要 `bootstrap.yml`。
-- 继续使用 legacy bootstrap 时，必须显式增加 `spring-cloud-starter-bootstrap`，或以系统属性/环境变量设置 `spring.cloud.bootstrap.enabled=true`。
-- Discovery-first Config Client 仍需在足够早的配置阶段获得 Eureka `defaultZone`。检查配置服务器的 service ID、认证 metadata 和启动阶段的额外网络往返。
-- 不要把 `eureka.client.healthcheck.enabled=true` 放在 `bootstrap.yml`；官方文档明确说明这可能使实例以 `UNKNOWN` 注册，应放在 `application.yml`。
+### 5. 注册、健康与实例身份
 
-### 4. Eureka 属性与行为核对矩阵
+- 分别验证 `register-with-eureka` 与 `fetch-registry`；二者均为 false 的样例不会注册或发现。
+- Actuator health、status/home/health URL、management port、context path、forwarded headers
+  与外部 HTTPS 地址必须一致。
+- 容器、Kubernetes、NAT 和多网卡场景要复核 `hostname`、`prefer-ip-address`、
+  `ip-address`、`instance-id`，确保注册地址可达且实例 ID 稳定唯一。
+- `lease-renewal`、`lease-expiration`、registry fetch 的测试短周期不能直接用于生产；
+  联合观察 heartbeat、eviction、自我保护、delta/full fetch 和滚动发布。
 
-| 关注点 | 典型属性 | 迁移检查 |
-| --- | --- | --- |
-| 服务地址 | `eureka.client.serviceUrl.defaultZone` | `defaultZone` 是 Map key，区分大小写；不要机械改为 `default-zone`。确认末尾 `/eureka/`、DNS、代理与多区 URL。 |
-| 应用标识 | `spring.application.name` | 默认 service ID/VIP 取此值；空值或变化会造成新服务名。 |
-| 注册/拉取 | `register-with-eureka`、`fetch-registry` | 客户端通常都为 true；单机 server 样例常设 false，不要照搬。 |
-| 健康同步 | `eureka.client.healthcheck.enabled` | 默认只靠 heartbeat，开启后联动 Actuator；只放 `application.yml`。 |
-| 健康/状态 URL | `statusPageUrlPath`、`healthCheckUrlPath` 或绝对 URL | 自定义 context path、management port、HTTPS/反向代理时逐项验证；链接会写入 registry metadata。 |
-| 实例地址 | `hostname`、`preferIpAddress`、`instanceId` | 容器/Kubernetes/NAT 下确认其他服务确实可达；多实例 ID 必须唯一且稳定。 |
-| metadata | `eureka.instance.metadataMap.*` | 自定义负载策略、zone、Config Server 认证/路径的消费者需要兼容验证。 |
-| 租约 | `leaseRenewalIntervalInSeconds`、`leaseExpirationDurationInSeconds` | 默认心跳周期有服务端假设；测试用 3/10 秒不应直接用于生产。 |
-| 刷新 | `eureka.client.refresh.enable` | 刷新会短暂注销客户端；滚动发布期间评估是否关闭。 |
-| 安全端口 | `nonSecurePortEnabled=false`、`securePortEnabled=true` | 同时复核 status/health/home 的绝对 HTTPS URL 和 forwarded headers。 |
+### 6. Zone、TLS、认证和代理
 
-升级后至少观察：注册状态、续约、registry fetch、实例 eviction、自我保护、zone fallback、DNS/代理失败、滚动发布时的短暂不可用，以及 actuator `/health` 中 discovery/eureka 指标。
+`serviceUrl.defaultZone` 的路径、末尾 `/eureka/`、region/availability-zone 与
+LoadBalancer zone metadata 需要端到端验证。Basic Auth 多 server 有凭据选择限制；敏感值
+应来自 Secret/环境变量。mTLS 需复核 key/trust store、证书链、hostname verification、
+代理终止后的协议/端口和 JVM 默认 trust store。
 
-### 5. Ribbon 移除与 Spring Cloud LoadBalancer
+### 7. AOT/native
 
-- Spring Cloud 2021.0 之前遗留的 Ribbon 已不在目标发布列车中。删除 `spring-cloud-starter-netflix-ribbon`、`@RibbonClient`/`IRule`/`ServerList` 等 Netflix Ribbon 定制。
-- 改用 `spring-cloud-starter-loadbalancer` 和 `ServiceInstanceListSupplier`。缓存、zone、hint、retry、sticky session 与健康检查策略都要重新验证。
-- `@LoadBalanced RestTemplate` 需要 classpath 中有 Spring Cloud LoadBalancer 实现；普通 `RestTemplate` 与负载均衡实例并存时用 qualifier/`@Primary` 消除注入歧义。
-- WebClient 使用 reactive load-balancer filter；RestClient/RestTemplate 使用阻塞式集成。URI 应继续采用 `http://<serviceId>/...`，不要提前解析成固定主机。
+Eureka Client 4.2 支持 AOT/native，但客户端随机端口不受支持；build-time 与 runtime 的
+service ID、端口和影响 bean 创建的配置应一致。LoadBalancer 的 service IDs 需要在 native
+构建时可发现。Eureka Server 不在本模块范围内，也不能由此推断 native 支持。
 
-### 6. Eureka 底层 HTTP Client
+## 固定真实仓库用例
 
-4.2.x 的 EurekaClient 可使用 RestTemplate、RestClient、WebClient 或 Jersey：
+测试从以下固定 commit 缩减，覆盖 before→after、marker 和 no-op：
 
-- `spring-boot-starter-web` 提供 RestTemplate/RestClient；默认路径仍为 RestTemplate。
-- `eureka.client.restclient.enabled=true` 选择 RestClient。
-- 有 WebFlux 且 `eureka.client.webclient.enabled=true` 时选择 WebClient。
-- Jersey 需要显式 Jersey 依赖；若它在 classpath 但不使用，设置 `eureka.client.jersey.enabled=false`。
-- 自定义 builder、拦截器、代理、连接池和超时必须重测。4.2 文档列出了 `eureka.client.rest-template-timeout.*` 与 `eureka.client.restclient.timeout.*`，单位为毫秒。
+- [apache/linkis `974438c`](https://github.com/apache/linkis/blob/974438c957554ad025e4ac4af0f30bac91574c29/pom.xml)：3.1.7 隔离属性自动升级，并标记 Java 8/Boot 2.7/Cloud 2021；
+- [Sohob/VeryLinkedIN `bb02ce7`](https://github.com/Sohob/VeryLinkedIN/blob/bb02ce79fb5608709ee0ce3d69862949c46775b7/account/pom.xml)：3.1.2 直接版本自动升级，注册/拉取 false 配置被标记；
+- [emirtotic/aviation-app `578d5f1`](https://github.com/emirtotic/aviation-app/blob/578d5f1a2b9c743b7ead9020006194c1facf9965/flight-service/pom.xml)：3.1.5、Javax exclusion、`@EnableEurekaClient` 删除，以及 zone/health/lease YAML 标记；
+- [TyCoding/cloud-template `737f98a`](https://github.com/TyCoding/cloud-template/blob/737f98a7383db9f498400ad5e57dd9b3a819dcac/sct-api/pom.xml)：Greenwich BOM 管理的无版本 starter 保持 no-op；
+- [jkazama/sample-boot-micro `0e8fb57`](https://github.com/jkazama/sample-boot-micro/blob/0e8fb571af8d0ab32d22cfba33ab2eab48836381/build.gradle)：Hoxton Gradle BOM 与无版本 starter 保持 no-op；
+- [WuKongOpenSource/WukongCRM `1fa4ec2`](https://github.com/WuKongOpenSource/WukongCRM-11.0-JAVA/blob/1fa4ec2fdf727111eca73ef4c94dfbb7712c83bb/gateway/src/main/java/com/kakarote/gateway/config/LBConfig.java)：真实 `IRule`/Ribbon 配置标记；
+- [kalayciburak/microservices `ac114f2`](https://github.com/kalayciburak/microservices/blob/ac114f28be0ff22e2733eb0df515bb6191050e8a/api-gateway/pom.xml)：Cloud 2021 BOM 无版本 starter 与相邻依赖 no-op；
+- [Hemil-Fichadia/FakeStoreProductService `e8fb64c`](https://github.com/Hemil-Fichadia/FakeStoreProductService/blob/e8fb64cf5675d038be6dbddaf598d61dc5de627f/pom.xml)：目标 4.2.0 幂等/no-op。
 
-### 7. OpenFeign
+## 固定上游依据
 
-- Feign 已是独立的 `org.springframework.cloud:spring-cloud-starter-openfeign`，不要依赖旧 Netflix 聚合 starter 的传递行为。
-- `@FeignClient(name = "inventory")` 的 name 与 Eureka service ID 需一致；使用 service ID 解析时保证 LoadBalancer 在 classpath。
-- 检查自定义 `Retryer`、ErrorDecoder、RequestInterceptor、HTTP client、超时、压缩、熔断器和 fallback。Boot 3/Spring 6 后 Jakarta 与 HttpClient 5 的变化也可能影响这些扩展。
-- 对无 Eureka 的直连 Feign 使用明确 `url`；不要把“未发现实例”误判成 Feign 序列化错误。
+- Spring Cloud Netflix `v4.2.0`：
+  [`235850c10598359f55cea38f846519649ade3e4f`](https://github.com/spring-cloud/spring-cloud-netflix/tree/235850c10598359f55cea38f846519649ade3e4f)
+- 对照起点 `v3.1.7`：
+  [`3d27038710a1957e611b21fc24e350563efeffd4`](https://github.com/spring-cloud/spring-cloud-netflix/tree/3d27038710a1957e611b21fc24e350563efeffd4)
+- Spring Cloud release train `v2024.0.0`：
+  [`b8c0cc7433dad01e622395a0f36fbd58ad3171ff`](https://github.com/spring-cloud/spring-cloud-release/tree/b8c0cc7433dad01e622395a0f36fbd58ad3171ff)
+- Spring Cloud build `v4.2.0`（固定 Boot 3.4.0 基线）：
+  [`54fea53d929555cac5fd7e98772405ba878f99d9`](https://github.com/spring-cloud/spring-cloud-build/tree/54fea53d929555cac5fd7e98772405ba878f99d9)
+- OpenRewrite 测试风格固定参考：
+  [`rewrite-java-dependencies@decb8db`](https://github.com/openrewrite/rewrite-java-dependencies/tree/decb8dbb2b5b726f8815efc51c85c34a60268bb0)
+  与 [`rewrite@b3008cc`](https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568)。
 
-### 8. TLS、认证与代理
-
-- Basic Auth 可嵌入 `serviceUrl.defaultZone`，但 Eureka 的限制使多个 server 不能分别使用不同凭据，实际只采用找到的第一组。
-- mTLS 需设置 `eureka.client.tls.enabled=true`，并核对 key-store/trust-store、类型、密码及证书链；省略 trust-store 时使用 JVM 默认 trust store。
-- 凭据不应提交到仓库；使用 Secret/环境变量并验证日志脱敏。
-- TLS 终止于代理时，确认 forwarded headers、注册地址协议/端口以及 status/health/home URL 都对外可达。
-
-### 9. AOT 与原生镜像
-
-- Eureka Client 4.2 支持 AOT/native，但必须设置 `spring.cloud.refresh.enabled=false`。
-- AOT/native 不支持 Eureka 客户端随机端口；端口、service ID 和影响 bean 创建的配置在 build time/run time 应一致。
-- LoadBalancer native 场景需显式声明 service IDs（如 `@LoadBalancerClient` 或 `spring.cloud.loadbalancer.eager-load.clients`）。
-- Eureka **Server** 不支持 AOT/native；本模块也不处理 server starter。
-
-### 10. Eureka Server 兼容与灰度验证
-
-本配方只改客户端 starter，不替换 server。上线前用实际 Eureka Server 版本验证 REST 注册、续约、下线、registry delta/full fetch、认证/TLS、metadata 和多 zone 行为。推荐先升级独立测试环境的 Boot/Cloud BOM，再灰度少量客户端；同时保留可回滚镜像，避免客户端协议、代理或安全策略差异造成全量注册失败。
-
-## 运行方式
+## 验证
 
 ```bash
-mvn -U org.openrewrite.maven:rewrite-maven-plugin:run \
-  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.springcloudeureka.MigrateEurekaClientTo4_2_0
+mvn -f rewrite-spring-cloud-eureka-client-upgrade/pom.xml clean verify
 ```
 
-Gradle 使用 OpenRewrite Gradle plugin 激活同名配方。建议先执行 dry run，审查生成的 patch，并在目标工程执行：
-
-```bash
-./mvnw clean verify
-# 或
-./gradlew clean test
-```
-
-随后执行依赖树检查，确保只存在一套兼容的 Boot/Cloud/Netflix/Commons/LoadBalancer 版本。
-
-## 测试来源与边界
-
-测试套件包含 38 个测试执行，覆盖 Maven/Gradle 的四个表格起始版本、属性、dependencyManagement、profile、字符串/map/变量、BOM 无版本、目标/更高版本、相似坐标、`@EnableEurekaClient` 的真实源码迁移、Ribbon 风险标记，以及其余源码和配置不误改。真实用例均固定到公开 GitHub commit：
-
-- [apache/linkis `974438c...`](https://github.com/apache/linkis/blob/974438c957554ad025e4ac4af0f30bac91574c29/pom.xml)：3.1.7 属性、dependencyManagement、Cloud BOM 与 Jersey exclusions。
-- [Sohob/VeryLinkedIN `bb02ce7...`](https://github.com/Sohob/VeryLinkedIN/blob/bb02ce79fb5608709ee0ce3d69862949c46775b7/account/pom.xml)：3.1.2 显式版本及注册/拉取开关。
-- [emirtotic/aviation-app `578d5f1...`](https://github.com/emirtotic/aviation-app/blob/578d5f1a2b9c743b7ead9020006194c1facf9965/flight-service/pom.xml)：3.1.5、`javax.servlet` exclusion、`@EnableEurekaClient`、`@LoadBalanced RestTemplate` 与 Eureka YAML。
-- [dtrcreative/i113_security `d5554da...`](https://github.com/dtrcreative/i113_security/blob/d5554daa29d2733f1195dfe8f8ae2497cc21b3b9/pom.xml)：3.1.5、Java 17、Actuator 与旧 Cloud BOM 混搭风险。
-- [TyCoding/cloud-template `737f98a...`](https://github.com/TyCoding/cloud-template/blob/737f98a7383db9f498400ad5e57dd9b3a819dcac/sct-api/pom.xml)：Boot 2.1.5.RELEASE + Greenwich BOM 管理的无版本 starter，验证不添加版本。
-- [kalayciburak/microservices `ac114f2...`](https://github.com/kalayciburak/microservices/blob/ac114f28be0ff22e2733eb0df515bb6191050e8a/api-gateway/pom.xml)：Cloud 2021.0.5 BOM 无版本 starter 与相邻 3.1.5 依赖不误改。
-- [jkazama/sample-boot-micro `0e8fb57...`](https://github.com/jkazama/sample-boot-micro/blob/0e8fb571af8d0ab32d22cfba33ab2eab48836381/build.gradle)：Gradle Hoxton BOM 无版本 starter/OpenFeign。
-- [Hemil-Fichadia/FakeStoreProductService `e8fb64c...`](https://github.com/Hemil-Fichadia/FakeStoreProductService/blob/e8fb64cf5675d038be6dbddaf598d61dc5de627f/pom.xml)：目标 4.2.0 幂等性。
-
-Kotlin DSL 的纯 parser 测试没有 GradleProject 语义模型，因此配方安全地保持不变；在真实工程中应通过 OpenRewrite Gradle plugin/tooling model 执行，并审查结果。
-
-## 官方参考
-
-- [Spring Cloud 支持版本矩阵](https://github.com/spring-cloud/spring-cloud-release/wiki/Supported-Versions)
-- [Spring Cloud 2024.0 Release Notes](https://github.com/spring-cloud/spring-cloud-release/wiki/Spring-Cloud-2024.0-Release-Notes)
-- [Spring Cloud Netflix 4.2 Eureka Client 文档](https://docs.spring.io/spring-cloud-netflix/reference/4.2/spring-cloud-netflix.html)
-- [Spring Cloud Netflix 4.2 配置属性](https://docs.spring.io/spring-cloud-netflix/reference/4.2/configprops.html)
-- [Spring Cloud Config 4.2 Client / Config Data](https://docs.spring.io/spring-cloud-config/reference/4.2/client.html)
-- [Spring Cloud Commons LoadBalancer](https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/loadbalancer.html)
-- [Spring Boot 3.0 Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide)
+当前 69 个测试执行覆盖四个表格版本、Maven/Gradle/Kotlin、直接/隔离/共享属性（含 XML attribute 引用）、
+dependencyManagement/profile、外部 BOM/platform、范围/动态/未解析版本、真实仓库
+before→after/marker/no-op、annotation/config 自动删除、Java/build/properties/YAML 风险、
+幂等性和 recipe validation。自动测试后仍需在实际 Eureka Server、代理、证书和多节点
+网络环境执行注册、续约、fetch、eviction、failover、refresh 和灰度回滚测试。

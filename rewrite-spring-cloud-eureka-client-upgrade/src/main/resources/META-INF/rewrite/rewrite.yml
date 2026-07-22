@@ -7,7 +7,7 @@ description: Upgrade Spring Cloud Netflix Eureka Client while preserving release
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springcloudeureka.MigrateEurekaClientTo4_2_0
 displayName: Migrate Spring Cloud Netflix Eureka Client applications to 4.2.0
-description: Upgrade the starter, remove the obsolete EnableEurekaClient annotation, and mark Netflix Ribbon APIs that require an application-specific Spring Cloud LoadBalancer migration.
+description: Strictly upgrade spreadsheet-selected declarations, remove obsolete source/config constructs, and mark release-train and runtime decisions.
 tags:
   - spring-cloud
   - netflix-eureka
@@ -18,17 +18,22 @@ recipeList:
   - com.huawei.clouds.openrewrite.springcloudeureka.UpgradeEurekaClientTo4_2_0
   - org.openrewrite.java.RemoveAnnotation:
       annotationPattern: '@org.springframework.cloud.netflix.eureka.EnableEurekaClient'
-  - org.openrewrite.java.search.FindTypes:
-      fullyQualifiedTypeName: org.springframework.cloud.netflix.ribbon..*
-      checkAssignability: false
-  - org.openrewrite.java.search.FindTypes:
-      fullyQualifiedTypeName: com.netflix.loadbalancer..*
-      checkAssignability: false
+  - org.openrewrite.properties.DeleteProperty:
+      propertyKey: ribbon.eureka.enabled
+      relaxedBinding: false
+  - org.openrewrite.yaml.DeleteProperty:
+      propertyKey: ribbon.eureka.enabled
+      coalesce: false
+      relaxedBinding: false
+  - com.huawei.clouds.openrewrite.springcloudeureka.FindEurekaClientJavaMigrationRisks
+  - com.huawei.clouds.openrewrite.springcloudeureka.FindEurekaClientBuildMigrationRisks
+  - com.huawei.clouds.openrewrite.springcloudeureka.FindEurekaClientPropertiesMigrationRisks
+  - com.huawei.clouds.openrewrite.springcloudeureka.FindEurekaClientYamlMigrationRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springcloudeureka.UpgradeEurekaClientTo4_2_0
 displayName: Upgrade Spring Cloud Netflix Eureka Client to 4.2.0
-description: Upgrade explicit org.springframework.cloud:spring-cloud-starter-netflix-eureka-client versions in Maven and Gradle to 4.2.0 without adding or overriding versions managed by a Spring Cloud BOM.
+description: Upgrade only the four spreadsheet source versions in safe Maven and Gradle declarations without changing shared properties or BOM-managed dependencies.
 tags:
   - spring-cloud
   - netflix-eureka
@@ -36,8 +41,4 @@ tags:
   - java
   - dependency-upgrade
 recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: org.springframework.cloud
-      artifactId: spring-cloud-starter-netflix-eureka-client
-      newVersion: 4.2.0
-      overrideManagedVersion: false
+  - com.huawei.clouds.openrewrite.springcloudeureka.UpgradeSelectedEurekaClientDependency

@@ -17,6 +17,7 @@ import static org.openrewrite.gradle.Assertions.buildGradleKts;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.test.SourceSpecs.text;
+import static org.openrewrite.xml.Assertions.xml;
 
 class UpgradeEurekaClientTest implements RewriteTest {
     private static final String RECIPE =
@@ -276,7 +277,7 @@ class UpgradeEurekaClientTest implements RewriteTest {
     }
 
     @Test
-    void upgradesGradleInterpolatedVersionVariable() {
+    void preservesGradleInterpolatedVersionVariable() {
         rewriteRun(buildGradle(
                 """
                 plugins { id 'java' }
@@ -285,33 +286,17 @@ class UpgradeEurekaClientTest implements RewriteTest {
                 dependencies {
                     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${eurekaVersion}"
                 }
-                """,
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                def eurekaVersion = '4.2.0'
-                dependencies {
-                    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${eurekaVersion}"
-                }
                 """
         ));
     }
 
     @Test
-    void upgradesGradleMapNotationVersionVariable() {
+    void preservesGradleMapNotationVersionVariable() {
         rewriteRun(buildGradle(
                 """
                 plugins { id 'java-library' }
                 repositories { mavenCentral() }
                 def eurekaVersion = '3.1.5'
-                dependencies {
-                    api group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: eurekaVersion
-                }
-                """,
-                """
-                plugins { id 'java-library' }
-                repositories { mavenCentral() }
-                def eurekaVersion = '4.2.0'
                 dependencies {
                     api group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: eurekaVersion
                 }
@@ -334,13 +319,20 @@ class UpgradeEurekaClientTest implements RewriteTest {
     }
 
     @Test
-    void leavesKotlinDslWithoutGradleSemanticModelUntouched() {
+    void upgradesSafeKotlinDslLiteral() {
         rewriteRun(buildGradleKts(
                 """
                 plugins { java }
                 repositories { mavenCentral() }
                 dependencies {
                     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:3.1.7")
+                }
+                """,
+                """
+                plugins { java }
+                repositories { mavenCentral() }
+                dependencies {
+                    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0")
                 }
                 """
         ));
@@ -352,6 +344,55 @@ class UpgradeEurekaClientTest implements RewriteTest {
                 pomXml(eurekaPom("4.2.0")),
                 pomXml(eurekaPom("4.2.1"), spec -> spec.path("later-pom.xml")),
                 buildGradle(gradleDependency("implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:5.0.0'"), spec -> spec.path("later.gradle"))
+        );
+    }
+
+    @ParameterizedTest(name = "preserves unlisted Maven version {0}")
+    @ValueSource(strings = {"2.1.4.RELEASE", "2.1.6.RELEASE", "3.0.0", "3.1.3", "3.1.6", "4.0.4", "[3,4)", "latest.release"})
+    void leavesUnlistedRangeAndDynamicVersionsUntouched(String version) {
+        rewriteRun(xml(eurekaPom(version), source -> source.path("pom.xml")));
+    }
+
+    @Test
+    void leavesSharedMavenVersionPropertyUntouched() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shared</artifactId><version>1</version>
+                  <properties><spring-cloud.version>3.1.7</spring-cloud.version></properties><dependencies>
+                    <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-netflix-eureka-client</artifactId><version>${spring-cloud.version}</version></dependency>
+                    <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-openfeign</artifactId><version>${spring-cloud.version}</version></dependency>
+                  </dependencies>
+                </project>
+                """
+        ));
+    }
+
+    @Test
+    void leavesPropertyReferencedFromXmlAttributeUntouched() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>attribute-shared</artifactId><version>1</version>
+                  <properties><eureka.version>3.1.7</eureka.version></properties><dependencies>
+                    <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-netflix-eureka-client</artifactId><version>${eureka.version}</version></dependency>
+                  </dependencies><build><plugins><plugin><groupId>example</groupId><artifactId>metadata</artifactId>
+                    <configuration><label value="${eureka.version}"/></configuration>
+                  </plugin></plugins></build>
+                </project>
+                """
+        ));
+    }
+
+    @Test
+    void leavesUnresolvedPropertyAndVersionCatalogUntouched() {
+        rewriteRun(
+                xml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>unresolved</artifactId><version>1</version><dependencies>
+                          <dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-starter-netflix-eureka-client</artifactId><version>${managed.eureka.version}</version></dependency>
+                        </dependencies></project>
+                        """, source -> source.path("pom.xml")
+                ),
+                buildGradle("dependencies { implementation libs.spring.cloud.eureka.client }")
         );
     }
 
@@ -473,7 +514,7 @@ class UpgradeEurekaClientTest implements RewriteTest {
                         import com.netflix.loadbalancer.IRule;
 
                         class RibbonConfiguration {
-                            /*~~>*/IRule rule;
+                            /*~~(Netflix Ribbon is absent from the 2024.0 release train; port rule/server-list behavior to Spring Cloud LoadBalancer explicitly)~~>*/IRule rule;
                         }
                         """
                 )
@@ -547,6 +588,12 @@ class UpgradeEurekaClientTest implements RewriteTest {
         assertTrue(recipe.validateAll().stream().allMatch(validation -> validation.isValid()));
         assertEquals(MIGRATION_RECIPE, migrationRecipe.getName());
         assertTrue(migrationRecipe.validateAll().stream().allMatch(validation -> validation.isValid()));
+    }
+
+    @Test
+    void strictDependencyUpgradeIsIdempotent() {
+        rewriteRun(spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1),
+                pomXml(eurekaPom("3.1.7"), eurekaPom("4.2.0")));
     }
 
     private static Environment environment() {
