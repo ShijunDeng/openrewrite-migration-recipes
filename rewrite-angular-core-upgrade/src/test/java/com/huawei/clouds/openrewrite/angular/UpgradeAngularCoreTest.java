@@ -12,6 +12,8 @@ import static org.openrewrite.json.Assertions.json;
 class UpgradeAngularCoreTest implements RewriteTest {
     private static final String RECIPE_NAME =
             "com.huawei.clouds.openrewrite.angular.UpgradeAngularCoreTo20_3_26";
+    private static final String MIGRATE_RECIPE_NAME =
+            "com.huawei.clouds.openrewrite.angular.MigrateAngularCoreTo20_3_26";
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -19,14 +21,14 @@ class UpgradeAngularCoreTest implements RewriteTest {
     }
 
     @Test
-    void upgradesEveryDirectDependencySectionInPackageJson() {
+    void upgradesSafeScalarValuesInEveryDirectDependencySection() {
         rewriteRun(json(
                 """
                 {
                   "dependencies": {"@angular/core": "~10.0.14"},
                   "devDependencies": {"@angular/core": "12.2.17"},
-                  "peerDependencies": {"@angular/core": ">=13 <20"},
-                  "optionalDependencies": {"@angular/core": "19.2.0"}
+                  "peerDependencies": {"@angular/core": "13.1.3"},
+                  "optionalDependencies": {"@angular/core": "10.2.5"}
                 }
                 """,
                 """
@@ -65,7 +67,10 @@ class UpgradeAngularCoreTest implements RewriteTest {
         Recipe recipe = environment.activateRecipes(RECIPE_NAME);
         assertTrue(environment.listRecipes().stream()
                 .anyMatch(candidate -> RECIPE_NAME.equals(candidate.getName())));
+        assertTrue(environment.listRecipes().stream()
+                .anyMatch(candidate -> MIGRATE_RECIPE_NAME.equals(candidate.getName())));
         assertTrue(recipe.validate().isValid(), () -> recipe.validate().failures().toString());
+        assertTrue(environment.activateRecipes(MIGRATE_RECIPE_NAME).validate().isValid());
     }
 
     private static Environment environment() {

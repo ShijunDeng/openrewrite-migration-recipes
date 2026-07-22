@@ -26,7 +26,7 @@
 | [`rewrite-angular-platform-browser-dynamic-upgrade`](rewrite-angular-platform-browser-dynamic-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularPlatformBrowserDynamicTo20_3_26` | 将 `@angular/platform-browser-dynamic` 升级到 20.3.26，并指导迁离已废弃 JIT 平台 |
 | [`rewrite-angular-animations-upgrade`](rewrite-angular-animations-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularAnimationsTo20_3_26` | 将 `@angular/animations` 升级到 20.3.26，并指导迁离 legacy animations API |
 | [`rewrite-angular-router-upgrade`](rewrite-angular-router-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularRouterTo20_3_26` | 将 `@angular/router` 升级到 20.3.26 |
-| [`rewrite-angular-core-upgrade`](rewrite-angular-core-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularCoreTo20_3_26` | 将 `@angular/core` 升级到 20.3.26 |
+| [`rewrite-angular-core-upgrade`](rewrite-angular-core-upgrade) | `com.huawei.clouds.openrewrite.angular.MigrateAngularCoreTo20_3_26` | 严格升级 Angular Core 20.3.26，自动迁移 `TestBed.get`/`DOCUMENT`，并标记 package group、工具链、SSR、DI 与渲染风险 |
 | [`rewrite-angular-forms-upgrade`](rewrite-angular-forms-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularFormsTo20_3_26` | 将 `@angular/forms` 升级到 20.3.26 |
 | [`rewrite-angular-compiler-upgrade`](rewrite-angular-compiler-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularCompilerTo20_3_26` | 将 `@angular/compiler` 升级到 20.3.26 |
 | [`rewrite-jasypt-spring-boot-starter-upgrade`](rewrite-jasypt-spring-boot-starter-upgrade) | `com.huawei.clouds.openrewrite.jasypt.MigrateJasyptSpringBootStarterTo4_0_3` | 严格升级到 4.0.3，自动迁移配置键和自动配置包，并定位 Java/Boot 基线、历史密文、密钥及扩展点风险 |

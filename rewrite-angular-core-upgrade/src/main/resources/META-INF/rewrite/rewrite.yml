@@ -6,26 +6,27 @@ description: Upgrade Angular packages with explicit lockstep and CLI migration g
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.angular.UpgradeAngularCoreTo20_3_26
-displayName: Upgrade @angular/core to 20.3.26
-description: Update direct @angular/core declarations in package.json to 20.3.26. Other Angular packages and CLI migrations must be handled in lockstep.
+displayName: Upgrade selected @angular/core declarations to 20.3.26
+description: Upgrade only exact, caret, or tilde source releases visible in the migration spreadsheet; compound ranges, protocols, variables, catalogs, lockfiles, and unlisted versions are unchanged.
 tags:
   - angular
   - angular-core
   - nodejs
   - dependency-upgrade
-preconditions:
-  - org.openrewrite.FindSourceFiles:
-      filePattern: package.json;**/package.json
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.dependencies['@angular/core']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.devDependencies['@angular/core']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.peerDependencies['@angular/core']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.optionalDependencies['@angular/core']
-      value: '"20.3.26"'
+  - com.huawei.clouds.openrewrite.angular.UpgradeSelectedAngularCoreDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.MigrateAngularCoreTo20_3_26
+displayName: Migrate Angular Core applications to 20.3.26
+description: Upgrade selected dependency declarations, apply deterministic Angular 20 source migrations, and mark exact TypeScript/JSON locations that require an application decision.
+tags:
+  - angular
+  - angular-core
+  - nodejs
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.UpgradeSelectedAngularCoreDependency
+  - com.huawei.clouds.openrewrite.angular.MigrateDeterministicAngular20Source
+  - com.huawei.clouds.openrewrite.angular.FindAngular20JsonRisks
+  - com.huawei.clouds.openrewrite.angular.FindAngular20TypeScriptRisks
