@@ -60,6 +60,7 @@
 | [`rewrite-gridstack-upgrade`](rewrite-gridstack-upgrade) | `com.huawei.clouds.openrewrite.gridstack.UpgradeGridStackTo12_3_3` | 将表格指定的 GridStack 4/5/6/7 声明升级到 12.3.3，并说明 API、事件、序列化、拖拽、nested grid、CSS 与框架集成变化 |
 | [`rewrite-react-dom-upgrade`](rewrite-react-dom-upgrade) | `com.huawei.clouds.openrewrite.reactdom.UpgradeReactDomTo19_0_0` | 将表格指定的 React DOM 16/17/18 声明升级到 19.0.0，并说明 root、hydration、SSR、测试与 React 版本联动边界 |
 | [`rewrite-react-upgrade`](rewrite-react-upgrade) | `com.huawei.clouds.openrewrite.react.UpgradeReactTo19_2_7` | 将表格指定的 React 16/17/18/19.0 声明升级到 19.2.7，并说明 JSX、类型、StrictMode、Suspense、SSR/RSC 与 renderer 同版约束 |
+| [`rewrite-angular-gridster2-upgrade`](rewrite-angular-gridster2-upgrade) | `com.huawei.clouds.openrewrite.angulargridster2.UpgradeAngularGridster2To20_2_4` | 将 angular-gridster2 12/13/16 升级到 20.2.4，并说明 Angular/RxJS peer、standalone、布局、拖拽、responsive 与 SSR 迁移边界 |
 
 后续迁移应新增独立模块，例如：
 

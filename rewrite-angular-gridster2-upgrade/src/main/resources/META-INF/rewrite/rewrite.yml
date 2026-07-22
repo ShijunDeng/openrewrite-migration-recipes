@@ -1,0 +1,36 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.angulargridster2
+packageName: com.huawei.clouds.openrewrite.angulargridster2
+description: Upgrade angular-gridster2 with explicit Angular, RxJS, standalone component, TypeScript, drag, resize, responsive, layout, SSR, and packaging migration guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angulargridster2.UpgradeAngularGridster2To20_2_4
+displayName: Upgrade angular-gridster2 to 20.2.4
+description: Update only spreadsheet-selected direct angular-gridster2 declarations in package.json to 20.2.4 without changing Angular, RxJS, aliases, protocols, overrides, lockfiles, source code, or unlisted versions.
+tags:
+  - angular-gridster2
+  - angular
+  - dashboard
+  - typescript
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.dependencies['angular-gridster2'][?(@ == '12.1.1' || @ == '^12.1.1' || @ == '~12.1.1' || @ == '=12.1.1' || @ == 'v12.1.1' || @ == '^v12.1.1' || @ == '13.3.0' || @ == '^13.3.0' || @ == '~13.3.0' || @ == '=13.3.0' || @ == 'v13.3.0' || @ == '^v13.3.0' || @ == '13.3.2' || @ == '^13.3.2' || @ == '~13.3.2' || @ == '=13.3.2' || @ == 'v13.3.2' || @ == '^v13.3.2' || @ == '16.0.0' || @ == '^16.0.0' || @ == '~16.0.0' || @ == '=16.0.0' || @ == 'v16.0.0' || @ == '^v16.0.0')]
+      value: '"20.2.4"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.devDependencies['angular-gridster2'][?(@ == '12.1.1' || @ == '^12.1.1' || @ == '~12.1.1' || @ == '=12.1.1' || @ == 'v12.1.1' || @ == '^v12.1.1' || @ == '13.3.0' || @ == '^13.3.0' || @ == '~13.3.0' || @ == '=13.3.0' || @ == 'v13.3.0' || @ == '^v13.3.0' || @ == '13.3.2' || @ == '^13.3.2' || @ == '~13.3.2' || @ == '=13.3.2' || @ == 'v13.3.2' || @ == '^v13.3.2' || @ == '16.0.0' || @ == '^16.0.0' || @ == '~16.0.0' || @ == '=16.0.0' || @ == 'v16.0.0' || @ == '^v16.0.0')]
+      value: '"20.2.4"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.peerDependencies['angular-gridster2'][?(@ == '12.1.1' || @ == '^12.1.1' || @ == '~12.1.1' || @ == '=12.1.1' || @ == 'v12.1.1' || @ == '^v12.1.1' || @ == '13.3.0' || @ == '^13.3.0' || @ == '~13.3.0' || @ == '=13.3.0' || @ == 'v13.3.0' || @ == '^v13.3.0' || @ == '13.3.2' || @ == '^13.3.2' || @ == '~13.3.2' || @ == '=13.3.2' || @ == 'v13.3.2' || @ == '^v13.3.2' || @ == '16.0.0' || @ == '^16.0.0' || @ == '~16.0.0' || @ == '=16.0.0' || @ == 'v16.0.0' || @ == '^v16.0.0')]
+      value: '"20.2.4"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.optionalDependencies['angular-gridster2'][?(@ == '12.1.1' || @ == '^12.1.1' || @ == '~12.1.1' || @ == '=12.1.1' || @ == 'v12.1.1' || @ == '^v12.1.1' || @ == '13.3.0' || @ == '^13.3.0' || @ == '~13.3.0' || @ == '=13.3.0' || @ == 'v13.3.0' || @ == '^v13.3.0' || @ == '13.3.2' || @ == '^13.3.2' || @ == '~13.3.2' || @ == '=13.3.2' || @ == 'v13.3.2' || @ == '^v13.3.2' || @ == '16.0.0' || @ == '^16.0.0' || @ == '~16.0.0' || @ == '=16.0.0' || @ == 'v16.0.0' || @ == '^v16.0.0')]
+      value: '"20.2.4"'

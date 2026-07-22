@@ -83,6 +83,7 @@
     <module>rewrite-gridstack-upgrade</module>
     <module>rewrite-react-dom-upgrade</module>
     <module>rewrite-react-upgrade</module>
+    <module>rewrite-angular-gridster2-upgrade</module>
   </modules>
 
   <dependencyManagement>
