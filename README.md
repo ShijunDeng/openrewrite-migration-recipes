@@ -38,6 +38,7 @@
 | [`rewrite-vue-i18n-upgrade`](rewrite-vue-i18n-upgrade) | `com.huawei.clouds.openrewrite.vuei18n.UpgradeVueI18nTo11_3_0` | 将 Vue I18n 7.x–10.x/早期 11.x 声明升级到 11.3.0，且不降级后续版本 |
 | [`rewrite-kafka-clients-upgrade`](rewrite-kafka-clients-upgrade) | `com.huawei.clouds.openrewrite.kafka.MigrateKafkaClientsTo4_1_2` | 将 Kafka Clients 升级到 4.1.2，并迁移明确移除的 Admin API 与 JMX 配置键 |
 | [`rewrite-jakarta-servlet-api-upgrade`](rewrite-jakarta-servlet-api-upgrade) | `com.huawei.clouds.openrewrite.jakartaservlet.MigrateJakartaServletApiTo6_1_0` | 将 Jakarta Servlet API 升级到 6.1.0，并迁移 javax namespace 与有明确替代的删除 API |
+| [`rewrite-mybatis-spring-upgrade`](rewrite-mybatis-spring-upgrade) | `com.huawei.clouds.openrewrite.mybatisspring.MigrateMyBatisSpringTo4_0_0` | 将 MyBatis-Spring 升级到 4.0.0，并迁移其 Spring Batch 6 infrastructure 包引用 |
 
 后续迁移应新增独立模块，例如：
 

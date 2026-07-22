@@ -61,6 +61,7 @@
     <module>rewrite-vue-i18n-upgrade</module>
     <module>rewrite-kafka-clients-upgrade</module>
     <module>rewrite-jakarta-servlet-api-upgrade</module>
+    <module>rewrite-mybatis-spring-upgrade</module>
   </modules>
 
   <dependencyManagement>
