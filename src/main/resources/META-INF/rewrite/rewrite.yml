@@ -1,0 +1,5 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: io.github.shijundeng.rewrite.fastjson
+packageName: io.github.shijundeng.rewrite.fastjson
+description: Migrate projects from Alibaba Fastjson 1.x to FasterXML Jackson.
