@@ -21,6 +21,7 @@
 | [`rewrite-jedis-upgrade`](rewrite-jedis-upgrade) | `com.huawei.clouds.openrewrite.jedis.UpgradeJedisTo7_2_1` | 将 Maven/Gradle Jedis 依赖升级到 7.2.1 |
 | [`rewrite-mybatis-spring-boot-starter-upgrade`](rewrite-mybatis-spring-boot-starter-upgrade) | `com.huawei.clouds.openrewrite.mybatisspringboot.UpgradeMyBatisSpringBootStarterTo4` | 将 MyBatis Spring Boot Starter 升级到 4.0.0 |
 | [`rewrite-slf4j-upgrade`](rewrite-slf4j-upgrade) | `com.huawei.clouds.openrewrite.slf4j.UpgradeSlf4jApiTo2_0_17` | 将 Maven/Gradle SLF4J API 依赖升级到 2.0.17 |
+| [`rewrite-angular-common-upgrade`](rewrite-angular-common-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularCommonTo20_3_26` | 将 `@angular/common` 升级到 20.3.26 |
 
 后续迁移应新增独立模块，例如：
 

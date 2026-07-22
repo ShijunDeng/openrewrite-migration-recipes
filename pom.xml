@@ -44,6 +44,7 @@
     <module>rewrite-jedis-upgrade</module>
     <module>rewrite-mybatis-spring-boot-starter-upgrade</module>
     <module>rewrite-slf4j-upgrade</module>
+    <module>rewrite-angular-common-upgrade</module>
   </modules>
 
   <dependencyManagement>
