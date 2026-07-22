@@ -2,6 +2,7 @@ package com.huawei.clouds.openrewrite.mssqljdbc;
 
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
+import org.openrewrite.Tree;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
@@ -50,13 +51,19 @@ public final class FindMssqlJdbc13MigrationRisks extends Recipe {
     public JavaIsoVisitor<ExecutionContext> getVisitor() {
         return new JavaIsoVisitor<ExecutionContext>() {
             @Override
+            public J.CompilationUnit visitCompilationUnit(J.CompilationUnit compilationUnit, ExecutionContext ctx) {
+                return UpgradeSelectedMssqlJdbcDependency.isProjectPath(compilationUnit.getSourcePath()) ?
+                        super.visitCompilationUnit(compilationUnit, ctx) : compilationUnit;
+            }
+
+            @Override
             public J.Literal visitLiteral(J.Literal literal, ExecutionContext ctx) {
                 J.Literal l = super.visitLiteral(literal, ctx);
                 if (!(l.getValue() instanceof String value)) {
                     return l;
                 }
                 String lower = value.toLowerCase(Locale.ROOT);
-                if (lower.startsWith("jdbc:sqlserver:")) {
+                if (lower.contains("jdbc:sqlserver:")) {
                     List<String> risks = new ArrayList<>();
                     risks.add(lower.contains("encrypt=") || lower.contains("trustservercertificate=") ||
                               lower.contains("hostnameincertificate=") || lower.contains("servercertificate=")
@@ -77,30 +84,30 @@ public final class FindMssqlJdbc13MigrationRisks extends Recipe {
                     if (containsAny(lower, "quotedidentifier=", "concatnullyieldsnull=")) {
                         risks.add("verify pooled-connection session settings");
                     }
-                    return SearchResult.found(l, "SQL Server JDBC 13.2: " + String.join("; ", risks));
+                    return mark(l, "SQL Server JDBC 13.2: " + String.join("; ", risks));
                 }
                 if (containsAny(lower, "columnencryptionsetting=", "enclaveattestation", "keyvaultprovider")) {
-                    return SearchResult.found(l,
+                    return mark(l,
                             "Always Encrypted connection fragment detected; verify key provider, optional dependencies, attestation, metadata cache and failover behavior");
                 }
                 if (containsAny(lower, "authentication=activedirectory", "aadsecureprincipal", "accesstokencallbackclass=", "msiclientid=")) {
-                    return SearchResult.found(l,
+                    return mark(l,
                             "Microsoft Entra connection fragment detected; review deprecated modes/properties, token callbacks and Azure Identity/MSAL dependencies");
                 }
                 if (lower.contains("vectortypesupport=")) {
-                    return SearchResult.found(l,
+                    return mark(l,
                             "vectorTypeSupport connection fragment detected; verify native vector versus legacy JSON-string ResultSet/ORM mappings");
                 }
                 if (containsAny(lower, "quotedidentifier=", "concatnullyieldsnull=")) {
-                    return SearchResult.found(l,
+                    return mark(l,
                             "SQL Server session-property fragment detected; verify new and pooled connection state and dependent SQL semantics");
                 }
                 if (VECTOR_SQL.matcher(value).find()) {
-                    return SearchResult.found(l,
+                    return mark(l,
                             "SQL Server VECTOR detected: 13.2 returns native vector values unless vectorTypeSupport=off; update ResultSet/ORM mappings deliberately");
                 }
                 if (lower.contains("mssql-jdbc_auth") || lower.contains("sqljdbc_auth")) {
-                    return SearchResult.found(l,
+                    return mark(l,
                             "Native integrated-authentication library reference detected; deploy the 13.2 architecture-specific mssql-jdbc_auth binary and retest Kerberos/NTLM");
                 }
                 return l;
@@ -114,27 +121,27 @@ public final class FindMssqlJdbc13MigrationRisks extends Recipe {
                 }
                 String name = m.getSimpleName();
                 if (TLS_METHODS.contains(name)) {
-                    return SearchResult.found(m,
+                    return mark(m,
                             "Retest SQL Server JDBC 13.2 encryption defaults, strict/TDS 8.0, certificate chain and hostname validation");
                 }
                 if ("setLoginTimeout".equals(name)) {
-                    return SearchResult.found(m,
+                    return mark(m,
                             "13.2 inherits the 30-second default and revised socket/login timeout interaction; verify failover, pool and probe budgets");
                 }
                 if (AUTH_METHODS.contains(name)) {
-                    return SearchResult.found(m,
+                    return mark(m,
                             "Review Microsoft Entra/integrated authentication: deprecated AAD properties, renamed modes, optional Azure Identity/MSAL dependencies and token callbacks");
                 }
                 if (ENCRYPTION_METHODS.contains(name)) {
-                    return SearchResult.found(m,
+                    return mark(m,
                             "Always Encrypted or enclave API detected; verify key provider, attestation, metadata cache, optional dependencies and failover behavior");
                 }
                 if ("setVectorTypeSupport".equals(name) || "getVectorTypeSupport".equals(name)) {
-                    return SearchResult.found(m,
+                    return mark(m,
                             "Verify SQL Server 13.2 native vector representation and bulk-copy/ResultSet/ORM mappings; use off only as a temporary compatibility choice");
                 }
                 if (SESSION_METHODS.contains(name)) {
-                    return SearchResult.found(m,
+                    return mark(m,
                             "Verify quotedIdentifier/concatNullYieldsNull on new and pooled connections; session state affects SQL semantics");
                 }
                 return m;
@@ -154,5 +161,10 @@ public final class FindMssqlJdbc13MigrationRisks extends Recipe {
             }
         }
         return false;
+    }
+
+    private static <T extends Tree> T mark(T tree, String message) {
+        return tree.getMarkers().findAll(SearchResult.class).stream()
+                .anyMatch(result -> message.equals(result.getDescription())) ? tree : SearchResult.found(tree, message);
     }
 }

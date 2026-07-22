@@ -18,6 +18,7 @@ import static org.openrewrite.gradle.Assertions.buildGradle;
 import static org.openrewrite.gradle.Assertions.buildGradleKts;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.test.SourceSpecs.text;
 import static org.openrewrite.xml.Assertions.xml;
 
@@ -43,7 +44,8 @@ class UpgradeMssqlJdbcTest implements RewriteTest {
     @ParameterizedTest(name = "upgrades exact spreadsheet version {0}")
     @ValueSource(strings = {
             "7.2.2.jre8", "9.4.1.jre11", "10.2.1.jre8",
-            "10.2.3.jre8", "10.2.3.jre17", "11.2.2.jre11"
+            "10.2.3.jre8", "10.2.3.jre17", "11.2.2.jre11",
+            "12.2.0.jre11", "12.3.0.jre17-preview"
     })
     void upgradesEverySpreadsheetVersion(String oldVersion) {
         rewriteRun(pomXml(pom(oldVersion), pom("13.2.1.jre11")));
@@ -212,20 +214,15 @@ class UpgradeMssqlJdbcTest implements RewriteTest {
     }
 
     @Test
-    void preservesDependencyShape() {
-        rewriteRun(pomXml(
+    void preservesClassifierVariantWithoutChangingItsShape() {
+        rewriteRun(xml(
                 """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shape</artifactId><version>1</version><dependencies><dependency>
                   <groupId>com.microsoft.sqlserver</groupId><artifactId>mssql-jdbc</artifactId><version>10.2.3.jre8</version><classifier>sources</classifier><scope>runtime</scope><optional>true</optional>
                   <exclusions><exclusion><groupId>com.azure</groupId><artifactId>*</artifactId></exclusion></exclusions>
                 </dependency></dependencies></project>
                 """,
-                """
-                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shape</artifactId><version>1</version><dependencies><dependency>
-                  <groupId>com.microsoft.sqlserver</groupId><artifactId>mssql-jdbc</artifactId><version>13.2.1.jre11</version><classifier>sources</classifier><scope>runtime</scope><optional>true</optional>
-                  <exclusions><exclusion><groupId>com.azure</groupId><artifactId>*</artifactId></exclusion></exclusions>
-                </dependency></dependencies></project>
-                """
+                source -> source.path("pom.xml")
         ));
     }
 
@@ -307,8 +304,8 @@ class UpgradeMssqlJdbcTest implements RewriteTest {
         rewriteRun(
                 riskSpec(),
                 java(
-                        "class App { String url = \"jdbc:sqlserver://localhost;databaseName=app\"; }",
-                        "class App { String url = /*~~(SQL Server JDBC 13.2: encrypt now defaults to true; define and test certificate policy; loginTimeout default changed from 15s to 30s)~~>*/\"jdbc:sqlserver://localhost;databaseName=app\"; }"
+                        "class App { String url = \"primary=jdbc:sqlserver://localhost;databaseName=app\"; }",
+                        "class App { String url = /*~~(SQL Server JDBC 13.2: encrypt now defaults to true; define and test certificate policy; loginTimeout default changed from 15s to 30s)~~>*/\"primary=jdbc:sqlserver://localhost;databaseName=app\"; }"
                 )
         );
     }
@@ -397,28 +394,55 @@ class UpgradeMssqlJdbcTest implements RewriteTest {
     }
 
     @Test
+    void javaRiskMarkersAreIdempotent() {
+        rewriteRun(
+                spec -> {
+                    riskSpec().accept(spec);
+                    spec.cycles(2).expectedCyclesThatMakeChanges(1);
+                },
+                java(
+                        "class App { String url = \"jdbc:sqlserver://db;databaseName=app\"; }",
+                        "class App { String url = /*~~(SQL Server JDBC 13.2: encrypt now defaults to true; define and test certificate policy; loginTimeout default changed from 15s to 30s)~~>*/\"jdbc:sqlserver://db;databaseName=app\"; }"
+                )
+        );
+    }
+
+    @Test
+    void javaRiskSearchSkipsGeneratedAndInstallSources() {
+        rewriteRun(
+                riskSpec(),
+                java(
+                        "class Generated { String url = \"jdbc:sqlserver://db;encrypt=true\"; }",
+                        source -> source.path("target/generated-sources/Generated.java")
+                ),
+                java(
+                        "class Installed { String dll = \"mssql-jdbc_auth.dll\"; }",
+                        source -> source.path("install/sources/Installed.java")
+                )
+        );
+    }
+
+    @Test
     void buildSearchMarksJava8AndOptionalAuthEncryptionDependencies() {
         rewriteRun(
                 spec -> spec.recipe(recipe(BUILD_RISK_RECIPE)),
-                text(
+                pomXml(
                         """
-                        <project><properties><maven.compiler.release>8</maven.compiler.release></properties><dependencies>
-                          <dependency><artifactId>mssql-jdbc_auth</artifactId></dependency>
-                          <dependency><artifactId>azure-identity</artifactId></dependency>
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>sqlserver</artifactId><version>1</version>
+                        <properties><maven.compiler.release>8</maven.compiler.release></properties><dependencies>
+                          <dependency><groupId>com.microsoft.sqlserver</groupId><artifactId>mssql-jdbc</artifactId><version>13.2.1.jre11</version></dependency>
+                          <dependency><groupId>com.microsoft.sqlserver</groupId><artifactId>mssql-jdbc_auth</artifactId><version>13.2.1.x64</version></dependency>
+                          <dependency><groupId>com.azure</groupId><artifactId>azure-identity</artifactId><version>1.16.2</version></dependency>
                         </dependencies></project>
                         """,
                         """
-                        <project><properties>~~><maven.compiler.release>8</maven.compiler.release></properties><dependencies>
-                          <dependency>~~><artifactId>mssql-jdbc_auth</artifactId></dependency>
-                          <dependency>~~><artifactId>azure-identity</artifactId></dependency>
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>sqlserver</artifactId><version>1</version>
+                        <properties><!--~~(mssql-jdbc 13.2.1.jre11 requires Java 11 or newer; align compiler, toolchain, CI, container and runtime JDKs)~~>--><maven.compiler.release>8</maven.compiler.release></properties><dependencies>
+                          <dependency><groupId>com.microsoft.sqlserver</groupId><artifactId>mssql-jdbc</artifactId><version>13.2.1.jre11</version></dependency>
+                          <!--~~(SQL Server JDBC optional runtime dependency detected; align it with the selected Entra, native authentication, Always Encrypted or vector feature and verify dependency convergence)~~>--><dependency><groupId>com.microsoft.sqlserver</groupId><artifactId>mssql-jdbc_auth</artifactId><version>13.2.1.x64</version></dependency>
+                          <!--~~(SQL Server JDBC optional runtime dependency detected; align it with the selected Entra, native authentication, Always Encrypted or vector feature and verify dependency convergence)~~>--><dependency><groupId>com.azure</groupId><artifactId>azure-identity</artifactId><version>1.16.2</version></dependency>
                         </dependencies></project>
-                        """,
-                        source -> source.path("pom.xml")
-                ),
-                text(
-                        "java { toolchain { languageVersion = JavaLanguageVersion.of(8) } }",
-                        "java { toolchain { languageVersion = ~~>JavaLanguageVersion.of(8) } }",
-                        source -> source.path("build.gradle")
+                        """
                 )
         );
     }
@@ -427,8 +451,12 @@ class UpgradeMssqlJdbcTest implements RewriteTest {
     void configurationSearchMarksExactConnectionPropertyAndNativeDll() {
         rewriteRun(
                 spec -> spec.recipe(recipe(CONFIG_RISK_RECIPE)),
-                text("encrypt=true", "~~>encrypt=true", source -> source.path("application.properties")),
-                text("AUTH_DLL=mssql-jdbc_auth-10.2.3.x64.dll", "AUTH_DLL=~~>mssql-jdbc_auth-10.2.3.x64.dll",
+                properties(
+                        "spring.datasource.url=jdbc:sqlserver://db;databaseName=app\nspring.datasource.hikari.data-source-properties.encrypt=true\n",
+                        "~~(SQL Server JDBC URL detected; retest 13.2 TLS/encrypt/certificate policy, 30-second login timeout, Entra authentication, failover and pooling)~~>spring.datasource.url=jdbc:sqlserver://db;databaseName=app\n~~(SQL Server JDBC connection property detected; review its 13.2 TLS, timeout, authentication, Always Encrypted, vector or pooled-session semantics)~~>spring.datasource.hikari.data-source-properties.encrypt=true\n",
+                        source -> source.path("application.properties")
+                ),
+                text("AUTH_DLL=mssql-jdbc_auth-10.2.3.x64.dll", "~~(Native SQL Server authentication library detected; deploy the matching 13.2 OS/architecture binary and retest Kerberos, NTLM and integrated security)~~>AUTH_DLL=mssql-jdbc_auth-10.2.3.x64.dll",
                         source -> source.path("runtime.env"))
         );
     }

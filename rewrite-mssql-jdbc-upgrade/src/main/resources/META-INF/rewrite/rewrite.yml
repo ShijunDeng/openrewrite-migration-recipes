@@ -50,18 +50,7 @@ tags:
   - build
   - search
 recipeList:
-  - org.openrewrite.text.Find:
-      find: '<(?:maven\.compiler\.(?:source|target|release)|source|target|release)>[ \t]*(?:1\.[0-8]|[0-9]|10)[ \t]*</|<artifactId>(?:mssql-jdbc_auth|msal4j|azure-identity|azure-security-keyvault-keys|azure-keyvault|bcprov-[^<]+|gson)</artifactId>'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/pom.xml"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '(?:sourceCompatibility|targetCompatibility)[ \t]*(?:=|\.set\()[ \t]*["'']?(?:1\.[0-8]|[0-9]|10)\b|JavaLanguageVersion\.of\([ \t]*(?:[0-9]|10)[ \t]*\)|(?:com\.microsoft\.sqlserver:mssql-jdbc_auth|com\.microsoft\.azure:msal4j|com\.azure:azure-(?:identity|security-keyvault-keys)|org\.bouncycastle:bcprov-|com\.google\.code\.gson:gson)'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.gradle;**/*.gradle.kts;**/*.toml"
-      contextSize: 0
+  - com.huawei.clouds.openrewrite.mssqljdbc.FindMssqlJdbc13BuildRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.mssqljdbc.FindManualMssqlJdbc13ConfigurationRisks
@@ -73,24 +62,7 @@ tags:
   - configuration
   - search
 recipeList:
-  - org.openrewrite.text.Find:
-      find: 'jdbc:sqlserver:'
-      regex: false
-      caseSensitive: false
-      filePattern: "**/*.properties;**/*.yml;**/*.yaml;**/*.xml;**/*.conf;**/*.env;**/*.json"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '(?i)\b(?:encrypt|trustServerCertificate|trustStore|trustStorePassword|hostNameInCertificate|serverCertificate|sslProtocol|loginTimeout|socketTimeout|authentication|authenticationScheme|AADSecurePrincipalId|AADSecurePrincipalSecret|accessTokenCallbackClass|msiClientId|columnEncryptionSetting|enclaveAttestationUrl|enclaveAttestationProtocol|keyVaultProviderClientId|keyVaultProviderClientKey|vectorTypeSupport|quotedIdentifier|concatNullYieldsNull)\s*[=:]'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.properties;**/*.yml;**/*.yaml;**/*.xml;**/*.conf;**/*.env;**/*.json"
-      contextSize: 0
-  - org.openrewrite.text.Find:
-      find: '(?i)(?:mssql-jdbc_auth|sqljdbc_auth)[^ \t\r\n"'']*'
-      regex: true
-      caseSensitive: true
-      filePattern: "**/*.properties;**/*.yml;**/*.yaml;**/*.xml;**/*.conf;**/*.env;**/*.json;**/*.sh;**/*.bat;**/*.ps1;**/Dockerfile*"
-      contextSize: 0
+  - com.huawei.clouds.openrewrite.mssqljdbc.FindMssqlJdbc13ConfigurationRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.mssqljdbc.MigrateMssqlJdbcTo13_2_1Jre11

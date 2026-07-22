@@ -24,6 +24,16 @@
       <version>${rewrite.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-properties</artifactId>
+      <version>${rewrite.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-yaml</artifactId>
+      <version>${rewrite.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.openrewrite.recipe</groupId>
       <artifactId>rewrite-java-dependencies</artifactId>
     </dependency>
