@@ -1,0 +1,21 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.slf4j
+packageName: com.huawei.clouds.openrewrite.slf4j
+description: Upgrade SLF4J with explicit provider compatibility guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.slf4j.UpgradeSlf4jApiTo2_0_17
+displayName: Upgrade SLF4J API to 2.0.17
+description: Upgrade org.slf4j:slf4j-api declarations in Maven and Gradle builds to 2.0.17. The logging provider must be upgraded separately.
+tags:
+  - slf4j
+  - logging
+  - java
+  - dependency-upgrade
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.slf4j
+      artifactId: slf4j-api
+      newVersion: 2.0.17
+      overrideManagedVersion: true

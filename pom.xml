@@ -43,6 +43,7 @@
     <module>rewrite-ngx-translate-http-loader-upgrade</module>
     <module>rewrite-jedis-upgrade</module>
     <module>rewrite-mybatis-spring-boot-starter-upgrade</module>
+    <module>rewrite-slf4j-upgrade</module>
   </modules>
 
   <dependencyManagement>
