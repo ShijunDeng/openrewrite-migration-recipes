@@ -55,6 +55,7 @@
     <module>rewrite-jasypt-spring-boot-starter-upgrade</module>
     <module>rewrite-angular-cdk-upgrade</module>
     <module>rewrite-hibernate-core-upgrade</module>
+    <module>rewrite-vue-router-upgrade</module>
   </modules>
 
   <dependencyManagement>

@@ -1,0 +1,35 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.vuerouter
+packageName: com.huawei.clouds.openrewrite.vuerouter
+description: Upgrade Vue Router dependencies with explicit source-migration guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.vuerouter.UpgradeVueRouterTo5_0_3
+displayName: Upgrade Vue Router to 5.0.3
+description: Update older direct vue-router declarations in package.json to 5.0.3 without downgrading later versions or replacing non-registry references.
+tags:
+  - vue
+  - vue-router
+  - nodejs
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.dependencies[?(@['vue-router'] =~ '^[<>=~^ ]*v?(?:[34]\.|5\.0\.[0-2](?:[^0-9]|$)).*')]['vue-router']
+      value: '"5.0.3"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.devDependencies[?(@['vue-router'] =~ '^[<>=~^ ]*v?(?:[34]\.|5\.0\.[0-2](?:[^0-9]|$)).*')]['vue-router']
+      value: '"5.0.3"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.peerDependencies[?(@['vue-router'] =~ '^[<>=~^ ]*v?(?:[34]\.|5\.0\.[0-2](?:[^0-9]|$)).*')]['vue-router']
+      value: '"5.0.3"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.optionalDependencies[?(@['vue-router'] =~ '^[<>=~^ ]*v?(?:[34]\.|5\.0\.[0-2](?:[^0-9]|$)).*')]['vue-router']
+      value: '"5.0.3"'
