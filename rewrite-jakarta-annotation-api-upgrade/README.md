@@ -2,13 +2,13 @@
 
 本模块对应表格中的 `jakarta.annotation:jakarta.annotation-api`，处理 `1.3.5` 到 `3.0.0` 的升级。这个版本跨度看似只改版本号，实际上跨越了 Jakarta EE 8、9、10、11：`1.3.5` 虽然已经使用 `jakarta.annotation` Maven groupId，却仍导出 `javax.annotation.*`；2.0 才把 Java 包迁到 `jakarta.annotation.*`，3.0 又彻底删除了 `ManagedBean`。
 
-建议先运行删除项审计配方：
+推荐完整配方已经内置删除项审计；也可以先单独运行审计配方做迁移预评估：
 
 ```text
 com.huawei.clouds.openrewrite.jakartaannotation.FindRemovedManagedBeanUsages
 ```
 
-确认所有命中项的人工迁移方案后，再运行完整配方：
+完整配方会保留这些 `SearchResult` 标记，同时完成安全类型迁移：
 
 ```text
 com.huawei.clouds.openrewrite.jakartaannotation.MigrateJakartaAnnotationApiTo3_0_0
@@ -22,7 +22,7 @@ com.huawei.clouds.openrewrite.jakartaannotation.UpgradeJakartaAnnotationApiTo3_0
 
 ## 自动处理范围
 
-依赖配方把 Maven/Gradle 中精确坐标 `jakarta.annotation:jakarta.annotation-api` 升级到 `3.0.0`。它支持 Maven 直接版本、版本属性和 dependencyManagement，以及 Gradle Groovy 字符串、Map 和本地版本变量写法；scope、optional 等声明保持不变。`overrideManagedVersion=true` 会保证选中目标版本，若版本原本由 Jakarta EE、Spring Boot、Quarkus 或应用服务器 BOM 管理，必须复核是否应该升级整个平台而不是长期保留局部覆盖。
+依赖配方只把表格明确给出的 `jakarta.annotation:jakarta.annotation-api:1.3.5` 升级到 `3.0.0`。它支持 Maven 直接版本、dependencyManagement 和仅被目标依赖引用的本地属性，以及 Gradle Groovy 字符串/Map、Kotlin DSL 直接字面量；scope、optional 等声明保持不变。表格外版本、范围/动态值、Gradle 变量/catalog、共享 Maven 属性和外部 parent/BOM 的无版本声明均不猜测、不覆盖；推荐配方会对外部管理声明加标记，要求到真正拥有版本的平台处理。
 
 完整配方在依赖升级之外，以类型信息逐个迁移 1.3.5 中存在且 3.0.0 仍存在的 14 个类型引用：
 
@@ -43,7 +43,19 @@ com.huawei.clouds.openrewrite.jakartaannotation.UpgradeJakartaAnnotationApiTo3_0
 | `javax.annotation.sql.DataSourceDefinition` | `jakarta.annotation.sql.DataSourceDefinition` |
 | `javax.annotation.sql.DataSourceDefinitions` | `jakarta.annotation.sql.DataSourceDefinitions` |
 
-迁移覆盖 import、通配符 import 实际使用、全限定名、嵌套枚举和 `package-info.java`。它不是 `javax.annotation` 的递归文本替换，因此不会误改字符串、注释、业务同名注解，也不会触碰 Java SE 的 `javax.annotation.processing.*` 或 `javax.lang.model.*`。
+迁移覆盖 import、通配符 import 实际使用、全限定名、嵌套枚举和 `package-info.java`。它不是 `javax.annotation` 的递归文本替换，因此不会误改注释、业务同名注解，也不会触碰 Java SE 的 `javax.annotation.processing.*` 或 `javax.lang.model.*`。Java 字符串中的其他 `javax.annotation.*` 由推荐配方精确标记，交给反射、生成器、扫描器或配置的真实所有者决定。
+
+## 配方执行状态
+
+| 不兼容点 | 推荐配方行为 | 状态 |
+| --- | --- | --- |
+| 14 个仍存在的规范类型改包 | 使用类型归因迁移 import、全限定名、注解和嵌套枚举 | AUTO |
+| `ManagedBean` 在 3.0 删除 | 在旧/新命名空间的具体类型引用上保留 SearchResult | MARK，不能伪造目标类型或 CDI scope |
+| 最低 Java 提升到 11 | 定位 Maven/Gradle 中可见且低于 11 的 source/target/release | MARK，不擅自升级业务 JDK |
+| JPMS 模块 `java.annotation`→`jakarta.annotation` | 对以 PlainText 输入的 `module-info.java` 中旧 requires 定位文件 | MARK，需结合完整 module graph 审核 |
+| OSGi/bnd 仍导入 `javax.annotation` | 定位 MANIFEST.MF、bnd 和 feature 元数据 | MARK，需结合目标容器 wiring |
+| 反射/生成器/扫描器字符串 | 标记 Java 字符串中的 `javax.annotation.*`，排除 Java SE `javax.annotation.processing.*` | MARK，不做盲目文本替换 |
+| 由平台/BOM管理的无版本依赖 | 保持声明并标记版本所有权 | MARK/NO-OP |
 
 ## `ManagedBean` 必须人工迁移
 
@@ -60,9 +72,9 @@ Jakarta Annotations 3.0 的唯一规范级删除项是 `jakarta.annotation.Manag
 | 1.3.5 的坐标已是 `jakarta.annotation:*`，包仍是 `javax.annotation.*` | 不能只看 groupId 判断源码已完成 Jakarta 迁移；应同时扫描 import、全限定名、反射字符串、生成代码模板与预编译依赖 |
 | 2.0 将规范类型从 `javax.annotation`、`.security`、`.sql` 迁到 `jakarta.annotation` | 这是二进制和源码均不兼容的命名空间切换；所有框架、容器、测试库和自有公共 API 必须使用同一命名空间，旧二进制不能靠改应用 import 继续链接 |
 | 3.0 删除 `ManagedBean` | 使用审计配方逐项迁到 CDI、Enterprise Beans、Faces backing bean 或目标平台组件模型；配方不生成不存在的 `jakarta.annotation.ManagedBean` |
-| 最低 Java 版本提升 | 1.3.5 manifest 要求 Java 8，3.0.0 要求 Java 11；若整体迁到 Jakarta EE 11，平台最低基线通常还要统一到 Java 17。同步升级编译、运行、CI、镜像与 toolchain |
-| JPMS 模块名改变 | 1.3.5 是自动模块 `java.annotation`，3.0.0 是显式模块 `jakarta.annotation`；`module-info.java` 中的 `requires java.annotation` 需要人工改为 `requires jakarta.annotation`，本配方不按文本猜测模块声明 |
-| OSGi 导出包改变 | bundle 由 `javax.annotation*` 改为 `jakarta.annotation*`；检查 `Import-Package`、bnd 指令、feature/repository 描述和容器 wiring，不能在运行时同时依赖互不兼容的包空间 |
+| 最低 Java 版本提升 | 1.3.5 manifest 要求 Java 8，3.0.0 要求 Java 11；推荐配方会标记可见的旧构建基线。若整体迁到 Jakarta EE 11，平台最低基线通常还要统一到 Java 17。同步升级编译、运行、CI、镜像与 toolchain |
+| JPMS 模块名改变 | 1.3.5 是自动模块 `java.annotation`，3.0.0 是显式模块 `jakarta.annotation`；推荐配方会在 PlainText 形式的 `module-info.java` 上标记旧 requires，不在缺少完整 module graph 时直接修改 |
+| OSGi 导出包改变 | bundle 由 `javax.annotation*` 改为 `jakarta.annotation*`；配方定位相关 MANIFEST/bnd/feature 文件，仍需结合目标容器检查 wiring，不能在运行时同时依赖互不兼容的包空间 |
 | 2.1 新增 `@Nonnull`、`@Nullable`，并允许 `@Priority` 用于全部 annotation target | 这些是可选的新 API，不应机械替换 JSpecify、JSR-305、JetBrains、Spring 或 Checker Framework 的 nullness 注解；各工具对默认值、泛型/type-use 和运行时语义不同 |
 | lifecycle 回调改包 | `PostConstruct`/`PreDestroy` 的方法约束仍需满足；确认 Spring 6、CDI 4、Jakarta EE 11 或实际 DI 容器能够发现 Jakarta 版本，并回归异常、继承、代理和销毁顺序 |
 | `Resource`/`Resources` 改包 | 注解类型会自动迁移，但 JNDI 名、lookup、mappedName、authenticationType、shareable 和实际资源绑定不变；必须在目标容器验证注入。`javax.sql.DataSource` 属于 Java SE，仍然保留 `javax.sql` |
@@ -82,7 +94,7 @@ Jakarta Annotations 3.0 的唯一规范级删除项是 `jakarta.annotation.Manag
 
 ## 测试样本来源
 
-测试按 OpenRewrite `RewriteTest` 的 before/after 与 no-op 风格编写，共 26 个场景，真实样本均固定到不可漂移的 commit：
+测试按 OpenRewrite `RewriteTest` 的 before/after、marker 与 no-op 风格编写，共 28 个场景，真实样本均固定到不可漂移的 commit：
 
 - [dropwizard/metrics `metrics-jersey2/pom.xml`](https://github.com/dropwizard/metrics/blob/3d704a3b80b93815ad44a7b29601a65eaeb5c3bf/metrics-jersey2/pom.xml)：dependencyManagement 中的 `1.3.5`；
 - [OpenAPITools/openapi-generator EAP Gradle sample](https://github.com/OpenAPITools/openapi-generator/blob/82cb1ad5ab515e81cf54a598b91cf5ff61b718c1/samples/server/petstore/jaxrs-resteasy/eap/build.gradle)：Gradle `providedCompile` 的直接坐标；
@@ -91,9 +103,9 @@ Jakarta Annotations 3.0 的唯一规范级删除项是 `jakarta.annotation.Manag
 - [javaee-samples/javaee7-samples `DataSourceDefinitionHolder`](https://github.com/javaee-samples/javaee7-samples/blob/4a67b232d71bc2b3b6d418e955218fa71741b943/jpa/datasourcedefinition/src/main/java/org/javaee7/jpa/datasourcedefinition/DataSourceDefinitionHolder.java)：标准 data source definition；
 - [OpenLiberty `MyManagedBean1`](https://github.com/OpenLiberty/open-liberty/blob/673c04f54357bfd6d07be45a862884c45f0b6c54/dev/com.ibm.ws.cdi.jee_fat/fat/src/com/ibm/ws/cdi/jee/ejbWithJsp/ejb/MyManagedBean1.java)：同一文件同时包含必须人工处理的 `ManagedBean` 与可自动迁移的 `Resource`。
 
-用例还覆盖 Maven 属性、scope/optional、Gradle 字符串/Map/变量、Kotlin DSL 无语义模型时 fail-safe、目标版本 no-op、相似坐标防误伤、全部 14 个安全类型、嵌套类型、通配符、全限定名、package annotation、已迁移源码、字符串/注释/业务同名类型、Java SE annotation processing 防误伤、旧/新 `ManagedBean` 审计，以及构建文件和源码同批迁移。
+用例还覆盖 Maven 隔离/共享属性、scope/optional、Gradle 字符串/Map/变量、Kotlin DSL 直接字面量、表格外版本、目标版本 no-op、相似坐标防误伤、全部 14 个安全类型、嵌套类型、通配符、全限定名、package annotation、已迁移源码、反射字符串 marker、注释/业务同名类型、Java SE annotation processing 防误伤、旧/新 `ManagedBean` 审计、Java 基线、外部 BOM、JPMS/OSGi marker，以及构建文件和源码同批迁移。
 
-实现与断言风格参考 Apache 2.0 的 OpenRewrite 核心测试：[ChangeTypeTest](https://github.com/openrewrite/rewrite/blob/main/rewrite-java/src/test/java/org/openrewrite/java/ChangeTypeTest.java)、[FindTypesTest](https://github.com/openrewrite/rewrite/blob/main/rewrite-java/src/test/java/org/openrewrite/java/search/FindTypesTest.java) 和 [UpgradeDependencyVersionTest](https://github.com/openrewrite/rewrite-java-dependencies/blob/main/src/test/java/org/openrewrite/java/dependencies/UpgradeDependencyVersionTest.java)。
+实现与断言风格参考 Apache 2.0 的 OpenRewrite 固定提交测试：[ChangeTypeTest](https://github.com/openrewrite/rewrite/blob/1b1804a5af7692612398fcce034a846b48b5b8cf/rewrite-java-test/src/test/java/org/openrewrite/java/ChangeTypeTest.java)、[FindTypesTest](https://github.com/openrewrite/rewrite/blob/1b1804a5af7692612398fcce034a846b48b5b8cf/rewrite-java-test/src/test/java/org/openrewrite/java/search/FindTypesTest.java) 和 [UpgradeDependencyVersionTest](https://github.com/openrewrite/rewrite-java-dependencies/blob/decb8dbb2b5b726f8815efc51c85c34a60268bb0/src/test/java/org/openrewrite/java/dependencies/UpgradeDependencyVersionTest.java)。
 
 ## 使用与验证
 

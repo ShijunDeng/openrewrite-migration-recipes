@@ -12,6 +12,8 @@ import static org.openrewrite.gradle.Assertions.buildGradle;
 import static org.openrewrite.gradle.Assertions.buildGradleKts;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.test.SourceSpecs.text;
+import static org.openrewrite.xml.Assertions.xml;
 
 class JakartaAnnotationApiUpgradeTest implements RewriteTest {
     private static final String DEPENDENCY_RECIPE =
@@ -156,7 +158,7 @@ class JakartaAnnotationApiUpgradeTest implements RewriteTest {
     }
 
     @Test
-    void upgradesGradleVersionVariable() {
+    void leavesGradleVersionVariableForItsOwner() {
         rewriteRun(buildGradle(
                 """
                 plugins { id 'java' }
@@ -165,28 +167,25 @@ class JakartaAnnotationApiUpgradeTest implements RewriteTest {
                 dependencies {
                     compileOnly "jakarta.annotation:jakarta.annotation-api:${annotationsVersion}"
                 }
-                """,
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                def annotationsVersion = '3.0.0'
-                dependencies {
-                    compileOnly "jakarta.annotation:jakarta.annotation-api:${annotationsVersion}"
-                }
                 """
         ));
     }
 
     @Test
-    void leavesKotlinDslWithoutGradleSemanticModelUntouched() {
-        // UpgradeDependencyVersion uses GradleProject markers for Kotlin DSL. A parser-only
-        // RewriteTest has no Tooling API model and must fail safe instead of editing raw text.
+    void upgradesLiteralKotlinDslWithoutGradleSemanticModel() {
         rewriteRun(buildGradleKts(
                 """
                 plugins { java }
                 repositories { mavenCentral() }
                 dependencies {
                     compileOnly("jakarta.annotation:jakarta.annotation-api:1.3.5")
+                }
+                """,
+                """
+                plugins { java }
+                repositories { mavenCentral() }
+                dependencies {
+                    compileOnly("jakarta.annotation:jakarta.annotation-api:3.0.0")
                 }
                 """
         ));
@@ -197,6 +196,24 @@ class JakartaAnnotationApiUpgradeTest implements RewriteTest {
         rewriteRun(pomXml("""
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>target</artifactId><version>1</version><dependencies><dependency><groupId>jakarta.annotation</groupId><artifactId>jakarta.annotation-api</artifactId><version>3.0.0</version></dependency></dependencies></project>
                 """));
+    }
+
+    @Test
+    void leavesSpreadsheetExternalAndSharedPropertyVersionsUntouched() {
+        rewriteRun(
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>outside</artifactId><version>1</version>
+                          <dependencies><dependency><groupId>jakarta.annotation</groupId><artifactId>jakarta.annotation-api</artifactId><version>2.1.1</version></dependency></dependencies>
+                        </project>
+                        """),
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shared</artifactId><version>1</version>
+                          <properties><annotations.version>1.3.5</annotations.version></properties>
+                          <name>annotations-${annotations.version}</name>
+                          <dependencies><dependency><groupId>jakarta.annotation</groupId><artifactId>jakarta.annotation-api</artifactId><version>${annotations.version}</version></dependency></dependencies>
+                        </project>
+                        """, source -> source.path("shared-pom.xml"))
+        );
     }
 
     @Test
@@ -503,7 +520,7 @@ class JakartaAnnotationApiUpgradeTest implements RewriteTest {
 
                         import javax.annotation.ManagedBean;
 
-                        @ManagedBean("MyManagedBean1")
+                        @/*~~>*/ManagedBean("MyManagedBean1")
                         class MyManagedBean1 {
                             @Resource(lookup = "globalGreeting") String greeting;
                         }
@@ -526,7 +543,53 @@ class JakartaAnnotationApiUpgradeTest implements RewriteTest {
                             @interface Resource {}
                             @Resource class BusinessResource {}
                         }
+                        """,
                         """
+                        class AnnotationNames {
+                            // javax.annotation.PostConstruct is configuration, not a Java type use.
+                            String lifecycle = /*~~(String-based javax.annotation reference is not type-safe; identify its reflection, generator, scanner, or configuration owner before changing it)~~>*/"javax.annotation.PostConstruct";
+                            String processor = "javax.annotation.processing.Processor";
+
+                            @interface Resource {}
+                            @Resource class BusinessResource {}
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void recommendedRecipeMarksBuildModuleAndOsgiRisks() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE)),
+                xml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>legacy</artifactId><version>1</version>
+                          <properties><java.version>1.8</java.version></properties>
+                          <dependencies><dependency><groupId>jakarta.annotation</groupId><artifactId>jakarta.annotation-api</artifactId></dependency></dependencies>
+                        </project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>legacy</artifactId><version>1</version>
+                          <properties><!--~~(Jakarta Annotations 3 requires Java 11 or newer; align compiler, runtime, CI, container, and toolchain)~~>--><java.version>1.8</java.version></properties>
+                          <dependencies><!--~~(Jakarta Annotations version is externally managed; upgrade the owning platform/BOM instead of adding a local override blindly)~~>--><dependency><groupId>jakarta.annotation</groupId><artifactId>jakarta.annotation-api</artifactId></dependency></dependencies>
+                        </project>
+                        """,
+                        source -> source.path("pom.xml")
+                ),
+                buildGradle(
+                        "sourceCompatibility = '1.8'\n",
+                        "sourceCompatibility = /*~~(Jakarta Annotations 3 requires Java 11 or newer)~~>*/'1.8'\n"
+                ),
+                text(
+                        "module example.app { requires java.annotation; }",
+                        "~~(JPMS module name changed from java.annotation to jakarta.annotation; update requires and verify module-path consumers)~~>module example.app { requires java.annotation; }",
+                        source -> source.path("src/main/java/module-info.java")
+                ),
+                text(
+                        "Import-Package: javax.annotation;version=\"[1.3,2)\"\n",
+                        "~~(OSGi/build metadata still imports javax.annotation; migrate package wiring only with the target container and bundle set)~~>Import-Package: javax.annotation;version=\"[1.3,2)\"\n",
+                        source -> source.path("META-INF/MANIFEST.MF")
                 )
         );
     }

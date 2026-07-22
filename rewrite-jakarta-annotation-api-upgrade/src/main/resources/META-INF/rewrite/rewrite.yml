@@ -14,11 +14,7 @@ tags:
   - java
   - dependency-upgrade
 recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: jakarta.annotation
-      artifactId: jakarta.annotation-api
-      newVersion: 3.0.0
-      overrideManagedVersion: true
+  - com.huawei.clouds.openrewrite.jakartaannotation.UpgradeSelectedJakartaAnnotationDependency
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.jakartaannotation.MigrateJakartaAnnotationApiTo3_0_0
@@ -31,6 +27,8 @@ tags:
   - source-migration
 recipeList:
   - com.huawei.clouds.openrewrite.jakartaannotation.UpgradeJakartaAnnotationApiTo3_0_0
+  - com.huawei.clouds.openrewrite.jakartaannotation.FindRemovedManagedBeanUsages
+  - com.huawei.clouds.openrewrite.jakartaannotation.FindJakartaAnnotation3MigrationRisks
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: javax.annotation.Generated
       newFullyQualifiedTypeName: jakarta.annotation.Generated
