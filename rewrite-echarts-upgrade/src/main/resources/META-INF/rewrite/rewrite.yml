@@ -2,12 +2,12 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.echarts
 packageName: com.huawei.clouds.openrewrite.echarts
-description: Upgrade Apache ECharts applications with explicit compatibility guidance.
+description: Upgrade Apache ECharts dependencies, migrate deterministic public source constructs, and locate visual or runtime behavior changes that require chart-specific review.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.echarts.UpgradeEChartsTo6_1_0
-displayName: Upgrade Apache ECharts 4.x or 5.x to 6.1.0
-description: Update direct ECharts declarations in package.json to 6.1.0. Lock files must be regenerated with the project's package manager.
+displayName: Upgrade selected Apache ECharts declarations to 6.1.0
+description: Upgrade only spreadsheet-selected direct ECharts 4.x and 5.x package.json declarations to 6.1.0 without changing protocols, aliases, ranges, lockfiles, or newer versions.
 tags:
   - echarts
   - nodejs
@@ -16,15 +16,100 @@ preconditions:
   - org.openrewrite.FindSourceFiles:
       filePattern: package.json;**/package.json
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.dependencies.echarts
-      value: '"6.1.0"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.devDependencies.echarts
-      value: '"6.1.0"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.peerDependencies.echarts
-      value: '"6.1.0"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.optionalDependencies.echarts
-      value: '"6.1.0"'
+  - com.huawei.clouds.openrewrite.echarts.UpgradeSelectedEChartsDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.echarts.MigrateDeterministicEChartsSourceTo6
+displayName: Migrate deterministic ECharts 6 source constructs
+description: Move legacy full-build and v5 light-theme imports to target public exports and rename the legacy namespace option type.
+tags:
+  - echarts
+  - javascript
+  - typescript
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.echarts.RewriteDeterministicEChartsSource
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.echarts.AuditECharts6SourceCompatibility
+displayName: Locate ECharts 6 source compatibility work
+description: In ECharts source files, mark deprecated options, internal or map imports, graphic array transforms, theme-sensitive initialization, and v6 option semantics that require visual or data-index review.
+tags:
+  - echarts
+  - search
+  - visual-regression
+  - manual-review
+preconditions:
+  - org.openrewrite.text.Find:
+      find: '(?:["''](?:echarts|@covalent/echarts)(?:/[^"'']*)?["'']|\becharts[.](?:init|EChartOption|EChartsOption)\b)'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs}"
+      contextSize: 0
+recipeList:
+  - org.openrewrite.text.Find:
+      find: '(?:["'']echarts/(?:src|map)/|\b(?:hoverAnimation|hoverOffset|clipOverflow|clockWise|mapType|mapLocation|dataRange)[ \t]*:)'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs}"
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '\b(?:position|scale|origin)[ \t]*:[ \t]*\['
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs}"
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '\bvalueFormatter[ \t]*(?::|\()|\b(?:startValue|rich)[ \t]*:|\bcenter[ \t]*:[ \t]*\[[^\]]*%|\btype[ \t]*:[ \t]*["''](?:bar|pictorialBar|candlestick|boxplot)["'']'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs}"
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '\becharts[.]init[ \t]*\('
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{js,jsx,ts,tsx,mjs,cjs}"
+      contextSize: 80
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.echarts.AuditEChartsCompanionDependencies
+displayName: Locate ECharts companion packages requiring compatibility review
+description: Mark framework wrappers and obsolete community typings whose compatibility and release cadence are independent from the ECharts core package.
+tags:
+  - echarts
+  - search
+  - dependency-review
+recipeList:
+  - org.openrewrite.json.search.FindKey:
+      key: $.dependencies['ngx-echarts']
+  - org.openrewrite.json.search.FindKey:
+      key: $.devDependencies['ngx-echarts']
+  - org.openrewrite.json.search.FindKey:
+      key: $.dependencies['echarts-for-react']
+  - org.openrewrite.json.search.FindKey:
+      key: $.devDependencies['echarts-for-react']
+  - org.openrewrite.json.search.FindKey:
+      key: $.dependencies['vue-echarts']
+  - org.openrewrite.json.search.FindKey:
+      key: $.devDependencies['vue-echarts']
+  - org.openrewrite.json.search.FindKey:
+      key: $.dependencies['@types/echarts']
+  - org.openrewrite.json.search.FindKey:
+      key: $.devDependencies['@types/echarts']
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.echarts.MigrateEChartsTo6_1_0
+displayName: Migrate Apache ECharts applications to 6.1.0
+description: Upgrade selected dependencies, migrate deterministic public source constructs, and mark deprecated APIs, visual defaults, data-index semantics, and companion packages for targeted review.
+tags:
+  - echarts
+  - nodejs
+  - javascript
+  - typescript
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.echarts.UpgradeEChartsTo6_1_0
+  - com.huawei.clouds.openrewrite.echarts.MigrateDeterministicEChartsSourceTo6
+  - com.huawei.clouds.openrewrite.echarts.AuditECharts6SourceCompatibility
+  - com.huawei.clouds.openrewrite.echarts.AuditEChartsCompanionDependencies

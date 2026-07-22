@@ -15,7 +15,7 @@
 | [`rewrite-guava-upgrade`](rewrite-guava-upgrade) | `com.huawei.clouds.openrewrite.guava.UpgradeGuavaTo33_5_0Jre` | 将 Maven/Gradle Guava 依赖升级到 33.5.0-jre |
 | [`rewrite-ngx-translate-core-upgrade`](rewrite-ngx-translate-core-upgrade) | `com.huawei.clouds.openrewrite.ngxtranslate.MigrateNgxTranslateCoreTo17` | 将 `@ngx-translate/core` 11/13/14/15 升级到 17.0.0，自动迁移 fallback API、getter、默认实现和严格 standalone imports，并标记 provider、HTTP loader、事件、并发与 SSR 风险 |
 | [`rewrite-hibernate-validator-upgrade`](rewrite-hibernate-validator-upgrade) | `com.huawei.clouds.openrewrite.hibernatevalidator.UpgradeHibernateValidatorTo8` | 将 Hibernate Validator 升级到 8.0.3.Final 并迁移 Jakarta Validation API |
-| [`rewrite-echarts-upgrade`](rewrite-echarts-upgrade) | `com.huawei.clouds.openrewrite.echarts.UpgradeEChartsTo6_1_0` | 将 ECharts 4.x/5.x 的 `package.json` 声明升级到 6.1.0 |
+| [`rewrite-echarts-upgrade`](rewrite-echarts-upgrade) | `com.huawei.clouds.openrewrite.echarts.MigrateEChartsTo6_1_0` | 将 ECharts 4/5 升级到 6.1.0，自动迁移公开入口和旧 option 类型，并标记 deprecated option、主题/布局、data index、地图与 wrapper 风险 |
 | [`rewrite-fastjson-upgrade`](rewrite-fastjson-upgrade) | `com.huawei.clouds.openrewrite.fastjson.UpgradeFastjsonTo2_0_62` | 将 Fastjson 1.x/2.x 兼容模块升级到 2.0.62，并提供可选的新 API 包名迁移 |
 | [`rewrite-ngx-translate-http-loader-upgrade`](rewrite-ngx-translate-http-loader-upgrade) | `com.huawei.clouds.openrewrite.ngxtranslate.UpgradeNgxTranslateHttpLoaderTo17` | 将 `@ngx-translate/http-loader` 升级到 17.0.0 |
 | [`rewrite-jedis-upgrade`](rewrite-jedis-upgrade) | `com.huawei.clouds.openrewrite.jedis.UpgradeJedisTo7_2_1` | 将 Maven/Gradle Jedis 依赖升级到 7.2.1 |

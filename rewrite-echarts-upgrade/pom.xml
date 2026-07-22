@@ -13,7 +13,7 @@
 
   <artifactId>rewrite-echarts-upgrade</artifactId>
   <name>OpenRewrite ECharts Upgrade</name>
-  <description>Configuration-based OpenRewrite recipe for upgrading ECharts 4.x and 5.x to 6.1.0.</description>
+  <description>OpenRewrite recipes for upgrading ECharts dependencies and deterministic source constructs to 6.1.0.</description>
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-echarts-upgrade</url>
 
   <dependencies>

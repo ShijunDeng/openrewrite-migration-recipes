@@ -1,73 +1,82 @@
-# Apache ECharts 4.x/5.x to 6.1.0 upgrade recipe
+# Apache ECharts 4/5 → 6.1.0 自动迁移
 
-本模块对应 `开源软件升级.xlsx` 中的 `echarts`，合并处理表中列出的 `4.8.0`、`4.9.0`、`5.0.2`、`5.2.1`、`5.2.2`、`5.3.0`、`5.3.1`、`5.3.3`、`5.4.0` 及 `5.4.1 …（共 12 个版本）`，目标版本为 `6.1.0`。
+本模块对应 `开源软件升级.xlsx` 中约 244 个服务使用的 `echarts`。推荐入口同时执行严格依赖升级、确定性源码改写和兼容性风险定位：
 
-配方名称：
+```text
+com.huawei.clouds.openrewrite.echarts.MigrateEChartsTo6_1_0
+```
+
+仅升级依赖时使用底层配方：
 
 ```text
 com.huawei.clouds.openrewrite.echarts.UpgradeEChartsTo6_1_0
 ```
 
-## 自动处理范围
+## 表格版本边界
 
-配方仅修改 `package.json`，将下列直接依赖区中的 `echarts` 版本统一设置为 `6.1.0`：
+依赖配方只修改任意层级 `package.json` 的 `dependencies`、`devDependencies`、`peerDependencies`、`optionalDependencies`，并且值必须是以下版本的 exact、caret、tilde、equal、`v` 或 `^v` registry 声明：
 
-- `dependencies`
-- `devDependencies`
-- `peerDependencies`
-- `optionalDependencies`
-
-配方不会修改名称相似但生命周期独立的 `ngx-echarts`、`echarts-for-react` 或 `vue-echarts`。这些适配层必须按各自模块的目标版本单独升级。
-
-`package-lock.json`、`npm-shrinkwrap.json`、`yarn.lock` 和 `pnpm-lock.yaml` 包含解析地址、完整性摘要及依赖图，不能只替换版本字符串。运行配方后必须使用项目原有包管理器重新生成锁文件，例如：
-
-```bash
-npm install
-# 或 yarn install / pnpm install
+```text
+4.8.0, 4.9.0,
+5.0.2, 5.2.1, 5.2.2, 5.3.0, 5.3.1, 5.3.3,
+5.4.0, 5.4.1, 5.4.2, 5.4.3, 5.5.0, 5.5.1, 5.6.0
 ```
 
-## ECharts 4 → 5 不兼容修改点
+表格把 `5.4.1` 后的来源压缩为聚合单元格；这里按 Apache ECharts 官方 5.x release 序列展开到 5.6.0。未列版本、复杂范围、prerelease、协议/alias、override/resolution、非标量值、锁文件和其他 JSON 均保持不变。
 
-| 不兼容点 | 迁移建议 |
-| --- | --- |
-| 默认主题和调色板改变 | 对颜色敏感的图表显式设置主题或调色板；临时兼容可复用 v4 调色板 |
-| npm 包不再内置地图 GeoJSON | 自行引入所需 GeoJSON，并通过 `echarts.registerMap()` 注册 |
-| `echarts/lib/...` 内部源码路径及 TypeScript/ESM 结构改变 | 按需引入改用公开的 `echarts/core`、`echarts/charts`、`echarts/components` 和 `echarts/renderers` 入口，避免内部路径 |
-| 停止支持 IE8/VML | 更新浏览器支持基线；旧版 IE 场景不能直接升级 |
-| `visualMap` 与 `itemStyle` 的视觉优先级调整 | 检查同时使用两者的颜色、透明度和边框结果 |
-| 富文本 `padding` 修复为与 CSS 一致 | 对依赖旧错误顺序的富文本标签重新调整 padding |
-| simple 构建不再包含 ARIA | 需要无障碍能力时改用包含 `AriaComponent` 的模块化构建 |
-| 图形元素数组式 `position`、`scale`、`origin` 已废弃 | 改用 `x`/`y`、`scaleX`/`scaleY`、`originX`/`originY` |
-| 文本元素样式接口重构 | 使用 `textContent`、`textConfig` 和新的文本样式属性，清理旧版扁平文本属性 |
-| `hoverAnimation`、`clipOverflow` 等旧配置废弃 | 分别迁移到 `emphasis.scale`、`clip`，检查所有废弃配置警告 |
+## spec → 配方行为 → 测试
 
-## ECharts 5 → 6 不兼容修改点
+| 不兼容点 / 迁移 spec | 配方行为 | 自动化状态 | 测试证据 |
+| --- | --- | --- | --- |
+| 表格列出的 ECharts 4/5 直接依赖 | 精确升级到 `6.1.0`，不修改 wrapper 和 lockfile | 自动修复 | 180 个区段/版本/声明组合、真实 package、协议/范围/嵌套负例 |
+| `echarts/lib/echarts[.js]`、`echarts/src/echarts[.ts]` 全量入口 | 改为目标公开根入口 `echarts`；合法的 chart/component side-effect import 保留 | 自动修复 | waldur 固定 commit、ES import/dynamic import/require before→after |
+| v5 内部 `echarts/src/theme/light` | 按 6.0 官方说明迁移到公开 `echarts/theme/rainbow.js` | 自动修复 | theme import before→after |
+| v4 namespace 类型 `echarts.EChartOption` | 改为目标导出的 `echarts.EChartsOption`；不修改注释、字符串或相似标识符 | 自动修复 | ant-simple-pro 固定 commit、lookalike 负例 |
+| `hoverAnimation`、`hoverOffset`、`clipOverflow`、`clockWise`、`mapType`、`mapLocation`、`dataRange` | 标记具体 option key；嵌套 `emphasis`、已有新字段和 series 类型决定正确补丁，配方不猜测 | 自动检测 | Covalent 与 ant-simple-pro 固定源码 marker |
+| graphic 的数组 `position`/`scale`/`origin` | 标记数组式 transform，人工改为 x/y、scaleX/Y、originX/Y | 自动检测 | graphic marker 测试 |
+| v6 新默认主题、legend 位置和 Cartesian 防溢出/防重叠 | 标记 `echarts.init()` 及边界 series；由视觉基线决定采用新默认或显式兼容选项 | 自动检测 + 视觉验证 | init、bar/pictorialBar/candlestick/boxplot marker |
+| geo/map/graph/tree 百分比 center 计算基准修复 | 标记百分比数组 `center`；决定重新校准或临时使用 `legacyViewCoordSysCenterBase` | 自动检测 | percentage center marker |
+| rich label 现在继承普通 label | 标记 `rich`；决定接受继承或配置 `richInheritPlainLabel: false` | 自动检测 | semantic option audit |
+| 6.1 `tooltip.valueFormatter` 第二参数改为 raw data index | 标记属性和 method shorthand，结合 dataZoom/filter 修正索引逻辑 | 自动检测 | callback marker 测试 |
+| 6.1 `axis.startValue` 不再兼作 `axis.min` | 标记 `startValue`，由业务决定是否补同值 `min` | 自动检测 | axis marker 测试 |
+| 6.1 边界 bar/pictorialBar/candlestick/boxplot 默认不再溢出 grid | 标记 series 类型；需要旧行为时审核 `axis.containShape: false` | 自动检测 + 视觉验证 | series marker 测试 |
+| v5 不再随 npm 包内置地图 GeoJSON、`echarts/src`/`echarts/map` 私有入口 | 标记剩余私有/地图路径，人工提供 GeoJSON 并 `registerMap()` | 自动检测 | deep/map import audit |
+| `ngx-echarts`、`echarts-for-react`、`vue-echarts`、`@types/echarts` | 在 `package.json` 标记具体 dependency key，分别升级 wrapper；ECharts 自带类型时删除冗余 typings | 自动检测 | JSON SearchResult 测试 |
 
-| 不兼容点 | 迁移建议 |
-| --- | --- |
-| v6 默认主题、视觉样式和组件位置改变，图例默认移到底部 | 做视觉回归；需要保持 v5 外观时显式使用 `echarts/theme/v5.js` |
-| Cartesian 坐标轴默认启用防溢出和轴名防重叠布局 | 检查像素级布局；必要时设置 `grid.outerBoundsMode: 'none'` 并关闭相应轴标签/轴名防重叠选项 |
-| `geo`、`map`、`graph`、`tree` 的百分比 `center` 计算基准修正 | 重新校准中心位置；短期可在根 option 设置 `legacyViewCoordSysCenterBase: true` |
-| rich label 样式现在继承普通 label 样式 | 检查字体与阴影继承；需要旧行为时设置 `richInheritPlainLabel: false` |
-| `tooltip.valueFormatter` 第二个参数改为原始数据索引 | 若回调使用索引读取数据，改为基于 raw data index，并覆盖 dataZoom/filter 场景测试 |
-| `axis.startValue` 不再兼作 `axis.min` | 需要固定最小值时同时显式设置 `axis.min` |
-| bar、pictorialBar、candlestick、boxplot 默认不再越出 grid | 确认边界图形展示；需要旧行为时设置 `axis.containShape: false` |
+`自动检测` 生成 OpenRewrite `SearchResult`（dry-run 中的 `~~>`），表示配方已经把工作定位到具体位置，但尚未完成需要图表语义或视觉基线的迁移。它不能被记为“自动修复完成”。
 
-完整差异以 Apache ECharts 官方的 [5.0.0](https://github.com/apache/echarts/releases/tag/5.0.0)、[6.0.0](https://github.com/apache/echarts/releases/tag/6.0.0) 和 [6.1.0](https://github.com/apache/echarts/releases/tag/6.1.0) 发布说明为准。
+## 为什么不机械改 option
 
-## 使用方式
+ECharts 的 backward-compat preprocessor 能说明旧字段的目标方向，但很多迁移会创建或合并嵌套对象。例如 `hoverAnimation` 对应 `emphasis.scale`，若原 option 已存在 `emphasis`，全局文本替换可能覆盖 focus、itemStyle 或 scaleSize。`startValue` 是否需要复制到 `min`、百分比 center 是否应保留旧错误基准，也属于产品行为选择。因此模块对这些点做精确检测，并把自动写入限制在一一对应的模块入口和类型名。
 
-安装本仓库配方后，在待升级项目执行：
+模块不会生成 lockfile、内嵌 GeoJSON、升级 Angular/React/Vue wrapper，也不会自动选择 Canvas/SVG renderer、主题或可访问性组件。运行后须用项目原包管理器重新生成锁文件。
+
+## 真实公开仓库测试
+
+- [waldur/waldur-homeport `2726280c` 的 legacy full-build import](https://github.com/waldur/waldur-homeport/blob/2726280ccadf38a4b13eda1e353b5364f5b82d83/src/echarts/index.ts)：实际 before→after 改为根入口，保留 chart/component side-effect import。
+- [lgf196/ant-simple-pro `f6613195` 的 ECharts 4.9 package](https://github.com/lgf196/ant-simple-pro/blob/f6613195ab949b067afa57cdf885373d8c6cc58e/vue/package.json) 与 [旧 `EChartOption`/`hoverAnimation`](https://github.com/lgf196/ant-simple-pro/blob/f6613195ab949b067afa57cdf885373d8c6cc58e/vue/src/views/charts/components/pie-option.ts)：依赖和类型 before→after、deprecated option marker。
+- [Teradata/covalent `812ab55b` 的 ECharts 5.4.3 package](https://github.com/Teradata/covalent/blob/812ab55b4fb701899404d54f5bada274a5c4520d/package.json) 与 [line component](https://github.com/Teradata/covalent/blob/812ab55b4fb701899404d54f5bada274a5c4520d/libs/angular-echarts/line/src/line.component.ts)：依赖 before→after，`clipOverflow`/`hoverAnimation` marker。
+
+测试结构参考 OpenRewrite 固定提交 `b3008cc4` 的 [`RewriteTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-test/src/main/java/org/openrewrite/test/RewriteTest.java) 与 [`FindAndReplaceTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-core/src/test/java/org/openrewrite/text/FindAndReplaceTest.java)。
+
+## 官方固定依据
+
+- [ECharts 5.0.0 固定源码 `de46c551`](https://github.com/apache/echarts/tree/de46c55144e695240305d38e8ea874e03e323506)
+- [ECharts 5.6.0 固定源码 `fe42bc1e`](https://github.com/apache/echarts/tree/fe42bc1ea3a8d2ef7864cfe303de34f480149d09)
+- [ECharts 6.0.0 release 与 breaking changes](https://github.com/apache/echarts/releases/tag/6.0.0)
+- [ECharts 6.1.0 release 与 breaking changes](https://github.com/apache/echarts/releases/tag/6.1.0)
+- [目标 6.1.0 固定 package exports](https://github.com/apache/echarts/blob/c5a48f5f97d23e5379720870b8444cd05b50ffb4/package.json)
+- [目标 backward compatibility preprocessor](https://github.com/apache/echarts/blob/c5a48f5f97d23e5379720870b8444cd05b50ffb4/src/preprocessor/backwardCompat.ts)
+
+## 使用与验证
 
 ```bash
 mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:dryRun \
   -Drewrite.recipeArtifactCoordinates=com.huawei.clouds.openrewrite:rewrite-echarts-upgrade:1.0.0-SNAPSHOT \
-  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.echarts.UpgradeEChartsTo6_1_0
+  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.echarts.MigrateEChartsTo6_1_0
 ```
 
-确认 patch 后将 `dryRun` 改为 `run`，随后重新生成锁文件，并执行 TypeScript 编译、单元测试、视觉回归和端到端测试。
-
-## 模块验证
+审核自动 patch 和全部 `~~>` 后再执行 `run`，随后重建 lockfile，运行 TypeScript、unit/E2E、SSR，以及覆盖主题、legend、axis、dataZoom、地图、rich label 和边界图形的视觉回归。
 
 ```bash
 mvn -pl rewrite-echarts-upgrade -am clean verify
