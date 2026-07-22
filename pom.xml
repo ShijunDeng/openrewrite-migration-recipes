@@ -121,6 +121,7 @@
     <module>rewrite-react-redux-upgrade</module>
     <module>rewrite-ngx-color-picker-upgrade</module>
     <module>rewrite-feign-core-upgrade</module>
+    <module>rewrite-graalvm-js-upgrade</module>
   </modules>
 
   <dependencyManagement>

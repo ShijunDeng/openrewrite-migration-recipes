@@ -1,0 +1,33 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.graalvmjs
+packageName: com.huawei.clouds.openrewrite.graalvmjs
+description: Upgrade workbook-selected GraalVM JavaScript dependencies to 24.2.1 and migrate the 23.1+ Polyglot embedding layout.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.graalvmjs.UpgradeGraalVmJsTo24_2_1
+displayName: Upgrade GraalVM JavaScript dependency to 24.2.1
+description: Upgrade only exact org.graalvm.js:js versions 22.3.0 and 22.3.1 to 24.2.1 in owned Maven and top-level Gradle dependency declarations.
+tags:
+  - graalvm
+  - graaljs
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.graalvmjs.UpgradeSelectedGraalVmJsDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.graalvmjs.MigrateGraalVmJsTo24_2_1
+displayName: Migrate GraalVM JavaScript applications to 24.2.1
+description: Upgrade GraalJS, migrate canonical Polyglot/POM dependencies and disable-eval options, then precisely mark build, JSR-223, ECMAScript, sandbox, module, and runtime risks.
+tags:
+  - graalvm
+  - graaljs
+  - polyglot
+  - java
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.graalvmjs.UpgradeGraalVmJsTo24_2_1
+  - com.huawei.clouds.openrewrite.graalvmjs.MigrateGraalVmJsDependencyLayout
+  - com.huawei.clouds.openrewrite.graalvmjs.MigrateDeprecatedGraalVmJsOptions
+  - com.huawei.clouds.openrewrite.graalvmjs.FindGraalVmJs24BuildRisks
+  - com.huawei.clouds.openrewrite.graalvmjs.FindGraalVmJs24JavaRisks
