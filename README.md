@@ -23,6 +23,7 @@
 | [`rewrite-slf4j-upgrade`](rewrite-slf4j-upgrade) | `com.huawei.clouds.openrewrite.slf4j.UpgradeSlf4jApiTo2_0_17` | 将 Maven/Gradle SLF4J API 依赖升级到 2.0.17 |
 | [`rewrite-angular-common-upgrade`](rewrite-angular-common-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularCommonTo20_3_26` | 将 `@angular/common` 升级到 20.3.26 |
 | [`rewrite-angular-platform-browser-upgrade`](rewrite-angular-platform-browser-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularPlatformBrowserTo20_3_26` | 将 `@angular/platform-browser` 升级到 20.3.26 |
+| [`rewrite-angular-platform-browser-dynamic-upgrade`](rewrite-angular-platform-browser-dynamic-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularPlatformBrowserDynamicTo20_3_26` | 将 `@angular/platform-browser-dynamic` 升级到 20.3.26，并指导迁离已废弃 JIT 平台 |
 
 后续迁移应新增独立模块，例如：
 

@@ -1,0 +1,31 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.angular
+packageName: com.huawei.clouds.openrewrite.angular
+description: Upgrade Angular packages with explicit lockstep and CLI migration guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.UpgradeAngularPlatformBrowserDynamicTo20_3_26
+displayName: Upgrade @angular/platform-browser-dynamic to 20.3.26
+description: Update direct @angular/platform-browser-dynamic declarations in package.json to 20.3.26. The package is deprecated in Angular 20 and should subsequently be removed.
+tags:
+  - angular
+  - angular-platform-browser-dynamic
+  - nodejs
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.dependencies['@angular/platform-browser-dynamic']
+      value: '"20.3.26"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.devDependencies['@angular/platform-browser-dynamic']
+      value: '"20.3.26"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.peerDependencies['@angular/platform-browser-dynamic']
+      value: '"20.3.26"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.optionalDependencies['@angular/platform-browser-dynamic']
+      value: '"20.3.26"'
