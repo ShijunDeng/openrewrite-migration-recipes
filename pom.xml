@@ -74,6 +74,7 @@
     <module>rewrite-react-router-dom-upgrade</module>
     <module>rewrite-lossless-json-upgrade</module>
     <module>rewrite-shedlock-jdbc-template-upgrade</module>
+    <module>rewrite-jakarta-annotation-api-upgrade</module>
   </modules>
 
   <dependencyManagement>

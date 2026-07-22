@@ -1,0 +1,91 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.jakartaannotation
+packageName: com.huawei.clouds.openrewrite.jakartaannotation
+description: Upgrade Jakarta Annotations dependencies and migrate the type-safe part of the javax-to-jakarta namespace transition.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jakartaannotation.UpgradeJakartaAnnotationApiTo3_0_0
+displayName: Upgrade Jakarta Annotations API to 3.0.0
+description: Upgrade the jakarta.annotation:jakarta.annotation-api Maven or Gradle dependency to 3.0.0 without modifying Java source.
+tags:
+  - jakarta-annotations
+  - jakarta-ee-11
+  - java
+  - dependency-upgrade
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: jakarta.annotation
+      artifactId: jakarta.annotation-api
+      newVersion: 3.0.0
+      overrideManagedVersion: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jakartaannotation.MigrateJakartaAnnotationApiTo3_0_0
+displayName: Migrate Jakarta Annotations API 1.3.5 to 3.0.0
+description: Upgrade the dependency and move every 1.3.5 annotation that still exists in 3.0.0 from javax.annotation to jakarta.annotation, while deliberately leaving ManagedBean and Java SE annotation-processing types unchanged.
+tags:
+  - jakarta-annotations
+  - jakarta-ee-11
+  - javax-to-jakarta
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.jakartaannotation.UpgradeJakartaAnnotationApiTo3_0_0
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.Generated
+      newFullyQualifiedTypeName: jakarta.annotation.Generated
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.PostConstruct
+      newFullyQualifiedTypeName: jakarta.annotation.PostConstruct
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.PreDestroy
+      newFullyQualifiedTypeName: jakarta.annotation.PreDestroy
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.Priority
+      newFullyQualifiedTypeName: jakarta.annotation.Priority
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.Resource
+      newFullyQualifiedTypeName: jakarta.annotation.Resource
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.Resource$AuthenticationType
+      newFullyQualifiedTypeName: jakarta.annotation.Resource$AuthenticationType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.Resources
+      newFullyQualifiedTypeName: jakarta.annotation.Resources
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.security.DeclareRoles
+      newFullyQualifiedTypeName: jakarta.annotation.security.DeclareRoles
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.security.DenyAll
+      newFullyQualifiedTypeName: jakarta.annotation.security.DenyAll
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.security.PermitAll
+      newFullyQualifiedTypeName: jakarta.annotation.security.PermitAll
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.security.RolesAllowed
+      newFullyQualifiedTypeName: jakarta.annotation.security.RolesAllowed
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.security.RunAs
+      newFullyQualifiedTypeName: jakarta.annotation.security.RunAs
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.sql.DataSourceDefinition
+      newFullyQualifiedTypeName: jakarta.annotation.sql.DataSourceDefinition
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.sql.DataSourceDefinitions
+      newFullyQualifiedTypeName: jakarta.annotation.sql.DataSourceDefinitions
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jakartaannotation.FindRemovedManagedBeanUsages
+displayName: Find ManagedBean usages removed by Jakarta Annotations 3.0
+description: Mark javax.annotation.ManagedBean or jakarta.annotation.ManagedBean references for a mandatory manual CDI or platform-specific migration; this recipe never invents a jakarta.annotation.ManagedBean type.
+tags:
+  - jakarta-annotations
+  - managed-bean
+  - search
+recipeList:
+  - org.openrewrite.java.search.FindTypes:
+      fullyQualifiedTypeName: javax.annotation.ManagedBean
+      checkAssignability: false
+  - org.openrewrite.java.search.FindTypes:
+      fullyQualifiedTypeName: jakarta.annotation.ManagedBean
+      checkAssignability: false

@@ -51,6 +51,7 @@
 | [`rewrite-react-router-dom-upgrade`](rewrite-react-router-dom-upgrade) | `com.huawei.clouds.openrewrite.reactrouterdom.UpgradeReactRouterDomTo6_30_4` | 将表格指定的 react-router-dom 4.3.1 声明升级到 6.30.4，并说明路由、导航、SSR 与 data router 迁移边界 |
 | [`rewrite-lossless-json-upgrade`](rewrite-lossless-json-upgrade) | `com.huawei.clouds.openrewrite.losslessjson.UpgradeLosslessJsonTo4_0_1` | 将表格指定的 lossless-json 2.0.8/2.0.11 声明升级到 4.0.1，并说明 Node、模块入口、TypeScript 与无损数字语义变化 |
 | [`rewrite-shedlock-jdbc-template-upgrade`](rewrite-shedlock-jdbc-template-upgrade) | `com.huawei.clouds.openrewrite.shedlockjdbc.UpgradeShedLockJdbcTemplateTo7_2_1` | 将 ShedLock JdbcTemplate provider 升级到 7.2.1，并说明 Java/Spring 基线、SQL 方言、时钟与锁异常语义变化 |
+| [`rewrite-jakarta-annotation-api-upgrade`](rewrite-jakarta-annotation-api-upgrade) | `com.huawei.clouds.openrewrite.jakartaannotation.MigrateJakartaAnnotationApiTo3_0_0` | 将 Jakarta Annotations API 1.3.5 升级到 3.0.0，安全迁移 14 个类型并单独审计已删除的 ManagedBean |
 
 后续迁移应新增独立模块，例如：
 
