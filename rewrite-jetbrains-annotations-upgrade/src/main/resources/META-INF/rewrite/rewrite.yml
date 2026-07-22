@@ -5,19 +5,27 @@ packageName: com.huawei.clouds.openrewrite.jetbrainsannotations
 description: Upgrade JetBrains Annotations while retaining compile-time-only dependency semantics and documenting static-analysis compatibility risks.
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.jetbrainsannotations.UpgradeJetBrainsAnnotationsTo26_0_2_1
-displayName: Upgrade JetBrains Annotations to 26.0.2-1
-description: Upgrade explicit org.jetbrains:annotations Maven and Gradle dependency versions to the spreadsheet target 26.0.2-1 without adding versions to platform-managed dependencies.
+name: com.huawei.clouds.openrewrite.jetbrainsannotations.MigrateJetBrainsAnnotationsTo26_0_2_1
+displayName: Migrate JetBrains Annotations to 26.0.2-1
+description: Strictly upgrade spreadsheet-selected dependencies and mark Java baseline, legacy artifact, mixed nullability, experimental default, and Kotlin Multiplatform risks that require review.
 tags:
   - jetbrains
   - annotations
   - nullability
   - static-analysis
-  - dependency-upgrade
+  - migration
 recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: org.jetbrains
-      artifactId: annotations
-      newVersion: 26.0.2.x
-      versionPattern: "-1"
-      overrideManagedVersion: false
+  - com.huawei.clouds.openrewrite.jetbrainsannotations.UpgradeJetBrainsAnnotationsTo26_0_2_1
+  - com.huawei.clouds.openrewrite.jetbrainsannotations.FindJetBrainsAnnotations26MigrationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jetbrainsannotations.UpgradeJetBrainsAnnotationsTo26_0_2_1
+displayName: Upgrade JetBrains Annotations to 26.0.2-1
+description: Upgrade only explicit org.jetbrains:annotations Maven and Gradle dependency versions listed in the spreadsheet, without changing source or configuration compatibility choices.
+tags:
+  - jetbrains
+  - annotations
+  - dependency-upgrade
+  - strict
+recipeList:
+  - com.huawei.clouds.openrewrite.jetbrainsannotations.UpgradeSelectedJetBrainsAnnotationsDependency

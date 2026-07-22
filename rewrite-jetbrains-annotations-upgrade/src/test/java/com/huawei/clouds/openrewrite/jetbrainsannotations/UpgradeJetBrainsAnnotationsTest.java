@@ -337,7 +337,7 @@ class UpgradeJetBrainsAnnotationsTest implements RewriteTest {
     }
 
     @Test
-    void upgradesGradleVersionVariable() {
+    void leavesGradleVersionVariableForReview() {
         rewriteRun(
                 spec -> spec.beforeRecipe(withToolingApi()),
                 buildGradle(
@@ -345,12 +345,6 @@ class UpgradeJetBrainsAnnotationsTest implements RewriteTest {
                         plugins { id 'java-library' }
                         repositories { mavenCentral() }
                         def annotationsVersion = '23.0.0'
-                        dependencies { compileOnly "org.jetbrains:annotations:$annotationsVersion" }
-                        """,
-                        """
-                        plugins { id 'java-library' }
-                        repositories { mavenCentral() }
-                        def annotationsVersion = '26.0.2-1'
                         dependencies { compileOnly "org.jetbrains:annotations:$annotationsVersion" }
                         """
                 )
@@ -404,11 +398,8 @@ class UpgradeJetBrainsAnnotationsTest implements RewriteTest {
     }
 
     @Test
-    void upgradesAnOlderExplicitVersionOutsideSpreadsheet() {
-        rewriteRun(pomXml(
-                pomWithVersion("13.0"),
-                pomWithVersion("26.0.2-1")
-        ));
+    void leavesVersionOutsideSpreadsheetUntouched() {
+        rewriteRun(pomXml(pomWithVersion("13.0")));
     }
 
     @Test
@@ -452,16 +443,53 @@ class UpgradeJetBrainsAnnotationsTest implements RewriteTest {
     }
 
     @Test
-    void leavesKotlinGradleDependencyWithoutSemanticModelUntouched() {
-        // UpgradeDependencyVersion uses Gradle's dependency model. A parser-only Kotlin DSL
-        // test has no GradleProject marker and must fail safe rather than editing arbitrary text.
+    void upgradesLiteralKotlinGradleDependencyWithoutSemanticModel() {
         rewriteRun(buildGradleKts(
                 """
                 plugins { `java-library` }
                 repositories { mavenCentral() }
                 dependencies { compileOnly("org.jetbrains:annotations:24.0.1") }
+                """,
+                """
+                plugins { `java-library` }
+                repositories { mavenCentral() }
+                dependencies { compileOnly("org.jetbrains:annotations:26.0.2-1") }
                 """
         ));
+    }
+
+    @Test
+    void leavesSharedMavenPropertyUntouched() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shared</artifactId><version>1</version>
+                  <properties><annotations.version>23.1.0</annotations.version></properties>
+                  <name>quality-${annotations.version}</name>
+                  <dependencies><dependency>
+                    <groupId>org.jetbrains</groupId><artifactId>annotations</artifactId><version>${annotations.version}</version>
+                  </dependency></dependencies>
+                </project>
+                """
+        ));
+    }
+
+    @Test
+    void leavesRangesDynamicVersionsAndExternalManagementUntouched() {
+        rewriteRun(
+                pomXml(pomWithVersion("[23.0.0,25.0.0)"), spec -> spec.path("range-pom.xml")),
+                pomXml(pomWithVersion("LATEST"), spec -> spec.path("dynamic-pom.xml")),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>managed</artifactId><version>1</version>
+                          <dependencyManagement><dependencies><dependency>
+                            <groupId>org.flywaydb</groupId><artifactId>flyway-parent</artifactId><version>11.14.1</version><type>pom</type><scope>import</scope>
+                          </dependency></dependencies></dependencyManagement>
+                          <dependencies><dependency><groupId>org.jetbrains</groupId><artifactId>annotations</artifactId></dependency></dependencies>
+                        </project>
+                        """,
+                        spec -> spec.path("managed-pom.xml")
+                )
+        );
     }
 
     @Test
@@ -508,8 +536,11 @@ class UpgradeJetBrainsAnnotationsTest implements RewriteTest {
     void discoversAndValidatesRecipe() {
         Environment environment = environment();
         Recipe recipe = environment.activateRecipes(RECIPE_NAME);
+        Recipe migration = environment.activateRecipes(
+                "com.huawei.clouds.openrewrite.jetbrainsannotations.MigrateJetBrainsAnnotationsTo26_0_2_1");
         assertTrue(environment.listRecipes().stream().anyMatch(candidate -> RECIPE_NAME.equals(candidate.getName())));
         assertTrue(recipe.validate().isValid(), () -> recipe.validate().failures().toString());
+        assertTrue(migration.validate().isValid(), () -> migration.validate().failures().toString());
     }
 
     private static String pomWithVersion(String version) {

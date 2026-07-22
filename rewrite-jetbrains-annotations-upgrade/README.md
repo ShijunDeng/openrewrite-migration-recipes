@@ -2,24 +2,40 @@
 
 本模块对应表格中的 `org.jetbrains:annotations`，覆盖 `23.0.0`、`23.1.0`、`24.0.0`、`24.0.1` 到 `26.0.2-1` 的升级。
 
-配方名称：
+推荐执行配方：
 
 ```text
-com.huawei.clouds.openrewrite.jetbrainsannotations.UpgradeJetBrainsAnnotationsTo26_0_2_1
+com.huawei.clouds.openrewrite.jetbrainsannotations.MigrateJetBrainsAnnotationsTo26_0_2_1
 ```
 
-目标版本的 `-1` 是 JetBrains 发布版本的一部分，不是本项目添加的 classifier。配方内部使用 `26.0.2.x` 选择器和固定的 `-1` 元数据模式；Maven Central 当前唯一匹配项就是 `26.0.2-1`。这样可以避免把纯数字后缀误解释为 Node SemVer 的区间，同时不会选择普通的 `26.0.2` 或将来的其他版本。
+它组合严格依赖升级与可执行兼容风险定位。只需要改依赖、不要风险标记时可单独执行低层配方 `com.huawei.clouds.openrewrite.jetbrainsannotations.UpgradeJetBrainsAnnotationsTo26_0_2_1`。
+
+目标版本的 `-1` 是 JetBrains 发布版本的一部分，不是本项目添加的 classifier。实现直接写入精确版本 `26.0.2-1`，不会通过模糊版本选择器误选普通 `26.0.2` 或未来版本。
 
 ## 自动处理边界
 
-- 升级 Maven 直接依赖、`dependencyManagement`、活动 profile 和版本属性中的显式 `org.jetbrains:annotations` 版本。
-- 升级带 Gradle Tooling API 语义模型的 Groovy DSL 字符串、map notation 和版本变量；保留 `compileOnly`、`testCompileOnly`、`api`、`implementation` 等 configuration。
+- 只把表格明确列出的 `23.0.0`、`23.1.0`、`24.0.0`、`24.0.1` 改为 `26.0.2-1`；其他旧版、范围、`LATEST` 和变量表达式不猜测。
+- 升级 Maven 直接依赖、`dependencyManagement`、活动 profile 和仅被目标依赖引用的隔离版本属性。属性若还出现在其他依赖、插件、属性、元素或 XML attribute 中，则完整保留，避免共享属性误伤。
+- 升级 Gradle Groovy DSL 字符串/map notation 与 Kotlin DSL 直接字面量；保留 `compileOnly`、`testCompileOnly`、`api`、`implementation` 等 configuration。变量、version catalog、platform/BOM 管理版本保持不变。
 - 保留 Maven 的 `provided`/`test` scope、`optional`、classifier 和 exclusions；不会把仅编译期注解变为运行时依赖。
 - 不给 BOM/平台管理的无版本依赖强行添加版本，`overrideManagedVersion` 为 `false`。应在平台定义处升级，避免同一工程出现两个版本来源。
 - 不将 `26.0.2-1`、普通 `26.0.2` 或语义上更高的版本降级。
 - 不修改 `annotations-java5`、`annotations-*` Kotlin/Native 平台模块、旧 `com.intellij:annotations`、AndroidX/Checker Framework/SpotBugs 等相似注解坐标。
 - 不自动增加、删除或重写 Java/Kotlin 注解。特别是不会擅自应用 `@NotNullByDefault`，因为它会递归改变字段、参数、返回值、泛型参数上界和数组元素的空值契约。
-- 没有 `GradleProject` 语义模型时，Kotlin DSL 和需要查询 Maven metadata 的版本选择会安全保持不变。实际运行应使用 OpenRewrite Gradle 插件、Maven 插件解析 Gradle 工程，或其他能提供 Tooling API 模型的执行方式；纯文本扫描不足以可靠处理变量、平台和仓库。
+- 直接字面量迁移不依赖联网查询 Maven metadata；变量、平台、version catalog 等无法证明归属的声明不会被文本替换。
+
+## 配方真正执行的兼容处理
+
+| 不兼容点 | 推荐配方行为 | 自动化状态 | 测试 |
+| --- | --- | --- | --- |
+| 目标 artifact 要求 JDK 8+ | 定位 Maven `java.version`/compiler source、target、release 和 Gradle source/target compatibility 中低于 8 的值 | `SearchResult` 精确标记，不擅自改变业务 JDK 基线 | Maven、Groovy、Kotlin 构建标记与现代 no-op |
+| `annotations-java5` 在 24.1.0 停止更新 | 定位 Maven/Gradle 旧 artifact，提示“保留 Java 5-7”或“先升级 JDK”二选一 | 标记；选择依赖真实运行环境，不能机械决定 | Maven与Gradle marker |
+| 旧 `com.intellij:annotations` 可能产生重复类 | 定位旧坐标并要求检查 resolved classpath | 标记，不自动删除潜在传递依赖 | Gradle marker |
+| JSpecify、Checker、SpotBugs、AndroidX 等并存 | 定位并行依赖；Java 文件同时 import JetBrains 与其他 nullability 注解时标记具体 import | 标记，不擅自统一不同语义体系 | Maven依赖与 Java import marker |
+| `@NotNullByDefault` 为实验性递归契约 | 定位实际 annotation 使用边界，提示审核泛型、数组、override 与例外 | 标记，不自动添加、删除或扩大作用域 | 类型归因 Java marker |
+| 25+ 引入 Kotlin Multiplatform variants | 仅当同一 Gradle 文件声明 JetBrains 坐标时定位 Kotlin multiplatform 插件 | 标记，要求验证全部 target、lock 与 verification metadata | Kotlin DSL marker |
+
+这里没有把“README 描述”冒充自动迁移：上表每项都由推荐配方执行。另一方面，官方从 23.0.0 到目标版本没有删除可一一替换的 Java API，因此本模块没有制造无依据的业务源码替换；语义选择均以可审查的 `SearchResult` 落到具体源码或构建节点。
 
 ## 主要不兼容修改点与工具链影响
 
@@ -78,7 +94,7 @@ com.huawei.clouds.openrewrite.jetbrainsannotations.UpgradeJetBrainsAnnotationsTo
 
 用例组织参考 OpenRewrite 官方固定提交的 [UpgradeDependencyVersionTest](https://github.com/openrewrite/rewrite-java-dependencies/blob/decb8dbb2b5b726f8815efc51c85c34a60268bb0/src/test/java/org/openrewrite/java/dependencies/UpgradeDependencyVersionTest.java)，Gradle 变更用例也采用官方 `withToolingApi()` 方式生成真实 `GradleProject` 标记。
 
-当前 24 个测试执行覆盖：表格全部四个起始版本、旧版兜底、Maven 直接/属性/dependencyManagement/活动 profile/重复声明、Gradle 字符串/map/变量与 `compileOnly`/`testCompileOnly`/`api`/`implementation`、scope 与附加节点保留、无版本依赖、目标和更高版本防降级、相似坐标防误伤、Java 注解源码 no-op、Kotlin DSL 无语义模型安全回退，以及 recipe discovery/validation。
+当前 31 个测试执行覆盖：表格全部四个起始版本、Maven 直接/隔离属性/dependencyManagement/活动 profile/重复声明、Gradle Groovy 字符串/map 与 Kotlin DSL 字面量、`compileOnly`/`testCompileOnly`/`api`/`implementation`、scope 与附加节点保留、共享属性、范围/动态版本、外部 BOM、无版本依赖、表格外版本和更高版本防误伤、相似坐标防误伤，以及 JDK 基线、旧 artifact、并行 nullability、`@NotNullByDefault`、KMP 风险的 before→marker、推荐聚合配方和现代工程 no-op。所有 before→after 用例还由 RewriteTest 的多 cycle 执行验证幂等性。
 
 ## 使用与验证
 
@@ -89,7 +105,7 @@ mvn -f rewrite-jetbrains-annotations-upgrade/pom.xml clean verify
 
 mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:dryRun \
   -Drewrite.recipeArtifactCoordinates=com.huawei.clouds.openrewrite:rewrite-jetbrains-annotations-upgrade:1.0.0-SNAPSHOT \
-  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.jetbrainsannotations.UpgradeJetBrainsAnnotationsTo26_0_2_1
+  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.jetbrainsannotations.MigrateJetBrainsAnnotationsTo26_0_2_1
 ```
 
 审核依赖 diff 后，至少运行：JDK 8 基线编译、当前生产 JDK 编译、JPMS/module-path 编译、Java/Kotlin 混编、所有 annotation processor、IDE/Qodana/Error Prone/Sonar 检查、Javadoc、KMP 全 target 解析、dependency lock/verification，以及公开 API 的二进制兼容检查。把新增告警作为独立审核结果处理，不要用全局 suppression 掩盖真实空值或 API 使用问题。
