@@ -19,6 +19,7 @@
 | [`rewrite-fastjson-upgrade`](rewrite-fastjson-upgrade) | `com.huawei.clouds.openrewrite.fastjson.UpgradeFastjsonTo2_0_62` | 将 Fastjson 1.x/2.x 兼容模块升级到 2.0.62，并提供可选的新 API 包名迁移 |
 | [`rewrite-ngx-translate-http-loader-upgrade`](rewrite-ngx-translate-http-loader-upgrade) | `com.huawei.clouds.openrewrite.ngxtranslate.UpgradeNgxTranslateHttpLoaderTo17` | 将 `@ngx-translate/http-loader` 升级到 17.0.0 |
 | [`rewrite-jedis-upgrade`](rewrite-jedis-upgrade) | `com.huawei.clouds.openrewrite.jedis.UpgradeJedisTo7_2_1` | 将 Maven/Gradle Jedis 依赖升级到 7.2.1 |
+| [`rewrite-mybatis-spring-boot-starter-upgrade`](rewrite-mybatis-spring-boot-starter-upgrade) | `com.huawei.clouds.openrewrite.mybatisspringboot.UpgradeMyBatisSpringBootStarterTo4` | 将 MyBatis Spring Boot Starter 升级到 4.0.0 |
 
 后续迁移应新增独立模块，例如：
 

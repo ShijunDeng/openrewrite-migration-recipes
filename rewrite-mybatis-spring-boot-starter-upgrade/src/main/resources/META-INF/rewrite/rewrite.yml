@@ -1,0 +1,21 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.mybatisspringboot
+packageName: com.huawei.clouds.openrewrite.mybatisspringboot
+description: Upgrade MyBatis Spring Boot integration with explicit platform compatibility guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspringboot.UpgradeMyBatisSpringBootStarterTo4
+displayName: Upgrade MyBatis Spring Boot Starter to 4.0.0
+description: Upgrade org.mybatis.spring.boot:mybatis-spring-boot-starter declarations in Maven and Gradle builds to 4.0.0.
+tags:
+  - mybatis
+  - spring-boot
+  - java
+  - dependency-upgrade
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis.spring.boot
+      artifactId: mybatis-spring-boot-starter
+      newVersion: 4.0.0
+      overrideManagedVersion: true

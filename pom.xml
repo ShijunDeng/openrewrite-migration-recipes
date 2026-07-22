@@ -42,6 +42,7 @@
     <module>rewrite-fastjson-upgrade</module>
     <module>rewrite-ngx-translate-http-loader-upgrade</module>
     <module>rewrite-jedis-upgrade</module>
+    <module>rewrite-mybatis-spring-boot-starter-upgrade</module>
   </modules>
 
   <dependencyManagement>
