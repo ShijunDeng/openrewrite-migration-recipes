@@ -39,6 +39,7 @@
 | [`rewrite-kafka-clients-upgrade`](rewrite-kafka-clients-upgrade) | `com.huawei.clouds.openrewrite.kafka.MigrateKafkaClientsTo4_1_2` | 将 Kafka Clients 升级到 4.1.2，并迁移明确移除的 Admin API 与 JMX 配置键 |
 | [`rewrite-jakarta-servlet-api-upgrade`](rewrite-jakarta-servlet-api-upgrade) | `com.huawei.clouds.openrewrite.jakartaservlet.MigrateJakartaServletApiTo6_1_0` | 将 Jakarta Servlet API 升级到 6.1.0，并迁移 javax namespace 与有明确替代的删除 API |
 | [`rewrite-mybatis-spring-upgrade`](rewrite-mybatis-spring-upgrade) | `com.huawei.clouds.openrewrite.mybatisspring.MigrateMyBatisSpringTo4_0_0` | 将 MyBatis-Spring 升级到 4.0.0，并迁移其 Spring Batch 6 infrastructure 包引用 |
+| [`rewrite-marked-upgrade`](rewrite-marked-upgrade) | `com.huawei.clouds.openrewrite.marked.UpgradeMarkedTo17_0_6` | 将表格列出的 Marked 4.x/5.x 声明升级到 17.0.6，且不降级后续版本 |
 
 后续迁移应新增独立模块，例如：
 

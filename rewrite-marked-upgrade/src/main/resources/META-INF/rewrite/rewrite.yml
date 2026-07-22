@@ -1,0 +1,36 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.marked
+packageName: com.huawei.clouds.openrewrite.marked
+description: Upgrade selected Marked declarations with explicit JavaScript runtime, module, renderer, and security migration guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.marked.UpgradeMarkedTo17_0_6
+displayName: Upgrade Marked to 17.0.6
+description: Update the spreadsheet-selected direct marked declarations in package.json to 17.0.6 without changing aliases, workspace references, lockfiles, tags, or newer versions.
+tags:
+  - marked
+  - markdown
+  - javascript
+  - nodejs
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.dependencies[?(@.marked =~ '^[<>=~^ ]*v?(?:4\.(?:0\.(?:10|12|17)|1\.0|2\.(?:3|12)|3\.0)|5\.1\.[01])(?:[-+ <>=~^|].*)?$')].marked
+      value: '"17.0.6"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.devDependencies[?(@.marked =~ '^[<>=~^ ]*v?(?:4\.(?:0\.(?:10|12|17)|1\.0|2\.(?:3|12)|3\.0)|5\.1\.[01])(?:[-+ <>=~^|].*)?$')].marked
+      value: '"17.0.6"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.peerDependencies[?(@.marked =~ '^[<>=~^ ]*v?(?:4\.(?:0\.(?:10|12|17)|1\.0|2\.(?:3|12)|3\.0)|5\.1\.[01])(?:[-+ <>=~^|].*)?$')].marked
+      value: '"17.0.6"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.optionalDependencies[?(@.marked =~ '^[<>=~^ ]*v?(?:4\.(?:0\.(?:10|12|17)|1\.0|2\.(?:3|12)|3\.0)|5\.1\.[01])(?:[-+ <>=~^|].*)?$')].marked
+      value: '"17.0.6"'

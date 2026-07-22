@@ -62,6 +62,7 @@
     <module>rewrite-kafka-clients-upgrade</module>
     <module>rewrite-jakarta-servlet-api-upgrade</module>
     <module>rewrite-mybatis-spring-upgrade</module>
+    <module>rewrite-marked-upgrade</module>
   </modules>
 
   <dependencyManagement>
