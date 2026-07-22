@@ -263,6 +263,89 @@ class UpgradeMyBatisSpringTest implements RewriteTest {
     }
 
     @Test
+    void leavesVersionsOutsideTheSpreadsheetMatrixUntouched() {
+        rewriteRun(
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>old-unlisted</artifactId><version>1</version><dependencies><dependency><groupId>org.mybatis</groupId><artifactId>mybatis-spring</artifactId><version>3.0.0</version></dependency></dependencies></project>
+                        """),
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>nearby-patch</artifactId><version>1</version><dependencies><dependency><groupId>org.mybatis</groupId><artifactId>mybatis-spring</artifactId><version>2.0.6</version></dependency></dependencies></project>
+                        """, spec -> spec.path("nearby-patch-pom.xml"))
+        );
+    }
+
+    @Test
+    void isolatesAPropertySharedWithAnotherDependency() {
+        rewriteRun(pomXml(
+                """
+                <project>
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>example</groupId><artifactId>shared-property</artifactId><version>1</version>
+                  <properties><shared.version>2.0.7</shared.version></properties>
+                  <dependencies>
+                    <dependency><groupId>org.mybatis</groupId><artifactId>mybatis-spring</artifactId><version>${shared.version}</version></dependency>
+                    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>${shared.version}</version></dependency>
+                  </dependencies>
+                </project>
+                """,
+                """
+                <project>
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>example</groupId><artifactId>shared-property</artifactId><version>1</version>
+                  <properties><shared.version>2.0.7</shared.version></properties>
+                  <dependencies>
+                    <dependency><groupId>org.mybatis</groupId><artifactId>mybatis-spring</artifactId><version>4.0.0</version></dependency>
+                    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>${shared.version}</version></dependency>
+                  </dependencies>
+                </project>
+                """
+        ));
+    }
+
+    @Test
+    void isolatesAPropertyEmbeddedInUnrelatedProjectMetadata() {
+        rewriteRun(pomXml(
+                """
+                <project>
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>example</groupId><artifactId>embedded-shared-property</artifactId><version>1</version>
+                  <name>release-${shared.version}</name>
+                  <properties><shared.version>2.0.7</shared.version></properties>
+                  <dependencies>
+                    <dependency><groupId>org.mybatis</groupId><artifactId>mybatis-spring</artifactId><version>${shared.version}</version></dependency>
+                  </dependencies>
+                </project>
+                """,
+                """
+                <project>
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>example</groupId><artifactId>embedded-shared-property</artifactId><version>1</version>
+                  <name>release-${shared.version}</name>
+                  <properties><shared.version>2.0.7</shared.version></properties>
+                  <dependencies>
+                    <dependency><groupId>org.mybatis</groupId><artifactId>mybatis-spring</artifactId><version>4.0.0</version></dependency>
+                  </dependencies>
+                </project>
+                """
+        ));
+    }
+
+    @Test
+    void doesNotOverrideAnExternallyManagedVersion() {
+        rewriteRun(pomXml("""
+                <project>
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>example</groupId><artifactId>externally-managed</artifactId><version>1</version>
+                  <dependencyManagement><dependencies><dependency>
+                    <groupId>org.mybatis.spring.boot</groupId><artifactId>mybatis-spring-boot</artifactId>
+                    <version>2.2.2</version><type>pom</type><scope>import</scope>
+                  </dependency></dependencies></dependencyManagement>
+                  <dependencies><dependency><groupId>org.mybatis</groupId><artifactId>mybatis-spring</artifactId></dependency></dependencies>
+                </project>
+                """));
+    }
+
+    @Test
     void leavesCompanionAndSimilarArtifactsUntouched() {
         rewriteRun(pomXml(
                 """
@@ -290,7 +373,7 @@ class UpgradeMyBatisSpringTest implements RewriteTest {
     @Test
     void preservesOfficialMyBatisSpringNamespaceConfiguration() {
         // Reduced from mybatis/spring's official 1.3.1 namespace sample:
-        // https://github.com/mybatis/spring/blob/mybatis-spring-1.3.1/src/test/java/org/mybatis/spring/sample/config/applicationContext-namespace.xml
+        // https://github.com/mybatis/spring/blob/9cb7b928b6a2b4626b1a0769327f8698be97d318/src/test/java/org/mybatis/spring/sample/config/applicationContext-namespace.xml
         rewriteRun(xml(
                 """
                 <?xml version="1.0" encoding="UTF-8"?>

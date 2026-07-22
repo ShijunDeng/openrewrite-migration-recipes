@@ -13,10 +13,23 @@
 
   <artifactId>rewrite-mybatis-spring-upgrade</artifactId>
   <name>OpenRewrite MyBatis-Spring Upgrade</name>
-  <description>Configuration-based OpenRewrite recipes for upgrading MyBatis-Spring to 4.0.0.</description>
+  <description>OpenRewrite recipes for strictly upgrading MyBatis-Spring to 4.0.0 and migrating deterministic Java/XML compatibility changes.</description>
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-mybatis-spring-upgrade</url>
 
   <dependencies>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-java</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-maven</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-xml</artifactId>
+      <version>${rewrite.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.openrewrite.recipe</groupId>
       <artifactId>rewrite-java-dependencies</artifactId>
@@ -30,6 +43,18 @@
     <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-gradle</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite.gradle.tooling</groupId>
+      <artifactId>model</artifactId>
+      <version>${rewrite.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.gradle</groupId>
+      <artifactId>gradle-tooling-api</artifactId>
+      <version>7.3-20210825160000+0000</version>
       <scope>test</scope>
     </dependency>
     <dependency>

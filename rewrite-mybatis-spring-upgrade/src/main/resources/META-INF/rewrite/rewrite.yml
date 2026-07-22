@@ -2,36 +2,22 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.mybatisspring
 packageName: com.huawei.clouds.openrewrite.mybatisspring
-description: Upgrade MyBatis-Spring dependencies and the type-safe source changes required by Spring Batch 6.
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpringDependencyTo4_0_0
-displayName: Upgrade MyBatis-Spring dependency to 4.0.0
-description: Upgrade org.mybatis:mybatis-spring declarations in Maven and Gradle builds to 4.0.0 without changing application source or configuration.
-tags:
-  - mybatis
-  - mybatis-spring
-  - java
-  - dependency-upgrade
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: org.mybatis
-      artifactId: mybatis-spring
-      newVersion: 4.0.0
-      overrideManagedVersion: true
+description: Strictly upgrade MyBatis-Spring and migrate deterministic Java, Spring Batch, and XML compatibility changes.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.mybatisspring.MigrateMyBatisSpringTo4_0_0
 displayName: Migrate MyBatis-Spring applications to 4.0.0
-description: Upgrade MyBatis-Spring and migrate the Spring Batch infrastructure packages used by MyBatis batch readers and writers to their Spring Batch 6 names.
+description: Apply source and XML changes proven by the 4.0.0 target, mark application-specific decisions, and strictly upgrade only the spreadsheet source versions.
 tags:
   - mybatis
   - mybatis-spring
+  - spring
   - spring-batch
   - java
-  - source-migration
+  - migration
 recipeList:
-  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpringDependencyTo4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.MigrateMyBatisSpringXml
+  - com.huawei.clouds.openrewrite.mybatisspring.MigrateMyBatisSpringJava
   - org.openrewrite.java.ChangePackage:
       oldPackageName: org.springframework.batch.item
       newPackageName: org.springframework.batch.infrastructure.item
@@ -48,3 +34,257 @@ recipeList:
       oldPackageName: org.springframework.batch.support
       newPackageName: org.springframework.batch.infrastructure.support
       recursive: true
+  - com.huawei.clouds.openrewrite.mybatisspring.FindMyBatisSpringJavaRisks
+  - com.huawei.clouds.openrewrite.mybatisspring.FindMyBatisSpringXmlRisks
+  - com.huawei.clouds.openrewrite.mybatisspring.FindMyBatisSpringMavenPlatformRisks
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpringDependencyTo4_0_0
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpringDependencyTo4_0_0
+displayName: Strictly upgrade listed MyBatis-Spring versions to 4.0.0
+description: Upgrade only the seven spreadsheet source versions in direct Maven or Gradle declarations and local Maven dependencyManagement; when a Maven property is shared, use a 4.0.0 literal without changing unrelated dependencies, and do not override external management.
+tags:
+  - mybatis
+  - mybatis-spring
+  - dependency-upgrade
+  - strict
+recipeList:
+  - com.huawei.clouds.openrewrite.mybatisspring.IsolateSharedMyBatisSpringVersionProperty
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring1_3_1To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring1_3_1To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring2_0_4To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring2_0_4To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring2_0_7To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring2_0_7To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring2_1_0To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring2_1_0To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring2_1_1To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring2_1_1To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring3_0_1To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring3_0_1To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring3_0_2To4_0_0
+  - com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring3_0_2To4_0_0
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring1_3_1To4_0_0
+displayName: Upgrade MyBatis-Spring 1.3.1 to 4.0.0
+description: Upgrade only direct org.mybatis:mybatis-spring 1.3.1 declarations.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 1.3.1
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring1_3_1To4_0_0
+displayName: Upgrade managed MyBatis-Spring 1.3.1 to 4.0.0
+description: Upgrade only local Maven dependencyManagement entries for org.mybatis:mybatis-spring 1.3.1.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 1.3.1
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring2_0_4To4_0_0
+displayName: Upgrade MyBatis-Spring 2.0.4 to 4.0.0
+description: Upgrade only direct org.mybatis:mybatis-spring 2.0.4 declarations.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 2.0.4
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring2_0_4To4_0_0
+displayName: Upgrade managed MyBatis-Spring 2.0.4 to 4.0.0
+description: Upgrade only local Maven dependencyManagement entries for org.mybatis:mybatis-spring 2.0.4.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 2.0.4
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring2_0_7To4_0_0
+displayName: Upgrade MyBatis-Spring 2.0.7 to 4.0.0
+description: Upgrade only direct org.mybatis:mybatis-spring 2.0.7 declarations.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 2.0.7
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring2_0_7To4_0_0
+displayName: Upgrade managed MyBatis-Spring 2.0.7 to 4.0.0
+description: Upgrade only local Maven dependencyManagement entries for org.mybatis:mybatis-spring 2.0.7.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 2.0.7
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring2_1_0To4_0_0
+displayName: Upgrade MyBatis-Spring 2.1.0 to 4.0.0
+description: Upgrade only direct org.mybatis:mybatis-spring 2.1.0 declarations.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 2.1.0
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring2_1_0To4_0_0
+displayName: Upgrade managed MyBatis-Spring 2.1.0 to 4.0.0
+description: Upgrade only local Maven dependencyManagement entries for org.mybatis:mybatis-spring 2.1.0.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 2.1.0
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring2_1_1To4_0_0
+displayName: Upgrade MyBatis-Spring 2.1.1 to 4.0.0
+description: Upgrade only direct org.mybatis:mybatis-spring 2.1.1 declarations.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 2.1.1
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring2_1_1To4_0_0
+displayName: Upgrade managed MyBatis-Spring 2.1.1 to 4.0.0
+description: Upgrade only local Maven dependencyManagement entries for org.mybatis:mybatis-spring 2.1.1.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 2.1.1
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring3_0_1To4_0_0
+displayName: Upgrade MyBatis-Spring 3.0.1 to 4.0.0
+description: Upgrade only direct org.mybatis:mybatis-spring 3.0.1 declarations.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 3.0.1
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring3_0_1To4_0_0
+displayName: Upgrade managed MyBatis-Spring 3.0.1 to 4.0.0
+description: Upgrade only local Maven dependencyManagement entries for org.mybatis:mybatis-spring 3.0.1.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 3.0.1
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeMyBatisSpring3_0_2To4_0_0
+displayName: Upgrade MyBatis-Spring 3.0.2 to 4.0.0
+description: Upgrade only direct org.mybatis:mybatis-spring 3.0.2 declarations.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 3.0.2
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.mybatisspring.UpgradeManagedMyBatisSpring3_0_2To4_0_0
+displayName: Upgrade managed MyBatis-Spring 3.0.2 to 4.0.0
+description: Upgrade only local Maven dependencyManagement entries for org.mybatis:mybatis-spring 3.0.2.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      version: 3.0.2
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.mybatis
+      artifactId: mybatis-spring
+      newVersion: 4.0.0
+      overrideManagedVersion: false
