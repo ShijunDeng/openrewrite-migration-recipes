@@ -39,6 +39,7 @@
     <module>rewrite-ngx-translate-core-upgrade</module>
     <module>rewrite-hibernate-validator-upgrade</module>
     <module>rewrite-echarts-upgrade</module>
+    <module>rewrite-fastjson-upgrade</module>
   </modules>
 
   <dependencyManagement>
