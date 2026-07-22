@@ -1,0 +1,44 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.jcloverslf4j
+packageName: com.huawei.clouds.openrewrite.jcloverslf4j
+description: Upgrade JCL-over-SLF4J with explicit bridge topology, provider, ServiceLoader, Commons Logging, and Java runtime guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jcloverslf4j.UpgradeJclOverSlf4jDependencyTo2_0_17
+displayName: Upgrade JCL-over-SLF4J dependency to 2.0.17
+description: Upgrade only XLSX-listed org.slf4j:jcl-over-slf4j Maven root/profile dependency, locally owned dependency-management/property, and top-level Gradle versions 1.7.30, 1.7.32, and 1.7.36 to 2.0.17 without overriding external, shared, dynamic, nested, or variant ownership.
+tags:
+  - slf4j
+  - commons-logging
+  - logging-bridge
+  - java
+  - dependency-upgrade
+  - strict
+recipeList:
+  - com.huawei.clouds.openrewrite.jcloverslf4j.UpgradeSelectedJclOverSlf4jDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jcloverslf4j.MigrateJclOverSlf4jTo2_0_17
+displayName: Migrate JCL-over-SLF4J to 2.0.17
+description: Upgrade the XLSX-listed JCL bridge and safely owned SLF4J companions, then mark bridge loops, duplicate JCL implementations, provider/ServiceLoader, Commons Logging discovery, Java baseline, BOM/property/catalog/variant, and configuration risks.
+tags:
+  - slf4j
+  - commons-logging
+  - logging-bridge
+  - service-loader
+  - java
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.jcloverslf4j.MigrateSelectedJclSlf4jFamilyDependencies
+  - com.huawei.clouds.openrewrite.jcloverslf4j.AlignSelectedJclSlf4jCompanions
+  - com.huawei.clouds.openrewrite.jcloverslf4j.FindJclOverSlf4jBuildRisks
+  - com.huawei.clouds.openrewrite.jcloverslf4j.FindJclOverSlf4jJavaRisks
+  - com.huawei.clouds.openrewrite.jcloverslf4j.FindJclOverSlf4jResourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jcloverslf4j.AlignJclSlf4jCompanionsTo2_0_17
+displayName: Align selected SLF4J companions with JCL-over-SLF4J 2.0.17
+description: When JCL-over-SLF4J 2.0.17 is explicit, align only exact XLSX-listed SLF4J API, first-party provider, and one-way bridge companion versions.
+recipeList:
+  - com.huawei.clouds.openrewrite.jcloverslf4j.AlignSelectedJclSlf4jCompanions

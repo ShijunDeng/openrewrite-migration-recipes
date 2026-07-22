@@ -101,6 +101,7 @@
     <module>rewrite-fs-extra-upgrade</module>
     <module>rewrite-curator-client-upgrade</module>
     <module>rewrite-log4j-over-slf4j-upgrade</module>
+    <module>rewrite-jcl-over-slf4j-upgrade</module>
   </modules>
 
   <dependencyManagement>
