@@ -2,30 +2,56 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.angular
 packageName: com.huawei.clouds.openrewrite.angular
-description: Upgrade Angular packages with explicit lockstep and CLI migration guidance.
+description: Upgrade Angular packages with lockstep dependency, legacy animation and native CSS migration guidance.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.angular.UpgradeAngularAnimationsTo20_3_26
-displayName: Upgrade @angular/animations to 20.3.26
-description: Update direct @angular/animations declarations in package.json to 20.3.26. The package is deprecated as of Angular 20.2 and should be migrated to native CSS animations.
-tags:
-  - angular
-  - angular-animations
-  - nodejs
-  - dependency-upgrade
-preconditions:
-  - org.openrewrite.FindSourceFiles:
-      filePattern: package.json;**/package.json
+displayName: Upgrade selected @angular/animations declarations to 20.3.26
+description: Upgrade only exact, caret, or tilde source releases visible in the migration spreadsheet; compound ranges, protocols, variables, lockfiles and unlisted versions remain unchanged.
+tags: [angular, angular-animations, nodejs, dependency-upgrade]
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.dependencies['@angular/animations']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.devDependencies['@angular/animations']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.peerDependencies['@angular/animations']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.optionalDependencies['@angular/animations']
-      value: '"20.3.26"'
+  - com.huawei.clouds.openrewrite.angular.UpgradeSelectedAngularAnimationsDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.MigrateDeterministicAngularAnimationsTo20
+displayName: Migrate deterministic Angular animations constructs
+description: Move the core-owned animation token import and normalize only redundant Angular-owned animation configuration.
+tags: [angular, angular-animations, typescript, source-migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.MigrateDeterministicAngularAnimationsSource
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.AuditAngularAnimations20Source
+displayName: Audit Angular 20 legacy animation source compatibility
+description: Mark legacy DSL, providers/modules, programmatic players, testing and SSR-sensitive TypeScript nodes.
+tags: [angular, angular-animations, typescript, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.FindAngularAnimationsTypeScriptRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.AuditAngularAnimations20Project
+displayName: Audit Angular 20 animations project compatibility
+description: Mark unresolved declarations, lockstep packages, third-party consumers, runtime/tooling and workspace SSR configuration.
+tags: [angular, angular-animations, dependencies, configuration, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.FindAngularAnimationsJsonRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.AuditAngularAnimations20TemplatesAndStyles
+displayName: Audit Angular 20 animation templates and styles
+description: Mark legacy triggers/callbacks, native animate.enter/leave, CSS timelines and reduced-motion boundaries.
+tags: [angular, angular-animations, html, css, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.FindAngularAnimationsTemplateStyleRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.MigrateAngularAnimationsTo20_3_26
+displayName: Migrate Angular animations applications to 20.3.26
+description: Upgrade spreadsheet-selected declarations, apply deterministic source migrations, and mark all remaining legacy/native animation decisions.
+tags: [angular, angular-animations, typescript, css, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.UpgradeAngularAnimationsTo20_3_26
+  - com.huawei.clouds.openrewrite.angular.MigrateDeterministicAngularAnimationsTo20
+  - com.huawei.clouds.openrewrite.angular.AuditAngularAnimations20Source
+  - com.huawei.clouds.openrewrite.angular.AuditAngularAnimations20Project
+  - com.huawei.clouds.openrewrite.angular.AuditAngularAnimations20TemplatesAndStyles

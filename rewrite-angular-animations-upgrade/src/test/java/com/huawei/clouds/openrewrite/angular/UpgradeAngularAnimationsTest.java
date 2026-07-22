@@ -1,32 +1,110 @@
 package com.huawei.clouds.openrewrite.angular;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openrewrite.Recipe;
 import org.openrewrite.config.Environment;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
+import org.openrewrite.test.SourceSpecs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openrewrite.json.Assertions.json;
 
 class UpgradeAngularAnimationsTest implements RewriteTest {
-    private static final String RECIPE_NAME =
+    private static final String RECIPE =
             "com.huawei.clouds.openrewrite.angular.UpgradeAngularAnimationsTo20_3_26";
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(environment().activateRecipes(RECIPE_NAME));
+        spec.recipe(environment().activateRecipes(RECIPE));
+    }
+
+    @ParameterizedTest(name = "upgrades spreadsheet version {0}")
+    @ValueSource(strings = {
+            "10.0.14", "10.2.5", "11.2.14", "12.2.10", "12.2.13", "12.2.14",
+            "12.2.16", "12.2.17", "13.1.3", "13.2.6"
+    })
+    void upgradesEveryVisibleSpreadsheetVersion(String version) {
+        rewriteRun(packageVersion("package.json", version));
+    }
+
+    @ParameterizedTest(name = "upgrades exact anchored declaration {0}")
+    @ValueSource(strings = {
+            "^10.0.14", "~10.0.14", "^10.2.5", "~10.2.5", "^11.2.14", "~11.2.14",
+            "^12.2.10", "~12.2.10", "^12.2.13", "~12.2.13", "^12.2.14", "~12.2.14",
+            "^12.2.16", "~12.2.16", "^12.2.17", "~12.2.17", "^13.1.3", "~13.1.3",
+            "^13.2.6", "~13.2.6"
+    })
+    void upgradesEveryCaretAndTildeForm(String declaration) {
+        rewriteRun(packageVersion("package.json", declaration));
     }
 
     @Test
-    void upgradesEveryDirectDependencySectionInPackageJson() {
+    void upgradesRealPokedexManifestAndPreservesLockstepEvidence() {
+        // HybridShivam/pokedex-angular-app, fixed commit a39ca00439e160069ea711ee98326288f9a1443e.
         rewriteRun(json(
                 """
                 {
-                  "dependencies": {"@angular/animations": "~10.0.14"},
-                  "devDependencies": {"@angular/animations": "12.2.17"},
-                  "peerDependencies": {"@angular/animations": ">=13 <20"},
-                  "optionalDependencies": {"@angular/animations": "19.2.0"}
+                  "dependencies": {
+                    "@angular/animations": "~10.2.5",
+                    "@angular/common": "~10.2.5",
+                    "@angular/core": "~10.2.5",
+                    "@angular/platform-browser": "~10.2.5"
+                  }
+                }
+                """,
+                """
+                {
+                  "dependencies": {
+                    "@angular/animations": "20.3.26",
+                    "@angular/common": "~10.2.5",
+                    "@angular/core": "~10.2.5",
+                    "@angular/platform-browser": "~10.2.5"
+                  }
+                }
+                """,
+                source -> source.path("package.json")
+        ));
+    }
+
+    @Test
+    void upgradesRealApacheNifiManifest() {
+        // apache/nifi, fixed commit 59cff970ca8b98ee51ae4418cf4de6830fa28c37.
+        rewriteRun(json(
+                """
+                {
+                  "dependencies": {
+                    "@angular/animations": "11.2.14",
+                    "@angular/core": "11.2.14",
+                    "@angular/platform-browser": "11.2.14"
+                  }
+                }
+                """,
+                """
+                {
+                  "dependencies": {
+                    "@angular/animations": "20.3.26",
+                    "@angular/core": "11.2.14",
+                    "@angular/platform-browser": "11.2.14"
+                  }
+                }
+                """,
+                source -> source.path("nifi-registry/nifi-registry-core/nifi-registry-web-ui/src/main/package.json")
+        ));
+    }
+
+    @Test
+    void upgradesAllFourDirectDependencySections() {
+        rewriteRun(json(
+                """
+                {
+                  "dependencies": {"@angular/animations": "10.0.14"},
+                  "devDependencies": {"@angular/animations": "^11.2.14"},
+                  "peerDependencies": {"@angular/animations": "~12.2.17"},
+                  "optionalDependencies": {"@angular/animations": "13.2.6"}
                 }
                 """,
                 """
@@ -37,35 +115,135 @@ class UpgradeAngularAnimationsTest implements RewriteTest {
                   "optionalDependencies": {"@angular/animations": "20.3.26"}
                 }
                 """,
-                spec -> spec.path("package.json")
+                source -> source.path("package.json")
         ));
     }
 
     @Test
-    void doesNotModifyOtherJsonFilesOrAngularCore() {
+    void upgradesRootAndNestedWorkspaceManifests() {
+        rewriteRun(
+                packageVersion("package.json", "10.2.5"),
+                packageVersion("apps/browser/package.json", "^12.2.14"),
+                packageVersion("libs/ui/package.json", "~13.1.3")
+        );
+    }
+
+    @ParameterizedTest(name = "leaves unlisted scalar {0}")
+    @ValueSource(strings = {
+            "9.1.13", "10.0.13", "10.1.6", "11.2.13", "12.2.11", "12.2.15",
+            "13.0.0", "13.2.5", "14.0.0", "19.2.0", "20.3.25", "20.3.26", "20.3.27", "21.0.0"
+    })
+    void leavesUnlistedTargetAndNewerScalarVersionsUntouched(String declaration) {
+        rewriteRun(json("{\"dependencies\":{\"@angular/animations\":\"" + declaration + "\"}}",
+                source -> source.path("package.json")));
+    }
+
+    @ParameterizedTest(name = "leaves complex or unsafe declaration {0}")
+    @ValueSource(strings = {
+            ">=10.0.14 <20", "10.2.5 || ^12.2.17", "10.0.14 - 13.2.6", "12.x", "*",
+            "v11.2.14", "=12.2.17", "^v13.1.3", "12.2.17-next.1", "13.2.6+vendor.2"
+    })
+    void leavesComplexRangesAndVersionLookalikesUntouched(String declaration) {
+        rewriteRun(json("{\"dependencies\":{\"@angular/animations\":\"" + declaration + "\"}}",
+                source -> source.path("package.json")));
+    }
+
+    @Test
+    void leavesProtocolsAliasesTagsAndVariablesUntouched() {
+        rewriteRun(json(
+                """
+                {
+                  "dependencies": {"@angular/animations": "workspace:^12.2.17"},
+                  "devDependencies": {"@angular/animations": "npm:@company/animations@13.2.6"},
+                  "peerDependencies": {"@angular/animations": "file:../animations"},
+                  "optionalDependencies": {"@angular/animations": "${ANGULAR_VERSION}"},
+                  "catalog": {"@angular/animations": "12.2.17"}
+                }
+                """,
+                source -> source.path("package.json")
+        ));
+    }
+
+    @Test
+    void leavesGitUrlsCatalogAndNonStringValuesUntouched() {
+        rewriteRun(json(
+                """
+                {
+                  "dependencies": {"@angular/animations": "github:angular/angular#12.2.17"},
+                  "devDependencies": {"@angular/animations": "https://registry.example/angular-12.2.17.tgz"},
+                  "peerDependencies": {"@angular/animations": {"version": "12.2.17"}},
+                  "optionalDependencies": {"@angular/animations": null}
+                }
+                """,
+                source -> source.path("package.json")
+        ));
+    }
+
+    @Test
+    void leavesOverridesResolutionsMetadataAndLockfilesUntouched() {
         rewriteRun(
                 json(
                         """
-                        {"dependencies": {"@angular/animations": "10.2.5"}}
+                        {
+                          "overrides": {"@angular/animations": "10.2.5"},
+                          "resolutions": {"@angular/animations": "11.2.14"},
+                          "pnpm": {"overrides": {"@angular/animations": "12.2.17"}},
+                          "peerDependenciesMeta": {"@angular/animations": {"optional": true}},
+                          "metadata": {"dependencies": {"@angular/animations": "13.2.6"}}
+                        }
                         """,
-                        spec -> spec.path("config/dependencies.json")
+                        source -> source.path("package.json")
                 ),
+                json("{\"packages\":{\"\":{\"dependencies\":{\"@angular/animations\":\"12.2.17\"}}}}",
+                        source -> source.path("package-lock.json"))
+        );
+    }
+
+    @Test
+    void leavesOrdinaryJsonSimilarPackagesAndAngularPeersUntouched() {
+        rewriteRun(
+                json("{\"dependencies\":{\"@angular/animations\":\"12.2.17\"}}",
+                        source -> source.path("fixtures/dependencies.json")),
                 json(
                         """
-                        {"dependencies": {"@angular/core": "10.2.5"}}
+                        {
+                          "dependencies": {
+                            "@angular/core": "12.2.17",
+                            "angular-animations": "12.2.17",
+                            "@angular/Animations": "12.2.17",
+                            "@company/angular-animations": "12.2.17"
+                          }
+                        }
                         """,
-                        spec -> spec.path("package.json")
+                        source -> source.path("package.json")
                 )
         );
     }
 
     @Test
-    void discoversAndValidatesRecipe() {
+    void dependencyUpgradeIsIdempotent() {
+        rewriteRun(
+                spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1),
+                packageVersion("package.json", "12.2.17")
+        );
+    }
+
+    @Test
+    void discoversValidRecipeMetadata() {
         Environment environment = environment();
-        Recipe recipe = environment.activateRecipes(RECIPE_NAME);
-        assertTrue(environment.listRecipes().stream()
-                .anyMatch(candidate -> RECIPE_NAME.equals(candidate.getName())));
-        assertTrue(recipe.validate().isValid(), () -> recipe.validate().failures().toString());
+        Recipe recipe = environment.activateRecipes(RECIPE);
+        assertTrue(environment.listRecipes().stream().anyMatch(candidate -> RECIPE.equals(candidate.getName())));
+        assertEquals("Upgrade selected @angular/animations declarations to 20.3.26", recipe.getDisplayName());
+        assertTrue(recipe.validateAll().stream().allMatch(validation -> validation.isValid()),
+                () -> recipe.validateAll().toString());
+    }
+
+    private static SourceSpecs packageVersion(String path, String version) {
+        return json(
+                "{\"dependencies\":{\"@angular/animations\":\"" + version + "\"}}",
+                "{\"dependencies\":{\"@angular/animations\":\"20.3.26\"}}",
+                source -> source.path(path)
+        );
     }
 
     private static Environment environment() {
