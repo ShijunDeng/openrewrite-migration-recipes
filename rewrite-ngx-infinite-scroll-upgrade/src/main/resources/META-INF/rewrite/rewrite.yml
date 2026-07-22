@@ -1,0 +1,202 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.ngxinfinitescroll
+packageName: com.huawei.clouds.openrewrite.ngxinfinitescroll
+description: Upgrade ngx-infinite-scroll, migrate its deprecated NgModule wrapper to the standalone directive, and locate behavior-sensitive Angular 17 follow-up work.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxinfinitescroll.UpgradeNgxInfiniteScrollTo17_0_1
+displayName: Upgrade ngx-infinite-scroll to 17.0.1
+description: Update only spreadsheet-selected direct ngx-infinite-scroll declarations in package.json to 17.0.1 without changing unlisted versions, protocols, aliases, lockfiles, Angular peers, or source code.
+tags:
+  - ngx-infinite-scroll
+  - angular
+  - npm
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - com.huawei.clouds.openrewrite.ngxinfinitescroll.UpgradeDependenciesNgxInfiniteScrollTo17_0_1
+  - com.huawei.clouds.openrewrite.ngxinfinitescroll.UpgradeDevDependenciesNgxInfiniteScrollTo17_0_1
+  - com.huawei.clouds.openrewrite.ngxinfinitescroll.UpgradePeerDependenciesNgxInfiniteScrollTo17_0_1
+  - com.huawei.clouds.openrewrite.ngxinfinitescroll.UpgradeOptionalDependenciesNgxInfiniteScrollTo17_0_1
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxinfinitescroll.UpgradeDependenciesNgxInfiniteScrollTo17_0_1
+displayName: Upgrade selected ngx-infinite-scroll dependencies declarations
+description: Upgrade a selected string-valued ngx-infinite-scroll declaration in the package.json dependencies object.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+  - org.openrewrite.text.Find:
+      find: '"dependencies"\s*:\s*\{(?:(?!\}).)*?"ngx-infinite-scroll"\s*:\s*"(?:\^|~)?(?:9\.1\.0|10\.0\.1|13\.0\.1|13\.1\.0|14\.0\.1)"'
+      regex: true
+      caseSensitive: true
+      multiline: true
+      dotAll: true
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.dependencies['ngx-infinite-scroll'][?(@ == '9.1.0' || @ == '^9.1.0' || @ == '~9.1.0' || @ == '10.0.1' || @ == '^10.0.1' || @ == '~10.0.1' || @ == '13.0.1' || @ == '^13.0.1' || @ == '~13.0.1' || @ == '13.1.0' || @ == '^13.1.0' || @ == '~13.1.0' || @ == '14.0.1' || @ == '^14.0.1' || @ == '~14.0.1')]
+      value: '"17.0.1"'
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxinfinitescroll.UpgradeDevDependenciesNgxInfiniteScrollTo17_0_1
+displayName: Upgrade selected ngx-infinite-scroll devDependencies declarations
+description: Upgrade a selected string-valued ngx-infinite-scroll declaration in the package.json devDependencies object.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+  - org.openrewrite.text.Find:
+      find: '"devDependencies"\s*:\s*\{(?:(?!\}).)*?"ngx-infinite-scroll"\s*:\s*"(?:\^|~)?(?:9\.1\.0|10\.0\.1|13\.0\.1|13\.1\.0|14\.0\.1)"'
+      regex: true
+      caseSensitive: true
+      multiline: true
+      dotAll: true
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.devDependencies['ngx-infinite-scroll'][?(@ == '9.1.0' || @ == '^9.1.0' || @ == '~9.1.0' || @ == '10.0.1' || @ == '^10.0.1' || @ == '~10.0.1' || @ == '13.0.1' || @ == '^13.0.1' || @ == '~13.0.1' || @ == '13.1.0' || @ == '^13.1.0' || @ == '~13.1.0' || @ == '14.0.1' || @ == '^14.0.1' || @ == '~14.0.1')]
+      value: '"17.0.1"'
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxinfinitescroll.UpgradePeerDependenciesNgxInfiniteScrollTo17_0_1
+displayName: Upgrade selected ngx-infinite-scroll peerDependencies declarations
+description: Upgrade a selected string-valued ngx-infinite-scroll declaration in the package.json peerDependencies object.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+  - org.openrewrite.text.Find:
+      find: '"peerDependencies"\s*:\s*\{(?:(?!\}).)*?"ngx-infinite-scroll"\s*:\s*"(?:\^|~)?(?:9\.1\.0|10\.0\.1|13\.0\.1|13\.1\.0|14\.0\.1)"'
+      regex: true
+      caseSensitive: true
+      multiline: true
+      dotAll: true
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.peerDependencies['ngx-infinite-scroll'][?(@ == '9.1.0' || @ == '^9.1.0' || @ == '~9.1.0' || @ == '10.0.1' || @ == '^10.0.1' || @ == '~10.0.1' || @ == '13.0.1' || @ == '^13.0.1' || @ == '~13.0.1' || @ == '13.1.0' || @ == '^13.1.0' || @ == '~13.1.0' || @ == '14.0.1' || @ == '^14.0.1' || @ == '~14.0.1')]
+      value: '"17.0.1"'
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxinfinitescroll.UpgradeOptionalDependenciesNgxInfiniteScrollTo17_0_1
+displayName: Upgrade selected ngx-infinite-scroll optionalDependencies declarations
+description: Upgrade a selected string-valued ngx-infinite-scroll declaration in the package.json optionalDependencies object.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+  - org.openrewrite.text.Find:
+      find: '"optionalDependencies"\s*:\s*\{(?:(?!\}).)*?"ngx-infinite-scroll"\s*:\s*"(?:\^|~)?(?:9\.1\.0|10\.0\.1|13\.0\.1|13\.1\.0|14\.0\.1)"'
+      regex: true
+      caseSensitive: true
+      multiline: true
+      dotAll: true
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.optionalDependencies['ngx-infinite-scroll'][?(@ == '9.1.0' || @ == '^9.1.0' || @ == '~9.1.0' || @ == '10.0.1' || @ == '^10.0.1' || @ == '~10.0.1' || @ == '13.0.1' || @ == '^13.0.1' || @ == '~13.0.1' || @ == '13.1.0' || @ == '^13.1.0' || @ == '~13.1.0' || @ == '14.0.1' || @ == '^14.0.1' || @ == '~14.0.1')]
+      value: '"17.0.1"'
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxinfinitescroll.MigrateInfiniteScrollModuleToStandaloneDirective
+displayName: Migrate InfiniteScrollModule to InfiniteScrollDirective
+description: Replace an unambiguous ngx-infinite-scroll named import and Angular imports/exports metadata reference with the 17.0.1 standalone directive; ambiguous or custom references remain for the audit recipe.
+tags:
+  - ngx-infinite-scroll
+  - angular
+  - standalone
+  - source-migration
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: "**/*.ts"
+  - org.openrewrite.text.Find:
+      find: 'import\s*\{(?=[^}]*\bInfiniteScrollModule\b)(?![^}]*\bInfiniteScrollDirective\b)[^}]*\}\s*from\s*["'']ngx-infinite-scroll["'']'
+      regex: true
+      caseSensitive: true
+      multiline: true
+      filePattern: "**/*.ts"
+recipeList:
+  - org.openrewrite.text.FindAndReplace:
+      find: '(?<prefix>import\s*\{(?:(?!\}).)*?)\bInfiniteScrollModule\b(?<suffix>(?:(?!\}).)*?\}\s*from\s*["'']ngx-infinite-scroll["''])'
+      replace: '${prefix}InfiniteScrollDirective${suffix}'
+      regex: true
+      caseSensitive: true
+      multiline: true
+      dotAll: true
+      filePattern: "**/*.ts"
+      plaintextOnly: false
+  - org.openrewrite.text.FindAndReplace:
+      find: '(?<prefix>\b(?:imports|exports)\s*:\s*\[(?:(?!\]).)*?)\bInfiniteScrollModule\b'
+      replace: '${prefix}InfiniteScrollDirective'
+      regex: true
+      caseSensitive: true
+      multiline: true
+      dotAll: true
+      filePattern: "**/*.ts"
+      plaintextOnly: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxinfinitescroll.AuditNgxInfiniteScroll17Compatibility
+displayName: Locate ngx-infinite-scroll 17 compatibility work
+description: Mark Angular peer declarations, deprecated module references, unsupported deep imports, and behavior-sensitive directive inputs for focused Angular 17, scrolling, SSR, and change-detection review.
+tags:
+  - ngx-infinite-scroll
+  - angular-17
+  - search
+recipeList:
+  - org.openrewrite.json.search.FindKey:
+      key: $.dependencies['@angular/core']
+  - org.openrewrite.json.search.FindKey:
+      key: $.devDependencies['@angular/core']
+  - org.openrewrite.json.search.FindKey:
+      key: $.peerDependencies['@angular/core']
+  - org.openrewrite.json.search.FindKey:
+      key: $.optionalDependencies['@angular/core']
+  - org.openrewrite.json.search.FindKey:
+      key: $.dependencies['@angular/common']
+  - org.openrewrite.json.search.FindKey:
+      key: $.devDependencies['@angular/common']
+  - org.openrewrite.json.search.FindKey:
+      key: $.peerDependencies['@angular/common']
+  - org.openrewrite.json.search.FindKey:
+      key: $.optionalDependencies['@angular/common']
+  - org.openrewrite.text.Find:
+      find: '\bInfiniteScrollModule\b'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.ts"
+      description: true
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: 'from\s*["'']ngx-infinite-scroll/'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.ts"
+      description: true
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '\b(?:infiniteScrollContainer|fromRoot|scrollWindow|immediateCheck|infiniteScrollThrottle|alwaysCallback|horizontal|infiniteScrollDisabled)\b'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.html;**/*.ts"
+      description: true
+      contextSize: 120
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxinfinitescroll.MigrateNgxInfiniteScrollTo17_0_1
+displayName: Migrate ngx-infinite-scroll applications to 17.0.1
+description: Upgrade the selected dependency, migrate unambiguous InfiniteScrollModule imports and Angular metadata to the standalone directive, and mark compatibility work that requires application-specific review.
+tags:
+  - ngx-infinite-scroll
+  - angular-17
+  - dependency-upgrade
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.ngxinfinitescroll.UpgradeNgxInfiniteScrollTo17_0_1
+  - com.huawei.clouds.openrewrite.ngxinfinitescroll.MigrateInfiniteScrollModuleToStandaloneDirective
+  - com.huawei.clouds.openrewrite.ngxinfinitescroll.AuditNgxInfiniteScroll17Compatibility

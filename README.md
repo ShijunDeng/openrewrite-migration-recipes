@@ -65,6 +65,7 @@
 | [`rewrite-spring-cloud-eureka-client-upgrade`](rewrite-spring-cloud-eureka-client-upgrade) | `com.huawei.clouds.openrewrite.springcloudeureka.MigrateEurekaClientTo4_2_0` | 将 Spring Cloud Netflix Eureka Client starter 2.1/3.1 升级到 4.2.0，删除废弃启用注解、标记 Ribbon 风险，并说明 Boot/Cloud release train、Java 17、Jakarta、配置、LoadBalancer 与 AOT 迁移边界 |
 | [`rewrite-spring-data-elasticsearch-upgrade`](rewrite-spring-data-elasticsearch-upgrade) | `com.huawei.clouds.openrewrite.springdataelasticsearch.MigrateSpringDataElasticsearchTo6_0_5` | 将表格指定的 Spring Data Elasticsearch 4.2/4.4 依赖升级到 6.0.5，并说明 Spring 7、Elasticsearch 9、客户端、查询、mapping、repository 与集群迁移边界 |
 | [`rewrite-curator-framework-upgrade`](rewrite-curator-framework-upgrade) | `com.huawei.clouds.openrewrite.curatorframework.MigrateCuratorFrameworkTo5_7_1` | 将 Apache Curator Framework 2.7.1 升级到 5.7.1，自动迁移 ListenerContainer 构造/类型，并精确标记已删除 API、旧 cache 与 ZooKeeper 3.4 风险 |
+| [`rewrite-ngx-infinite-scroll-upgrade`](rewrite-ngx-infinite-scroll-upgrade) | `com.huawei.clouds.openrewrite.ngxinfinitescroll.MigrateNgxInfiniteScrollTo17_0_1` | 将 ngx-infinite-scroll 9/10/13/14 升级到 17.0.1，自动迁移 deprecated NgModule 到 standalone directive，并标记 Angular peer、深度导入与滚动行为风险 |
 
 后续迁移应新增独立模块，例如：
 
