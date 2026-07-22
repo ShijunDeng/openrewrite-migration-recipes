@@ -1,0 +1,35 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.ngxecharts
+packageName: com.huawei.clouds.openrewrite.ngxecharts
+description: Upgrade ngx-echarts with explicit Angular and ECharts compatibility guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxecharts.UpgradeNgxEchartsTo20_0_2
+displayName: Upgrade ngx-echarts to 20.0.2
+description: Update older direct ngx-echarts declarations in package.json to 20.0.2 without downgrading newer versions or replacing non-registry references.
+tags:
+  - angular
+  - echarts
+  - ngx-echarts
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.dependencies[?(@['ngx-echarts'] =~ '^[<>=~^ ]*v?(?:(?:[5-9]|1[0-9])(?:\.|$)|20\.0\.[01](?:[^0-9]|$)).*')]['ngx-echarts']
+      value: '"20.0.2"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.devDependencies[?(@['ngx-echarts'] =~ '^[<>=~^ ]*v?(?:(?:[5-9]|1[0-9])(?:\.|$)|20\.0\.[01](?:[^0-9]|$)).*')]['ngx-echarts']
+      value: '"20.0.2"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.peerDependencies[?(@['ngx-echarts'] =~ '^[<>=~^ ]*v?(?:(?:[5-9]|1[0-9])(?:\.|$)|20\.0\.[01](?:[^0-9]|$)).*')]['ngx-echarts']
+      value: '"20.0.2"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.optionalDependencies[?(@['ngx-echarts'] =~ '^[<>=~^ ]*v?(?:(?:[5-9]|1[0-9])(?:\.|$)|20\.0\.[01](?:[^0-9]|$)).*')]['ngx-echarts']
+      value: '"20.0.2"'

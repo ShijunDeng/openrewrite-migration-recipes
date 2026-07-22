@@ -40,6 +40,7 @@
 | [`rewrite-jakarta-servlet-api-upgrade`](rewrite-jakarta-servlet-api-upgrade) | `com.huawei.clouds.openrewrite.jakartaservlet.MigrateJakartaServletApiTo6_1_0` | 将 Jakarta Servlet API 升级到 6.1.0，并迁移 javax namespace 与有明确替代的删除 API |
 | [`rewrite-mybatis-spring-upgrade`](rewrite-mybatis-spring-upgrade) | `com.huawei.clouds.openrewrite.mybatisspring.MigrateMyBatisSpringTo4_0_0` | 将 MyBatis-Spring 升级到 4.0.0，并迁移其 Spring Batch 6 infrastructure 包引用 |
 | [`rewrite-marked-upgrade`](rewrite-marked-upgrade) | `com.huawei.clouds.openrewrite.marked.UpgradeMarkedTo17_0_6` | 将表格列出的 Marked 4.x/5.x 声明升级到 17.0.6，且不降级后续版本 |
+| [`rewrite-ngx-echarts-upgrade`](rewrite-ngx-echarts-upgrade) | `com.huawei.clouds.openrewrite.ngxecharts.UpgradeNgxEchartsTo20_0_2` | 将 ngx-echarts 5.x–20.0.1 声明升级到 20.0.2，并说明 Angular/ECharts 配套迁移边界 |
 
 后续迁移应新增独立模块，例如：
 

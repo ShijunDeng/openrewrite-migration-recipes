@@ -63,6 +63,7 @@
     <module>rewrite-jakarta-servlet-api-upgrade</module>
     <module>rewrite-mybatis-spring-upgrade</module>
     <module>rewrite-marked-upgrade</module>
+    <module>rewrite-ngx-echarts-upgrade</module>
   </modules>
 
   <dependencyManagement>
