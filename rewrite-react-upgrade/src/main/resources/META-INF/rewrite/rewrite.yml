@@ -2,35 +2,59 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.react
 packageName: com.huawei.clouds.openrewrite.react
-description: Upgrade selected React declarations with explicit renderer, JSX, TypeScript, testing, Suspense, SSR, and Server Components migration guidance.
+description: Upgrade spreadsheet-selected React declarations and expose React 18/19 source, renderer, tooling and ecosystem migration work.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.react.UpgradeReactTo19_2_7
 displayName: Upgrade React to 19.2.7
-description: Update selected direct React 16.x through 19.0 declarations in package.json to 19.2.7 without changing renderers, types, aliases, protocols, overrides, lockfiles, or source code.
-tags:
-  - react
-  - javascript
-  - typescript
-  - frontend
-  - dependency-upgrade
+description: Update only spreadsheet-selected direct React declarations in package.json to 19.2.7 without changing aliases, protocols, lockfiles, metadata or unlisted versions.
+tags: [react, javascript, typescript, dependency-upgrade]
 preconditions:
   - org.openrewrite.FindSourceFiles:
       filePattern: package.json;**/package.json
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.dependencies['react'][?(@ == '16.6.1' || @ == '^16.6.1' || @ == '~16.6.1' || @ == '=16.6.1' || @ == 'v16.6.1' || @ == '^v16.6.1' || @ == '16.14.0' || @ == '^16.14.0' || @ == '~16.14.0' || @ == '=16.14.0' || @ == 'v16.14.0' || @ == '^v16.14.0' || @ == '17.0.2' || @ == '^17.0.2' || @ == '~17.0.2' || @ == '=17.0.2' || @ == 'v17.0.2' || @ == '^v17.0.2' || @ == '18.2.0' || @ == '^18.2.0' || @ == '~18.2.0' || @ == '=18.2.0' || @ == 'v18.2.0' || @ == '^v18.2.0' || @ == '19.0.0' || @ == '^19.0.0' || @ == '~19.0.0' || @ == '=19.0.0' || @ == 'v19.0.0' || @ == '^v19.0.0')]
-      value: '"19.2.7"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.devDependencies['react'][?(@ == '16.6.1' || @ == '^16.6.1' || @ == '~16.6.1' || @ == '=16.6.1' || @ == 'v16.6.1' || @ == '^v16.6.1' || @ == '16.14.0' || @ == '^16.14.0' || @ == '~16.14.0' || @ == '=16.14.0' || @ == 'v16.14.0' || @ == '^v16.14.0' || @ == '17.0.2' || @ == '^17.0.2' || @ == '~17.0.2' || @ == '=17.0.2' || @ == 'v17.0.2' || @ == '^v17.0.2' || @ == '18.2.0' || @ == '^18.2.0' || @ == '~18.2.0' || @ == '=18.2.0' || @ == 'v18.2.0' || @ == '^v18.2.0' || @ == '19.0.0' || @ == '^19.0.0' || @ == '~19.0.0' || @ == '=19.0.0' || @ == 'v19.0.0' || @ == '^v19.0.0')]
-      value: '"19.2.7"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.peerDependencies['react'][?(@ == '16.6.1' || @ == '^16.6.1' || @ == '~16.6.1' || @ == '=16.6.1' || @ == 'v16.6.1' || @ == '^v16.6.1' || @ == '16.14.0' || @ == '^16.14.0' || @ == '~16.14.0' || @ == '=16.14.0' || @ == 'v16.14.0' || @ == '^v16.14.0' || @ == '17.0.2' || @ == '^17.0.2' || @ == '~17.0.2' || @ == '=17.0.2' || @ == 'v17.0.2' || @ == '^v17.0.2' || @ == '18.2.0' || @ == '^18.2.0' || @ == '~18.2.0' || @ == '=18.2.0' || @ == 'v18.2.0' || @ == '^v18.2.0' || @ == '19.0.0' || @ == '^19.0.0' || @ == '~19.0.0' || @ == '=19.0.0' || @ == 'v19.0.0' || @ == '^v19.0.0')]
-      value: '"19.2.7"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: >-
-        $.optionalDependencies['react'][?(@ == '16.6.1' || @ == '^16.6.1' || @ == '~16.6.1' || @ == '=16.6.1' || @ == 'v16.6.1' || @ == '^v16.6.1' || @ == '16.14.0' || @ == '^16.14.0' || @ == '~16.14.0' || @ == '=16.14.0' || @ == 'v16.14.0' || @ == '^v16.14.0' || @ == '17.0.2' || @ == '^17.0.2' || @ == '~17.0.2' || @ == '=17.0.2' || @ == 'v17.0.2' || @ == '^v17.0.2' || @ == '18.2.0' || @ == '^18.2.0' || @ == '~18.2.0' || @ == '=18.2.0' || @ == 'v18.2.0' || @ == '^v18.2.0' || @ == '19.0.0' || @ == '^19.0.0' || @ == '~19.0.0' || @ == '=19.0.0' || @ == 'v19.0.0' || @ == '^v19.0.0')]
-      value: '"19.2.7"'
+  - com.huawei.clouds.openrewrite.react.UpgradeSelectedReactDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.react.MigrateDeterministicReactSourceTo19
+displayName: Migrate deterministic React source to React 19
+description: Apply narrowly guarded official render, hydrate, act-import and ref-callback transforms while excluding comments and literals.
+tags: [react, javascript, typescript, source-migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.react.MigrateDeterministicReactSource
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.react.AuditReact19SourceCompatibility
+displayName: Audit React 19 source compatibility
+description: Mark removed APIs and context-dependent root, context, ref, testing, StrictMode, Suspense, hydration, batching, SSR and TypeScript changes.
+tags: [react, javascript, typescript, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.react.FindReactSourceMigrationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.react.AuditReact19ProjectCompatibility
+displayName: Audit React 19 project compatibility
+description: Mark renderer, type, framework, router, native, testing and tooling dependencies plus classic JSX settings that need explicit compatibility decisions.
+tags: [react, javascript, typescript, dependencies, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.react.FindReactProjectMigrationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.react.AuditReact19ResourceCompatibility
+displayName: Audit React 19 HTML resource compatibility
+description: Mark removed UMD artifacts and inline legacy ReactDOM roots in HTML resources.
+tags: [react, javascript, html, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.react.FindReactResourceMigrationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.react.MigrateReactTo19_2_7
+displayName: Migrate React applications to 19.2.7
+description: Upgrade spreadsheet-selected React declarations, apply deterministic official source transforms, and mark the remaining React 18/19 project compatibility work.
+tags: [react, javascript, typescript, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.react.UpgradeReactTo19_2_7
+  - com.huawei.clouds.openrewrite.react.MigrateDeterministicReactSourceTo19
+  - com.huawei.clouds.openrewrite.react.AuditReact19SourceCompatibility
+  - com.huawei.clouds.openrewrite.react.AuditReact19ProjectCompatibility
+  - com.huawei.clouds.openrewrite.react.AuditReact19ResourceCompatibility

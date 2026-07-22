@@ -204,11 +204,15 @@ class UpgradeReactTest implements RewriteTest {
     @ParameterizedTest(name = "upgrades safe npm declaration {0}")
     @ValueSource(strings = {
             "^16.6.1",
+            "~16.6.1",
+            "^16.14.0",
             "~16.14.0",
-            "v17.0.2",
-            "=18.2.0",
+            "^17.0.2",
+            "~17.0.2",
+            "^18.2.0",
+            "~18.2.0",
             "^19.0.0",
-            "^v18.2.0"
+            "~19.0.0"
     })
     void upgradesSupportedRegistrySemverForms(String declaration) {
         rewriteRun(packageVersion("package.json", declaration));
@@ -221,7 +225,7 @@ class UpgradeReactTest implements RewriteTest {
                 {
                   "dependencies": {"react": "16.6.1"},
                   "devDependencies": {"react": "^16.14.0"},
-                  "peerDependencies": {"react": "=17.0.2"},
+                  "peerDependencies": {"react": "17.0.2"},
                   "optionalDependencies": {"react": "~19.0.0"}
                 }
                 """,
@@ -351,6 +355,9 @@ class UpgradeReactTest implements RewriteTest {
     @ValueSource(strings = {
             "17.0.2-rc.1",
             "18.2.0+company.4",
+            "v17.0.2",
+            "=18.2.0",
+            "^v18.2.0",
             ">=16.14.0 <17",
             " >= 18.2.0 <= 20",
             "16.6.1 - 18.2.0",
