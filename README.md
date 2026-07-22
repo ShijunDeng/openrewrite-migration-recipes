@@ -46,6 +46,7 @@
 | [`rewrite-uuid-upgrade`](rewrite-uuid-upgrade) | `com.huawei.clouds.openrewrite.uuid.UpgradeUuidTo13_0_2` | 将表格指定的 uuid 8.x–11.x 声明升级到 13.0.2，保留协议引用和未列版本 |
 | [`rewrite-shedlock-spring-upgrade`](rewrite-shedlock-spring-upgrade) | `com.huawei.clouds.openrewrite.shedlockspring.MigrateShedLockSpringTo7_2_1` | 将 ShedLock Spring 升级到 7.2.1，并迁移 2.x 的 SchedulerLock 包名与字符串 duration 属性 |
 | [`rewrite-ng-dynamic-forms-core-upgrade`](rewrite-ng-dynamic-forms-core-upgrade) | `com.huawei.clouds.openrewrite.ngdynamicforms.UpgradeNgDynamicFormsCoreTo18_0_0` | 将 @ng-dynamic-forms/core 14.x–17.x 升级到 18.0.0，并说明 Angular/standalone/UI 配套迁移 |
+| [`rewrite-tweenjs-upgrade`](rewrite-tweenjs-upgrade) | `com.huawei.clouds.openrewrite.tweenjs.UpgradeTweenJsTo23_1_1` | 将表格指定的 @tweenjs/tween.js 19/20 声明升级到 23.1.1，并说明模块与时间轴行为变化 |
 
 后续迁移应新增独立模块，例如：
 

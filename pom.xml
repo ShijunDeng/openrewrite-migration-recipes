@@ -69,6 +69,7 @@
     <module>rewrite-uuid-upgrade</module>
     <module>rewrite-shedlock-spring-upgrade</module>
     <module>rewrite-ng-dynamic-forms-core-upgrade</module>
+    <module>rewrite-tweenjs-upgrade</module>
   </modules>
 
   <dependencyManagement>

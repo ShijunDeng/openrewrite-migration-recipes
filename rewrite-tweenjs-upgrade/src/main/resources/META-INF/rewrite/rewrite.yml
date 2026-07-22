@@ -1,0 +1,36 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.tweenjs
+packageName: com.huawei.clouds.openrewrite.tweenjs
+description: Upgrade Tween.js with explicit module-resolution, timing, group, and animation-behavior migration guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.tweenjs.UpgradeTweenJsTo23_1_1
+displayName: Upgrade @tweenjs/tween.js to 23.1.1
+description: Update the spreadsheet-selected direct @tweenjs/tween.js declarations in package.json to 23.1.1 without changing aliases, workspace references, lockfiles, tags, or other versions.
+tags:
+  - tweenjs
+  - animation
+  - javascript
+  - typescript
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.dependencies[?(@['@tweenjs/tween.js'] =~ '^[<>=~^ ]*v?(?:19\.0\.0|20\.0\.3)(?:[-+ <>=~^|].*)?$')]['@tweenjs/tween.js']
+      value: '"23.1.1"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.devDependencies[?(@['@tweenjs/tween.js'] =~ '^[<>=~^ ]*v?(?:19\.0\.0|20\.0\.3)(?:[-+ <>=~^|].*)?$')]['@tweenjs/tween.js']
+      value: '"23.1.1"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.peerDependencies[?(@['@tweenjs/tween.js'] =~ '^[<>=~^ ]*v?(?:19\.0\.0|20\.0\.3)(?:[-+ <>=~^|].*)?$')]['@tweenjs/tween.js']
+      value: '"23.1.1"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.optionalDependencies[?(@['@tweenjs/tween.js'] =~ '^[<>=~^ ]*v?(?:19\.0\.0|20\.0\.3)(?:[-+ <>=~^|].*)?$')]['@tweenjs/tween.js']
+      value: '"23.1.1"'
