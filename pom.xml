@@ -57,6 +57,7 @@
     <module>rewrite-hibernate-core-upgrade</module>
     <module>rewrite-vue-router-upgrade</module>
     <module>rewrite-okhttp-upgrade</module>
+    <module>rewrite-d3-upgrade</module>
   </modules>
 
   <dependencyManagement>

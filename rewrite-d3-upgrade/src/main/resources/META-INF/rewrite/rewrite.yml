@@ -1,0 +1,35 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.d3
+packageName: com.huawei.clouds.openrewrite.d3
+description: Upgrade selected D3 declarations with explicit JavaScript migration guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.d3.UpgradeD3To7_9_0
+displayName: Upgrade D3 to 7.9.0
+description: Update the selected older direct d3 declarations in package.json to 7.9.0 without changing aliases, workspace references, lockfiles, or newer versions.
+tags:
+  - d3
+  - javascript
+  - visualization
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.dependencies[?(@.d3 =~ '^[<>=~^ ]*(?:5\.16\.0|6\.(?:6\.2|7\.0)|7\.(?:1\.1|8\.(?:2|4|5)))(?:[-+ <>=~^|].*)?$')].d3
+      value: '"7.9.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.devDependencies[?(@.d3 =~ '^[<>=~^ ]*(?:5\.16\.0|6\.(?:6\.2|7\.0)|7\.(?:1\.1|8\.(?:2|4|5)))(?:[-+ <>=~^|].*)?$')].d3
+      value: '"7.9.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.peerDependencies[?(@.d3 =~ '^[<>=~^ ]*(?:5\.16\.0|6\.(?:6\.2|7\.0)|7\.(?:1\.1|8\.(?:2|4|5)))(?:[-+ <>=~^|].*)?$')].d3
+      value: '"7.9.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: >-
+        $.optionalDependencies[?(@.d3 =~ '^[<>=~^ ]*(?:5\.16\.0|6\.(?:6\.2|7\.0)|7\.(?:1\.1|8\.(?:2|4|5)))(?:[-+ <>=~^|].*)?$')].d3
+      value: '"7.9.0"'
