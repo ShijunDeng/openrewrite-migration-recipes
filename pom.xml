@@ -36,6 +36,7 @@
     <module>rewrite-fastjson2-to-jackson</module>
     <module>rewrite-rxjs-upgrade</module>
     <module>rewrite-guava-upgrade</module>
+    <module>rewrite-ngx-translate-core-upgrade</module>
   </modules>
 
   <dependencyManagement>

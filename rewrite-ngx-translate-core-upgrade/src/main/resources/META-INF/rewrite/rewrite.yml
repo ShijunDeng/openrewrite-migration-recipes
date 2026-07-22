@@ -1,0 +1,31 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.ngxtranslate
+packageName: com.huawei.clouds.openrewrite.ngxtranslate
+description: Upgrade ngx-translate with explicit Angular compatibility guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ngxtranslate.UpgradeNgxTranslateCoreTo17
+displayName: Upgrade @ngx-translate/core to 17.0.0
+description: Update direct @ngx-translate/core declarations in package.json to 17.0.0. Lock files must be regenerated with the project's package manager.
+tags:
+  - ngx-translate
+  - angular
+  - nodejs
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.dependencies['@ngx-translate/core']
+      value: '"17.0.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.devDependencies['@ngx-translate/core']
+      value: '"17.0.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.peerDependencies['@ngx-translate/core']
+      value: '"17.0.0"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.optionalDependencies['@ngx-translate/core']
+      value: '"17.0.0"'
