@@ -1,0 +1,160 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.jaxbruntime
+packageName: com.huawei.clouds.openrewrite.jaxbruntime
+description: Upgrade Eclipse JAXB Runtime and migrate the type-safe portion of JAXB 2 applications to Jakarta XML Binding 4.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jaxbruntime.UpgradeJaxbRuntimeTo4_0_8
+displayName: Upgrade JAXB Runtime to 4.0.8
+description: Upgrade the exact org.glassfish.jaxb:jaxb-runtime Maven or Gradle dependency to 4.0.8 without changing source namespaces or companion APIs.
+tags:
+  - jaxb
+  - xml-binding
+  - java
+  - dependency-upgrade
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.glassfish.jaxb
+      artifactId: jaxb-runtime
+      newVersion: 4.0.8
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jaxbruntime.MigrateJaxbBindingsToJakarta3
+displayName: Migrate JAXB binding files to the Jakarta 3.0 namespace
+description: Update legacy JAXB external binding and inline XML Schema customization namespaces, binding schema URLs, and binding language versions in xjb, jxb, and xsd files.
+tags:
+  - jaxb
+  - xjc
+  - xml-schema
+  - jakarta
+recipeList:
+  - org.openrewrite.text.FindAndReplace:
+      find: http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd
+      replace: https://jakarta.ee/xml/ns/jaxb/bindingschema_3_0.xsd
+      filePattern: "**/*.xjb"
+      plaintextOnly: false
+  - org.openrewrite.text.FindAndReplace:
+      find: http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd
+      replace: https://jakarta.ee/xml/ns/jaxb/bindingschema_3_0.xsd
+      filePattern: "**/*.jxb"
+      plaintextOnly: false
+  - org.openrewrite.text.FindAndReplace:
+      find: http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd
+      replace: https://jakarta.ee/xml/ns/jaxb/bindingschema_3_0.xsd
+      filePattern: "**/*.xsd"
+      plaintextOnly: false
+  - org.openrewrite.text.FindAndReplace:
+      find: 'http://java\.sun\.com/xml/ns/jaxb(?!/xjc)'
+      replace: https://jakarta.ee/xml/ns/jaxb
+      regex: true
+      filePattern: "**/*.xjb"
+      plaintextOnly: false
+  - org.openrewrite.text.FindAndReplace:
+      find: 'http://java\.sun\.com/xml/ns/jaxb(?!/xjc)'
+      replace: https://jakarta.ee/xml/ns/jaxb
+      regex: true
+      filePattern: "**/*.jxb"
+      plaintextOnly: false
+  - org.openrewrite.text.FindAndReplace:
+      find: 'http://java\.sun\.com/xml/ns/jaxb(?!/xjc)'
+      replace: https://jakarta.ee/xml/ns/jaxb
+      regex: true
+      filePattern: "**/*.xsd"
+      plaintextOnly: false
+  - org.openrewrite.text.FindAndReplace:
+      find: '(?<prefix><(?:(?:jxb|jaxb):)?bindings\b(?:(?!>).)*?\bversion\s*=\s*["''])(?:1\.0|2\.[01])(?<quote>["''])'
+      replace: '${prefix}3.0${quote}'
+      regex: true
+      caseSensitive: true
+      multiline: true
+      dotAll: true
+      filePattern: "**/*.xjb"
+      plaintextOnly: false
+  - org.openrewrite.text.FindAndReplace:
+      find: '(?<prefix><(?:(?:jxb|jaxb):)?bindings\b(?:(?!>).)*?\bversion\s*=\s*["''])(?:1\.0|2\.[01])(?<quote>["''])'
+      replace: '${prefix}3.0${quote}'
+      regex: true
+      caseSensitive: true
+      multiline: true
+      dotAll: true
+      filePattern: "**/*.jxb"
+      plaintextOnly: false
+  - org.openrewrite.text.FindAndReplace:
+      find: '(?<prefix>\b(?:jxb|jaxb):version\s*=\s*["''])(?:1\.0|2\.[01])(?<quote>["''])'
+      replace: '${prefix}3.0${quote}'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.xsd"
+      plaintextOnly: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jaxbruntime.MigrateJaxbRuntimeTo4_0_8
+displayName: Migrate JAXB Runtime 2.x applications to JAXB Runtime 4.0.8
+description: Upgrade JAXB Runtime and companion JAXB/Activation APIs, migrate javax source namespaces and the stable RI NamespacePrefixMapper extension, and update JAXB binding customizations.
+tags:
+  - jaxb
+  - jakarta-xml-binding
+  - jakarta-ee-10
+  - java
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.jaxbruntime.UpgradeJaxbRuntimeTo4_0_8
+  - org.openrewrite.java.dependencies.ChangeDependency:
+      oldGroupId: javax.xml.bind
+      oldArtifactId: jaxb-api
+      newGroupId: jakarta.xml.bind
+      newArtifactId: jakarta.xml.bind-api
+      newVersion: 4.0.5
+      overrideManagedVersion: true
+      changeManagedDependency: true
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: jakarta.xml.bind
+      artifactId: jakarta.xml.bind-api
+      newVersion: 4.0.5
+      overrideManagedVersion: true
+  - org.openrewrite.java.dependencies.ChangeDependency:
+      oldGroupId: javax.activation
+      oldArtifactId: javax.activation-api
+      newGroupId: jakarta.activation
+      newArtifactId: jakarta.activation-api
+      newVersion: 2.1.4
+      overrideManagedVersion: true
+      changeManagedDependency: true
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: jakarta.activation
+      artifactId: jakarta.activation-api
+      newVersion: 2.1.4
+      overrideManagedVersion: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.bind
+      newPackageName: jakarta.xml.bind
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.activation
+      newPackageName: jakarta.activation
+      recursive: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.sun.xml.bind.marshaller.NamespacePrefixMapper
+      newFullyQualifiedTypeName: org.glassfish.jaxb.runtime.marshaller.NamespacePrefixMapper
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeTypeInStringLiteral:
+      oldFullyQualifiedTypeName: com.sun.xml.bind.namespacePrefixMapper
+      newFullyQualifiedTypeName: org.glassfish.jaxb.namespacePrefixMapper
+  - org.openrewrite.java.ChangeTypeInStringLiteral:
+      oldFullyQualifiedTypeName: com.sun.xml.bind.indentString
+      newFullyQualifiedTypeName: org.glassfish.jaxb.indentString
+  - org.openrewrite.java.ChangeTypeInStringLiteral:
+      oldFullyQualifiedTypeName: com.sun.xml.bind.characterEscapeHandler
+      newFullyQualifiedTypeName: org.glassfish.jaxb.characterEscapeHandler
+  - org.openrewrite.java.ChangeTypeInStringLiteral:
+      oldFullyQualifiedTypeName: com.sun.xml.bind.xmlDeclaration
+      newFullyQualifiedTypeName: org.glassfish.jaxb.xmlDeclaration
+  - org.openrewrite.java.ChangeTypeInStringLiteral:
+      oldFullyQualifiedTypeName: com.sun.xml.bind.xmlHeaders
+      newFullyQualifiedTypeName: org.glassfish.jaxb.xmlHeaders
+  - org.openrewrite.java.ChangeTypeInStringLiteral:
+      oldFullyQualifiedTypeName: com.sun.xml.bind.objectIdentitityCycleDetection
+      newFullyQualifiedTypeName: org.glassfish.jaxb.objectIdentitityCycleDetection
+  - com.huawei.clouds.openrewrite.jaxbruntime.MigrateJaxbBindingsToJakarta3

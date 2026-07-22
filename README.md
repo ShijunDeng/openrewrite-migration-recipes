@@ -53,6 +53,7 @@
 | [`rewrite-shedlock-jdbc-template-upgrade`](rewrite-shedlock-jdbc-template-upgrade) | `com.huawei.clouds.openrewrite.shedlockjdbc.UpgradeShedLockJdbcTemplateTo7_2_1` | 将 ShedLock JdbcTemplate provider 升级到 7.2.1，并说明 Java/Spring 基线、SQL 方言、时钟与锁异常语义变化 |
 | [`rewrite-jakarta-annotation-api-upgrade`](rewrite-jakarta-annotation-api-upgrade) | `com.huawei.clouds.openrewrite.jakartaannotation.MigrateJakartaAnnotationApiTo3_0_0` | 将 Jakarta Annotations API 1.3.5 升级到 3.0.0，安全迁移 14 个类型并单独审计已删除的 ManagedBean |
 | [`rewrite-kubernetes-client-java-upgrade`](rewrite-kubernetes-client-java-upgrade) | `com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateKubernetesClientJavaTo25_0_0_Legacy` | 将表格指定的 Kubernetes Java Client 11/16/17/18 升级到 25.0.0-legacy，保留旧式调用接口并说明集群/API/序列化迁移边界 |
+| [`rewrite-jaxb-runtime-upgrade`](rewrite-jaxb-runtime-upgrade) | `com.huawei.clouds.openrewrite.jaxbruntime.MigrateJaxbRuntimeTo4_0_8` | 将 JAXB Runtime 2.3.7/2.3.8 升级到 4.0.8，迁移 Jakarta XML Binding/Activation、RI 扩展与 XJC binding 文件 |
 
 后续迁移应新增独立模块，例如：
 
