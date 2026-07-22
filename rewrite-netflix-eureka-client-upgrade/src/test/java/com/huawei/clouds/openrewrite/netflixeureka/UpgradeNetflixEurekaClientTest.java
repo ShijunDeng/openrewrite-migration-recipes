@@ -3,6 +3,7 @@ package com.huawei.clouds.openrewrite.netflixeureka;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.Recipe;
 import org.openrewrite.config.Environment;
+import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
@@ -17,6 +18,8 @@ import static org.openrewrite.test.SourceSpecs.text;
 class UpgradeNetflixEurekaClientTest implements RewriteTest {
     private static final String RECIPE_NAME =
             "com.huawei.clouds.openrewrite.netflixeureka.UpgradeNetflixEurekaClientTo2_0_4";
+    private static final String MIGRATION_RECIPE_NAME =
+            "com.huawei.clouds.openrewrite.netflixeureka.MigrateNetflixEurekaClientTo2_0_4";
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -389,15 +392,469 @@ class UpgradeNetflixEurekaClientTest implements RewriteTest {
     }
 
     @Test
+    void migrationUpgradesGraviteeAndMarksRemovedTwoArgumentConstructor() {
+        // Reduced from gravitee-io-community/gravitee-service-discovery-eureka at
+        // ad52ed93c38dc7d3200040bc183aa9010518000a. The 2.x replacement needs an
+        // explicit TransportClientFactories implementation, so the recipe marks the call.
+        // https://github.com/gravitee-io-community/gravitee-service-discovery-eureka/blob/ad52ed93c38dc7d3200040bc183aa9010518000a/src/main/java/io/gravitee/discovery/eureka/EurekaServiceDiscovery.java#L94-L98
+        rewriteRun(
+                spec -> spec
+                        .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .parser(legacyEurekaParser()),
+                pomXml(
+                        pomWithPropertiesAndDependency("<eureka.version>1.10.18</eureka.version>", "<version>${eureka.version}</version>"),
+                        pomWithPropertiesAndDependency("<eureka.version>2.0.4</eureka.version>", "<version>${eureka.version}</version>")
+                ),
+                java(
+                        """
+                        package io.gravitee.discovery.eureka;
+
+                        import com.netflix.appinfo.ApplicationInfoManager;
+                        import com.netflix.discovery.DiscoveryClient;
+                        import com.netflix.discovery.EurekaClientConfig;
+
+                        class EurekaServiceDiscovery {
+                            DiscoveryClient start(ApplicationInfoManager info, EurekaClientConfig config) {
+                                return new DiscoveryClient(info, config);
+                            }
+                        }
+                        """,
+                        """
+                        package io.gravitee.discovery.eureka;
+
+                        import com.netflix.appinfo.ApplicationInfoManager;
+                        import com.netflix.discovery.DiscoveryClient;
+                        import com.netflix.discovery.EurekaClientConfig;
+
+                        class EurekaServiceDiscovery {
+                            DiscoveryClient start(ApplicationInfoManager info, EurekaClientConfig config) {
+                                return /*~~>*/new DiscoveryClient(info, config);
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void migrationMarksCorneastConsumerConstructorAndPreservesLookup() {
+        // Reduced from Alioth4J/corneast at 4e94c5be23b28a91f107e65811322fdfde906d30.
+        // https://github.com/Alioth4J/corneast/blob/4e94c5be23b28a91f107e65811322fdfde906d30/corneast-client/src/main/java/com/alioth4j/corneast/client/eureka/EurekaConsumer.java#L123-L149
+        rewriteRun(
+                spec -> spec
+                        .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .parser(legacyEurekaParser()),
+                java(
+                        """
+                        package com.alioth4j.corneast.client.eureka;
+
+                        import com.netflix.appinfo.ApplicationInfoManager;
+                        import com.netflix.discovery.DiscoveryClient;
+                        import com.netflix.discovery.EurekaClientConfig;
+
+                        class EurekaConsumer {
+                            DiscoveryClient connect(ApplicationInfoManager info, EurekaClientConfig config) {
+                                DiscoveryClient client = new DiscoveryClient(info, config);
+                                client.getApplication("inventory");
+                                return client;
+                            }
+                        }
+                        """,
+                        """
+                        package com.alioth4j.corneast.client.eureka;
+
+                        import com.netflix.appinfo.ApplicationInfoManager;
+                        import com.netflix.discovery.DiscoveryClient;
+                        import com.netflix.discovery.EurekaClientConfig;
+
+                        class EurekaConsumer {
+                            DiscoveryClient connect(ApplicationInfoManager info, EurekaClientConfig config) {
+                                DiscoveryClient client = /*~~>*/new DiscoveryClient(info, config);
+                                client.getApplication("inventory");
+                                return client;
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void marksRemovedInstanceInfoAndOptionalArgsConstructor() {
+        rewriteRun(
+                spec -> spec
+                        .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .parser(legacyEurekaParser()),
+                java(
+                        """
+                        package example;
+
+                        import com.netflix.appinfo.InstanceInfo;
+                        import com.netflix.discovery.AbstractDiscoveryClientOptionalArgs;
+                        import com.netflix.discovery.DiscoveryClient;
+                        import com.netflix.discovery.EurekaClientConfig;
+
+                        class LegacyFactory {
+                            DiscoveryClient create(InstanceInfo info, EurekaClientConfig config,
+                                                   AbstractDiscoveryClientOptionalArgs args) {
+                                return new DiscoveryClient(info, config, args);
+                            }
+                        }
+                        """,
+                        """
+                        package example;
+
+                        import com.netflix.appinfo.InstanceInfo;
+                        import com.netflix.discovery.AbstractDiscoveryClientOptionalArgs;
+                        import com.netflix.discovery.DiscoveryClient;
+                        import com.netflix.discovery.EurekaClientConfig;
+
+                        class LegacyFactory {
+                            DiscoveryClient create(InstanceInfo info, EurekaClientConfig config,
+                                                   AbstractDiscoveryClientOptionalArgs args) {
+                                return /*~~>*/new DiscoveryClient(info, config, args);
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void marksRemovedDiscoveryManagerInitializationOverload() {
+        rewriteRun(
+                spec -> spec
+                        .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .parser(legacyEurekaParser()),
+                java(
+                        """
+                        package example;
+
+                        import com.netflix.appinfo.EurekaInstanceConfig;
+                        import com.netflix.discovery.DiscoveryManager;
+                        import com.netflix.discovery.EurekaClientConfig;
+
+                        class Bootstrap {
+                            void start(EurekaInstanceConfig instanceConfig, EurekaClientConfig clientConfig) {
+                                DiscoveryManager.getInstance().initComponent(instanceConfig, clientConfig);
+                            }
+                        }
+                        """,
+                        """
+                        package example;
+
+                        import com.netflix.appinfo.EurekaInstanceConfig;
+                        import com.netflix.discovery.DiscoveryManager;
+                        import com.netflix.discovery.EurekaClientConfig;
+
+                        class Bootstrap {
+                            void start(EurekaInstanceConfig instanceConfig, EurekaClientConfig clientConfig) {
+                                /*~~>*/DiscoveryManager.getInstance().initComponent(instanceConfig, clientConfig);
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void marksRemovedOptionalArgsTransportSetters() {
+        rewriteRun(
+                spec -> spec
+                        .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .parser(legacyEurekaParser()),
+                java(
+                        """
+                        package example;
+
+                        import com.netflix.discovery.AbstractDiscoveryClientOptionalArgs;
+                        import com.netflix.discovery.shared.transport.jersey.EurekaJerseyClient;
+                        import com.netflix.discovery.shared.transport.jersey.TransportClientFactories;
+
+                        class OptionalArgsConfigurer {
+                            void configure(AbstractDiscoveryClientOptionalArgs args,
+                                           EurekaJerseyClient client,
+                                           TransportClientFactories factories) {
+                                args.setEurekaJerseyClient(client);
+                                args.setTransportClientFactories(factories);
+                            }
+                        }
+                        """,
+                        """
+                        package example;
+
+                        import com.netflix.discovery.AbstractDiscoveryClientOptionalArgs;
+                        import com.netflix.discovery.shared.transport.jersey.EurekaJerseyClient;
+                        import com.netflix.discovery.shared.transport.jersey.TransportClientFactories;
+
+                        class OptionalArgsConfigurer {
+                            void configure(AbstractDiscoveryClientOptionalArgs args,
+                                           /*~~>*/EurekaJerseyClient client,
+                                           TransportClientFactories factories) {
+                                /*~~>*/args.setEurekaJerseyClient(client);
+                                /*~~>*/args.setTransportClientFactories(factories);
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void marksJersey1TransportTypesAndJavaxJaxRsInEurekaExtension() {
+        rewriteRun(
+                spec -> spec
+                        .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .parser(JavaParser.fromJavaVersion().dependsOn(
+                                """
+                                package com.netflix.discovery;
+                                public interface EurekaClientConfig {}
+                                """,
+                                """
+                                package com.netflix.discovery.shared.transport.jersey;
+                                public class Jersey1TransportClientFactories {}
+                                """,
+                                """
+                                package javax.ws.rs.ext;
+                                public interface MessageBodyReader<T> {}
+                                """
+                        )),
+                java(
+                        """
+                        package example;
+
+                        import com.netflix.discovery.EurekaClientConfig;
+                        import com.netflix.discovery.shared.transport.jersey.Jersey1TransportClientFactories;
+                        import javax.ws.rs.ext.MessageBodyReader;
+
+                        class CustomTransport implements MessageBodyReader<Object> {
+                            EurekaClientConfig config;
+                            Jersey1TransportClientFactories factories;
+                        }
+                        """,
+                        """
+                        package example;
+
+                        import com.netflix.discovery.EurekaClientConfig;
+                        import com.netflix.discovery.shared.transport.jersey.Jersey1TransportClientFactories;
+                        import javax.ws.rs.ext.MessageBodyReader;
+
+                        class CustomTransport implements /*~~>*/MessageBodyReader<Object> {
+                            EurekaClientConfig config;
+                            /*~~>*/Jersey1TransportClientFactories factories;
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void doesNotMarkJavaxTypesInUnrelatedCompilationUnit() {
+        rewriteRun(
+                spec -> spec
+                        .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .parser(JavaParser.fromJavaVersion().dependsOn(
+                                """
+                                package javax.annotation;
+                                public @interface Nullable {}
+                                """
+                        )),
+                java(
+                        """
+                        package example;
+                        import javax.annotation.Nullable;
+                        class UnrelatedController {
+                            @Nullable String value;
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void marksRemovedTransportAndGovernatorDependencies() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME)),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>legacy-stack</artifactId><version>1</version>
+                          <dependencies>
+                            <dependency><groupId>com.netflix.eureka</groupId><artifactId>eureka-client</artifactId><version>1.10.18</version></dependency>
+                            <dependency><groupId>com.netflix.eureka</groupId><artifactId>eureka-client-jersey2</artifactId><version>1.10.18</version></dependency>
+                            <dependency><groupId>com.netflix.eureka</groupId><artifactId>eureka-server-governator</artifactId><version>1.10.18</version></dependency>
+                            <dependency><groupId>com.sun.jersey</groupId><artifactId>jersey-client</artifactId><version>1.19.4</version></dependency>
+                          </dependencies>
+                        </project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>legacy-stack</artifactId><version>1</version>
+                          <dependencies>
+                            <dependency><groupId>com.netflix.eureka</groupId><artifactId>eureka-client</artifactId><version>2.0.4</version></dependency>
+                            <!--~~>--><dependency><groupId>com.netflix.eureka</groupId><artifactId>eureka-client-jersey2</artifactId><version>1.10.18</version></dependency>
+                            <!--~~>--><dependency><groupId>com.netflix.eureka</groupId><artifactId>eureka-server-governator</artifactId><version>1.10.18</version></dependency>
+                            <!--~~>--><dependency><groupId>com.sun.jersey</groupId><artifactId>jersey-client</artifactId><version>1.19.4</version></dependency>
+                          </dependencies>
+                        </project>
+                        """
+                )
+        );
+    }
+
+    @Test
+    void marksRemovedClassNamesInDescriptorsButNotStableRawProperties() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME)),
+                text(
+                        """
+                        bootstrap.module=com.netflix.discovery.guice.EurekaModule
+                        client.filter=com.netflix.discovery.EurekaIdentityHeaderFilter
+                        """,
+                        """
+                        bootstrap.module=~~(com.netflix.discovery.guice.EurekaModule)~~>com.netflix.discovery.guice.EurekaModule
+                        client.filter=~~(com.netflix.discovery.EurekaIdentityHeaderFilter)~~>com.netflix.discovery.EurekaIdentityHeaderFilter
+                        """,
+                        source -> source.path("src/main/resources/eureka-bootstrap.properties")
+                ),
+                text(
+                        """
+                        eureka.name=inventory
+                        eureka.registration.enabled=true
+                        eureka.shouldFetchRegistry=true
+                        eureka.serviceUrl.default=http://localhost:8761/eureka/
+                        eureka.preferSameZone=true
+                        """,
+                        source -> source.path("src/main/resources/eureka-client.properties")
+                )
+        );
+    }
+
+    @Test
+    void leavesAlreadyMigratedTransportConstructorUnmarked() {
+        rewriteRun(
+                spec -> spec
+                        .recipe(environment().activateRecipes(MIGRATION_RECIPE_NAME))
+                        .parser(JavaParser.fromJavaVersion().dependsOn(
+                                """
+                                package com.netflix.appinfo;
+                                public class ApplicationInfoManager {}
+                                """,
+                                """
+                                package com.netflix.discovery;
+                                import com.netflix.appinfo.ApplicationInfoManager;
+                                import com.netflix.discovery.shared.transport.jersey.TransportClientFactories;
+                                public class DiscoveryClient {
+                                    public DiscoveryClient(ApplicationInfoManager info, EurekaClientConfig config,
+                                                           TransportClientFactories factories) {}
+                                }
+                                """,
+                                """
+                                package com.netflix.discovery;
+                                public interface EurekaClientConfig {}
+                                """,
+                                """
+                                package com.netflix.discovery.shared.transport.jersey;
+                                public interface TransportClientFactories<T> {}
+                                """,
+                                """
+                                package com.netflix.discovery.shared.transport.jersey3;
+                                import com.netflix.discovery.shared.transport.jersey.TransportClientFactories;
+                                public final class Jersey3TransportClientFactories implements TransportClientFactories<Object> {
+                                    public static Jersey3TransportClientFactories getInstance() { return null; }
+                                }
+                                """
+                        )),
+                java(
+                        """
+                        package example;
+
+                        import com.netflix.appinfo.ApplicationInfoManager;
+                        import com.netflix.discovery.DiscoveryClient;
+                        import com.netflix.discovery.EurekaClientConfig;
+                        import com.netflix.discovery.shared.transport.jersey3.Jersey3TransportClientFactories;
+
+                        class MigratedClient {
+                            DiscoveryClient create(ApplicationInfoManager info, EurekaClientConfig config) {
+                                return new DiscoveryClient(info, config, Jersey3TransportClientFactories.getInstance());
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
     void recipeMetadataIsDiscoverable() {
         Recipe recipe = environment().activateRecipes(RECIPE_NAME);
+        Recipe migrationRecipe = environment().activateRecipes(MIGRATION_RECIPE_NAME);
         assertEquals("Upgrade Netflix Eureka Client to 2.0.4", recipe.getDisplayName());
         assertTrue(recipe.getDescription().contains("explicitly versioned"));
         assertTrue(recipe.getTags().contains("netflix-eureka"));
+        assertEquals("Migrate Netflix Eureka Client applications to 2.0.4", migrationRecipe.getDisplayName());
+        assertTrue(migrationRecipe.validate().isValid(), () -> migrationRecipe.validate().failures().toString());
     }
 
     private static Environment environment() {
         return Environment.builder().scanRuntimeClasspath().build();
+    }
+
+    private static JavaParser.Builder<?, ?> legacyEurekaParser() {
+        return JavaParser.fromJavaVersion().dependsOn(
+                """
+                package com.netflix.appinfo;
+                public class ApplicationInfoManager {}
+                """,
+                """
+                package com.netflix.appinfo;
+                public class InstanceInfo {}
+                """,
+                """
+                package com.netflix.appinfo;
+                public interface EurekaInstanceConfig {}
+                """,
+                """
+                package com.netflix.discovery;
+                public interface EurekaClientConfig {}
+                """,
+                """
+                package com.netflix.discovery;
+                public abstract class AbstractDiscoveryClientOptionalArgs {
+                    public void setEurekaJerseyClient(com.netflix.discovery.shared.transport.jersey.EurekaJerseyClient client) {}
+                    public void setTransportClientFactories(com.netflix.discovery.shared.transport.jersey.TransportClientFactories factories) {}
+                }
+                """,
+                """
+                package com.netflix.discovery;
+                import com.netflix.appinfo.ApplicationInfoManager;
+                import com.netflix.appinfo.InstanceInfo;
+                public class DiscoveryClient {
+                    public DiscoveryClient(ApplicationInfoManager info, EurekaClientConfig config) {}
+                    public DiscoveryClient(InstanceInfo info, EurekaClientConfig config) {}
+                    public DiscoveryClient(ApplicationInfoManager info, EurekaClientConfig config,
+                                           AbstractDiscoveryClientOptionalArgs args) {}
+                    public DiscoveryClient(InstanceInfo info, EurekaClientConfig config,
+                                           AbstractDiscoveryClientOptionalArgs args) {}
+                    public Object getApplication(String name) { return null; }
+                }
+                """,
+                """
+                package com.netflix.discovery;
+                import com.netflix.appinfo.EurekaInstanceConfig;
+                public class DiscoveryManager {
+                    public static DiscoveryManager getInstance() { return null; }
+                    public void initComponent(EurekaInstanceConfig instance, EurekaClientConfig client) {}
+                    public void initComponent(EurekaInstanceConfig instance, EurekaClientConfig client,
+                                              AbstractDiscoveryClientOptionalArgs args) {}
+                }
+                """,
+                """
+                package com.netflix.discovery.shared.transport.jersey;
+                public class EurekaJerseyClient {}
+                """,
+                """
+                package com.netflix.discovery.shared.transport.jersey;
+                public interface TransportClientFactories<T> {}
+                """
+        );
     }
 
     private static String pomWithDependency(String details) {
