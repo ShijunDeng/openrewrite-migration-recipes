@@ -108,6 +108,7 @@
     <module>rewrite-chalk-upgrade</module>
     <module>rewrite-prometheus-upgrade</module>
     <module>rewrite-angular-architects-module-federation-upgrade</module>
+    <module>rewrite-springfox-swagger2-upgrade</module>
   </modules>
 
   <dependencyManagement>

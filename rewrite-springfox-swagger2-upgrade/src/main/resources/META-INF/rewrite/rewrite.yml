@@ -1,0 +1,31 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springfoxswagger2
+packageName: com.huawei.clouds.openrewrite.springfoxswagger2
+description: Provide an isolated literal-XLSX writer plus a separate non-mutating audit for the unpublished target, reverse version direction, source API, configuration, runtime, and dependency ownership risks.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springfoxswagger2.UpgradeSpringfoxSwagger2To1_1_2
+displayName: Apply the selected Springfox Swagger 2 target 1.1.2
+description: Change only direct standard io.springfox:springfox-swagger2 declarations at workbook-visible versions 3.0.0, 2.10.5, 2.6.1, 2.7.0, 2.9.2, or 1.0.1 to the literal workbook target 1.1.2; this target is unpublished and the output is not a resolvable build upgrade.
+tags: [springfox, swagger, openapi, dependency-upgrade]
+recipeList:
+  - com.huawei.clouds.openrewrite.springfoxswagger2.UpgradeSelectedSpringfoxSwagger2Dependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springfoxswagger2.AuditSpringfoxSwagger2WorkbookTarget
+displayName: Audit the invalid Springfox Swagger 2 workbook target
+description: Keep dependencies and APIs unchanged while marking the unpublished 1.1.2 target, reverse version direction, Springfox and Swagger 2 APIs, configuration/endpoints, family alignment, Java baseline, and build ownership that cannot be safely migrated until the target is corrected.
+tags: [springfox, swagger, openapi, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.springfoxswagger2.FindSpringfoxSwagger2BuildRisks
+  - com.huawei.clouds.openrewrite.springfoxswagger2.FindSpringfoxSwagger2JavaRisks
+  - com.huawei.clouds.openrewrite.springfoxswagger2.FindSpringfoxSwagger2ConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springfoxswagger2.MigrateSpringfoxSwagger2To1_1_2
+displayName: Audit Springfox Swagger 2 target 1.1.2 (compatibility alias)
+description: Compatibility alias for the non-mutating audit recipe; it deliberately performs no dependency or Java API migration because io.springfox:springfox-swagger2:1.1.2 is unpublished.
+tags: [springfox, swagger, openapi, migration, audit]
+recipeList:
+  - com.huawei.clouds.openrewrite.springfoxswagger2.AuditSpringfoxSwagger2WorkbookTarget
