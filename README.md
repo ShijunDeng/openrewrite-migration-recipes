@@ -64,6 +64,7 @@
 | [`rewrite-netflix-eureka-client-upgrade`](rewrite-netflix-eureka-client-upgrade) | `com.huawei.clouds.openrewrite.netflixeureka.UpgradeNetflixEurekaClientTo2_0_4` | 将原生 Netflix Eureka Client 1.10.18 升级到 2.0.4，并说明 Jakarta、HTTP transport、配置、生命周期、TLS 与协议兼容边界 |
 | [`rewrite-spring-cloud-eureka-client-upgrade`](rewrite-spring-cloud-eureka-client-upgrade) | `com.huawei.clouds.openrewrite.springcloudeureka.MigrateEurekaClientTo4_2_0` | 将 Spring Cloud Netflix Eureka Client starter 2.1/3.1 升级到 4.2.0，删除废弃启用注解、标记 Ribbon 风险，并说明 Boot/Cloud release train、Java 17、Jakarta、配置、LoadBalancer 与 AOT 迁移边界 |
 | [`rewrite-spring-data-elasticsearch-upgrade`](rewrite-spring-data-elasticsearch-upgrade) | `com.huawei.clouds.openrewrite.springdataelasticsearch.MigrateSpringDataElasticsearchTo6_0_5` | 将表格指定的 Spring Data Elasticsearch 4.2/4.4 依赖升级到 6.0.5，并说明 Spring 7、Elasticsearch 9、客户端、查询、mapping、repository 与集群迁移边界 |
+| [`rewrite-curator-framework-upgrade`](rewrite-curator-framework-upgrade) | `com.huawei.clouds.openrewrite.curatorframework.MigrateCuratorFrameworkTo5_7_1` | 将 Apache Curator Framework 2.7.1 升级到 5.7.1，自动迁移 ListenerContainer 构造/类型，并精确标记已删除 API、旧 cache 与 ZooKeeper 3.4 风险 |
 
 后续迁移应新增独立模块，例如：
 

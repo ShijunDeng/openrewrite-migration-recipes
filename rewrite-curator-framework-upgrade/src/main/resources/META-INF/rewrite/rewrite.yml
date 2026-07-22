@@ -1,0 +1,83 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.curatorframework
+packageName: com.huawei.clouds.openrewrite.curatorframework
+description: Upgrade Apache Curator Framework with explicit ZooKeeper, binary compatibility, listener, cache, and removed-API guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.curatorframework.MigrateCuratorFrameworkTo5_7_1
+displayName: Migrate Apache Curator Framework applications to 5.7.1
+description: Upgrade Curator Framework, migrate the removed ListenerContainer construction API, and mark removed APIs whose replacements require application semantics.
+tags:
+  - apache-curator
+  - zookeeper
+  - java
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.curatorframework.UpgradeCuratorFrameworkTo5_7_1
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: org.apache.curator.framework.listen.ListenerContainer forEach(..)
+      matchOverrides: false
+  - com.huawei.clouds.openrewrite.curatorframework.ReplaceListenerContainerConstruction
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.curator.framework.listen.ListenerContainer
+      newFullyQualifiedTypeName: org.apache.curator.framework.listen.StandardListenerManager
+  - org.openrewrite.java.search.FindTypes:
+      fullyQualifiedTypeName: org.apache.curator.ensemble.exhibitor..*
+      checkAssignability: false
+  - org.openrewrite.java.search.FindTypes:
+      fullyQualifiedTypeName: org.apache.curator.ConnectionHandlingPolicy
+      checkAssignability: true
+  - org.openrewrite.java.search.FindTypes:
+      fullyQualifiedTypeName: org.apache.curator.framework.recipes.locks.Reaper
+      checkAssignability: true
+  - org.openrewrite.java.search.FindTypes:
+      fullyQualifiedTypeName: org.apache.curator.framework.recipes.locks.ChildReaper
+      checkAssignability: true
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: org.apache.curator.RetryLoop shouldRetry(int)
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: org.apache.curator.RetryLoop isRetryException(java.lang.Throwable)
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: org.apache.curator.framework.recipes.nodes.GroupMember newPersistentEphemeralNode(..)
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: org.apache.curator.framework.recipes.nodes.GroupMember newPathChildrenCache(..)
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: org.apache.curator.x.discovery.ServiceCacheBuilder executorService(org.apache.curator.utils.CloseableExecutorService)
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: org.apache.curator.x.discovery.ServiceProviderBuilder executorService(org.apache.curator.utils.CloseableExecutorService)
+      matchOverrides: false
+  - org.openrewrite.java.search.FindTypes:
+      fullyQualifiedTypeName: org.apache.curator.framework.recipes.cache.NodeCache
+      checkAssignability: true
+  - org.openrewrite.java.search.FindTypes:
+      fullyQualifiedTypeName: org.apache.curator.framework.recipes.cache.PathChildrenCache
+      checkAssignability: true
+  - org.openrewrite.java.search.FindTypes:
+      fullyQualifiedTypeName: org.apache.curator.framework.recipes.cache.TreeCache
+      checkAssignability: true
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.apache.zookeeper
+      artifactId: zookeeper
+      version: 3.4.x
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.curatorframework.UpgradeCuratorFrameworkTo5_7_1
+displayName: Upgrade Apache Curator Framework to 5.7.1
+description: Upgrade explicit org.apache.curator:curator-framework Maven and Gradle dependency versions to 5.7.1 without adding versions to externally managed dependencies or downgrading newer releases.
+tags:
+  - apache-curator
+  - zookeeper
+  - java
+  - dependency-upgrade
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.apache.curator
+      artifactId: curator-framework
+      newVersion: 5.7.1
+      overrideManagedVersion: false

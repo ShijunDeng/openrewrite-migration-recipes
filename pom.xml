@@ -87,6 +87,7 @@
     <module>rewrite-netflix-eureka-client-upgrade</module>
     <module>rewrite-spring-cloud-eureka-client-upgrade</module>
     <module>rewrite-spring-data-elasticsearch-upgrade</module>
+    <module>rewrite-curator-framework-upgrade</module>
   </modules>
 
   <dependencyManagement>
