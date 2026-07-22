@@ -1,0 +1,33 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.curatorclient
+packageName: com.huawei.clouds.openrewrite.curatorclient
+description: Strict Apache Curator Client upgrades with ZooKeeper, retry, ensemble-provider, and build-owner guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.curatorclient.MigrateCuratorClientTo5_9_0
+displayName: Migrate Apache Curator Client applications to 5.9.0
+description: Upgrade workbook-selected Curator Client declarations, automatically replace the removed retry-code classifier, and mark exact source, build, and configuration risks.
+tags:
+  - apache-curator
+  - zookeeper
+  - java
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.curatorclient.UpgradeCuratorClientTo5_9_0
+  - com.huawei.clouds.openrewrite.curatorclient.ReplaceRemovedRetryLoopShouldRetry
+  - com.huawei.clouds.openrewrite.curatorclient.FindCuratorClient5JavaMigrationRisks
+  - com.huawei.clouds.openrewrite.curatorclient.FindCuratorClient5ConfigurationRisks
+  - com.huawei.clouds.openrewrite.curatorclient.FindCuratorClient5BuildMigrationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.curatorclient.UpgradeCuratorClientTo5_9_0
+displayName: Upgrade Apache Curator Client to 5.9.0
+description: Upgrade only literal org.apache.curator:curator-client versions 2.7.1, 5.2.0, and 5.4.0 selected by the workbook, plus provably safe local Curator-suite properties.
+tags:
+  - apache-curator
+  - zookeeper
+  - java
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.curatorclient.UpgradeSelectedCuratorClientDependency

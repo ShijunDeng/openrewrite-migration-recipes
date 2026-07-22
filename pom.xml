@@ -99,6 +99,7 @@
     <module>rewrite-jetty-proxy-upgrade</module>
     <module>rewrite-icu4j-upgrade</module>
     <module>rewrite-fs-extra-upgrade</module>
+    <module>rewrite-curator-client-upgrade</module>
   </modules>
 
   <dependencyManagement>
