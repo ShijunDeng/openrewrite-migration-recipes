@@ -84,6 +84,7 @@
     <module>rewrite-react-dom-upgrade</module>
     <module>rewrite-react-upgrade</module>
     <module>rewrite-angular-gridster2-upgrade</module>
+    <module>rewrite-netflix-eureka-client-upgrade</module>
   </modules>
 
   <dependencyManagement>
