@@ -1,0 +1,32 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.angulararchitectsmodulefederation
+packageName: com.huawei.clouds.openrewrite.angulararchitectsmodulefederation
+description: Upgrade Angular Architects Module Federation with strict package ownership, explicit federation-stack preservation, and reviewable Angular 20 deployment guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angulararchitectsmodulefederation.UpgradeModuleFederationTo20_0_0
+displayName: Upgrade selected @angular-architects/module-federation declarations to 20.0.0
+description: Update only workbook-selected direct exact, caret, or tilde 15.0.3 and 16.0.4 declarations in package.json; preserve all other versions, protocols, ranges, aliases, overrides, workspaces and lockfiles.
+tags:
+  - angular
+  - module-federation
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.angulararchitectsmodulefederation.UpgradeSelectedModuleFederationDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angulararchitectsmodulefederation.MigrateModuleFederationTo20_0_0
+displayName: Migrate Angular Architects Module Federation applications to 20.0.0
+description: Preserve an existing classic-webpack choice for strictly selected manifests, upgrade selected declarations, and mark Angular, builder, runtime, sharing, remote, SSR, lockfile and deployment contracts requiring review.
+tags:
+  - angular
+  - module-federation
+  - webpack
+  - microfrontend
+recipeList:
+  - com.huawei.clouds.openrewrite.angulararchitectsmodulefederation.MigrateSelectedClassicWebpackCompanions
+  - com.huawei.clouds.openrewrite.angulararchitectsmodulefederation.UpgradeSelectedModuleFederationDependency
+  - com.huawei.clouds.openrewrite.angulararchitectsmodulefederation.FindModuleFederationSourceRisks
+  - com.huawei.clouds.openrewrite.angulararchitectsmodulefederation.FindModuleFederationProjectRisks
+  - com.huawei.clouds.openrewrite.angulararchitectsmodulefederation.FindModuleFederationResourceRisks

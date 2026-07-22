@@ -107,6 +107,7 @@
     <module>rewrite-pbr-upgrade</module>
     <module>rewrite-chalk-upgrade</module>
     <module>rewrite-prometheus-upgrade</module>
+    <module>rewrite-angular-architects-module-federation-upgrade</module>
   </modules>
 
   <dependencyManagement>
