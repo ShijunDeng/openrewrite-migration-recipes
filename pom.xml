@@ -22,7 +22,7 @@
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <rewrite.version>8.87.5</rewrite.version>
+    <rewrite.version>8.87.6</rewrite.version>
     <rewrite.java.dependencies.version>1.59.0</rewrite.java.dependencies.version>
     <jackson.version>2.22.1</jackson.version>
     <fastjson.version>1.2.83</fastjson.version>
