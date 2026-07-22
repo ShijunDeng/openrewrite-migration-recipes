@@ -13,13 +13,18 @@
 
   <artifactId>rewrite-angular-platform-browser-upgrade</artifactId>
   <name>OpenRewrite Angular Platform Browser Upgrade</name>
-  <description>Configuration-based OpenRewrite recipe for upgrading @angular/platform-browser to 20.3.26.</description>
+  <description>OpenRewrite recipes for upgrading @angular/platform-browser and migrating Angular 20 browser runtime boundaries.</description>
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-angular-platform-browser-upgrade</url>
 
   <dependencies>
     <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-json</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-javascript</artifactId>
+      <version>${rewrite.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openrewrite</groupId>

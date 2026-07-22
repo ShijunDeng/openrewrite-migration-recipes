@@ -2,30 +2,57 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.angular
 packageName: com.huawei.clouds.openrewrite.angular
-description: Upgrade Angular packages with explicit lockstep and CLI migration guidance.
+description: Upgrade Angular packages with lockstep dependencies and platform-browser source, configuration and template guidance.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.angular.UpgradeAngularPlatformBrowserTo20_3_26
-displayName: Upgrade @angular/platform-browser to 20.3.26
-description: Update direct @angular/platform-browser declarations in package.json to 20.3.26. Other Angular packages and CLI migrations must be handled in lockstep.
-tags:
-  - angular
-  - angular-platform-browser
-  - nodejs
-  - dependency-upgrade
-preconditions:
-  - org.openrewrite.FindSourceFiles:
-      filePattern: package.json;**/package.json
+displayName: Upgrade selected @angular/platform-browser declarations to 20.3.26
+description: Upgrade only exact, caret, or tilde source releases visible in the migration spreadsheet; compound ranges, protocols, variables, lockfiles and unlisted versions remain unchanged.
+tags: [angular, angular-platform-browser, nodejs, dependency-upgrade]
 recipeList:
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.dependencies['@angular/platform-browser']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.devDependencies['@angular/platform-browser']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.peerDependencies['@angular/platform-browser']
-      value: '"20.3.26"'
-  - org.openrewrite.json.ChangeValue:
-      oldKeyPath: $.optionalDependencies['@angular/platform-browser']
-      value: '"20.3.26"'
+  - com.huawei.clouds.openrewrite.angular.UpgradeSelectedAngularPlatformBrowserDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.MigrateDeterministicPlatformBrowserTo20
+displayName: Migrate deterministic Angular platform-browser constructs
+description: Move canonical core imports with TypeScript AST and remove enableIvy=true only from direct angularCompilerOptions.
+tags: [angular, angular-platform-browser, typescript, configuration, source-migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.MigrateDeterministicAngularPlatformBrowserSource
+  - com.huawei.clouds.openrewrite.angular.MigrateDeterministicAngularPlatformBrowserConfig
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.AuditAngularPlatformBrowser20Source
+displayName: Audit Angular 20 platform-browser source compatibility
+description: Mark bootstrap, hydration, BrowserModule, sanitizer, EventManager, Hammer, animations, testing, SSR, metadata and TransferState TypeScript nodes.
+tags: [angular, angular-platform-browser, typescript, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.FindAngularPlatformBrowserTypeScriptRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.AuditAngularPlatformBrowser20Project
+displayName: Audit Angular 20 platform-browser project compatibility
+description: Mark unresolved declarations, lockstep packages, runtime/tooling requirements, builders, SSR targets and compiler configuration.
+tags: [angular, angular-platform-browser, dependencies, configuration, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.FindAngularPlatformBrowserJsonRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.AuditAngularPlatformBrowser20Templates
+displayName: Audit Angular 20 platform-browser templates
+description: Mark hydration opt-outs, removed debug attributes, Hammer-style gestures and unsafe URLs in HTML templates.
+tags: [angular, angular-platform-browser, html, search]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.FindAngularPlatformBrowserTemplateRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.MigrateAngularPlatformBrowserTo20_3_26
+displayName: Migrate Angular platform-browser applications to 20.3.26
+description: Upgrade spreadsheet-selected declarations, apply deterministic TypeScript/config migrations, and mark all remaining platform-browser project risks.
+tags: [angular, angular-platform-browser, typescript, migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.angular.UpgradeAngularPlatformBrowserTo20_3_26
+  - com.huawei.clouds.openrewrite.angular.MigrateDeterministicPlatformBrowserTo20
+  - com.huawei.clouds.openrewrite.angular.AuditAngularPlatformBrowser20Source
+  - com.huawei.clouds.openrewrite.angular.AuditAngularPlatformBrowser20Project
+  - com.huawei.clouds.openrewrite.angular.AuditAngularPlatformBrowser20Templates
