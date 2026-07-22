@@ -2,43 +2,62 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.fastjson
 packageName: com.huawei.clouds.openrewrite.fastjson
-description: Upgrade Alibaba Fastjson with explicit compatibility and native API modes.
+description: Strict Fastjson 2.0.62 dependency, source, configuration, and behavior migration recipes.
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.fastjson.UpgradeFastjsonTo2_0_62
-displayName: Upgrade Fastjson to the 2.0.62 compatibility artifact
-description: Upgrade com.alibaba:fastjson declarations to the Fastjson2 2.0.62 compatibility artifact while preserving Fastjson 1.x package names.
+name: com.huawei.clouds.openrewrite.fastjson.MigrateFastjsonTo2_0_62
+displayName: Migrate Fastjson to 2.0.62 compatibility mode
+description: Strictly upgrade spreadsheet-selected dependencies, rewrite APIs removed from the Fastjson2 compatibility artifact, and precisely mark behavior-sensitive source and security configuration.
 tags:
   - fastjson
   - fastjson2
   - java
   - dependency-upgrade
 recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: com.alibaba
-      artifactId: fastjson
-      newVersion: 2.0.62
-      overrideManagedVersion: true
+  - com.huawei.clouds.openrewrite.fastjson.UpgradeSelectedFastjsonDependency
+  - com.huawei.clouds.openrewrite.fastjson.MigrateFastjsonCompatibilitySource
+  - com.huawei.clouds.openrewrite.fastjson.FindFastjson2MigrationRisks
+  - com.huawei.clouds.openrewrite.fastjson.FindFastjson2PropertiesRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.fastjson.UpgradeFastjsonTo2_0_62
+displayName: Upgrade Fastjson to 2.0.62 compatibility mode (legacy alias)
+description: Backward-compatible alias for the recommended migration recipe.
+recipeList:
+  - com.huawei.clouds.openrewrite.fastjson.MigrateFastjsonTo2_0_62
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.fastjson.MigrateFastjson1ToFastjson2Api
-displayName: Migrate Fastjson 1.x dependency and package names to Fastjson2 2.0.62
-description: Replace com.alibaba:fastjson with the native com.alibaba.fastjson2:fastjson2 artifact and recursively change com.alibaba.fastjson source package references to com.alibaba.fastjson2. API-level incompatibilities still require manual changes.
+displayName: Migrate selected Fastjson projects to native Fastjson2 API
+description: Explicit opt-in recipe that strictly changes dependency coordinates, performs only one-to-one core type moves, applies compatibility API rewrites, and leaves non-mechanical decisions marked for review.
 tags:
   - fastjson
   - fastjson2
   - java
   - dependency-migration
 recipeList:
-  - org.openrewrite.java.dependencies.ChangeDependency:
-      oldGroupId: com.alibaba
-      oldArtifactId: fastjson
-      newGroupId: com.alibaba.fastjson2
-      newArtifactId: fastjson2
-      newVersion: 2.0.62
-      overrideManagedVersion: true
-      changeManagedDependency: true
-  - org.openrewrite.java.ChangePackage:
-      oldPackageName: com.alibaba.fastjson
-      newPackageName: com.alibaba.fastjson2
-      recursive: true
+  - com.huawei.clouds.openrewrite.fastjson.MigrateSelectedFastjsonDependencyToNative
+  - com.huawei.clouds.openrewrite.fastjson.MigrateFastjsonCompatibilitySource
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.alibaba.fastjson.JSON
+      newFullyQualifiedTypeName: com.alibaba.fastjson2.JSON
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.alibaba.fastjson.JSONObject
+      newFullyQualifiedTypeName: com.alibaba.fastjson2.JSONObject
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.alibaba.fastjson.JSONArray
+      newFullyQualifiedTypeName: com.alibaba.fastjson2.JSONArray
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.alibaba.fastjson.TypeReference
+      newFullyQualifiedTypeName: com.alibaba.fastjson2.TypeReference
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.alibaba.fastjson.JSONException
+      newFullyQualifiedTypeName: com.alibaba.fastjson2.JSONException
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.alibaba.fastjson.annotation.JSONField
+      newFullyQualifiedTypeName: com.alibaba.fastjson2.annotation.JSONField
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.alibaba.fastjson.annotation.JSONType
+      newFullyQualifiedTypeName: com.alibaba.fastjson2.annotation.JSONType
+  - com.huawei.clouds.openrewrite.fastjson.FindFastjson2MigrationRisks
+  - com.huawei.clouds.openrewrite.fastjson.FindFastjson2PropertiesRisks
