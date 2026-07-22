@@ -45,6 +45,7 @@
     <module>rewrite-mybatis-spring-boot-starter-upgrade</module>
     <module>rewrite-slf4j-upgrade</module>
     <module>rewrite-angular-common-upgrade</module>
+    <module>rewrite-angular-platform-browser-upgrade</module>
   </modules>
 
   <dependencyManagement>

@@ -1,0 +1,31 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.angular
+packageName: com.huawei.clouds.openrewrite.angular
+description: Upgrade Angular packages with explicit lockstep and CLI migration guidance.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.angular.UpgradeAngularPlatformBrowserTo20_3_26
+displayName: Upgrade @angular/platform-browser to 20.3.26
+description: Update direct @angular/platform-browser declarations in package.json to 20.3.26. Other Angular packages and CLI migrations must be handled in lockstep.
+tags:
+  - angular
+  - angular-platform-browser
+  - nodejs
+  - dependency-upgrade
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: package.json;**/package.json
+recipeList:
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.dependencies['@angular/platform-browser']
+      value: '"20.3.26"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.devDependencies['@angular/platform-browser']
+      value: '"20.3.26"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.peerDependencies['@angular/platform-browser']
+      value: '"20.3.26"'
+  - org.openrewrite.json.ChangeValue:
+      oldKeyPath: $.optionalDependencies['@angular/platform-browser']
+      value: '"20.3.26"'

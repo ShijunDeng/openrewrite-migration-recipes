@@ -22,6 +22,7 @@
 | [`rewrite-mybatis-spring-boot-starter-upgrade`](rewrite-mybatis-spring-boot-starter-upgrade) | `com.huawei.clouds.openrewrite.mybatisspringboot.UpgradeMyBatisSpringBootStarterTo4` | 将 MyBatis Spring Boot Starter 升级到 4.0.0 |
 | [`rewrite-slf4j-upgrade`](rewrite-slf4j-upgrade) | `com.huawei.clouds.openrewrite.slf4j.UpgradeSlf4jApiTo2_0_17` | 将 Maven/Gradle SLF4J API 依赖升级到 2.0.17 |
 | [`rewrite-angular-common-upgrade`](rewrite-angular-common-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularCommonTo20_3_26` | 将 `@angular/common` 升级到 20.3.26 |
+| [`rewrite-angular-platform-browser-upgrade`](rewrite-angular-platform-browser-upgrade) | `com.huawei.clouds.openrewrite.angular.UpgradeAngularPlatformBrowserTo20_3_26` | 将 `@angular/platform-browser` 升级到 20.3.26 |
 
 后续迁移应新增独立模块，例如：
 
