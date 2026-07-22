@@ -1,0 +1,33 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.reactredux
+packageName: com.huawei.clouds.openrewrite.reactredux
+description: Upgrade workbook-selected React Redux declarations and inventory the React Redux 9.3.0 migration boundary.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.reactredux.UpgradeReactReduxTo9_3_0
+displayName: Upgrade workbook-selected React Redux declarations to 9.3.0
+description: Update only exact, caret, or tilde direct declarations whose base version is one of the six versions listed in the migration workbook.
+tags:
+  - react
+  - redux
+  - react-redux
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.reactredux.UpgradeSelectedReactReduxDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.reactredux.MigrateReactReduxTo9_3_0
+displayName: Migrate React Redux applications to 9.3.0
+description: Upgrade selected declarations, apply deterministic package and source compatibility changes, and mark exact manifest and source nodes that require application-specific decisions.
+tags:
+  - react
+  - redux
+  - react-redux
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.reactredux.UpgradeReactReduxTo9_3_0
+  - com.huawei.clouds.openrewrite.reactredux.MigrateReactReduxPackageConfiguration
+  - com.huawei.clouds.openrewrite.reactredux.MigrateDeterministicReactReduxSource
+  - com.huawei.clouds.openrewrite.reactredux.FindReactReduxManifestRisks
+  - com.huawei.clouds.openrewrite.reactredux.FindReactReduxSourceRisks

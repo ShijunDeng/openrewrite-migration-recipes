@@ -118,6 +118,7 @@
     <module>rewrite-testing-library-jest-dom-upgrade</module>
     <module>rewrite-jaxen-upgrade</module>
     <module>rewrite-ng2-file-upload-upgrade</module>
+    <module>rewrite-react-redux-upgrade</module>
   </modules>
 
   <dependencyManagement>
