@@ -138,15 +138,20 @@ class UpgradeOkHttpTest implements RewriteTest {
     }
 
     @Test
-    void leavesKotlinGradleDependencyWithoutSemanticModelUntouched() {
-        // UpgradeDependencyVersion needs the GradleProject marker for Kotlin DSL.
-        // A production run obtains it from Gradle Tooling; this parser-only test verifies safe fallback.
+    void upgradesDirectKotlinGradleDependencyWithoutAProjectModel() {
         rewriteRun(buildGradleKts(
                 """
                 plugins { java }
                 repositories { mavenCentral() }
                 dependencies {
                     implementation("com.squareup.okhttp3:okhttp:4.9.3")
+                }
+                """,
+                """
+                plugins { java }
+                repositories { mavenCentral() }
+                dependencies {
+                    implementation("com.squareup.okhttp3:okhttp:5.3.0")
                 }
                 """
         ));
@@ -319,8 +324,7 @@ class UpgradeOkHttpTest implements RewriteTest {
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>locally-managed</artifactId><version>1</version>
                   <dependencyManagement><dependencies><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>5.3.0</version></dependency></dependencies></dependencyManagement>
                   <dependencies>
-                  <dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId>
-                </dependency>
+                  <dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId></dependency>
                 </dependencies></project>
                 """
         ));
@@ -457,6 +461,6 @@ class UpgradeOkHttpTest implements RewriteTest {
     }
 
     private static org.openrewrite.test.SourceSpecs versionedPom(String before, String path) {
-        return pomXml(directPom(before), directPom("5.3.0"), spec -> spec.path(path));
+        return pomXml(directPom(before), directPom("5.3.0"), spec -> spec.path(path + "/pom.xml"));
     }
 }

@@ -2,12 +2,12 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.okhttp
 packageName: com.huawei.clouds.openrewrite.okhttp
-description: Upgrade OkHttp dependencies while preserving explicit JVM and Android platform choices.
+description: Upgrade OkHttp with strict dependency selection, deterministic Java migration, explicit platform choices, and focused compatibility markers.
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.okhttp.UpgradeOkHttpTo5_3_0
-displayName: Upgrade OkHttp to 5.3.0
-description: Upgrade com.squareup.okhttp3:okhttp and its BOM to 5.3.0 in Maven and Gradle builds without changing the platform artifact.
+displayName: Upgrade selected OkHttp declarations to 5.3.0
+description: Upgrade only spreadsheet-selected okhttp, okhttp-jvm, and okhttp-bom declarations in Maven and Gradle while preserving external BOMs, dynamic values, catalogs, protocols, and unlisted versions.
 tags:
   - okhttp
   - http-client
@@ -15,28 +15,141 @@ tags:
   - kotlin
   - dependency-upgrade
 recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+  - com.huawei.clouds.openrewrite.okhttp.UpgradeSelectedOkHttpDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.okhttp.MigrateDeterministicOkHttpSourceTo5
+displayName: Migrate deterministic OkHttp source constructs to version 5
+description: Replace type-attributed OkHttpClient clone calls with immutable newBuilder().build() derivation without changing Retrofit Call or unrelated clone methods.
+tags:
+  - okhttp
+  - java
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.okhttp.MigrateOkHttpClientClone
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.okhttp.FindManualOkHttp5SourceRisks
+displayName: Find OkHttp 5 source compatibility risks requiring review
+description: Mark internal APIs, client inheritance and mocking, nullable credentials, Kotlin API forms, old MockWebServer packages, unresolved clone calls, alpha APIs, and connection behavior configuration.
+tags:
+  - okhttp
+  - java
+  - kotlin
+  - search
+  - manual-review
+recipeList:
+  - org.openrewrite.text.Find:
+      find: '(?:import|from)[ \t]+okhttp3[.]internal(?:[.]|\b)|\bokhttp3[.]internal[.]'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{java,kt,kts}"
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '\bextends[ \t]+OkHttpClient\b|:[ \t]*OkHttpClient[ \t]*\(|\b(?:mock|spy)[ \t]*\([ \t]*OkHttpClient(?:[.]class)?[ \t]*\)'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{java,kt,kts}"
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '\bCredentials[.]basic[ \t]*\([^,]+,[ \t]*null\b|\bCredentials[.]basic[ \t]*\([ \t]*null\b'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{java,kt,kts}"
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '\b(?:HttpUrl|MediaType)[.](?:parse|get)[ \t]*\(|\b(?:RequestBody|ResponseBody)[.]create[ \t]*\('
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{kt,kts}"
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '\bokhttp3[.]mockwebserver(?:[.]|\b)'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{java,kt,kts}"
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '\b(?:client|okHttpClient|httpClient)[.]clone[ \t]*\('
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{java,kt,kts}"
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '@ExperimentalOkHttpApi\b|\bokhttp3[.]coroutines\b|\b(?:AddressPolicy|AsyncDns|ConnectionListener|SocketPolicy|RecordedRequest)[ \t]*(?:[.(<]|::)'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{java,kt,kts}"
+      contextSize: 80
+  - org.openrewrite.text.Find:
+      find: '\b(?:dns|proxy|proxySelector|certificatePinner|connectionSpecs|fastFallback|retryOnConnectionFailure)[ \t]*\('
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.{java,kt,kts}"
+      contextSize: 80
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.okhttp.FindOkHttp5CompanionDependencyRisks
+displayName: Find OkHttp 5 companion dependency alignment risks
+description: Mark OkHttp companion modules, Kotlin standard library, and Okio declarations for coordinate, variant, and dependency-convergence review against the fixed 5.3.0 release.
+tags:
+  - okhttp
+  - build
+  - search
+  - dependency-review
+recipeList:
+  - org.openrewrite.java.dependencies.FindDependency:
       groupId: com.squareup.okhttp3
-      artifactId: okhttp
-      newVersion: 5.3.0
-      overrideManagedVersion: true
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      artifactId: logging-interceptor
+  - org.openrewrite.java.dependencies.FindDependency:
       groupId: com.squareup.okhttp3
-      artifactId: okhttp-bom
-      newVersion: 5.3.0
-      overrideManagedVersion: true
+      artifactId: mockwebserver
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.squareup.okhttp3
+      artifactId: okhttp-tls
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.squareup.okhttp3
+      artifactId: okhttp-urlconnection
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.squareup.okhttp3
+      artifactId: okhttp-sse
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.squareup.okhttp3
+      artifactId: okhttp-coroutines
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.squareup.okio
+      artifactId: '*'
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: org.jetbrains.kotlin
+      artifactId: kotlin-stdlib
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.okhttp.MigrateOkHttpTo5_3_0
+displayName: Migrate OkHttp applications to 5.3.0
+description: Strictly upgrade selected declarations, migrate removed client cloning, and mark source, MockWebServer, alpha API, connection behavior, platform variant, and companion dependency risks.
+tags:
+  - okhttp
+  - http-client
+  - java
+  - kotlin
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.okhttp.UpgradeOkHttpTo5_3_0
+  - com.huawei.clouds.openrewrite.okhttp.MigrateDeterministicOkHttpSourceTo5
+  - com.huawei.clouds.openrewrite.okhttp.FindManualOkHttp5SourceRisks
+  - com.huawei.clouds.openrewrite.okhttp.FindOkHttp5CompanionDependencyRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.okhttp.MigrateMavenJvmOkHttpTo5_3_0
 displayName: Migrate Maven JVM projects to okhttp-jvm 5.3.0
-description: Upgrade OkHttp and replace the empty OkHttp 5 multiplatform metadata artifact with okhttp-jvm in Maven JVM projects.
+description: Run the full OkHttp migration and replace the empty OkHttp 5 multiplatform metadata artifact with okhttp-jvm in Maven projects explicitly confirmed to target the JVM rather than Android.
 tags:
   - okhttp
   - maven
   - jvm
   - dependency-migration
 recipeList:
-  - com.huawei.clouds.openrewrite.okhttp.UpgradeOkHttpTo5_3_0
+  - com.huawei.clouds.openrewrite.okhttp.MigrateOkHttpTo5_3_0
   - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
       oldGroupId: com.squareup.okhttp3
       oldArtifactId: okhttp

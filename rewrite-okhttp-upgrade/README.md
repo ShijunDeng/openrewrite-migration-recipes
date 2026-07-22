@@ -1,83 +1,116 @@
-# OkHttp upgrade to 5.3.0
+# OkHttp 5.3.0 迁移规范
 
-本模块处理表格坐标 `com.squareup.okhttp3:okhttp` 的全部记录：`3.14.4`、`3.14.9`、`4.8.0`、`4.9.1`、`4.9.2`、`4.9.3`、`4.10.0`、`4.11.0` 和 `5.0.0-alpha.11`，目标版本为 `5.3.0`。
+本模块处理 `开源软件升级.xlsx` 中 `com.squareup.okhttp3:okhttp` 的 `3.14.4`、`3.14.9`、`4.8.0`、`4.9.1`、`4.9.2`、`4.9.3`、`4.10.0`、`4.11.0`、`5.0.0-alpha.11` → `5.3.0`。
 
-通用保守配方：
+推荐组合入口：
 
 ```text
-com.huawei.clouds.openrewrite.okhttp.UpgradeOkHttpTo5_3_0
+com.huawei.clouds.openrewrite.okhttp.MigrateOkHttpTo5_3_0
 ```
 
-明确用于非 Android Maven JVM 工程的配方：
+它会执行严格依赖升级、确定性 Java 迁移和兼容性检测。`~~>` 是 OpenRewrite `SearchResult`，含义是“已检测、需复核”，不是“已自动修复”。
+
+已明确确认是非 Android 的 Maven JVM 工程时，可改用：
 
 ```text
 com.huawei.clouds.openrewrite.okhttp.MigrateMavenJvmOkHttpTo5_3_0
 ```
 
-## 自动处理范围
+该入口还会把 Maven 的 KMP metadata 坐标 `okhttp` 改成实际含 JVM class 的 `okhttp-jvm`。Android Maven 构建不能使用它。
 
-通用配方升级 Maven/Gradle 的 `com.squareup.okhttp3:okhttp` 和 `okhttp-bom`，覆盖直接版本、Maven 属性、dependencyManagement、Gradle Groovy 字符串/Map/属性以及 platform BOM。它保留 `okhttp` artifact，不替应用猜测 JVM 还是 Android，并且不会把 `5.3.1`、`5.3.2`、`5.4.0` 等后续版本降级。
+## 配方能力
 
-OkHttp 5 的 `okhttp` 是 Kotlin Multiplatform 元数据坐标。Gradle 能依据 module metadata 选择 JVM 或 Android 变体；普通 Maven 项目不会做该变体选择，官方明确要求 Maven 在 `okhttp-jvm` 与 `okhttp-android` 之间选择。第二个配方因此只在 Maven XML 中把 `okhttp` 改成 `okhttp-jvm`，也会升级已经显式使用的旧 `okhttp-jvm`。Android Maven 构建不能运行这个 JVM 配方，应人工选用 Android artifact。
+| 不兼容点或边界 | 配方行为 | 状态 | 测试依据 |
+| --- | --- | --- | --- |
+| 表格 9 个来源版本 | 只升级 Maven/Gradle 中 `okhttp`、`okhttp-jvm`、`okhttp-bom` 的表格精确版本到 `5.3.0` | **自动迁移** | 全部 9 个版本、direct/managed/BOM、Groovy/Kotlin DSL |
+| Maven 本地属性 | 属性的全部引用均属于 `com.squareup.okhttp3` family 时才升级；同时被项目版本或其他 group 使用则 no-op | **自动迁移 / 安全门禁** | Flink family-shared property before→after；跨 family 属性负例 |
+| Gradle 字符串、map notation、property 和 platform BOM | 精确坐标或可证明只供 OkHttp family 使用的变量自动升级 | **自动迁移** | Groovy string/map/property/platform 与 Kotlin direct string |
+| 未列版本、目标/后续版本、外部 BOM、动态范围、version catalog、其他 group/artifact | 不做范围推断、不写入外部 BOM 版本、不降级、不误改 companion | **安全门禁** | `5.2.0`、`5.3.x+`、`[4.9,5)`、versionless、相似坐标和 companion 负例 |
+| OkHttp 5 的 Maven 平台变体 | 通用入口保留 `okhttp`，不猜 JVM/Android；显式 JVM 入口将 Maven core 改成 `okhttp-jvm`，Gradle 继续依赖 metadata 让 variant selection 决定 | **自动迁移（需选择入口）** | direct/managed/existing-jvm Maven 与 Gradle 保留 artifact 测试 |
+| `OkHttpClient` 不再实现 `Cloneable` | 类型确认是 `okhttp3.OkHttpClient` 的无参 `.clone()` 自动改成 `.newBuilder().build()` | **自动迁移** | 变量 receiver、方法返回 receiver before→after；OpenRewrite 多 cycle 幂等检查 |
+| 其他同名 `clone()` | Retrofit `Call.clone()` 和用户类 clone 保持不变 | **安全门禁** | square/retrofit 固定提交真实负例、用户类型负例 |
+| `OkHttpClient` accessor final、继承或 mock client | 标记 Java `extends`、Kotlin `: OkHttpClient()`、`mock/spy(OkHttpClient)`；由项目改为 `Call.Factory` 或 wrapper | **检测** | Java/Kotlin marker |
+| `Credentials.basic()` 参数不再允许 null | 标记 null username/password，不擅自填默认凭据 | **检测** | null credential marker |
+| Kotlin static/getter API 迁到 property/extension | 标记 `HttpUrl/MediaType.parse|get`、`RequestBody/ResponseBody.create` 的 Kotlin 调用；需要结合 nullability 和 overload 决定目标扩展函数 | **检测** | Kotlin marker；Java bridge 不在该检测范围 |
+| `okhttp3.internal` 从非公共 API 变成 JPMS 强封装风险 | 标记 internal import/限定名，不添加 `--add-exports` 掩盖问题 | **检测** | internal marker |
+| MockWebServer 5 新坐标/包 | 标记旧 `okhttp3.mockwebserver`；不自动选择旧兼容模块、`mockwebserver3`、JUnit4 或 JUnit5 集成 | **检测** | square/retrofit 固定提交 marker |
+| `5.0.0-alpha.11` 后实验 API 多次变化 | 标记 `@ExperimentalOkHttpApi`、coroutines、`AddressPolicy`、`AsyncDns`、`ConnectionListener`、`SocketPolicy`、`RecordedRequest` | **检测** | alpha API marker |
+| Happy Eyeballs、DNS、proxy、TLS、pinning、retry 行为 | 标记相关 builder 配置点，要求在真实网络条件下验证连接竞速、事件顺序和失败语义 | **检测** | DNS/pinning marker |
+| companion、Okio、Kotlin 依赖收敛 | 标记 logging interceptor、MockWebServer、TLS、URLConnection、SSE、coroutines、Okio 和 Kotlin stdlib 显式声明 | **检测** | recipe discovery/validation；构建依赖搜索 |
 
-模块没有机械改写 Java/Kotlin 调用：官方说明 3→4 除少量例外外保持 Java 二进制和源码兼容，5.0 也不破坏既有非 alpha 公共 API；真正需要修改的主要是 Kotlin、`okhttp3.internal`、MockWebServer 或 alpha 实验 API，缺少类型和平台上下文时批量替换反而不安全。
+确定性源码转换：
 
-## 不兼容修改点
+```java
+// before
+OkHttpClient isolated = client.clone();
 
-| 版本跨度内的变化 | 影响与迁移建议 |
+// after
+OkHttpClient isolated = client.newBuilder().build();
+```
+
+该 visitor 依赖 OpenRewrite Java 类型信息；以下真实 Retrofit 代码不会被误改：
+
+```java
+Call<T> call = originalCall.clone();
+```
+
+## 仍需重点验证的行为变化
+
+- 4.x 实现从 Java 攂到 Kotlin，Java 公共 API 大体兼容，但 Kotlin property、extension、SAM、companion import 和 nullability 会暴露源码差异。
+- 4.x 最低 Java 8、Android API 21；需同步 bytecode、desugaring、R8/ProGuard、CI JDK 与设备矩阵。
+- 5.x 默认 fast fallback/Happy Eyeballs 使 IPv6/IPv4 可能并发连接；代理、DNS、连接事件顺序和指标可能改变。
+- URL/IDN 采用 UTS #46 non-transitional 规则，TLS cipher suite 更尊重客户端顺序；应回归国际化域名、pinning、代理/WAF 与严格服务端。
+- `Response.body` 在 Kotlin 中非空不代表总有可消费业务 body；仍须关闭主响应体并验证 cache/network/prior response。
+- 目标引入正式 JPMS module；split package、internal access、shade/OSGi/GraalVM 必须另测。
+- 表格目标是 `5.3.0`。配方会保留 `5.3.1`、`5.3.2`、`5.4.0+`，不会降级；上线前应单独评估目标之后的补丁修复。
+
+## 子配方
+
+| 配方 | 作用 |
 | --- | --- |
-| 4.0 实现从 Java 改为 Kotlin | Java 调用大体兼容；Kotlin 属性、扩展函数、可空性和 companion import 的源码形式变化。建议先经过 4.x 并运行 IDE/OpenRewrite Kotlin 专项清理，再进入 5.x |
-| `OkHttpClient` 的 26 个 accessor 在 4.x 变为 final | 继承或 mock `OkHttpClient` 的测试会失败；改为 mock/封装其实现的 `Call.Factory` |
-| `okhttp3.internal` 从来不是公共 API | 4.x 内部 Kotlin 重写、5.2 JPMS 强封装都会破坏内部 import；必须改用公开 API，不能添加 `--add-exports` 长期绕过 |
-| `Credentials.basic()` 参数改为非 null | 3.x 传 null 会生成字符串 `"null"`，4.x+ 不接受；在业务层明确校验用户名和密码，不要用自动默认值掩盖配置错误 |
-| `HttpUrl.queryParameterValues()` 的 Kotlin 返回元素可空 | `List<String>` 假设需要改为可空元素并明确处理无值 query parameter |
-| Kotlin getter/static API 迁到 property/extension | `HttpUrl.parse/get`、`MediaType.parse/get`、`RequestBody.create`、`ResponseBody.create` 等 Kotlin 调用使用 `toHttpUrl*`、`toMediaType*`、`toRequestBody`、`toResponseBody`；Java 兼容桥接不能被误删 |
-| Kotlin SAM 和 companion import 变化 | 旧 Kotlin lambda 可能要改成 `object : Dns/Authenticator/...`；静态风格 import 可能需要 `.Companion`。逐个编译 Kotlin source set |
-| 4.x 最低平台为 Java 8、Android 5/API 21 | 淘汰 Java 7/旧 Android 构建链，统一 bytecode、desugaring、R8/ProGuard 和 CI JDK 配置 |
-| 5.0 拆分 JVM/Android 发布变体 | Gradle 通常自动选变体；Maven 必须使用 `okhttp-jvm` 或适合 Android 的 artifact。检查 Shade、OSGi、JPMS、SBOM、许可扫描和依赖锁是否仍解析到真正 class JAR |
-| 5.0 的 MockWebServer 新坐标与包名 | 新核心为 `mockwebserver3`，JUnit 4/5 集成为 `mockwebserver3-junit4`/`mockwebserver3-junit5`；旧 `mockwebserver` 暂留但依赖 JUnit 4。测试迁移应独立实施 |
-| 5.0 默认 Happy Eyeballs/fast fallback | IPv6 与 IPv4 可能并发连接，代理、DNS、连接事件顺序和指标会变化；用双栈、慢 DNS、失败代理和连接池压力测试验证 |
-| URL/IDN、TLS 和 multipart 线上行为变化 | 5.0 alpha.12 起采用 UTS #46 non-transitional IDN，TLS cipher suite 更尊重客户端顺序；早期 5.x 也移除了 multipart part 的 `Content-Length`。验证国际化域名、证书固定、代理/WAF 和严格服务端 |
-| `OkHttpClient` 不再实现 `Cloneable` | 删除 clone/cast 逻辑，使用不可变 client 的 `newBuilder()` 派生配置 |
-| 5.x Kotlin `Response.body` 非空 | 某些 cache/network/prior response 的 body 是不可读取占位体；不能把“非空”解释成“一定有可消费内容”，仍需关闭主响应体 |
-| 5.0 alpha.11 之后实验 API 多次破坏 | coroutines 移到 `okhttp3.coroutines`；`Duration`、`Cache` 构造器、request gzip、`AddressPolicy`/`AsyncDns`/`ConnectionListener`、MockWebServer `SocketPolicy`/`RecordedRequest` 均有删除或改名。所有 `@ExperimentalOkHttpApi` 调用必须对照逐版 changelog 人工迁移 |
-| 5.2 引入正式 JPMS module | split package 和内部包访问在 module path 上会编译失败；`okhttp-java-net-cookiehandler` 等 companion module 也有新包名，必须做 classpath 与 module-path 两套测试 |
-| 5.3.0 依赖 Okio 3.16.2 与 Kotlin stdlib 2.2.21 | BOM/constraints/shading 不能强压旧 Okio/Kotlin；用 dependency convergence 和运行时链接测试排除 `NoSuchMethodError` |
-| 目标版本之后已有修复版 | 官方 5.3.1 因 Okio 缺失修复而重新发布，5.3.2 修复 timeout 延迟，5.4.0 也已发布。本配方忠实执行表格目标，但发现后续版本会 no-op；上线前应另行评估是否直接采用更新补丁 |
+| `UpgradeOkHttpTo5_3_0` | 严格升级表格版本和安全的 family-owned 属性 |
+| `MigrateDeterministicOkHttpSourceTo5` | 迁移类型确认的 `OkHttpClient.clone()` |
+| `FindManualOkHttp5SourceRisks` | 检测 internal、继承/mock、Kotlin、MockWebServer、alpha 与连接行为风险 |
+| `FindOkHttp5CompanionDependencyRisks` | 检测 companion、Okio、Kotlin 依赖收敛点 |
+| `MigrateOkHttpTo5_3_0` | 推荐的跨构建工具组合入口 |
+| `MigrateMavenJvmOkHttpTo5_3_0` | 推荐组合 + 已确认 Maven JVM 的 `okhttp-jvm` 坐标迁移 |
 
-迁移时应顺序阅读官方 [Upgrading to OkHttp 4](https://square.github.io/okhttp/changelogs/upgrading_to_okhttp_4/) 和 [OkHttp 5 change log](https://square.github.io/okhttp/changelogs/changelog/)，特别是从 `5.0.0-alpha.11` 到 stable 的每一段 breaking 项。目标 5.3.0 的官方发布元数据可在 [Maven Central](https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp/5.3.0/) 核对。
+完整名称均以 `com.huawei.clouds.openrewrite.okhttp.` 开头。
 
-## 测试样本来源
+## 官方固定依据
 
-- [Apache Flink](https://github.com/apache/flink/blob/f16dd6e7c230ce92fd8c87c3122ba5e188416a02/pom.xml)：`3.14.9` Maven 属性同时管理 core 与 logging interceptor
-- [crossoverJie/cim](https://github.com/crossoverJie/cim/blob/8863d9f6d76d0ad55a27bd0d6f05d6476937f0e8/pom.xml)：`4.9.2` 直接 Maven 依赖
-- [Synthea](https://github.com/synthetichealth/synthea/blob/3ffe7bc7f13990b3b13dcebd3bcc3586042b80c3/build.gradle)：`4.10.0` Gradle core 和同版本 MockWebServer，验证只修改表格坐标
-- [Apache BookKeeper](https://github.com/apache/bookkeeper/blob/68cc8dcbd1e8a7e95c68e70d183e178ad6d84ede/pom.xml)：`5.3.1` BOM 属性，验证绝不降级
-- OkHttp 官方 [5.3.0 repository tag](https://github.com/square/okhttp/tree/parent-5.3.0) 与 [README 的 Maven/JVM 说明](https://github.com/square/okhttp#readme)
-- OpenRewrite 官方 [UpgradeDependencyVersionTest](https://github.com/openrewrite/rewrite-java-dependencies/blob/main/src/test/java/org/openrewrite/java/dependencies/UpgradeDependencyVersionTest.java) 与 [ChangeDependencyGroupIdAndArtifactIdTest](https://github.com/openrewrite/rewrite/blob/main/rewrite-maven/src/test/java/org/openrewrite/maven/ChangeDependencyGroupIdAndArtifactIdTest.java)
+目标 tag 解引用到固定提交 [`0960b47e`](https://github.com/square/okhttp/tree/0960b47ec28a02e893499d2a7e53bf462a62875e)：
 
-当前 24 个测试覆盖表格全部旧版本、直接/受管 Maven 依赖、共享属性、BOM、Groovy Gradle 字符串/Map/属性/platform、Kotlin DSL 无语义模型安全回退、alpha→stable、目标/后续版本 no-op、相似和 companion artifact 防误伤、classifier/scope 保留、Maven `okhttp-jvm` 坐标迁移及 recipe discovery/validation。
+- [OkHttp 5.3.0 changelog](https://github.com/square/okhttp/blob/0960b47ec28a02e893499d2a7e53bf462a62875e/CHANGELOG.md)；
+- [Upgrading to OkHttp 4](https://github.com/square/okhttp/blob/0960b47ec28a02e893499d2a7e53bf462a62875e/docs/changelogs/upgrading_to_okhttp_4.md)；
+- [目标 `OkHttpClient.kt`](https://github.com/square/okhttp/blob/0960b47ec28a02e893499d2a7e53bf462a62875e/okhttp/src/commonJvmAndroid/kotlin/okhttp3/OkHttpClient.kt)；
+- [目标发布与 Maven/Gradle 使用说明](https://github.com/square/okhttp/blob/0960b47ec28a02e893499d2a7e53bf462a62875e/README.md)；
+- [目标版本目录](https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp/5.3.0/)。
+
+## 真实仓库回归语料
+
+| 仓库固定提交 | 实际场景 | 验证效果 |
+| --- | --- | --- |
+| [apache/flink `f16dd6e7`](https://github.com/apache/flink/blob/f16dd6e7c230ce92fd8c87c3122ba5e188416a02/pom.xml) | `3.14.9` 属性管理 core 与 logging interceptor | family-owned 属性自动升级 |
+| [crossoverJie/cim `8863d9f6`](https://github.com/crossoverJie/cim/blob/8863d9f6d76d0ad55a27bd0d6f05d6476937f0e8/pom.xml) | `4.9.2` Maven 直接依赖 | before→after |
+| [synthetichealth/synthea `3ffe7bc7`](https://github.com/synthetichealth/synthea/blob/3ffe7bc7f13990b3b13dcebd3bcc3586042b80c3/build.gradle) | `4.10.0` Gradle core 与 MockWebServer | 只升级表格 core 坐标 |
+| [apache/bookkeeper `68cc8dcb`](https://github.com/apache/bookkeeper/blob/68cc8dcbd1e8a7e95c68e70d183e178ad6d84ede/pom.xml) | `5.3.1` BOM | 后续版本 no-op |
+| [square/retrofit `d0b112da`](https://github.com/square/retrofit/tree/d0b112dad073b7fe49c953ebc46ff1b424cb1e51) | `Call.clone()` 与旧 MockWebServer package | 前者不误改，后者产生 marker |
+
+测试采用 OpenRewrite 官方 before→after、no-op、多 cycle 和 `SearchResult` 断言风格；当前共 35 个 JUnit invocation，而不是把 README 示例当作实现。
 
 ## 使用与验证
-
-通用升级：
 
 ```bash
 mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:dryRun \
   -Drewrite.recipeArtifactCoordinates=com.huawei.clouds.openrewrite:rewrite-okhttp-upgrade:1.0.0-SNAPSHOT \
-  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.okhttp.UpgradeOkHttpTo5_3_0
+  -Drewrite.activeRecipes=com.huawei.clouds.openrewrite.okhttp.MigrateOkHttpTo5_3_0
 ```
 
-确认是普通 Maven JVM 项目后，把 active recipe 换成：
-
-```text
-com.huawei.clouds.openrewrite.okhttp.MigrateMavenJvmOkHttpTo5_3_0
-```
-
-应用 patch 后刷新 Maven/Gradle lockfile，执行 Java/Kotlin 全量编译、Android API 21 设备/Robolectric、双栈 DNS、代理、TLS/certificate pinning、WebSocket/SSE/duplex、multipart、cache、interceptor、timeout/cancel、connection pool、MockWebServer、R8/ProGuard、JPMS、GraalVM 与依赖收敛测试。
+确认普通 Maven JVM 工程后，可把 active recipe 换成 `MigrateMavenJvmOkHttpTo5_3_0`。审查 patch 与所有 `~~>` 后再运行 `run`，刷新 lockfile，并执行 Java/Kotlin、Android API 21、双栈 DNS、proxy、TLS/pinning、WebSocket/SSE/duplex、multipart、cache、interceptor、timeout/cancel、pool、MockWebServer、R8、JPMS、GraalVM 和 dependency-convergence 测试。
 
 模块自身验证：
 
 ```bash
-mvn -f rewrite-okhttp-upgrade/pom.xml clean verify
+mvn -pl rewrite-okhttp-upgrade -am clean verify
 ```
