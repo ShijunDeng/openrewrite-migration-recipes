@@ -13,13 +13,41 @@
 
   <artifactId>rewrite-guava-upgrade</artifactId>
   <name>OpenRewrite Guava Upgrade</name>
-  <description>Configuration-based OpenRewrite recipe for upgrading Guava to 33.5.0-jre.</description>
+  <description>OpenRewrite recipes for upgrading Guava to 33.5.0-jre and migrating deterministic compatibility changes.</description>
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-guava-upgrade</url>
 
   <dependencies>
     <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-java</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.openrewrite.recipe</groupId>
       <artifactId>rewrite-java-dependencies</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>21.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-gradle</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite.gradle.tooling</groupId>
+      <artifactId>model</artifactId>
+      <version>${rewrite.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.gradle</groupId>
+      <artifactId>gradle-tooling-api</artifactId>
+      <version>7.3-20210825160000+0000</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>

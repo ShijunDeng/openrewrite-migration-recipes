@@ -2,19 +2,410 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.guava
 packageName: com.huawei.clouds.openrewrite.guava
-description: Upgrade Google Guava with explicit compatibility guidance.
+description: Upgrade Google Guava and migrate deterministic source compatibility changes.
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.guava.UpgradeGuavaTo33_5_0Jre
-displayName: Upgrade Guava to 33.5.0-jre
-description: Upgrade com.google.guava:guava declarations in Maven and Gradle builds to 33.5.0-jre.
+name: com.huawei.clouds.openrewrite.guava.MigrateGuavaTo33_5_0Jre
+displayName: Migrate Guava to 33.5.0-jre
+description: Migrate behaviorally equivalent Java APIs, mark application-specific compatibility risks, and strictly upgrade only the spreadsheet source versions.
 tags:
   - guava
   - java
   - dependency-upgrade
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.guava.MigrateCharMatcherConstants
+  - com.huawei.clouds.openrewrite.guava.AddGuavaDirectExecutor
+  - com.huawei.clouds.openrewrite.guava.FindGuavaMigrationRisks
+  - com.huawei.clouds.openrewrite.guava.FindGuavaAndroidFlavorMigration
+  - com.huawei.clouds.openrewrite.guava.FindGuavaBuildMigrationRisks
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuavaTo33_5_0Jre
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuavaTo33_5_0Jre
+displayName: Strictly upgrade listed Guava versions to 33.5.0-jre
+description: Upgrade only the ten source versions listed in the migration spreadsheet, including direct Maven or Gradle declarations and local Maven dependencyManagement entries, without overriding external management.
+tags:
+  - guava
+  - dependency-upgrade
+  - strict
+recipeList:
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuava21_0To33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava21_0To33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuava29_0JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava29_0JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuava30_1JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava30_1JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuava30_1_1JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava30_1_1JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuava31_1JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava31_1JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuava32_0_0JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava32_0_0JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuava32_0_1JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava32_0_1JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuava32_1_0JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava32_1_0JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuava32_1_1AndroidTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava32_1_1AndroidTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeGuava32_1_1JreTo33_5_0Jre
+  - com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava32_1_1JreTo33_5_0Jre
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.FindGuavaAndroidFlavorMigration
+displayName: Find Guava Android-to-JRE flavor switches
+description: Mark the listed 32.1.1-android dependency because changing it to the spreadsheet's JRE target requires an Android platform and minSdk review.
+tags:
+  - guava
+  - android
+  - search
+recipeList:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.1.1-android
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.FindGuavaBuildMigrationRisks
+displayName: Find Guava build and GWT migration risks
+description: Mark Gradle 6 wrappers that need dependency-metadata testing and the obsolete GWT-RPC emergency switch.
+tags:
+  - guava
+  - gradle
+  - gwt
+  - search
+recipeList:
+  - org.openrewrite.text.Find:
+      find: '(?m)^distributionUrl=.*gradle-6(?:\.|-).*'
+      regex: true
+      caseSensitive: true
+      multiline: true
+      dotAll: false
+      filePattern: '**/gradle-wrapper.properties'
+  - org.openrewrite.text.Find:
+      find: 'guava\.gwt\.emergency_reenable_rpc'
+      regex: true
+      caseSensitive: true
+      multiline: false
+      dotAll: false
+      filePattern: '**/*.gwt.xml;**/*.properties'
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuava21_0To33_5_0Jre
+displayName: Upgrade Guava 21.0 to 33.5.0-jre
+description: Upgrade only direct com.google.guava:guava 21.0 declarations to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 21.0
 recipeList:
   - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
       groupId: com.google.guava
       artifactId: guava
       newVersion: 33.5.0-jre
-      overrideManagedVersion: true
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava21_0To33_5_0Jre
+displayName: Upgrade managed Guava 21.0 to 33.5.0-jre
+description: Upgrade only Maven dependencyManagement entries for com.google.guava:guava 21.0 to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 21.0
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuava29_0JreTo33_5_0Jre
+displayName: Upgrade Guava 29.0-jre to 33.5.0-jre
+description: Upgrade only direct com.google.guava:guava 29.0-jre declarations to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 29.0-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava29_0JreTo33_5_0Jre
+displayName: Upgrade managed Guava 29.0-jre to 33.5.0-jre
+description: Upgrade only Maven dependencyManagement entries for com.google.guava:guava 29.0-jre to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 29.0-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuava30_1JreTo33_5_0Jre
+displayName: Upgrade Guava 30.1-jre to 33.5.0-jre
+description: Upgrade only direct com.google.guava:guava 30.1-jre declarations to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 30.1-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava30_1JreTo33_5_0Jre
+displayName: Upgrade managed Guava 30.1-jre to 33.5.0-jre
+description: Upgrade only Maven dependencyManagement entries for com.google.guava:guava 30.1-jre to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 30.1-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuava30_1_1JreTo33_5_0Jre
+displayName: Upgrade Guava 30.1.1-jre to 33.5.0-jre
+description: Upgrade only direct com.google.guava:guava 30.1.1-jre declarations to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 30.1.1-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava30_1_1JreTo33_5_0Jre
+displayName: Upgrade managed Guava 30.1.1-jre to 33.5.0-jre
+description: Upgrade only Maven dependencyManagement entries for com.google.guava:guava 30.1.1-jre to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 30.1.1-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuava31_1JreTo33_5_0Jre
+displayName: Upgrade Guava 31.1-jre to 33.5.0-jre
+description: Upgrade only direct com.google.guava:guava 31.1-jre declarations to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 31.1-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava31_1JreTo33_5_0Jre
+displayName: Upgrade managed Guava 31.1-jre to 33.5.0-jre
+description: Upgrade only Maven dependencyManagement entries for com.google.guava:guava 31.1-jre to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 31.1-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuava32_0_0JreTo33_5_0Jre
+displayName: Upgrade Guava 32.0.0-jre to 33.5.0-jre
+description: Upgrade only direct com.google.guava:guava 32.0.0-jre declarations to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.0.0-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava32_0_0JreTo33_5_0Jre
+displayName: Upgrade managed Guava 32.0.0-jre to 33.5.0-jre
+description: Upgrade only Maven dependencyManagement entries for com.google.guava:guava 32.0.0-jre to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.0.0-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuava32_0_1JreTo33_5_0Jre
+displayName: Upgrade Guava 32.0.1-jre to 33.5.0-jre
+description: Upgrade only direct com.google.guava:guava 32.0.1-jre declarations to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.0.1-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava32_0_1JreTo33_5_0Jre
+displayName: Upgrade managed Guava 32.0.1-jre to 33.5.0-jre
+description: Upgrade only Maven dependencyManagement entries for com.google.guava:guava 32.0.1-jre to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.0.1-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuava32_1_0JreTo33_5_0Jre
+displayName: Upgrade Guava 32.1.0-jre to 33.5.0-jre
+description: Upgrade only direct com.google.guava:guava 32.1.0-jre declarations to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.1.0-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava32_1_0JreTo33_5_0Jre
+displayName: Upgrade managed Guava 32.1.0-jre to 33.5.0-jre
+description: Upgrade only Maven dependencyManagement entries for com.google.guava:guava 32.1.0-jre to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.1.0-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuava32_1_1AndroidTo33_5_0Jre
+displayName: Upgrade Guava 32.1.1-android to 33.5.0-jre
+description: Upgrade only direct com.google.guava:guava 32.1.1-android declarations to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.1.1-android
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava32_1_1AndroidTo33_5_0Jre
+displayName: Upgrade managed Guava 32.1.1-android to 33.5.0-jre
+description: Upgrade only Maven dependencyManagement entries for com.google.guava:guava 32.1.1-android to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.1.1-android
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeGuava32_1_1JreTo33_5_0Jre
+displayName: Upgrade Guava 32.1.1-jre to 33.5.0-jre
+description: Upgrade only direct com.google.guava:guava 32.1.1-jre declarations to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.java.dependencies.FindDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.1.1-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.UpgradeManagedGuava32_1_1JreTo33_5_0Jre
+displayName: Upgrade managed Guava 32.1.1-jre to 33.5.0-jre
+description: Upgrade only Maven dependencyManagement entries for com.google.guava:guava 32.1.1-jre to 33.5.0-jre.
+preconditions:
+  - org.openrewrite.maven.search.FindManagedDependency:
+      groupId: com.google.guava
+      artifactId: guava
+      version: 32.1.1-jre
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: com.google.guava
+      artifactId: guava
+      newVersion: 33.5.0-jre
+      overrideManagedVersion: false

@@ -12,7 +12,7 @@
 | [`rewrite-fastjson-to-jackson`](rewrite-fastjson-to-jackson) | `com.huawei.clouds.openrewrite.fastjson.MigrateFastjsonToJackson` | 将 Fastjson 1.x Java 工程迁移到 Jackson 2.x |
 | [`rewrite-fastjson2-to-jackson`](rewrite-fastjson2-to-jackson) | `com.huawei.clouds.openrewrite.fastjson2.MigrateFastjson2ToJackson` | 将 Fastjson2 Java 工程迁移到 Jackson 2.x |
 | [`rewrite-rxjs-upgrade`](rewrite-rxjs-upgrade) | `com.huawei.clouds.openrewrite.rxjs.MigrateRxjsTo7_8_2` | 升级 RxJS 依赖，自动迁移确定性的导入、Ajax 类型和 `throwError`，并标记需要流语义判断的不兼容点 |
-| [`rewrite-guava-upgrade`](rewrite-guava-upgrade) | `com.huawei.clouds.openrewrite.guava.UpgradeGuavaTo33_5_0Jre` | 将 Maven/Gradle Guava 依赖升级到 33.5.0-jre |
+| [`rewrite-guava-upgrade`](rewrite-guava-upgrade) | `com.huawei.clouds.openrewrite.guava.MigrateGuavaTo33_5_0Jre` | 将 Guava 21/29–32 升级到 33.5.0-jre，自动迁移 `CharMatcher` 常量和旧 executor 重载，并标记移除 API、Android flavor、GWT 与 Gradle metadata 风险 |
 | [`rewrite-ngx-translate-core-upgrade`](rewrite-ngx-translate-core-upgrade) | `com.huawei.clouds.openrewrite.ngxtranslate.MigrateNgxTranslateCoreTo17` | 将 `@ngx-translate/core` 11/13/14/15 升级到 17.0.0，自动迁移 fallback API、getter、默认实现和严格 standalone imports，并标记 provider、HTTP loader、事件、并发与 SSR 风险 |
 | [`rewrite-hibernate-validator-upgrade`](rewrite-hibernate-validator-upgrade) | `com.huawei.clouds.openrewrite.hibernatevalidator.UpgradeHibernateValidatorTo8` | 将 Hibernate Validator 升级到 8.0.3.Final 并迁移 Jakarta Validation API |
 | [`rewrite-echarts-upgrade`](rewrite-echarts-upgrade) | `com.huawei.clouds.openrewrite.echarts.MigrateEChartsTo6_1_0` | 将 ECharts 4/5 升级到 6.1.0，自动迁移公开入口和旧 option 类型，并标记 deprecated option、主题/布局、data index、地图与 wrapper 风险 |
