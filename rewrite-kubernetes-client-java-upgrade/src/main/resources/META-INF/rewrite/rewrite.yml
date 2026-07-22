@@ -2,197 +2,186 @@
 type: specs.openrewrite.org/v1beta/category
 name: com.huawei.clouds.openrewrite.kubernetesclientjava
 packageName: com.huawei.clouds.openrewrite.kubernetesclientjava
-description: Upgrade the official Kubernetes Java client while retaining the pre-20 generated SDK interface.
+description: Upgrade spreadsheet-selected Fabric8 Kubernetes Client 5.12 declarations to 7.3.1, migrate deterministic APIs, and mark behavior changes for review.
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJavaDependencyTo25_0_0_Legacy
-displayName: Upgrade Kubernetes Java client dependency to 25.0.0-legacy
-description: Upgrade explicit io.kubernetes:client-java versions in Maven and Gradle builds to 25.0.0-legacy without overriding an externally managed version or changing companion artifacts and source.
+name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJavaDependencyTo7_3_1
+displayName: Upgrade selected Fabric8 Kubernetes Client declarations to 7.3.1
+description: Upgrade only direct io.fabric8:kubernetes-client 5.12.0 and 5.12.4 Maven or Gradle declarations whose version is locally and unambiguously owned.
 tags:
-  - kubernetes
+  - fabric8
   - kubernetes-client
   - java
   - dependency-upgrade
 recipeList:
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJava11_0_2To25_0_0_Legacy
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJava16_0_2To25_0_0_Legacy
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJava16_0_3To25_0_0_Legacy
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJava17_0_2To25_0_0_Legacy
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJava18_0_1To25_0_0_Legacy
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeManagedKubernetesClientJava11_0_2To25_0_0_Legacy
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeManagedKubernetesClientJava16_0_2To25_0_0_Legacy
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeManagedKubernetesClientJava16_0_3To25_0_0_Legacy
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeManagedKubernetesClientJava17_0_2To25_0_0_Legacy
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeManagedKubernetesClientJava18_0_1To25_0_0_Legacy
+  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeSelectedFabric8KubernetesClientDependency
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateKubernetesClientJavaTo25_0_0_Legacy
-displayName: Migrate Kubernetes Java client applications to 25.0.0-legacy
-description: Apply the conservative dependency upgrade; generated Kubernetes models, API calls, watches, authentication, patches, and serialization require application-specific review and are intentionally not rewritten without type and cluster context.
+name: com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateFabric8MockWebServerTo7
+displayName: Migrate Fabric8 mock-server tests from OkHttp types
+description: Replace the exact OkHttp and Okio test types listed by the Fabric8 7 migration guide, but only in source files that use okhttp3.mockwebserver.
+preconditions:
+  - org.openrewrite.text.Find:
+      find: 'okhttp3\.mockwebserver\.(?:Dispatcher|MockResponse|MockWebServer|QueueDispatcher|RecordedRequest)'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.java"
+      contextSize: 0
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.Headers
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.Headers
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.HttpUrl
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.HttpUrl
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.MediaType
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.MediaType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.Protocol
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.vertx.Protocol
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.Response
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.Response
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.WebSocket
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.WebSocket
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.WebSocketListener
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.WebSocketListener
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.mockwebserver.Dispatcher
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.Dispatcher
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.mockwebserver.MockResponse
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.MockResponse
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.mockwebserver.MockWebServer
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.MockWebServer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.mockwebserver.QueueDispatcher
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.QueueDispatcher
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okhttp3.mockwebserver.RecordedRequest
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.RecordedRequest
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okio.Buffer
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.Buffer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: okio.ByteString
+      newFullyQualifiedTypeName: io.fabric8.mockwebserver.http.ByteString
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateDeterministicFabric8SourceTo7
+displayName: Migrate deterministic Fabric8 Kubernetes Client APIs to version 7
+description: Apply official one-to-one package, type, method, mock-server, and safely typed client-construction replacements.
 tags:
-  - kubernetes
+  - fabric8
+  - kubernetes-client
+  - java
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateDefaultKubernetesClientConstruction
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: io.fabric8.kubernetes.client.internal.readiness
+      newPackageName: io.fabric8.kubernetes.client.readiness
+      recursive: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: io.fabric8.kubernetes.client.CustomResourceList
+      newFullyQualifiedTypeName: io.fabric8.kubernetes.api.model.DefaultKubernetesResourceList
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: io.fabric8.kubernetes.client.informers.SharedInformer
+      newFullyQualifiedTypeName: io.fabric8.kubernetes.client.informers.SharedIndexInformer
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.fabric8.kubernetes.client.dsl.Applicable apply()
+      newMethodName: createOrReplace
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: io.fabric8.openshift.api.model.clusterautoscaling
+      newPackageName: io.fabric8.openshift.api.model.autoscaling
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: io.fabric8.openshift.api.model.machineconfig
+      newPackageName: io.fabric8.openshift.api.model.machineconfiguration
+      recursive: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.fabric8.openshift.client.OpenShiftClient clusterAutoscaling()
+      newMethodName: openShiftAutoscaling
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: io.fabric8.verticalpodautoscaler.api.model
+      newPackageName: io.fabric8.autoscaling.api.model.v1
+      recursive: true
+  - com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateFabric8MockWebServerTo7
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.kubernetesclientjava.FindManualFabric8KubernetesClient7JavaRisks
+displayName: Find Fabric8 Kubernetes Client 7 Java migration risks
+description: Mark type-attributed resource, delete, configuration, client construction, watch/informer, streaming, and support checks plus removed APIs requiring application choices.
+tags:
+  - fabric8
+  - kubernetes-client
+  - java
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.kubernetesclientjava.FindFabric8KubernetesClient7MigrationRisks
+  - org.openrewrite.text.Find:
+      find: '\b(?:RawCustomResourceOperations|GenericKubernetesClient|AutoAdaptableKubernetesClient|SupportTestingClient|OpenShiftMockServer|EnableOpenShiftMockClient|HttpClientUtils|OkHttpClientFactory|OperationContext|IntOrString|PrinterColumn)\b|\.(?:setIntVal|setStrVal|setKind|writingInput|readingInput|readingOutput|readingError|redirectingInput|withReadyWaitTimeout)[ \t]*\('
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.java;**/*.groovy;**/*.kt"
+      contextSize: 0
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.kubernetesclientjava.FindManualFabric8KubernetesClient7BuildRisks
+displayName: Find Fabric8 Kubernetes Client 7 build and baseline risks
+description: Mark Java levels below 11, Fabric8 BOM ownership, split client/model/HTTP/mock modules, and renamed extension artifacts that require coordinated version or transport decisions.
+tags:
+  - fabric8
+  - kubernetes-client
+  - build
+  - search
+recipeList:
+  - org.openrewrite.text.Find:
+      find: '<(?:maven\.compiler\.(?:source|target|release)|source|target|release)>[ \t]*(?:1\.[0-8]|[0-9]|10)[ \t]*</|<artifactId>(?:kubernetes-client-bom|kubernetes-client-api|kubernetes-model|kubernetes-httpclient-(?:okhttp|vertx)|kubernetes-server-mock|openshift-client|openshift-model-(?:clusterautoscaling|machineconfig)|cert-manager-model-v1(?:alpha2|alpha3|beta1)?|istio-model-v1(?:alpha3|beta1)|open-virtual-networking(?:-client|-model-v1)?|verticalpodautoscaler-model-v1)</artifactId>'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/pom.xml"
+      contextSize: 0
+  - org.openrewrite.text.Find:
+      find: '(?:sourceCompatibility|targetCompatibility|languageVersion)[ \t]*(?:=|\.set\(|\.of\()[ \t]*["'']?(?:1\.[0-8]|[0-9]|10)\b|io\.fabric8:(?:kubernetes-client-bom|kubernetes-client-api|kubernetes-model|kubernetes-httpclient-(?:okhttp|vertx)|kubernetes-server-mock|openshift-client|openshift-model-(?:clusterautoscaling|machineconfig)|cert-manager-model-v1(?:alpha2|alpha3|beta1)?|istio-model-v1(?:alpha3|beta1)|open-virtual-networking(?:-client|-model-v1)?|verticalpodautoscaler-model-v1)'
+      regex: true
+      caseSensitive: true
+      filePattern: "**/*.gradle;**/*.gradle.kts;**/*.toml"
+      contextSize: 0
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.kubernetesclientjava.FindManualFabric8KubernetesClient7ConfigurationRisks
+displayName: Find Fabric8 Kubernetes Client 7 behavior and configuration risks
+description: Mark settings and resource manifests affected by compatibility-interceptor, namespace, kubeconfig, model serialization, readiness, API-version, and HTTP transport changes.
+tags:
+  - fabric8
+  - kubernetes-client
+  - configuration
+  - search
+recipeList:
+  - org.openrewrite.text.Find:
+      find: 'kubernetes\.backwardsCompatibilityInterceptor\.disable|KUBERNETES_BACKWARDSCOMPATIBILITYINTERCEPTOR_DISABLE|KUBERNETES_KUBECONFIG_FILE|httpclient|okhttp|vertx|readyWaitTimeout|apiVersion[ \t]*:'
+      regex: true
+      caseSensitive: false
+      filePattern: "**/*.properties;**/*.yml;**/*.yaml;**/*.json;**/*.xml;**/*.conf;**/*.env"
+      contextSize: 0
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateKubernetesClientJavaTo7_3_1
+displayName: Migrate selected Fabric8 Kubernetes Client applications to 7.3.1
+description: Strictly upgrade spreadsheet-selected declarations, migrate deterministic APIs, and mark Java, build, configuration, transport, model, and behavior risks for review.
+tags:
+  - fabric8
   - kubernetes-client
   - java
   - migration
 recipeList:
-  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJavaDependencyTo25_0_0_Legacy
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJava11_0_2To25_0_0_Legacy
-displayName: Upgrade Kubernetes Java client 11.0.2 to 25.0.0-legacy
-description: Upgrade only io.kubernetes:client-java 11.0.2 declarations to 25.0.0-legacy.
-preconditions:
-  - org.openrewrite.java.dependencies.FindDependency:
-      groupId: io.kubernetes
-      artifactId: client-java
-      version: 11.0.2
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: io.kubernetes
-      artifactId: client-java
-      newVersion: 25.0.0-legacy
-      overrideManagedVersion: false
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJava16_0_2To25_0_0_Legacy
-displayName: Upgrade Kubernetes Java client 16.0.2 to 25.0.0-legacy
-description: Upgrade only io.kubernetes:client-java 16.0.2 declarations to 25.0.0-legacy.
-preconditions:
-  - org.openrewrite.java.dependencies.FindDependency:
-      groupId: io.kubernetes
-      artifactId: client-java
-      version: 16.0.2
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: io.kubernetes
-      artifactId: client-java
-      newVersion: 25.0.0-legacy
-      overrideManagedVersion: false
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJava16_0_3To25_0_0_Legacy
-displayName: Upgrade Kubernetes Java client 16.0.3 to 25.0.0-legacy
-description: Upgrade only io.kubernetes:client-java 16.0.3 declarations to 25.0.0-legacy.
-preconditions:
-  - org.openrewrite.java.dependencies.FindDependency:
-      groupId: io.kubernetes
-      artifactId: client-java
-      version: 16.0.3
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: io.kubernetes
-      artifactId: client-java
-      newVersion: 25.0.0-legacy
-      overrideManagedVersion: false
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJava17_0_2To25_0_0_Legacy
-displayName: Upgrade Kubernetes Java client 17.0.2 to 25.0.0-legacy
-description: Upgrade only io.kubernetes:client-java 17.0.2 declarations to 25.0.0-legacy.
-preconditions:
-  - org.openrewrite.java.dependencies.FindDependency:
-      groupId: io.kubernetes
-      artifactId: client-java
-      version: 17.0.2
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: io.kubernetes
-      artifactId: client-java
-      newVersion: 25.0.0-legacy
-      overrideManagedVersion: false
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJava18_0_1To25_0_0_Legacy
-displayName: Upgrade Kubernetes Java client 18.0.1 to 25.0.0-legacy
-description: Upgrade only io.kubernetes:client-java 18.0.1 declarations to 25.0.0-legacy.
-preconditions:
-  - org.openrewrite.java.dependencies.FindDependency:
-      groupId: io.kubernetes
-      artifactId: client-java
-      version: 18.0.1
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: io.kubernetes
-      artifactId: client-java
-      newVersion: 25.0.0-legacy
-      overrideManagedVersion: false
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeManagedKubernetesClientJava11_0_2To25_0_0_Legacy
-displayName: Upgrade managed Kubernetes Java client 11.0.2 to 25.0.0-legacy
-description: Upgrade Maven dependencyManagement entries for io.kubernetes:client-java 11.0.2 to 25.0.0-legacy.
-preconditions:
-  - org.openrewrite.maven.search.FindManagedDependency:
-      groupId: io.kubernetes
-      artifactId: client-java
-      version: 11.0.2
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: io.kubernetes
-      artifactId: client-java
-      newVersion: 25.0.0-legacy
-      overrideManagedVersion: false
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeManagedKubernetesClientJava16_0_2To25_0_0_Legacy
-displayName: Upgrade managed Kubernetes Java client 16.0.2 to 25.0.0-legacy
-description: Upgrade Maven dependencyManagement entries for io.kubernetes:client-java 16.0.2 to 25.0.0-legacy.
-preconditions:
-  - org.openrewrite.maven.search.FindManagedDependency:
-      groupId: io.kubernetes
-      artifactId: client-java
-      version: 16.0.2
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: io.kubernetes
-      artifactId: client-java
-      newVersion: 25.0.0-legacy
-      overrideManagedVersion: false
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeManagedKubernetesClientJava16_0_3To25_0_0_Legacy
-displayName: Upgrade managed Kubernetes Java client 16.0.3 to 25.0.0-legacy
-description: Upgrade Maven dependencyManagement entries for io.kubernetes:client-java 16.0.3 to 25.0.0-legacy.
-preconditions:
-  - org.openrewrite.maven.search.FindManagedDependency:
-      groupId: io.kubernetes
-      artifactId: client-java
-      version: 16.0.3
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: io.kubernetes
-      artifactId: client-java
-      newVersion: 25.0.0-legacy
-      overrideManagedVersion: false
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeManagedKubernetesClientJava17_0_2To25_0_0_Legacy
-displayName: Upgrade managed Kubernetes Java client 17.0.2 to 25.0.0-legacy
-description: Upgrade Maven dependencyManagement entries for io.kubernetes:client-java 17.0.2 to 25.0.0-legacy.
-preconditions:
-  - org.openrewrite.maven.search.FindManagedDependency:
-      groupId: io.kubernetes
-      artifactId: client-java
-      version: 17.0.2
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: io.kubernetes
-      artifactId: client-java
-      newVersion: 25.0.0-legacy
-      overrideManagedVersion: false
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeManagedKubernetesClientJava18_0_1To25_0_0_Legacy
-displayName: Upgrade managed Kubernetes Java client 18.0.1 to 25.0.0-legacy
-description: Upgrade Maven dependencyManagement entries for io.kubernetes:client-java 18.0.1 to 25.0.0-legacy.
-preconditions:
-  - org.openrewrite.maven.search.FindManagedDependency:
-      groupId: io.kubernetes
-      artifactId: client-java
-      version: 18.0.1
-recipeList:
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
-      groupId: io.kubernetes
-      artifactId: client-java
-      newVersion: 25.0.0-legacy
-      overrideManagedVersion: false
+  - com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJavaDependencyTo7_3_1
+  - com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateDeterministicFabric8SourceTo7
+  - com.huawei.clouds.openrewrite.kubernetesclientjava.FindManualFabric8KubernetesClient7JavaRisks
+  - com.huawei.clouds.openrewrite.kubernetesclientjava.FindManualFabric8KubernetesClient7BuildRisks
+  - com.huawei.clouds.openrewrite.kubernetesclientjava.FindManualFabric8KubernetesClient7ConfigurationRisks

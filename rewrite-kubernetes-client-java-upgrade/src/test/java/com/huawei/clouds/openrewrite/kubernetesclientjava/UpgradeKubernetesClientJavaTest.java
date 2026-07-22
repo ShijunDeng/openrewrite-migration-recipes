@@ -3,9 +3,12 @@ package com.huawei.clouds.openrewrite.kubernetesclientjava;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.Recipe;
 import org.openrewrite.config.Environment;
+import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
+
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,427 +16,667 @@ import static org.openrewrite.gradle.Assertions.buildGradle;
 import static org.openrewrite.gradle.Assertions.buildGradleKts;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
-import static org.openrewrite.toml.Assertions.toml;
+import static org.openrewrite.test.SourceSpecs.text;
+import static org.openrewrite.xml.Assertions.xml;
 
 class UpgradeKubernetesClientJavaTest implements RewriteTest {
     private static final String DEPENDENCY_RECIPE =
-            "com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJavaDependencyTo25_0_0_Legacy";
+            "com.huawei.clouds.openrewrite.kubernetesclientjava.UpgradeKubernetesClientJavaDependencyTo7_3_1";
+    private static final String SOURCE_RECIPE =
+            "com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateDeterministicFabric8SourceTo7";
+    private static final String JAVA_RISK_RECIPE =
+            "com.huawei.clouds.openrewrite.kubernetesclientjava.FindManualFabric8KubernetesClient7JavaRisks";
+    private static final String BUILD_RISK_RECIPE =
+            "com.huawei.clouds.openrewrite.kubernetesclientjava.FindManualFabric8KubernetesClient7BuildRisks";
+    private static final String CONFIG_RISK_RECIPE =
+            "com.huawei.clouds.openrewrite.kubernetesclientjava.FindManualFabric8KubernetesClient7ConfigurationRisks";
     private static final String MIGRATION_RECIPE =
-            "com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateKubernetesClientJavaTo25_0_0_Legacy";
+            "com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateKubernetesClientJavaTo7_3_1";
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(environment().activateRecipes(DEPENDENCY_RECIPE));
+        spec.recipe(recipe(DEPENDENCY_RECIPE));
     }
 
     @Test
-    void upgradesSpreadsheetVersion11_0_2InMaven() {
-        rewriteRun(pomXml(directPom("11.0.2"), directPom("25.0.0-legacy")));
-    }
-
-    @Test
-    void upgradesSpreadsheetVersion16_0_2InMaven() {
-        rewriteRun(pomXml(directPom("16.0.2"), directPom("25.0.0-legacy")));
-    }
-
-    @Test
-    void upgradesSpreadsheetVersion16_0_3InMaven() {
-        rewriteRun(pomXml(directPom("16.0.3"), directPom("25.0.0-legacy")));
-    }
-
-    @Test
-    void upgradesSpreadsheetVersion17_0_2InMaven() {
-        rewriteRun(pomXml(directPom("17.0.2"), directPom("25.0.0-legacy")));
-    }
-
-    @Test
-    void upgradesSpreadsheetVersion18_0_1InMaven() {
-        rewriteRun(pomXml(directPom("18.0.1"), directPom("25.0.0-legacy")));
-    }
-
-    @Test
-    void upgradesSpringCloudKubernetesStyleManagedProperty() {
-        // Reduced from spring-cloud/spring-cloud-kubernetes v2.0.3 at 305c1658:
-        // https://github.com/spring-cloud/spring-cloud-kubernetes/blob/305c16585471514b528de61b0e3f7dc202dc9ae5/spring-cloud-kubernetes-dependencies/pom.xml
-        rewriteRun(pomXml(
-                """
-                <project>
-                  <modelVersion>4.0.0</modelVersion><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-kubernetes-dependencies</artifactId><version>2.0.3</version>
-                  <properties><kubernetes-java-client.version>11.0.2</kubernetes-java-client.version></properties>
-                  <dependencyManagement><dependencies>
-                    <dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>${kubernetes-java-client.version}</version></dependency>
-                    <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-extended</artifactId><version>${kubernetes-java-client.version}</version></dependency>
-                    <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-spring-integration</artifactId><version>${kubernetes-java-client.version}</version></dependency>
-                  </dependencies></dependencyManagement>
-                </project>
-                """,
-                """
-                <project>
-                  <modelVersion>4.0.0</modelVersion><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-kubernetes-dependencies</artifactId><version>2.0.3</version>
-                  <properties><kubernetes-java-client.version>25.0.0-legacy</kubernetes-java-client.version></properties>
-                  <dependencyManagement><dependencies>
-                    <dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>${kubernetes-java-client.version}</version></dependency>
-                    <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-extended</artifactId><version>${kubernetes-java-client.version}</version></dependency>
-                    <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-spring-integration</artifactId><version>${kubernetes-java-client.version}</version></dependency>
-                  </dependencies></dependencyManagement>
-                </project>
-                """
-        ));
-    }
-
-    @Test
-    void upgradesApacheShenyuStylePropertyBackedDirectDependency() {
-        // Reduced from apache/shenyu v2.7.0 at 2728a79c:
-        // https://github.com/apache/shenyu/blob/2728a79c8a283bd4076eed7ebb93f0e9e0442aa2/shenyu-admin/pom.xml
-        rewriteRun(pomXml(
-                propertyPom("17.0.2", "k8s-client.version"),
-                propertyPom("25.0.0-legacy", "k8s-client.version")
-        ));
-    }
-
-    @Test
-    void upgradesApacheSubmarineStyleDependencyManagement() {
-        // Reduced from apache/submarine rel/release-0.8.0 at 389c8fd9:
-        // https://github.com/apache/submarine/blob/389c8fd919411f1edb2aec05e6ed2bca83dcf15d/pom.xml
-        rewriteRun(pomXml(
-                """
-                <project>
-                  <modelVersion>4.0.0</modelVersion><groupId>org.apache.submarine</groupId><artifactId>submarine</artifactId><version>0.8.0</version>
-                  <properties><k8s.client-java.version>17.0.2</k8s.client-java.version></properties>
-                  <dependencyManagement><dependencies>
-                    <dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>${k8s.client-java.version}</version></dependency>
-                    <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-api-fluent</artifactId><version>${k8s.client-java.version}</version></dependency>
-                  </dependencies></dependencyManagement>
-                </project>
-                """,
-                """
-                <project>
-                  <modelVersion>4.0.0</modelVersion><groupId>org.apache.submarine</groupId><artifactId>submarine</artifactId><version>0.8.0</version>
-                  <properties><k8s.client-java.version>25.0.0-legacy</k8s.client-java.version></properties>
-                  <dependencyManagement><dependencies>
-                    <dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>${k8s.client-java.version}</version></dependency>
-                    <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-api-fluent</artifactId><version>${k8s.client-java.version}</version></dependency>
-                  </dependencies></dependencyManagement>
-                </project>
-                """
-        ));
-    }
-
-    @Test
-    void upgradesGroovyGradleStringNotationForEverySpreadsheetVersion() {
+    void upgradesBothSpreadsheetVersionsInMaven() {
         rewriteRun(
-                gradleDependency("11.0.2", "v11.gradle"),
-                gradleDependency("16.0.2", "v16-0-2.gradle"),
-                gradleDependency("16.0.3", "v16-0-3.gradle"),
-                gradleDependency("17.0.2", "v17.gradle"),
-                gradleDependency("18.0.1", "v18.gradle")
+                pomXml(pom("5.12.0"), pom("7.3.1"), source -> source.path("v5.12.0/pom.xml")),
+                pomXml(pom("5.12.4"), pom("7.3.1"), source -> source.path("v5.12.4/pom.xml"))
         );
     }
 
     @Test
-    void upgradesGroovyGradleMapNotation() {
-        rewriteRun(buildGradle(
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                dependencies { implementation group: 'io.kubernetes', name: 'client-java', version: '16.0.3' }
-                """,
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                dependencies { implementation group: 'io.kubernetes', name: 'client-java', version: '25.0.0-legacy' }
-                """
-        ));
-    }
-
-    @Test
-    void leavesGroovyGradleVersionPropertyWithoutResolvedRequestedVersionUntouched() {
-        rewriteRun(buildGradle(
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                ext { kubernetesClientVersion = '18.0.1' }
-                dependencies { implementation "io.kubernetes:client-java:${kubernetesClientVersion}" }
-                """,
-                source -> source.path("build.gradle")
-        ));
-    }
-
-    @Test
-    void leavesButterCamVersionCatalogForManualReview() {
-        // Reduced from ButterCam/sisyphus 1.7.14 at f8d72b42. The generic dependency recipe
-        // cannot safely infer which [versions] alias a version.ref row owns.
-        // https://github.com/ButterCam/sisyphus/blob/f8d72b422f21ed718c778bc94dbe192e4892a405/gradle/libs.versions.toml
-        rewriteRun(toml(
-                """
-                [versions]
-                kubernetes = "16.0.3"
-
-                [libraries]
-                kubernetes = { module = "io.kubernetes:client-java", version.ref = "kubernetes" }
-                """,
-                source -> source.path("gradle/libs.versions.toml")
-        ));
-    }
-
-    @Test
-    void leavesKotlinDslWithoutGradleSemanticModelUntouched() {
-        rewriteRun(buildGradleKts(
-                """
-                plugins { java }
-                repositories { mavenCentral() }
-                dependencies { implementation("io.kubernetes:client-java:18.0.1") }
-                """
-        ));
-    }
-
-    @Test
-    void upgradesLocallyManagedVersionForVersionlessDependency() {
-        rewriteRun(pomXml(
+    void upgradesSelectedDependencyManagementLiteralAndPreservesVersionlessUse() {
+        rewriteRun(xml(
                 """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>managed</artifactId><version>1</version>
-                  <dependencyManagement><dependencies><dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>16.0.2</version></dependency></dependencies></dependencyManagement>
-                  <dependencies><dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId></dependency></dependencies>
+                  <dependencyManagement><dependencies><dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>5.12.4</version></dependency></dependencies></dependencyManagement>
+                  <dependencies><dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId></dependency></dependencies>
                 </project>
                 """,
                 """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>managed</artifactId><version>1</version>
-                  <dependencyManagement><dependencies><dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>25.0.0-legacy</version></dependency></dependencies></dependencyManagement>
-                  <dependencies><dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId></dependency></dependencies>
+                  <dependencyManagement><dependencies><dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>7.3.1</version></dependency></dependencies></dependencyManagement>
+                  <dependencies><dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId></dependency></dependencies>
+                </project>
+                """,
+                source -> source.path("pom.xml")
+        ));
+    }
+
+    @Test
+    void upgradesIsolatedMavenProperty() {
+        rewriteRun(pomXml(
+                propertyPom("5.12.0"),
+                propertyPom("7.3.1")
+        ));
+    }
+
+    @Test
+    void preservesSharedMavenPropertyEvenWhenItsValueIsSelected() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shared</artifactId><version>1</version>
+                  <properties><fabric8.version>5.12.4</fabric8.version></properties>
+                  <dependencies>
+                    <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>${fabric8.version}</version></dependency>
+                    <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-model-core</artifactId><version>${fabric8.version}</version></dependency>
+                  </dependencies>
                 </project>
                 """
         ));
     }
 
     @Test
-    void leavesUnmanagedVersionlessDependencyUntouched() {
-        rewriteRun(buildGradle(
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                dependencies { implementation 'io.kubernetes:client-java' }
-                """
-        ));
-    }
-
-    @Test
-    void leavesTargetVersionUntouched() {
-        rewriteRun(pomXml(directPom("25.0.0-legacy")));
-    }
-
-    @Test
-    void leavesModernNonLegacyTargetUntouched() {
-        rewriteRun(pomXml(directPom("25.0.0")));
-    }
-
-    @Test
-    void leavesLaterModernMajorUntouched() {
-        rewriteRun(pomXml(directPom("26.0.0")));
-    }
-
-    @Test
-    void leavesUnlistedAdjacentMavenVersionsUntouched() {
-        rewriteRun(
-                pomXml(directPom("11.0.3"), source -> source.path("v11-0-3-pom.xml")),
-                pomXml(directPom("16.0.1"), source -> source.path("v16-0-1-pom.xml")),
-                pomXml(directPom("17.0.1"), source -> source.path("v17-0-1-pom.xml")),
-                pomXml(directPom("19.0.1"), source -> source.path("v19-0-1-pom.xml"))
-        );
-    }
-
-    @Test
-    void leavesUnlistedGradleVersionUntouched() {
-        rewriteRun(buildGradle(
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                dependencies { implementation 'io.kubernetes:client-java:18.0.0' }
-                """
-        ));
-    }
-
-    @Test
-    void leavesPropertyWithoutClientJavaReferenceUntouched() {
+    void preservesUnresolvedRangeTargetUnlistedAndFutureVersions() {
         rewriteRun(pomXml(
                 """
-                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>property-only</artifactId><version>1</version>
-                  <properties><kubernetes-client.version>17.0.2</kubernetes-client.version></properties>
-                  <dependencies><dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>6.13.5</version></dependency></dependencies>
-                </project>
-                """
-        ));
-    }
-
-    @Test
-    void leavesSameArtifactFromAnotherGroupUntouched() {
-        rewriteRun(buildGradle(
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                dependencies { implementation 'com.example:client-java:18.0.1' }
-                """
-        ));
-    }
-
-    @Test
-    void leavesCompanionArtifactsWithIndependentVersionsUntouched() {
-        rewriteRun(pomXml(
-                """
-                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>companions</artifactId><version>1</version><dependencies>
-                  <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-api</artifactId><version>18.0.1</version></dependency>
-                  <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-api-fluent</artifactId><version>18.0.1</version></dependency>
-                  <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-extended</artifactId><version>18.0.1</version></dependency>
-                  <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-proto</artifactId><version>18.0.1</version></dependency>
-                  <dependency><groupId>io.kubernetes</groupId><artifactId>client-java-spring-integration</artifactId><version>18.0.1</version></dependency>
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>safety</artifactId><version>1</version><dependencies>
+                  <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>${missing.version}</version></dependency>
+                  <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>[5.12,6)</version></dependency>
+                  <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>5.12.3</version></dependency>
+                  <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>6.13.5</version></dependency>
+                  <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>7.3.1</version></dependency>
+                  <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>7.4.0</version></dependency>
                 </dependencies></project>
                 """
         ));
     }
 
     @Test
-    void preservesScopeOptionalClassifierAndExclusions() {
+    void preservesBomManagedVersionlessDependency() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>bom-owned</artifactId><version>1</version>
+                  <dependencyManagement><dependencies><dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client-bom</artifactId><version>5.12.0</version><type>pom</type><scope>import</scope></dependency></dependencies></dependencyManagement>
+                  <dependencies><dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId></dependency></dependencies>
+                </project>
+                """
+        ));
+    }
+
+    @Test
+    void quarkusRealBomFixtureIsDeliberatelyNotRewritten() {
+        // Reduced from Quarkus 2.7.0.Final, fixed commit 6378c697:
+        // https://github.com/quarkusio/quarkus/blob/6378c69703a485f55b3d221493b5f1e3cfdf9003/bom/application/pom.xml
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>io.quarkus</groupId><artifactId>quarkus-bom</artifactId><version>2.7.0.Final</version>
+                  <properties><kubernetes-client.version>5.12.0</kubernetes-client.version></properties>
+                  <dependencyManagement><dependencies><dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client-bom</artifactId><version>${kubernetes-client.version}</version><type>pom</type><scope>import</scope></dependency></dependencies></dependencyManagement>
+                </project>
+                """
+        ));
+    }
+
+    @Test
+    void upgradesGroovyAndKotlinDirectStringNotation() {
+        rewriteRun(
+                buildGradle(
+                        "plugins { id 'java' }\ndependencies { implementation 'io.fabric8:kubernetes-client:5.12.0' }",
+                        "plugins { id 'java' }\ndependencies { implementation 'io.fabric8:kubernetes-client:7.3.1' }"
+                ),
+                buildGradleKts(
+                        "plugins { java }\ndependencies { implementation(\"io.fabric8:kubernetes-client:5.12.4\") }",
+                        "plugins { java }\ndependencies { implementation(\"io.fabric8:kubernetes-client:7.3.1\") }"
+                )
+        );
+    }
+
+    @Test
+    void preservesGradleInterpolationMapNotationAndVersionCatalogAlias() {
+        rewriteRun(
+                buildGradle(
+                        """
+                        plugins { id 'java' }
+                        ext { fabric8Version = '5.12.0' }
+                        dependencies {
+                          implementation "io.fabric8:kubernetes-client:${fabric8Version}"
+                          implementation group: 'io.fabric8', name: 'kubernetes-client', version: '5.12.4'
+                          implementation libs.fabric8.client
+                        }
+                        """
+                ),
+                buildGradleKts(
+                        """
+                        plugins { java }
+                        val fabric8Version = "5.12.4"
+                        dependencies { implementation("io.fabric8:kubernetes-client:$fabric8Version") }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void preservesSimilarGroupsAndCompanionArtifacts() {
+        rewriteRun(xml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>coordinates</artifactId><version>1</version><dependencies>
+                  <dependency><groupId>com.example</groupId><artifactId>kubernetes-client</artifactId><version>5.12.0</version></dependency>
+                  <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client-api</artifactId><version>5.12.0</version></dependency>
+                  <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client-bom</artifactId><version>5.12.4</version></dependency>
+                  <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-model</artifactId><version>5.12.4</version></dependency>
+                  <dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>5.12.0</version></dependency>
+                </dependencies></project>
+                """,
+                source -> source.path("pom.xml")
+        ));
+    }
+
+    @Test
+    void preservesMavenDependencyShape() {
         rewriteRun(pomXml(
                 """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shape</artifactId><version>1</version><dependencies><dependency>
-                  <groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>16.0.3</version><classifier>tests</classifier><scope>test</scope><optional>true</optional>
-                  <exclusions><exclusion><groupId>org.yaml</groupId><artifactId>snakeyaml</artifactId></exclusion></exclusions>
+                  <groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>5.12.4</version><classifier>tests</classifier><scope>test</scope><optional>true</optional>
+                  <exclusions><exclusion><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId></exclusion></exclusions>
                 </dependency></dependencies></project>
                 """,
                 """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shape</artifactId><version>1</version><dependencies><dependency>
-                  <groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>25.0.0-legacy</version><classifier>tests</classifier><scope>test</scope><optional>true</optional>
-                  <exclusions><exclusion><groupId>org.yaml</groupId><artifactId>snakeyaml</artifactId></exclusion></exclusions>
+                  <groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>7.3.1</version><classifier>tests</classifier><scope>test</scope><optional>true</optional>
+                  <exclusions><exclusion><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId></exclusion></exclusions>
                 </dependency></dependencies></project>
                 """
         ));
     }
 
     @Test
-    void migrationRecipePreservesApacheShenyuStyleLegacyApiSource() {
-        // Reduced from apache/shenyu v2.7.0 KubernetesScaler.java. The target is the legacy
-        // generator on purpose; changing positional generated calls without cluster context is unsafe.
-        rewriteRun(
-                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE))
-                        .typeValidationOptions(TypeValidation.none()),
-                pomXml(directPom("17.0.2"), directPom("25.0.0-legacy")),
-                java(
-                        """
-                        package org.apache.shenyu.admin.scale.scaler;
-
-                        import io.kubernetes.client.openapi.ApiException;
-                        import io.kubernetes.client.openapi.apis.AppsV1Api;
-                        import io.kubernetes.client.openapi.models.V1Scale;
-
-                        class KubernetesScaler {
-                            private final AppsV1Api api;
-                            KubernetesScaler(AppsV1Api api) { this.api = api; }
-
-                            V1Scale read(String name, String namespace) throws ApiException {
-                                return api.readNamespacedDeploymentScale(name, namespace, null);
-                            }
-
-                            void replace(String name, String namespace, V1Scale scale) throws ApiException {
-                                api.replaceNamespacedDeploymentScale(name, namespace, scale, null, null, null, null);
-                            }
-                        }
-                        """,
-                        source -> source.path("src/main/java/org/apache/shenyu/admin/scale/scaler/KubernetesScaler.java")
-                )
-        );
+    void dependencyUpgradeIsIdempotent() {
+        rewriteRun(spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1),
+                pomXml(pom("5.12.0"), pom("7.3.1")));
     }
 
     @Test
-    void migrationRecipePreservesWatchCallPatchAuthAndSerializationHotspots() {
+    void epamRealSourceMigratesSafeConfigConstructorToBuilder() {
+        // Reduced from epam/cloud-pipeline at fixed commit 0474f0b1:
+        // https://github.com/epam/cloud-pipeline/blob/0474f0b13233edbf600f339001aa77b82edb8a28/vm-monitor/src/main/java/com/epam/pipeline/vmmonitor/service/k8s/KubernetesDeploymentMonitor.java
         rewriteRun(
-                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE))
-                        .typeValidationOptions(TypeValidation.none()),
-                pomXml(directPom("18.0.1"), directPom("25.0.0-legacy")),
+                sourceSpec(),
                 java(
                         """
                         package example;
-
-                        import com.google.gson.reflect.TypeToken;
-                        import io.kubernetes.client.custom.V1Patch;
-                        import io.kubernetes.client.openapi.ApiClient;
-                        import io.kubernetes.client.openapi.ApiException;
-                        import io.kubernetes.client.openapi.apis.CoreV1Api;
-                        import io.kubernetes.client.openapi.models.V1Pod;
-                        import io.kubernetes.client.openapi.models.V1PodList;
-                        import io.kubernetes.client.util.Config;
-                        import io.kubernetes.client.util.Watch;
-                        import okhttp3.Call;
-
-                        class KubernetesHotspots {
-                            ApiClient authenticate() throws Exception { return Config.defaultClient(); }
-                            V1PodList list(CoreV1Api api) throws ApiException {
-                                return api.listNamespacedPod("default", null, null, null, null, null, null, null, null, null, null);
+                        import io.fabric8.kubernetes.client.Config;
+                        import io.fabric8.kubernetes.client.ConfigBuilder;
+                        import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+                        import io.fabric8.kubernetes.client.KubernetesClient;
+                        class Monitor {
+                            void check() {
+                                Config config = new ConfigBuilder().build();
+                                try (KubernetesClient client = new DefaultKubernetesClient(config)) {}
                             }
-                            Call listCall(CoreV1Api api) throws ApiException {
-                                return api.listNamespacedPodCall("default", null, null, null, null, null, null, null, null, true, null, null);
-                            }
-                            Watch<V1Pod> watch(ApiClient client, Call call) throws Exception {
-                                return Watch.createWatch(client, call, new TypeToken<Watch.Response<V1Pod>>() {}.getType());
-                            }
-                            V1Patch patch(String json) { return new V1Patch(json); }
                         }
                         """,
-                        source -> source.path("src/main/java/example/KubernetesHotspots.java")
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.Config;
+                        import io.fabric8.kubernetes.client.ConfigBuilder;
+                        import io.fabric8.kubernetes.client.KubernetesClient;
+                        class Monitor {
+                            void check() {
+                                Config config = new ConfigBuilder().build();
+                                try (KubernetesClient client = new io.fabric8.kubernetes.client.KubernetesClientBuilder().withConfig(config).build()) {}
+                            }
+                        }
+                        """
                 )
         );
     }
 
     @Test
-    void discoversAndValidatesRecipes() {
-        Environment environment = environment();
-        Recipe dependency = environment.activateRecipes(DEPENDENCY_RECIPE);
-        Recipe migration = environment.activateRecipes(MIGRATION_RECIPE);
-
-        assertTrue(environment.listRecipes().stream().anyMatch(recipe -> DEPENDENCY_RECIPE.equals(recipe.getName())));
-        assertTrue(environment.listRecipes().stream().anyMatch(recipe -> MIGRATION_RECIPE.equals(recipe.getName())));
-        assertTrue(dependency.validate().isValid(), () -> dependency.validate().failures().toString());
-        assertTrue(migration.validate().isValid(), () -> migration.validate().failures().toString());
-        assertEquals(1, migration.getRecipeList().size());
-    }
-
-    private static Environment environment() {
-        return Environment.builder()
-                .scanRuntimeClasspath("com.huawei.clouds.openrewrite.kubernetesclientjava")
-                .scanYamlResources()
-                .build();
-    }
-
-    private static String directPom(String version) {
-        return """
-                <project>
-                  <modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>kubernetes-client-app</artifactId><version>1</version>
-                  <dependencies><dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>%s</version></dependency></dependencies>
-                </project>
-                """.formatted(version);
-    }
-
-    private static String propertyPom(String version, String property) {
-        return """
-                <project>
-                  <modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>property-app</artifactId><version>1</version>
-                  <properties><%1$s>%2$s</%1$s></properties>
-                  <dependencies><dependency><groupId>io.kubernetes</groupId><artifactId>client-java</artifactId><version>${%1$s}</version></dependency></dependencies>
-                </project>
-                """.formatted(property, version);
-    }
-
-    private static org.openrewrite.test.SourceSpecs gradleDependency(String version, String path) {
-        return buildGradle(
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                dependencies { implementation 'io.kubernetes:client-java:%s' }
-                """.formatted(version),
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                dependencies { implementation 'io.kubernetes:client-java:25.0.0-legacy' }
-                """,
-                source -> source.path(path)
+    void yugabyteRealSourceBuilderMigrationIsIdempotent() {
+        // Reduced from yugabyte/yugabyte-db at fixed commit d2dbffa5:
+        // https://github.com/yugabyte/yugabyte-db/blob/d2dbffa51b6ad60903dac46442f36b2a2a786299/managed/src/main/java/com/yugabyte/yw/common/operator/KubernetesOperator.java
+        rewriteRun(
+                spec -> {
+                    sourceSpec().accept(spec);
+                    spec.cycles(2).expectedCyclesThatMakeChanges(1);
+                },
+                java(
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.Config;
+                        import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+                        import io.fabric8.kubernetes.client.KubernetesClient;
+                        class Operator {
+                            void run() {
+                                Config config = new Config();
+                                try (KubernetesClient client = new DefaultKubernetesClient(config)) {}
+                            }
+                        }
+                        """,
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.Config;
+                        import io.fabric8.kubernetes.client.KubernetesClient;
+                        class Operator {
+                            void run() {
+                                Config config = new Config();
+                                try (KubernetesClient client = new io.fabric8.kubernetes.client.KubernetesClientBuilder().withConfig(config).build()) {}
+                            }
+                        }
+                        """
+                )
         );
+    }
+
+    @Test
+    void leavesConcreteAndNamespacedClientTargetsForReview() {
+        rewriteRun(
+                sourceSpec(),
+                java(
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.*;
+                        class UnsafeTargets {
+                            DefaultKubernetesClient concrete = new DefaultKubernetesClient(new Config());
+                            NamespacedKubernetesClient namespaced = new DefaultKubernetesClient();
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void migratesReadinessCustomResourceInformerAndApplicable() {
+        rewriteRun(
+                sourceSpec(),
+                java(
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.CustomResourceList;
+                        import io.fabric8.kubernetes.client.dsl.Applicable;
+                        import io.fabric8.kubernetes.client.informers.SharedInformer;
+                        import io.fabric8.kubernetes.client.internal.readiness.Readiness;
+                        class APIs {
+                            CustomResourceList<?> list;
+                            SharedInformer<?> informer;
+                            Readiness readiness;
+                            Object create(Applicable<Object> a) { return a.apply(); }
+                        }
+                        """,
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.api.model.DefaultKubernetesResourceList;
+                        import io.fabric8.kubernetes.client.dsl.Applicable;
+                        import io.fabric8.kubernetes.client.informers.SharedIndexInformer;
+                        import io.fabric8.kubernetes.client.readiness.Readiness;
+
+                        class APIs {
+                            DefaultKubernetesResourceList<?> list;
+                            SharedIndexInformer<?> informer;
+                            Readiness readiness;
+                            Object create(Applicable<Object> a) { return a.createOrReplace(); }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void migratesOpenShiftAndVerticalPodAutoscalerPackages() {
+        rewriteRun(
+                sourceSpec(),
+                java(
+                        """
+                        package example;
+                        import io.fabric8.openshift.api.model.clusterautoscaling.v1.ClusterAutoscaler;
+                        import io.fabric8.openshift.api.model.machineconfig.v1.MachineConfig;
+                        import io.fabric8.openshift.client.OpenShiftClient;
+                        import io.fabric8.verticalpodautoscaler.api.model.VerticalPodAutoscaler;
+                        class Extensions {
+                            ClusterAutoscaler autoscaler; MachineConfig machine; VerticalPodAutoscaler vpa;
+                            Object dsl(OpenShiftClient client) { return client.clusterAutoscaling(); }
+                        }
+                        """,
+                        """
+                        package example;
+                        import io.fabric8.openshift.api.model.autoscaling.v1.ClusterAutoscaler;
+                        import io.fabric8.openshift.api.model.machineconfiguration.v1.MachineConfig;
+                        import io.fabric8.openshift.client.OpenShiftClient;
+                        import io.fabric8.autoscaling.api.model.v1.VerticalPodAutoscaler;
+                        class Extensions {
+                            ClusterAutoscaler autoscaler; MachineConfig machine; VerticalPodAutoscaler vpa;
+                            Object dsl(OpenShiftClient client) { return client.openShiftAutoscaling(); }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void migratesOfficialMockWebServerReplacementTypes() {
+        rewriteRun(
+                mockSourceSpec(),
+                java(
+                        """
+                        package example;
+                        import okhttp3.Headers;
+                        import okhttp3.mockwebserver.MockResponse;
+                        import okhttp3.mockwebserver.MockWebServer;
+                        import okhttp3.mockwebserver.RecordedRequest;
+                        class MockTest { MockWebServer server; MockResponse response; RecordedRequest request; Headers headers; }
+                        """,
+                        """
+                        package example;
+                        import io.fabric8.mockwebserver.MockWebServer;
+                        import io.fabric8.mockwebserver.http.Headers;
+                        import io.fabric8.mockwebserver.http.MockResponse;
+                        import io.fabric8.mockwebserver.http.RecordedRequest;
+
+                        class MockTest { MockWebServer server; MockResponse response; RecordedRequest request; Headers headers; }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void doesNotRewriteOrdinaryOkHttpTypesOutsideFabric8MockTests() {
+        rewriteRun(
+                mockSourceSpec(),
+                java(
+                        """
+                        package example;
+                        import okhttp3.Headers;
+                        class ProductionHttp { Headers headers; }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void flinkRealNamespacedConstructorIsMarkedNotBrokenByAutomation() {
+        // Reduced from apache/flink release-1.14.3 at fixed commit 98997ea3:
+        // https://github.com/apache/flink/blob/98997ea37ba08eae0f9aa6dd34823238097d8e0d/flink-kubernetes/src/main/java/org/apache/flink/kubernetes/kubeclient/FlinkKubeClientFactory.java
+        rewriteRun(
+                riskSourceSpec(),
+                java(
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.Config;
+                        import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+                        import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+                        class FlinkKubeClientFactory {
+                            NamespacedKubernetesClient create(Config config) {
+                                return new DefaultKubernetesClient(config);
+                            }
+                        }
+                        """,
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.Config;
+                        import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+                        import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+                        class FlinkKubeClientFactory {
+                            NamespacedKubernetesClient create(Config config) {
+                                return /*~~(Direct DefaultKubernetesClient construction remains: choose KubernetesClientBuilder and preserve namespace/HTTP-client semantics)~~>*/new DefaultKubernetesClient(config);
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void hugegraphRealKubeconfigStringConsumerIsPreciselyMarked() {
+        // Reduced from apache/hugegraph-computer at fixed commit 20cb8852:
+        // https://github.com/apache/hugegraph-computer/blob/20cb8852ac69af14871df20618a541cb1725594a/computer/computer-test/src/main/java/org/apache/hugegraph/computer/k8s/MiniKubeTest.java
+        rewriteRun(
+                riskSourceSpec(),
+                java(
+                        """
+                        package example;
+                        import java.io.File;
+                        import static io.fabric8.kubernetes.client.Config.getKubeconfigFilename;
+                        class MiniKubeTest { File config() { return new File(getKubeconfigFilename()); } }
+                        """,
+                        """
+                        package example;
+                        import java.io.File;
+                        import static io.fabric8.kubernetes.client.Config.getKubeconfigFilename;
+                        class MiniKubeTest { File config() { return new File(/*~~(Config.getKubeconfigFilename() became getKubeconfigFilenames(); migrate String consumers to the returned collection deliberately)~~>*/getKubeconfigFilename()); } }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void marksDeleteWatchAndCapabilityCallsWithTypedFabric8Owners() {
+        rewriteRun(
+                riskSourceSpec(),
+                java(
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.KubernetesClient;
+                        class Risks {
+                            void use(KubernetesClient client) {
+                                client.delete();
+                                client.watch();
+                                client.supports(String.class);
+                            }
+                        }
+                        """,
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.KubernetesClient;
+                        class Risks {
+                            void use(KubernetesClient client) {
+                                /*~~(Fabric8 resource/delete DSL changed across 6/7; verify resource(item), createOrReplace, delete StatusDetails, and propagation semantics)~~>*/client.delete();
+                                /*~~(Fabric8 watch/informer/stream lifecycle changed; verify close, reconnect, timeout, executor, and exception behavior on 7.3.1)~~>*/client.watch();
+                                /*~~(Fabric8 capability/adapt check semantics changed; choose hasApiGroup, supports, or adaptation according to intent)~~>*/client.supports(String.class);
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void marksQuarkusBomJavaBaselineAndHttpTransportBuildRisks() {
+        rewriteRun(
+                spec -> spec.recipe(recipe(BUILD_RISK_RECIPE)),
+                text(
+                        """
+                        <project><properties><maven.compiler.release>8</maven.compiler.release></properties><dependencies>
+                          <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client-bom</artifactId><version>5.12.0</version></dependency>
+                          <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-httpclient-okhttp</artifactId></dependency>
+                        </dependencies></project>
+                        """,
+                        """
+                        <project><properties>~~><maven.compiler.release>8</maven.compiler.release></properties><dependencies>
+                          <dependency><groupId>io.fabric8</groupId>~~><artifactId>kubernetes-client-bom</artifactId><version>5.12.0</version></dependency>
+                          <dependency><groupId>io.fabric8</groupId>~~><artifactId>kubernetes-httpclient-okhttp</artifactId></dependency>
+                        </dependencies></project>
+                        """,
+                        source -> source.path("pom.xml")
+                )
+        );
+    }
+
+    @Test
+    void marksBehaviorConfigurationAndManifestApiVersion() {
+        rewriteRun(
+                spec -> spec.recipe(recipe(CONFIG_RISK_RECIPE)),
+                text(
+                        """
+                        kubernetes.backwardsCompatibilityInterceptor.disable=true
+                        KUBERNETES_KUBECONFIG_FILE=/work/kubeconfig
+                        """,
+                        """
+                        ~~>kubernetes.backwardsCompatibilityInterceptor.disable=true
+                        ~~>KUBERNETES_KUBECONFIG_FILE=/work/kubeconfig
+                        """,
+                        source -> source.path("application.properties")
+                ),
+                text(
+                        "apiVersion: apps/v1\nkind: Deployment",
+                        "~~>apiVersion: apps/v1\nkind: Deployment",
+                        source -> source.path("deployment.yaml")
+                )
+        );
+    }
+
+    @Test
+    void compositeUpgradesDependencyMigratesSafeSourceAndMarksRemainingRisk() {
+        rewriteRun(
+                spec -> {
+                    sourceSpec().accept(spec);
+                    spec.recipe(recipe(MIGRATION_RECIPE)).typeValidationOptions(TypeValidation.none());
+                },
+                pomXml(pom("5.12.4"), pom("7.3.1")),
+                java(
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.Config;
+                        import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+                        import io.fabric8.kubernetes.client.KubernetesClient;
+                        class App {
+                            KubernetesClient safe = new DefaultKubernetesClient(new Config());
+                            String config = Config.getKubeconfigFilename();
+                        }
+                        """,
+                        """
+                        package example;
+                        import io.fabric8.kubernetes.client.Config;
+                        import io.fabric8.kubernetes.client.KubernetesClient;
+                        class App {
+                            KubernetesClient safe = new io.fabric8.kubernetes.client.KubernetesClientBuilder().withConfig(new Config()).build();
+                            String config = /*~~(Config.getKubeconfigFilename() became getKubeconfigFilenames(); migrate String consumers to the returned collection deliberately)~~>*/Config.getKubeconfigFilename();
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void allDeclarativeRecipesAreDiscoverableAndValid() {
+        Environment environment = environment();
+        String[] names = {
+                DEPENDENCY_RECIPE, SOURCE_RECIPE, JAVA_RISK_RECIPE, BUILD_RISK_RECIPE,
+                CONFIG_RISK_RECIPE, MIGRATION_RECIPE,
+                "com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateFabric8MockWebServerTo7"
+        };
+        for (String name : names) {
+            Recipe recipe = environment.activateRecipes(name);
+            assertEquals(name, recipe.getName());
+            assertTrue(recipe.validateAll().stream().allMatch(validation -> validation.isValid()),
+                    () -> name + ": " + recipe.validateAll());
+        }
+    }
+
+    private Recipe recipe(String name) {
+        return environment().activateRecipes(name);
+    }
+
+    private Environment environment() {
+        return Environment.builder().scanRuntimeClasspath().build();
+    }
+
+    private static Consumer<RecipeSpec> sourceSpec() {
+        return spec -> spec.recipe(Environment.builder().scanRuntimeClasspath().build().activateRecipes(SOURCE_RECIPE))
+                .parser(fabric8Parser()).typeValidationOptions(TypeValidation.none());
+    }
+
+    private static Consumer<RecipeSpec> riskSourceSpec() {
+        return spec -> spec.recipe(Environment.builder().scanRuntimeClasspath().build().activateRecipes(JAVA_RISK_RECIPE))
+                .parser(fabric8Parser()).typeValidationOptions(TypeValidation.none());
+    }
+
+    private static Consumer<RecipeSpec> mockSourceSpec() {
+        return spec -> spec.recipe(Environment.builder().scanRuntimeClasspath().build()
+                        .activateRecipes("com.huawei.clouds.openrewrite.kubernetesclientjava.MigrateFabric8MockWebServerTo7"))
+                .parser(fabric8Parser()).typeValidationOptions(TypeValidation.none());
+    }
+
+    private static JavaParser.Builder<?, ?> fabric8Parser() {
+        return JavaParser.fromJavaVersion().dependsOn(
+                """
+                package io.fabric8.kubernetes.client;
+                public interface KubernetesClient extends AutoCloseable {
+                    boolean delete(); Object watch(); boolean supports(Class<?> type); void close();
+                }
+                """,
+                "package io.fabric8.kubernetes.client; public interface NamespacedKubernetesClient extends KubernetesClient {}",
+                """
+                package io.fabric8.kubernetes.client;
+                public class Config { public static String getKubeconfigFilename() { return null; } }
+                """,
+                "package io.fabric8.kubernetes.client; public class ConfigBuilder { public Config build() { return null; } }",
+                """
+                package io.fabric8.kubernetes.client;
+                public class DefaultKubernetesClient implements NamespacedKubernetesClient {
+                    public DefaultKubernetesClient() {} public DefaultKubernetesClient(Config c) {}
+                    public boolean delete() { return false; } public Object watch() { return null; }
+                    public boolean supports(Class<?> type) { return false; } public void close() {}
+                }
+                """,
+                """
+                package io.fabric8.kubernetes.client;
+                public class KubernetesClientBuilder {
+                    public KubernetesClientBuilder withConfig(Config c) { return this; }
+                    public KubernetesClient build() { return null; }
+                }
+                """,
+                "package io.fabric8.kubernetes.client; public class CustomResourceList<T> {}",
+                "package io.fabric8.kubernetes.api.model; public class DefaultKubernetesResourceList<T> {}",
+                "package io.fabric8.kubernetes.client.dsl; public interface Applicable<T> { T apply(); T createOrReplace(); }",
+                "package io.fabric8.kubernetes.client.informers; public interface SharedInformer<T> {}",
+                "package io.fabric8.kubernetes.client.informers; public interface SharedIndexInformer<T> {}",
+                "package io.fabric8.kubernetes.client.internal.readiness; public class Readiness {}",
+                "package io.fabric8.kubernetes.client.readiness; public class Readiness {}",
+                "package io.fabric8.openshift.api.model.clusterautoscaling.v1; public class ClusterAutoscaler {}",
+                "package io.fabric8.openshift.api.model.autoscaling.v1; public class ClusterAutoscaler {}",
+                "package io.fabric8.openshift.api.model.machineconfig.v1; public class MachineConfig {}",
+                "package io.fabric8.openshift.api.model.machineconfiguration.v1; public class MachineConfig {}",
+                "package io.fabric8.verticalpodautoscaler.api.model; public class VerticalPodAutoscaler {}",
+                "package io.fabric8.autoscaling.api.model.v1; public class VerticalPodAutoscaler {}",
+                "package io.fabric8.openshift.client; public interface OpenShiftClient { Object clusterAutoscaling(); Object openShiftAutoscaling(); }",
+                "package okhttp3; public class Headers {}",
+                "package okhttp3.mockwebserver; public class MockWebServer {}",
+                "package okhttp3.mockwebserver; public class MockResponse {}",
+                "package okhttp3.mockwebserver; public class RecordedRequest {}",
+                "package io.fabric8.mockwebserver; public class MockWebServer {}",
+                "package io.fabric8.mockwebserver.http; public class Headers {}",
+                "package io.fabric8.mockwebserver.http; public class MockResponse {}",
+                "package io.fabric8.mockwebserver.http; public class RecordedRequest {}"
+        );
+    }
+
+    private static String pom(String version) {
+        return """
+               <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>app</artifactId><version>1</version><dependencies>
+                 <dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>%s</version></dependency>
+               </dependencies></project>
+               """.formatted(version);
+    }
+
+    private static String propertyPom(String version) {
+        return """
+               <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>property</artifactId><version>1</version>
+                 <properties><fabric8.version>%s</fabric8.version></properties>
+                 <dependencies><dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId><version>${fabric8.version}</version></dependency></dependencies>
+               </project>
+               """.formatted(version);
     }
 }
