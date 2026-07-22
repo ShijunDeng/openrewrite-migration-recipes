@@ -15,10 +15,6 @@
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-okhttp-upgrade</url>
   <dependencies>
     <dependency>
-      <groupId>org.openrewrite.recipe</groupId>
-      <artifactId>rewrite-java-dependencies</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-maven</artifactId>
     </dependency>
@@ -32,7 +28,21 @@
     </dependency>
     <dependency>
       <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-kotlin</artifactId>
+      <version>${rewrite.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-xml</artifactId>
+      <version>${rewrite.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-properties</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-yaml</artifactId>
       <version>${rewrite.version}</version>
     </dependency>
     <dependency>

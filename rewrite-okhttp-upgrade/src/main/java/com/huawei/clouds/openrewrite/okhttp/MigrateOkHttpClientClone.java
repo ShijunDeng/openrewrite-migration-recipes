@@ -2,6 +2,7 @@ package com.huawei.clouds.openrewrite.okhttp;
 
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
+import org.openrewrite.SourceFile;
 import org.openrewrite.Tree;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.JavaIsoVisitor;
@@ -9,6 +10,8 @@ import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.Space;
 import org.openrewrite.java.tree.TypeUtils;
+import org.openrewrite.kotlin.KotlinIsoVisitor;
+import org.openrewrite.kotlin.tree.K;
 
 import java.util.List;
 
@@ -27,36 +30,59 @@ public final class MigrateOkHttpClientClone extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new JavaIsoVisitor<ExecutionContext>() {
+        return new TreeVisitor<Tree, ExecutionContext>() {
             @Override
-            public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
-                J.MethodInvocation visited = super.visitMethodInvocation(method, ctx);
-                if (!"clone".equals(visited.getSimpleName()) || !hasNoArguments(visited) ||
-                    visited.getSelect() == null || visited.getMethodType() == null ||
-                    !TypeUtils.isOfClassType(visited.getMethodType().getDeclaringType(), "okhttp3.OkHttpClient")) {
-                    return visited;
+            public Tree visit(Tree tree, ExecutionContext ctx) {
+                if (!(tree instanceof SourceFile source) ||
+                    UpgradeSelectedOkHttpDependency.generated(source.getSourcePath())) return tree;
+                if (tree instanceof J.CompilationUnit java) {
+                    return new JavaIsoVisitor<ExecutionContext>() {
+                        @Override
+                        public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method,
+                                                                        ExecutionContext executionContext) {
+                            return migrate(super.visitMethodInvocation(method, executionContext));
+                        }
+                    }.visitNonNull(java, ctx);
                 }
-                JavaType.FullyQualified clientType = visited.getMethodType().getDeclaringType();
-                JavaType.FullyQualified builderType = JavaType.ShallowClass.build("okhttp3.OkHttpClient$Builder");
-                JavaType.Method newBuilderType = methodType(clientType, "newBuilder", builderType);
-                JavaType.Method buildType = methodType(builderType, "build", clientType);
-
-                J.MethodInvocation newBuilder = visited
-                        .withPrefix(Space.EMPTY)
-                        .withName(visited.getName().withSimpleName("newBuilder").withType(newBuilderType))
-                        .withMethodType(newBuilderType);
-                return visited
-                        .withId(Tree.randomId())
-                        .withSelect(newBuilder)
-                        .withName(visited.getName().withId(Tree.randomId()).withSimpleName("build").withType(buildType))
-                        .withMethodType(buildType);
-            }
-
-            private boolean hasNoArguments(J.MethodInvocation method) {
-                return method.getArguments().isEmpty() ||
-                       (method.getArguments().size() == 1 && method.getArguments().get(0) instanceof J.Empty);
+                if (tree instanceof K.CompilationUnit kotlin) {
+                    return new KotlinIsoVisitor<ExecutionContext>() {
+                        @Override
+                        public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method,
+                                                                        ExecutionContext executionContext) {
+                            return migrate(super.visitMethodInvocation(method, executionContext));
+                        }
+                    }.visitNonNull(kotlin, ctx);
+                }
+                return tree;
             }
         };
+    }
+
+    private static J.MethodInvocation migrate(J.MethodInvocation visited) {
+        if (!"clone".equals(visited.getSimpleName()) || !hasNoArguments(visited) ||
+            visited.getSelect() == null || visited.getMethodType() == null ||
+            !TypeUtils.isOfClassType(visited.getMethodType().getDeclaringType(), "okhttp3.OkHttpClient")) {
+            return visited;
+        }
+        JavaType.FullyQualified clientType = visited.getMethodType().getDeclaringType();
+        JavaType.FullyQualified builderType = JavaType.ShallowClass.build("okhttp3.OkHttpClient$Builder");
+        JavaType.Method newBuilderType = methodType(clientType, "newBuilder", builderType);
+        JavaType.Method buildType = methodType(builderType, "build", clientType);
+
+        J.MethodInvocation newBuilder = visited
+                .withPrefix(Space.EMPTY)
+                .withName(visited.getName().withSimpleName("newBuilder").withType(newBuilderType))
+                .withMethodType(newBuilderType);
+        return visited
+                .withId(Tree.randomId())
+                .withSelect(newBuilder)
+                .withName(visited.getName().withId(Tree.randomId()).withSimpleName("build").withType(buildType))
+                .withMethodType(buildType);
+    }
+
+    private static boolean hasNoArguments(J.MethodInvocation method) {
+        return method.getArguments().isEmpty() ||
+               (method.getArguments().size() == 1 && method.getArguments().get(0) instanceof J.Empty);
     }
 
     private static JavaType.Method methodType(JavaType.FullyQualified owner, String name, JavaType returnType) {

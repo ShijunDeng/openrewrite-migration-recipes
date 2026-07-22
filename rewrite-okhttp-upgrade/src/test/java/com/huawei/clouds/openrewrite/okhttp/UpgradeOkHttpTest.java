@@ -1,15 +1,21 @@
 package com.huawei.clouds.openrewrite.okhttp;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openrewrite.Recipe;
 import org.openrewrite.config.Environment;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openrewrite.gradle.Assertions.buildGradle;
 import static org.openrewrite.gradle.Assertions.buildGradleKts;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.xml.Assertions.xml;
 
 class UpgradeOkHttpTest implements RewriteTest {
     private static final String UPGRADE_RECIPE =
@@ -22,12 +28,24 @@ class UpgradeOkHttpTest implements RewriteTest {
         spec.recipe(environment().activateRecipes(UPGRADE_RECIPE));
     }
 
-    @Test
-    void upgradesTableVersion3_14_4InDirectMavenDependency() {
+    @ParameterizedTest(name = "upgrades workbook-visible source {0}")
+    @ValueSource(strings = {
+            "3.14.4", "3.14.9", "4.8.0", "4.9.1", "4.9.2",
+            "4.9.3", "4.10.0", "4.11.0", "5.0.0-alpha.11"
+    })
+    void upgradesEveryWorkbookSourceVersion(String version) {
         rewriteRun(pomXml(
-                directPom("3.14.4"),
+                directPom(version),
                 directPom("5.3.0")
         ));
+    }
+
+    @Test
+    void sourceVersionWhitelistExactlyMatchesWorkbookCells() {
+        assertEquals(Set.of(
+                        "3.14.4", "3.14.9", "4.8.0", "4.9.1", "4.9.2",
+                        "4.9.3", "4.10.0", "4.11.0", "5.0.0-alpha.11"),
+                UpgradeSelectedOkHttpDependency.SOURCE_VERSIONS);
     }
 
     @Test
@@ -178,20 +196,12 @@ class UpgradeOkHttpTest implements RewriteTest {
     }
 
     @Test
-    void upgradesGradleVersionProperty() {
+    void leavesGradleVersionPropertyForItsOwner() {
         rewriteRun(buildGradle(
                 """
                 plugins { id 'java' }
                 repositories { mavenCentral() }
                 ext { okhttpVersion = '4.11.0' }
-                dependencies {
-                    implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
-                }
-                """,
-                """
-                plugins { id 'java' }
-                repositories { mavenCentral() }
-                ext { okhttpVersion = '5.3.0' }
                 dependencies {
                     implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
                 }
@@ -331,19 +341,135 @@ class UpgradeOkHttpTest implements RewriteTest {
     }
 
     @Test
-    void upgradesScopedDependencyWithClassifierWithoutChangingShape() {
+    void leavesClassifiedDependencyUntouched() {
         rewriteRun(pomXml(
                 """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>classified</artifactId><version>1</version><dependencies><dependency>
                   <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>4.9.1</version><classifier>tests</classifier><scope>test</scope>
                 </dependency></dependencies></project>
-                """,
-                """
-                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>classified</artifactId><version>1</version><dependencies><dependency>
-                  <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>5.3.0</version><classifier>tests</classifier><scope>test</scope>
-                </dependency></dependencies></project>
                 """
         ));
+    }
+
+    @Test
+    void requiresOwnedMavenAndGradleDependencyNodesAndStandardVariants() {
+        rewriteRun(
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>plugin-owner</artifactId><version>1</version>
+                          <build><plugins><plugin><groupId>example</groupId><artifactId>tool</artifactId><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>4.11.0</version>
+                          </dependency></dependencies></plugin></plugins></build>
+                        </project>
+                        """,
+                        source -> source.path("plugin/pom.xml")
+                ),
+                xml(
+                        "<catalog><dependencies><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>4.11.0</version></dependency></dependencies></catalog>",
+                        source -> source.path("catalog.xml")
+                ),
+                xml(
+                        "<root><project><properties><okhttp.version>4.11.0</okhttp.version></properties><dependencies><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>${okhttp.version}</version></dependency></dependencies></project></root>",
+                        source -> source.path("nested/pom.xml")
+                ),
+                buildGradle(
+                        """
+                        implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+                        dependencies {
+                            constraints { implementation 'com.squareup.okhttp3:okhttp:4.11.0' }
+                            implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.11.0', classifier: 'tests'
+                            implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.11.0', ext: 'aar'
+                        }
+                        fake { dependencies { implementation 'com.squareup.okhttp3:okhttp:4.11.0' } }
+                        """,
+                        source -> source.path("strict.gradle")
+                ),
+                buildGradleKts(
+                        "implementation(\"com.squareup.okhttp3:okhttp:4.11.0\")",
+                        source -> source.path("outside.gradle.kts")
+                ),
+                pomXml(
+                        directPom("4.11.0"),
+                        source -> source.path("target/generated-poms/pom.xml")
+                ),
+                buildGradle(
+                        "dependencies { implementation 'com.squareup.okhttp3:okhttp:4.11.0' }",
+                        source -> source.path("install/templates/build.gradle")
+                )
+        );
+    }
+
+    @Test
+    void upgradesProfileLocalPropertyButProtectsDuplicateAndSharedProperties() {
+        rewriteRun(
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>profiles</artifactId><version>1</version>
+                          <profiles><profile><id>jdk</id><properties><okhttp.version>4.9.3</okhttp.version></properties><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>${okhttp.version}</version>
+                          </dependency></dependencies></profile></profiles>
+                        </project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>profiles</artifactId><version>1</version>
+                          <profiles><profile><id>jdk</id><properties><okhttp.version>5.3.0</okhttp.version></properties><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>${okhttp.version}</version>
+                          </dependency></dependencies></profile></profiles>
+                        </project>
+                        """,
+                        source -> source.path("profile/pom.xml")
+                ),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>duplicates</artifactId><version>1</version>
+                          <properties><okhttp.version>4.9.3</okhttp.version></properties>
+                          <profiles><profile><id>duplicate</id><properties><okhttp.version>4.9.3</okhttp.version></properties></profile></profiles>
+                          <dependencies><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>${okhttp.version}</version></dependency></dependencies>
+                        </project>
+                        """,
+                        source -> source.path("duplicates/pom.xml")
+                ),
+                pomXml(
+                        """
+                        <project name="${okhttp.version}"><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shared</artifactId><version>1</version>
+                          <properties><okhttp.version>4.9.3</okhttp.version></properties>
+                          <dependencies><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>${okhttp.version}</version></dependency></dependencies>
+                        </project>
+                        """,
+                        source -> source.path("shared/pom.xml")
+                ),
+                xml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>wrong-scope</artifactId><version>1</version>
+                          <profiles><profile><id>only-here</id><properties><okhttp.version>4.9.3</okhttp.version></properties></profile></profiles>
+                          <dependencies><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>${okhttp.version}</version></dependency></dependencies>
+                        </project>
+                        """, source -> source.path("wrong-scope/pom.xml")
+                )
+        );
+    }
+
+    @Test
+    void protectsInvalidBomShapesAndDynamicVersions() {
+        rewriteRun(
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>bad-bom</artifactId><version>1</version><dependencies>
+                          <dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp-bom</artifactId><version>4.11.0</version></dependency>
+                          <dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>[4.9,5)</version></dependency>
+                        </dependencies></project>
+                        """
+                ),
+                buildGradle(
+                        """
+                        dependencies {
+                            implementation 'com.squareup.okhttp3:okhttp:4.+'
+                            implementation platform('com.squareup.okhttp3:okhttp:4.11.0@pom')
+                            implementation 'com.squareup.okhttp3:okhttp:4.11.0:tests'
+                        }
+                        """
+                )
+        );
     }
 
     @Test
@@ -378,6 +504,114 @@ class UpgradeOkHttpTest implements RewriteTest {
                           </dependency></dependencies></dependencyManagement>
                         </project>
                         """
+                )
+        );
+    }
+
+    @Test
+    void optionalRecipeMigratesVersionlessConsumerOnlyWithLocalManagement() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MAVEN_JVM_RECIPE)),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>local-jvm</artifactId><version>1</version>
+                          <dependencyManagement><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>4.11.0</version>
+                          </dependency></dependencies></dependencyManagement>
+                          <dependencies><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId></dependency></dependencies>
+                        </project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>local-jvm</artifactId><version>1</version>
+                          <dependencyManagement><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp-jvm</artifactId><version>5.3.0</version>
+                          </dependency></dependencies></dependencyManagement>
+                          <dependencies><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp-jvm</artifactId></dependency></dependencies>
+                        </project>
+                        """
+                )
+        );
+    }
+
+    @Test
+    void optionalRecipeKeepsProfileLocalManagementInItsOwningProfile() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MAVEN_JVM_RECIPE)),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>profile-jvm</artifactId><version>1</version><profiles>
+                          <profile><id>owned</id><dependencyManagement><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>4.11.0</version>
+                          </dependency></dependencies></dependencyManagement><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId>
+                          </dependency></dependencies></profile>
+                          <profile><id>external</id><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId>
+                          </dependency></dependencies></profile>
+                        </profiles></project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>profile-jvm</artifactId><version>1</version><profiles>
+                          <profile><id>owned</id><dependencyManagement><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp-jvm</artifactId><version>5.3.0</version>
+                          </dependency></dependencies></dependencyManagement><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp-jvm</artifactId>
+                          </dependency></dependencies></profile>
+                          <profile><id>external</id><dependencies><!--~~(This OkHttp version is inherited or managed externally; resolve the effective BOM, parent, catalog, constraint, or profile owner and migrate it deliberately to 5.3.0)~~>--><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId>
+                          </dependency></dependencies></profile>
+                        </profiles></project>
+                        """
+                )
+        );
+    }
+
+    @Test
+    void optionalRecipeProtectsExternalVersionlessPluginClassifierAndGeneratedPom() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MAVEN_JVM_RECIPE)),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>external</artifactId><version>1</version>
+                          <dependencies>
+                            <dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId></dependency>
+                            <dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>5.3.0</version><classifier>tests</classifier></dependency>
+                          </dependencies>
+                          <build><plugins><plugin><groupId>example</groupId><artifactId>tool</artifactId><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>5.3.0</version>
+                          </dependency></dependencies></plugin></plugins></build>
+                        </project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>external</artifactId><version>1</version>
+                          <dependencies>
+                            <!--~~(This OkHttp version is inherited or managed externally; resolve the effective BOM, parent, catalog, constraint, or profile owner and migrate it deliberately to 5.3.0)~~>--><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId></dependency>
+                            <!--~~(This OkHttp classifier/type/ext or extended coordinate is a nonstandard variant; verify its JVM/Android artifact, capability, and classpath before migrating it manually)~~>--><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>5.3.0</version><classifier>tests</classifier></dependency>
+                          </dependencies>
+                          <build><plugins><plugin><groupId>example</groupId><artifactId>tool</artifactId><dependencies><dependency>
+                            <groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>5.3.0</version>
+                          </dependency></dependencies></plugin></plugins></build>
+                        </project>
+                        """,
+                        source -> source.path("external/pom.xml")
+                ),
+                pomXml(
+                        directPom("4.11.0"),
+                        source -> source.path("target/generated-poms/pom.xml")
+                ),
+                xml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>profile-property-only</artifactId><version>1</version>
+                          <profiles><profile><id>only-here</id><properties><okhttp.version>5.3.0</okhttp.version></properties></profile></profiles>
+                          <dependencies><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>${okhttp.version}</version></dependency></dependencies>
+                        </project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>profile-property-only</artifactId><version>1</version>
+                          <profiles><profile><id>only-here</id><properties><okhttp.version>5.3.0</okhttp.version></properties></profile></profiles>
+                          <dependencies><dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><!--~~(This OkHttp version is indirect, dynamic, ranged, or property-owned and cannot be selected safely; pin or migrate its exact owner without widening the workbook version whitelist)~~>--><version>${okhttp.version}</version></dependency></dependencies>
+                        </project>
+                        """, source -> source.path("profile-property-only/pom.xml")
                 )
         );
     }
