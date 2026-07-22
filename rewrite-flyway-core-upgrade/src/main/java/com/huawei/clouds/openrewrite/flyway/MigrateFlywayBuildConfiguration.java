@@ -38,7 +38,8 @@ public final class MigrateFlywayBuildConfiguration extends Recipe {
         return new TreeVisitor<Tree, ExecutionContext>() {
             @Override
             public Tree visit(Tree tree, ExecutionContext ctx) {
-                if (!(tree instanceof SourceFile source)) {
+                if (!(tree instanceof SourceFile source) || source.getSourcePath().getFileName() == null ||
+                    !FlywayVersions.isProjectPath(source.getSourcePath())) {
                     return tree;
                 }
                 String fileName = source.getSourcePath().getFileName().toString();
@@ -47,7 +48,7 @@ public final class MigrateFlywayBuildConfiguration extends Recipe {
                         @Override
                         public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext p) {
                             Xml.Tag t = super.visitTag(tag, p);
-                            if (!insideFlywayPluginConfiguration()) {
+                            if (!insideFlywayPluginConfiguration(getCursor())) {
                                 return t;
                             }
                             String replacement = FIELD_NAMES.get(t.getName());
@@ -62,19 +63,13 @@ public final class MigrateFlywayBuildConfiguration extends Recipe {
                             return t;
                         }
 
-                        private boolean insideFlywayPluginConfiguration() {
-                            Xml.Tag plugin = getCursor().getPathAsStream().filter(Xml.Tag.class::isInstance)
-                                    .map(Xml.Tag.class::cast).filter(candidate -> "plugin".equals(candidate.getName()))
-                                    .findFirst().orElse(null);
-                            return plugin != null && "org.flywaydb".equals(plugin.getChildValue("groupId").orElse(null)) &&
-                                   "flyway-maven-plugin".equals(plugin.getChildValue("artifactId").orElse(null));
-                        }
                     }.visitNonNull(document, ctx);
                 }
                 if (tree instanceof G.CompilationUnit cu && fileName.endsWith(".gradle")) {
-                    return new GradleVisitor().visitNonNull(cu, ctx);
+                    return hasFlywayPlugin(cu, ctx) ? new GradleVisitor().visitNonNull(cu, ctx) : tree;
                 }
                 if (tree instanceof K.CompilationUnit cu && fileName.endsWith(".gradle.kts")) {
+                    if (!hasFlywayPlugin(cu, ctx)) return tree;
                     return new KotlinIsoVisitor<ExecutionContext>() {
                         @Override
                         public J.Assignment visitAssignment(J.Assignment assignment, ExecutionContext p) {
@@ -134,7 +129,42 @@ public final class MigrateFlywayBuildConfiguration extends Recipe {
     }
 
     private static boolean insideFlywayBlock(Cursor cursor) {
-        return cursor.getPathAsStream().filter(J.MethodInvocation.class::isInstance)
-                .map(J.MethodInvocation.class::cast).anyMatch(invocation -> "flyway".equals(invocation.getSimpleName()));
+        return FlywayVersions.hasTopLevelAncestorInvocation(cursor, "flyway");
+    }
+
+    private static boolean insideFlywayPluginConfiguration(Cursor cursor) {
+        boolean configuration = false;
+        for (Cursor current = cursor; current != null; current = current.getParent()) {
+            if (!(current.getValue() instanceof Xml.Tag tag)) continue;
+            if ("configuration".equals(tag.getName())) configuration = true;
+            if ("plugin".equals(tag.getName())) {
+                return configuration && UpgradeSelectedFlywayBuildPlugins.isOwnedPlugin(current, tag);
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasFlywayPlugin(G.CompilationUnit cu, ExecutionContext ctx) {
+        boolean[] present = {false};
+        new GroovyIsoVisitor<ExecutionContext>() {
+            @Override
+            public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext p) {
+                if (UpgradeSelectedFlywayBuildPlugins.isFlywayPluginId(getCursor(), method)) present[0] = true;
+                return present[0] ? method : super.visitMethodInvocation(method, p);
+            }
+        }.visitNonNull(cu, ctx);
+        return present[0];
+    }
+
+    private static boolean hasFlywayPlugin(K.CompilationUnit cu, ExecutionContext ctx) {
+        boolean[] present = {false};
+        new KotlinIsoVisitor<ExecutionContext>() {
+            @Override
+            public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext p) {
+                if (UpgradeSelectedFlywayBuildPlugins.isFlywayPluginId(getCursor(), method)) present[0] = true;
+                return present[0] ? method : super.visitMethodInvocation(method, p);
+            }
+        }.visitNonNull(cu, ctx);
+        return present[0];
     }
 }

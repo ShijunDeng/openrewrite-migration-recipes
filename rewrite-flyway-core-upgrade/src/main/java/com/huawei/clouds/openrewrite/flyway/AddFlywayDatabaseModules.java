@@ -2,6 +2,9 @@ package com.huawei.clouds.openrewrite.flyway;
 
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
+import org.openrewrite.SourceFile;
+import org.openrewrite.Tree;
+import org.openrewrite.TreeVisitor;
 import org.openrewrite.xml.XmlIsoVisitor;
 import org.openrewrite.xml.tree.Content;
 import org.openrewrite.xml.tree.Xml;
@@ -39,65 +42,76 @@ public final class AddFlywayDatabaseModules extends Recipe {
     }
 
     @Override
-    public XmlIsoVisitor<ExecutionContext> getVisitor() {
-        return new XmlIsoVisitor<ExecutionContext>() {
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return new TreeVisitor<Tree, ExecutionContext>() {
             @Override
-            public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext ctx) {
-                Xml.Tag t = super.visitTag(tag, ctx);
-                if (!"dependencies".equals(t.getName()) ||
-                    !(getCursor().getParentTreeCursor().getValue() instanceof Xml.Tag parent) ||
-                    !"project".equals(parent.getName())) {
-                    return t;
-                }
-                List<Xml.Tag> dependencies = t.getChildren().stream()
-                        .filter(candidate -> "dependency".equals(candidate.getName())).toList();
-                Xml.Tag core = dependencies.stream().filter(AddFlywayDatabaseModules::isCore)
-                        .filter(this::hasTargetVersion).findFirst().orElse(null);
-                if (core == null) {
-                    return t;
-                }
-                Set<String> presentModules = dependencies.stream()
-                        .filter(candidate -> "org.flywaydb".equals(candidate.getChildValue("groupId").orElse(null)))
-                        .map(candidate -> candidate.getChildValue("artifactId").orElse(""))
-                        .collect(java.util.stream.Collectors.toSet());
-                List<String> needed = dependencies.stream().map(AddFlywayDatabaseModules::coordinate)
-                        .map(DRIVERS::get).filter(java.util.Objects::nonNull).distinct()
-                        .filter(module -> !presentModules.contains(module)).toList();
-                if (needed.isEmpty()) {
-                    return t;
-                }
-                String version = core.getChildValue("version").orElse(FlywayVersions.TARGET);
-                String scope = core.getChildValue("scope").orElse(null);
-                List<Content> content = new ArrayList<>(t.getContent().size() + needed.size());
-                for (Content child : t.getContent()) {
-                    content.add(child);
-                    if (child == core) {
-                        needed.forEach(module -> content.add(autoFormat(
-                                moduleTag(module, version, scope).withPrefix(core.getPrefix()), ctx, getCursor())));
+            public Tree visit(Tree tree, ExecutionContext ctx) {
+                if (!(tree instanceof Xml.Document document) || !(tree instanceof SourceFile source) ||
+                    source.getSourcePath().getFileName() == null ||
+                    !"pom.xml".equals(source.getSourcePath().getFileName().toString()) ||
+                    !FlywayVersions.isProjectPath(source.getSourcePath())) return tree;
+                Set<String> shadowed = new java.util.HashSet<>();
+                new XmlIsoVisitor<ExecutionContext>() {
+                    @Override
+                    public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext p) {
+                        if (FlywayVersions.isPropertiesChild(getCursor(), tag) &&
+                            !FlywayVersions.isProjectPropertiesChild(getCursor(), tag)) shadowed.add(tag.getName());
+                        return super.visitTag(tag, p);
                     }
-                }
-                return t.withContent(content);
-            }
-
-            private boolean hasTargetVersion(Xml.Tag dependency) {
-                String version = dependency.getChildValue("version").orElse(null);
-                if (FlywayVersions.TARGET.equals(version)) {
-                    return true;
-                }
-                if (version != null && version.startsWith("${") && version.endsWith("}")) {
-                    String property = version.substring(2, version.length() - 1);
-                    Xml.Document document = getCursor().firstEnclosing(Xml.Document.class);
-                    return document != null && FlywayVersions.TARGET.equals(document.getRoot().getChild("properties")
-                            .flatMap(properties -> properties.getChildValue(property)).orElse(null));
-                }
-                return false;
+                }.visitNonNull(document, ctx);
+                return new XmlIsoVisitor<ExecutionContext>() {
+                    @Override
+                    public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext p) {
+                        Xml.Tag t = super.visitTag(tag, p);
+                        if (!"dependencies".equals(t.getName()) ||
+                            !FlywayVersions.isProject(getCursor().getParentTreeCursor())) return t;
+                        List<Xml.Tag> dependencies = t.getChildren().stream()
+                                .filter(candidate -> "dependency".equals(candidate.getName())).toList();
+                        Xml.Tag core = dependencies.stream().filter(AddFlywayDatabaseModules::isCore)
+                                .filter(FlywayVersions::isStandardJar)
+                                .filter(dependency -> hasTargetVersion(dependency, document, shadowed)).findFirst().orElse(null);
+                        if (core == null) return t;
+                        Set<String> presentModules = dependencies.stream()
+                                .filter(candidate -> FlywayVersions.GROUP.equals(candidate.getChildValue("groupId").orElse(null)))
+                                .map(candidate -> candidate.getChildValue("artifactId").orElse(""))
+                                .collect(java.util.stream.Collectors.toSet());
+                        List<String> needed = dependencies.stream().filter(FlywayVersions::isStandardJar)
+                                .map(AddFlywayDatabaseModules::coordinate).map(DRIVERS::get)
+                                .filter(java.util.Objects::nonNull).distinct()
+                                .filter(module -> !presentModules.contains(module)).toList();
+                        if (needed.isEmpty()) return t;
+                        String version = core.getChildValue("version").orElse(FlywayVersions.TARGET);
+                        String scope = core.getChildValue("scope").orElse(null);
+                        List<Content> content = new ArrayList<>(t.getContent().size() + needed.size());
+                        for (Content child : t.getContent()) {
+                            content.add(child);
+                            if (child == core) {
+                                needed.forEach(module -> content.add(autoFormat(
+                                        moduleTag(module, version, scope).withPrefix(core.getPrefix()), p, getCursor())));
+                            }
+                        }
+                        return t.withContent(content);
+                    }
+                }.visitNonNull(document, ctx);
             }
         };
     }
 
+    private static boolean hasTargetVersion(Xml.Tag dependency, Xml.Document document, Set<String> shadowed) {
+        String version = dependency.getChildValue("version").map(String::trim).orElse(null);
+        if (FlywayVersions.TARGET.equals(version)) return true;
+        String property = UpgradeSelectedFlywayCoreDependency.propertyName(version).orElse(null);
+        if (property == null || shadowed.contains(property)) return false;
+        return document.getRoot().getChild("properties").map(properties ->
+                properties.getChildren().stream().filter(Xml.Tag.class::isInstance).map(Xml.Tag.class::cast)
+                        .filter(tag -> property.equals(tag.getName())).toList())
+                .filter(matches -> matches.size() == 1)
+                .map(matches -> FlywayVersions.TARGET.equals(matches.get(0).getValue().map(String::trim).orElse(null)))
+                .orElse(false);
+    }
+
     private static boolean isCore(Xml.Tag dependency) {
-        return "org.flywaydb".equals(dependency.getChildValue("groupId").orElse(null)) &&
-               "flyway-core".equals(dependency.getChildValue("artifactId").orElse(null));
+        return FlywayVersions.hasCoreCoordinates(dependency);
     }
 
     private static String coordinate(Xml.Tag dependency) {

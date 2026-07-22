@@ -10,6 +10,7 @@ import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.openrewrite.gradle.Assertions.buildGradle;
 import static org.openrewrite.gradle.Assertions.buildGradleKts;
 import static org.openrewrite.java.Assertions.java;
@@ -28,6 +29,14 @@ class UpgradeFlywayCoreTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.recipe(environment().activateRecipes(DEPENDENCY_RECIPE))
                 .parser(JavaParser.fromJavaVersion().classpath("flyway-core"));
+    }
+
+    @Test
+    void sourceSetMatchesTheVisibleSpreadsheetRowsExactly() {
+        assertEquals(java.util.Set.of(
+                "5.2.1", "7.1.1", "7.8.2", "7.11.1", "7.15.0",
+                "8.5.13", "9.16.3", "9.19.4", "9.20.0"), FlywayVersions.SOURCES);
+        assertEquals("11.14.1", FlywayVersions.TARGET);
     }
 
     @ParameterizedTest(name = "upgrades spreadsheet version {0}")
@@ -372,6 +381,128 @@ class UpgradeFlywayCoreTest implements RewriteTest {
                         """
                 )
         );
+    }
+
+    @Test
+    void upgradesPropertyUsedByTwoOwnedCoreDeclarations() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>two-core</artifactId><version>1</version>
+                  <properties><flyway.version>9.20.0</flyway.version></properties>
+                  <dependencyManagement><dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>${flyway.version}</version></dependency></dependencies></dependencyManagement>
+                  <dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>${flyway.version}</version></dependency></dependencies>
+                </project>
+                """,
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>two-core</artifactId><version>1</version>
+                  <properties><flyway.version>11.14.1</flyway.version></properties>
+                  <dependencyManagement><dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>${flyway.version}</version></dependency></dependencies></dependencyManagement>
+                  <dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>${flyway.version}</version></dependency></dependencies>
+                </project>
+                """));
+    }
+
+    @Test
+    void preservesProfileShadowedPropertyAndCustomMavenVariants() {
+        rewriteRun(pomXml("""
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>shadowed</artifactId><version>1</version>
+                  <properties><flyway.version>9.20.0</flyway.version></properties>
+                  <profiles><profile><id>legacy</id><properties><flyway.version>7.15.0</flyway.version></properties></profile></profiles>
+                  <dependencies>
+                    <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>${flyway.version}</version></dependency>
+                    <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>9.20.0</version><classifier>tests</classifier></dependency>
+                    <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>9.20.0</version><type>zip</type></dependency>
+                  </dependencies>
+                </project>
+                """));
+    }
+
+    @Test
+    void ignoresPluginDependenciesReportingPluginsAndGeneratedBuilds() {
+        rewriteRun(
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>owners</artifactId><version>1</version>
+                          <build><plugins><plugin><groupId>example</groupId><artifactId>codegen</artifactId><dependencies>
+                            <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>9.20.0</version></dependency>
+                          </dependencies></plugin></plugins></build>
+                          <reporting><plugins><plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId><version>9.20.0</version></plugin></plugins></reporting>
+                        </project>
+                        """),
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>generated</artifactId><version>1</version>
+                          <dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>9.20.0</version></dependency></dependencies>
+                        </project>
+                        """, source -> source.path("target/generated/pom.xml")),
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>maven-internal</artifactId><version>1</version>
+                          <dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>9.20.0</version></dependency></dependencies>
+                        </project>
+                        """, source -> source.path(".mvn/generated/pom.xml")),
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>nested-owner</artifactId><version>1</version>
+                          <build><plugins><plugin><groupId>example</groupId><artifactId>codegen</artifactId><configuration>
+                            <project><dependencies>
+                              <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>11.14.1</version></dependency>
+                              <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId><version>42.7.7</version></dependency>
+                            </dependencies></project>
+                          </configuration></plugin></plugins></build>
+                        </project>
+                        """, source -> source.path("nested-pom.xml"))
+        );
+    }
+
+    @Test
+    void ignoresFakeGradleDependencyAndPluginDslAndMapVariants() {
+        rewriteRun(
+                buildGradle("""
+                        implementation 'org.flywaydb:flyway-core:9.20.0'
+                        dependencies {
+                            implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.20.0', classifier: 'tests'
+                        }
+                        fake { dependencies { implementation 'org.flywaydb:flyway-core:9.20.0' } }
+                        fake {
+                            plugins { id 'org.flywaydb.flyway' version '9.20.0' }
+                        }
+                        """),
+                buildGradleKts("""
+                        implementation("org.flywaydb:flyway-core:9.20.0")
+                        fake { plugins { id("org.flywaydb.flyway") version "9.20.0" } }
+                        """, source -> source.path("fake.gradle.kts"))
+        );
+    }
+
+    @Test
+    void pluginRecipeIgnoresFakeDslReportingAndGeneratedTrees() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(PLUGIN_RECIPE)),
+                buildGradle("""
+                        fake { plugins { id 'org.flywaydb.flyway' version '9.20.0' } }
+                        """),
+                buildGradleKts("""
+                        fake { plugins { id("org.flywaydb.flyway") version "9.20.0" } }
+                        """, source -> source.path("fake.gradle.kts")),
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>report</artifactId><version>1</version>
+                          <reporting><plugins><plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId><version>9.20.0</version></plugin></plugins></reporting>
+                        </project>
+                        """, source -> source.path("report-pom.xml")),
+                buildGradle("""
+                        plugins { id 'org.flywaydb.flyway' version '9.20.0' }
+                        """, source -> source.path("build/generated/build.gradle"))
+        );
+    }
+
+    @Test
+    void pluginRecipePreservesProfileShadowedProperty() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(PLUGIN_RECIPE)),
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>plugin-shadow</artifactId><version>1</version>
+                          <properties><flyway.plugin.version>9.20.0</flyway.plugin.version></properties>
+                          <profiles><profile><id>legacy</id><properties><flyway.plugin.version>7.15.0</flyway.plugin.version></properties></profile></profiles>
+                          <build><plugins><plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId><version>${flyway.plugin.version}</version></plugin></plugins></build>
+                        </project>
+                        """));
     }
 
     @Test

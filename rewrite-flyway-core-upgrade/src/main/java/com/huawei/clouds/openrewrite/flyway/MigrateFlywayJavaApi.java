@@ -1,12 +1,17 @@
 package com.huawei.clouds.openrewrite.flyway;
 
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
+import org.openrewrite.SourceFile;
+import org.openrewrite.Tree;
+import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.JavaVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
+import org.openrewrite.marker.SearchResult;
 
 /** Applies deterministic Flyway Java API migrations. */
 public final class MigrateFlywayJavaApi extends Recipe {
@@ -24,8 +29,8 @@ public final class MigrateFlywayJavaApi extends Recipe {
     }
 
     @Override
-    public JavaVisitor<ExecutionContext> getVisitor() {
-        return new JavaVisitor<ExecutionContext>() {
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(projectSource(), new JavaVisitor<ExecutionContext>() {
             private final JavaTemplate migrationsExecuted = JavaTemplate.builder("#{any()}.migrationsExecuted").build();
 
             @Override
@@ -57,6 +62,16 @@ public final class MigrateFlywayJavaApi extends Recipe {
                     return f.withName(name);
                 }
                 return f;
+            }
+        });
+    }
+
+    static TreeVisitor<Tree, ExecutionContext> projectSource() {
+        return new TreeVisitor<Tree, ExecutionContext>() {
+            @Override
+            public Tree visit(Tree tree, ExecutionContext ctx) {
+                return tree instanceof SourceFile source && FlywayVersions.isProjectPath(source.getSourcePath())
+                        ? SearchResult.found(tree) : tree;
             }
         };
     }

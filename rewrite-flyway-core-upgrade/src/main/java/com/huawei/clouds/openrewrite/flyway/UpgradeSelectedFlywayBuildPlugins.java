@@ -1,5 +1,6 @@
 package com.huawei.clouds.openrewrite.flyway;
 
+import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.SourceFile;
@@ -16,11 +17,14 @@ import org.openrewrite.xml.tree.Xml;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** Upgrades only explicitly spreadsheet-selected OSS Flyway build plugins. */
 public final class UpgradeSelectedFlywayBuildPlugins extends Recipe {
+    private static final Pattern PROPERTY_REFERENCE = Pattern.compile("\\$\\{([^}]+)}");
+
     @Override
     public String getDisplayName() {
         return "Upgrade spreadsheet-selected Flyway build plugins";
@@ -28,7 +32,7 @@ public final class UpgradeSelectedFlywayBuildPlugins extends Recipe {
 
     @Override
     public String getDescription() {
-        return "Upgrade explicitly versioned org.flywaydb Flyway Maven and Gradle plugins only from spreadsheet-selected versions.";
+        return "Upgrade only owned Flyway Maven/Gradle plugin declarations from the exact spreadsheet source versions; preserve inherited, shared, shadowed, dynamic, and unrelated DSL declarations.";
     }
 
     @Override
@@ -36,18 +40,16 @@ public final class UpgradeSelectedFlywayBuildPlugins extends Recipe {
         return new TreeVisitor<Tree, ExecutionContext>() {
             @Override
             public Tree visit(Tree tree, ExecutionContext ctx) {
-                if (!(tree instanceof SourceFile source)) {
-                    return tree;
-                }
+                if (!(tree instanceof SourceFile source) || source.getSourcePath().getFileName() == null ||
+                    !FlywayVersions.isProjectPath(source.getSourcePath())) return tree;
                 String fileName = source.getSourcePath().getFileName().toString();
-                if (tree instanceof Xml.Document document && "pom.xml".equals(fileName)) {
-                    return upgradePom(document, ctx);
-                }
+                if (tree instanceof Xml.Document document && "pom.xml".equals(fileName)) return upgradePom(document, ctx);
                 if (tree instanceof G.CompilationUnit cu && fileName.endsWith(".gradle")) {
                     return new GroovyIsoVisitor<ExecutionContext>() {
                         @Override
                         public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext p) {
-                            return upgradePluginInvocation(super.visitMethodInvocation(method, p));
+                            J.MethodInvocation visited = super.visitMethodInvocation(method, p);
+                            return isFlywayPluginVersion(getCursor(), visited) ? upgradeVersion(visited) : visited;
                         }
                     }.visitNonNull(cu, ctx);
                 }
@@ -55,7 +57,8 @@ public final class UpgradeSelectedFlywayBuildPlugins extends Recipe {
                     return new KotlinIsoVisitor<ExecutionContext>() {
                         @Override
                         public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext p) {
-                            return upgradePluginInvocation(super.visitMethodInvocation(method, p));
+                            J.MethodInvocation visited = super.visitMethodInvocation(method, p);
+                            return isFlywayPluginVersion(getCursor(), visited) ? upgradeVersion(visited) : visited;
                         }
                     }.visitNonNull(cu, ctx);
                 }
@@ -65,76 +68,94 @@ public final class UpgradeSelectedFlywayBuildPlugins extends Recipe {
     }
 
     private static Xml.Document upgradePom(Xml.Document document, ExecutionContext ctx) {
-        Map<String, String> properties = new HashMap<>();
-        document.getRoot().getChild("properties").ifPresent(tag -> tag.getChildren().forEach(property ->
-                property.getValue().ifPresent(value -> properties.put(property.getName(), value.trim()))));
-        Set<String> eligible = new HashSet<>();
+        Map<String, Integer> rootDefinitions = new HashMap<>();
+        Map<String, String> values = new HashMap<>();
+        document.getRoot().getChild("properties").ifPresent(properties -> properties.getChildren().stream()
+                .filter(Xml.Tag.class::isInstance).map(Xml.Tag.class::cast).forEach(property -> {
+                    rootDefinitions.merge(property.getName(), 1, Integer::sum);
+                    property.getValue().ifPresent(value -> values.put(property.getName(), value.trim()));
+                }));
+        Map<String, Integer> allReferences = new HashMap<>();
+        Map<String, Integer> eligibleReferences = new HashMap<>();
+        Set<String> shadowed = new HashSet<>();
         new XmlIsoVisitor<ExecutionContext>() {
             @Override
+            public Xml.CharData visitCharData(Xml.CharData charData, ExecutionContext p) {
+                UpgradeSelectedFlywayBuildPlugins.collectReferences(charData.getText(), allReferences);
+                return super.visitCharData(charData, p);
+            }
+
+            @Override
+            public Xml.Attribute visitAttribute(Xml.Attribute attribute, ExecutionContext p) {
+                UpgradeSelectedFlywayBuildPlugins.collectReferences(attribute.getValueAsString(), allReferences);
+                return super.visitAttribute(attribute, p);
+            }
+
+            @Override
             public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext p) {
-                Xml.Tag t = super.visitTag(tag, p);
-                if (isPlugin(t)) {
-                    propertyName(t.getChildValue("version").orElse(null))
-                            .filter(name -> FlywayVersions.isSource(properties.get(name))).ifPresent(eligible::add);
+                if (FlywayVersions.isPropertiesChild(getCursor(), tag) &&
+                    !FlywayVersions.isProjectPropertiesChild(getCursor(), tag)) shadowed.add(tag.getName());
+                if (isOwnedPlugin(getCursor(), tag)) {
+                    UpgradeSelectedFlywayCoreDependency.propertyName(tag.getChildValue("version").orElse(null))
+                            .filter(name -> FlywayVersions.isSource(values.get(name)))
+                            .ifPresent(name -> eligibleReferences.merge(name, 1, Integer::sum));
                 }
-                return t;
+                return super.visitTag(tag, p);
             }
         }.visitNonNull(document, ctx);
-        String source = document.printAll();
-        Map<String, Boolean> exclusive = new HashMap<>();
-        eligible.forEach(name -> exclusive.put(name, count(source, "${" + name + "}") == 1));
+        Set<String> safe = new HashSet<>();
+        eligibleReferences.forEach((name, count) -> {
+            if (count.equals(allReferences.get(name)) && rootDefinitions.getOrDefault(name, 0) == 1 &&
+                !shadowed.contains(name)) safe.add(name);
+        });
 
         return (Xml.Document) new XmlIsoVisitor<ExecutionContext>() {
             @Override
             public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext p) {
-                Xml.Tag t = super.visitTag(tag, p);
-                if (isPlugin(t)) {
-                    String version = t.getChildValue("version").orElse(null);
-                    if (FlywayVersions.isSource(version)) {
-                        return t.withChildValue("version", FlywayVersions.TARGET);
-                    }
-                    String property = propertyName(version).orElse(null);
-                    if (property != null && eligible.contains(property) && !exclusive.getOrDefault(property, false)) {
-                        return t.withChildValue("version", FlywayVersions.TARGET);
-                    }
+                Xml.Tag visited = super.visitTag(tag, p);
+                if (FlywayVersions.isProjectPropertiesChild(getCursor(), visited) && safe.contains(visited.getName()) &&
+                    visited.getValue().map(String::trim).filter(FlywayVersions::isSource).isPresent()) {
+                    return visited.withValue(FlywayVersions.TARGET);
                 }
-                if (eligible.contains(t.getName()) && exclusive.getOrDefault(t.getName(), false) &&
-                    FlywayVersions.isSource(t.getValue().orElse(null))) {
-                    return t.withValue(FlywayVersions.TARGET);
+                if (!isOwnedPlugin(getCursor(), visited)) return visited;
+                String declared = visited.getChildValue("version").map(String::trim).orElse("");
+                if (FlywayVersions.isSource(declared)) return visited.withChildValue("version", FlywayVersions.TARGET);
+                String property = UpgradeSelectedFlywayCoreDependency.propertyName(declared).orElse(null);
+                if (property != null && eligibleReferences.containsKey(property) && !safe.contains(property) &&
+                    !shadowed.contains(property) && rootDefinitions.getOrDefault(property, 0) == 1) {
+                    return visited.withChildValue("version", FlywayVersions.TARGET);
                 }
-                return t;
+                return visited;
             }
         }.visitNonNull(document, ctx);
     }
 
-    private static boolean isPlugin(Xml.Tag tag) {
-        return "plugin".equals(tag.getName()) &&
-               "org.flywaydb".equals(tag.getChildValue("groupId").orElse(null)) &&
-               "flyway-maven-plugin".equals(tag.getChildValue("artifactId").orElse(null));
+    static boolean isOwnedPlugin(Cursor cursor, Xml.Tag tag) {
+        return FlywayVersions.isMavenBuildPlugin(cursor, tag) && FlywayVersions.hasFlywayMavenPluginCoordinates(tag);
     }
 
-    private static J.MethodInvocation upgradePluginInvocation(J.MethodInvocation invocation) {
-        if (!"version".equals(invocation.getSimpleName()) || invocation.getArguments().size() != 1 ||
-            !(invocation.getArguments().get(0) instanceof J.Literal literal) ||
-            !(literal.getValue() instanceof String version) || !FlywayVersions.isSource(version) ||
-            !invocation.printTrimmed().contains("org.flywaydb.flyway")) {
-            return invocation;
-        }
+    static boolean isFlywayPluginVersion(Cursor cursor, J.MethodInvocation invocation) {
+        if (!"version".equals(invocation.getSimpleName()) || !FlywayVersions.hasTopLevelAncestorInvocation(cursor, "plugins") ||
+            !(invocation.getSelect() instanceof J.MethodInvocation id)) return false;
+        return isFlywayPluginId(cursor, id);
+    }
+
+    static boolean isFlywayPluginId(Cursor cursor, J.MethodInvocation invocation) {
+        if (!"id".equals(invocation.getSimpleName()) || !FlywayVersions.hasTopLevelAncestorInvocation(cursor, "plugins") ||
+            invocation.getArguments().size() != 1 || !(invocation.getArguments().get(0) instanceof J.Literal literal)) return false;
+        return FlywayVersions.GRADLE_PLUGIN.equals(literal.getValue());
+    }
+
+    private static J.MethodInvocation upgradeVersion(J.MethodInvocation invocation) {
+        if (invocation.getArguments().size() != 1 || !(invocation.getArguments().get(0) instanceof J.Literal literal) ||
+            !(literal.getValue() instanceof String version) || !FlywayVersions.isSource(version)) return invocation;
         J.Literal replacement = literal.withValue(FlywayVersions.TARGET).withValueSource(
                 literal.getValueSource() == null ? null : literal.getValueSource().replace(version, FlywayVersions.TARGET));
         return invocation.withArguments(java.util.List.of(replacement));
     }
 
-    private static Optional<String> propertyName(String version) {
-        return version != null && version.startsWith("${") && version.endsWith("}")
-                ? Optional.of(version.substring(2, version.length() - 1)) : Optional.empty();
-    }
-
-    private static int count(String source, String token) {
-        int result = 0;
-        for (int offset = source.indexOf(token); offset >= 0; offset = source.indexOf(token, offset + token.length())) {
-            result++;
-        }
-        return result;
+    private static void collectReferences(String text, Map<String, Integer> references) {
+        Matcher matcher = PROPERTY_REFERENCE.matcher(text);
+        while (matcher.find()) references.merge(matcher.group(1), 1, Integer::sum);
     }
 }

@@ -1,7 +1,9 @@
 package com.huawei.clouds.openrewrite.flyway;
 
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
+import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.Flag;
@@ -31,17 +33,17 @@ public final class FindFlywayJavaMigrationRisks extends Recipe {
     }
 
     @Override
-    public JavaIsoVisitor<ExecutionContext> getVisitor() {
-        return new JavaIsoVisitor<ExecutionContext>() {
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(MigrateFlywayJavaApi.projectSource(), new JavaIsoVisitor<ExecutionContext>() {
             @Override
             public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
                 J.ClassDeclaration c = super.visitClassDeclaration(classDecl, ctx);
                 if (implementsAny(c, LEGACY_JAVA_MIGRATIONS)) {
-                    return SearchResult.found(c, "Legacy Jdbc/SpringJdbc migration must move to BaseJavaMigration and migrate(Context); adapt Connection/JdbcTemplate access explicitly");
+                    return mark(c, "Legacy Jdbc/SpringJdbc migration must move to BaseJavaMigration and migrate(Context); adapt Connection/JdbcTemplate access explicitly");
                 }
                 if (implementsType(c, "org.flywaydb.core.api.migration.JavaMigration") &&
                     !TypeUtils.isAssignableTo("org.flywaydb.core.api.migration.BaseJavaMigration", c.getType())) {
-                    return SearchResult.found(c, "Direct JavaMigration implementations track an evolving interface; prefer BaseJavaMigration and verify getResolvedMigration/transaction behavior");
+                    return mark(c, "Direct JavaMigration implementations track an evolving interface; prefer BaseJavaMigration and verify getResolvedMigration/transaction behavior");
                 }
                 return c;
             }
@@ -51,12 +53,12 @@ public final class FindFlywayJavaMigrationRisks extends Recipe {
                 J.NewClass n = super.visitNewClass(newClass, ctx);
                 if (TypeUtils.isOfClassType(n.getType(), FLYWAY) &&
                     (n.getArguments().isEmpty() || n.getArguments().stream().allMatch(J.Empty.class::isInstance))) {
-                    return SearchResult.found(n, "Mutable new Flyway() construction was removed; collect all setters into Flyway.configure() before load()");
+                    return mark(n, "Mutable new Flyway() construction was removed; collect all setters into Flyway.configure() before load()");
                 }
                 if (TypeUtils.isOfClassType(n.getType(), "org.flywaydb.core.api.Location") &&
                     n.getArguments().size() == 1 && n.getArguments().get(0) instanceof J.Literal literal &&
                     literal.getValue() instanceof String value && (value.contains("*") || value.contains("?"))) {
-                    return SearchResult.found(n, "Wildcard Location construction requires fromWildcardPath parser semantics; do not replace it with fromPath mechanically");
+                    return mark(n, "Wildcard Location construction requires fromWildcardPath parser semantics; do not replace it with fromPath mechanically");
                 }
                 return n;
             }
@@ -66,16 +68,16 @@ public final class FindFlywayJavaMigrationRisks extends Recipe {
                 J.MethodInvocation m = super.visitMethodInvocation(method, ctx);
                 if (methodOn(m, FLYWAY) && (m.getSimpleName().startsWith("set") ||
                     "configure".equals(m.getSimpleName()) && !m.getMethodType().hasFlags(Flag.Static))) {
-                    return SearchResult.found(m, "Mutable Flyway configuration was removed; preserve setter order and values in one FluentConfiguration chain before load()");
+                    return mark(m, "Mutable Flyway configuration was removed; preserve setter order and values in one FluentConfiguration chain before load()");
                 }
                 if (methodOn(m, FLYWAY) && "clean".equals(m.getSimpleName())) {
-                    return SearchResult.found(m, "Flyway clean destroys objects in configured schemas; verify environment, cleanDisabled, credentials, and explicit approval");
+                    return mark(m, "Flyway clean destroys objects in configured schemas; verify environment, cleanDisabled, credentials, and explicit approval");
                 }
                 if (methodOn(m, FLYWAY) && "repair".equals(m.getSimpleName())) {
-                    return SearchResult.found(m, "Flyway repair mutates schema-history checksums and states; compare info/validate output and use the same locations as migrate");
+                    return mark(m, "Flyway repair mutates schema-history checksums and states; compare info/validate output and use the same locations as migrate");
                 }
                 if (isLegacyIgnoreMethod(m)) {
-                    return SearchResult.found(m, "Legacy ignore*Migrations booleans were replaced by combined ignoreMigrationPatterns; merge every flag and the *:future default intentionally");
+                    return mark(m, "Legacy ignore*Migrations booleans were replaced by combined ignoreMigrationPatterns; merge every flag and the *:future default intentionally");
                 }
                 return m;
             }
@@ -83,15 +85,19 @@ public final class FindFlywayJavaMigrationRisks extends Recipe {
             @Override
             public J.Identifier visitIdentifier(J.Identifier identifier, ExecutionContext ctx) {
                 J.Identifier i = super.visitIdentifier(identifier, ctx);
+                if (getCursor().getParentTreeCursor().getValue() instanceof J.VariableDeclarations.NamedVariable variable &&
+                    variable.getName().getId().equals(identifier.getId())) return i;
+                if (getCursor().getParentTreeCursor().getValue() instanceof J.MethodInvocation invocation &&
+                    invocation.getName().getId().equals(identifier.getId())) return i;
                 if (TypeUtils.isOfClassType(i.getType(), "org.flywaydb.core.extensibility.ApiExtension")) {
-                    return SearchResult.found(i, "ApiExtension was replaced by ConfigurationExtension and is now obtained from PluginRegister; migrate the access path, not only the type name");
+                    return mark(i, "ApiExtension was replaced by ConfigurationExtension and is now obtained from PluginRegister; migrate the access path, not only the type name");
                 }
                 if (TypeUtils.isOfClassType(i.getType(), "org.flywaydb.core.api.ErrorCode")) {
-                    return SearchResult.found(i, "ErrorCode changed from enum to interface; built-in constants moved to CoreErrorCode while custom plugins may implement ErrorCode");
+                    return mark(i, "ErrorCode changed from enum to interface; built-in constants moved to CoreErrorCode while custom plugins may implement ErrorCode");
                 }
                 return i;
             }
-        };
+        });
     }
 
     private static boolean methodOn(J.MethodInvocation method, String owner) {
@@ -112,5 +118,9 @@ public final class FindFlywayJavaMigrationRisks extends Recipe {
     private static boolean implementsType(J.ClassDeclaration c, String type) {
         return c.getImplements() != null && c.getImplements().stream()
                 .anyMatch(implemented -> TypeUtils.isAssignableTo(type, implemented.getType()));
+    }
+
+    private static <T extends org.openrewrite.Tree> T mark(T tree, String message) {
+        return tree.getMarkers().findFirst(SearchResult.class).isPresent() ? tree : SearchResult.found(tree, message);
     }
 }

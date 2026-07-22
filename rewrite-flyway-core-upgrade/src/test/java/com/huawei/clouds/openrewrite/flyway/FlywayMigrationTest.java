@@ -18,6 +18,7 @@ import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.test.SourceSpecs.text;
+import static org.openrewrite.xml.Assertions.xml;
 
 class FlywayMigrationTest implements RewriteTest {
     private static final String MIGRATION_RECIPE =
@@ -337,6 +338,7 @@ class FlywayMigrationTest implements RewriteTest {
                 spec -> spec.recipe(new MigrateFlywayBuildConfiguration()),
                 buildGradle(
                         """
+                        plugins { id 'org.flywaydb.flyway' version '11.14.1' }
                         flyway {
                             checkReportFilename = 'report.html'
                             oracleKerberosConfigFile = '/etc/krb5.conf'
@@ -345,6 +347,7 @@ class FlywayMigrationTest implements RewriteTest {
                         checkReportFilename = 'keep'
                         """,
                         """
+                        plugins { id 'org.flywaydb.flyway' version '11.14.1' }
                         flyway {
                             reportFilename = 'report.html'
                             kerberosConfigFile = '/etc/krb5.conf'
@@ -355,12 +358,14 @@ class FlywayMigrationTest implements RewriteTest {
                 ),
                 buildGradleKts(
                         """
+                        plugins { id("org.flywaydb.flyway") version "11.14.1" }
                         flyway {
                             checkReportFilename = "report.html"
                             locations = arrayOf("db/migration", "classpath:custom")
                         }
                         """,
                         """
+                        plugins { id("org.flywaydb.flyway") version "11.14.1" }
                         flyway {
                             reportFilename = "report.html"
                             locations = arrayOf("classpath:db/migration", "classpath:custom")
@@ -506,6 +511,57 @@ class FlywayMigrationTest implements RewriteTest {
     }
 
     @Test
+    void marksLegacyAndDirectJavaMigrationContractsIdempotently() {
+        rewriteRun(
+                spec -> spec.recipe(new FindFlywayJavaMigrationRisks()).cycles(2).expectedCyclesThatMakeChanges(1)
+                        .parser(JavaParser.fromJavaVersion().dependsOn(
+                                "package org.flywaydb.core.api.migration.jdbc; public interface JdbcMigration {}",
+                                "package org.flywaydb.core.api.migration; public interface JavaMigration {}",
+                                "package org.flywaydb.core.api.migration; public abstract class BaseJavaMigration implements JavaMigration {}")),
+                java(
+                        """
+                        import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
+                        class LegacyMigration implements JdbcMigration {}
+                        """,
+                        """
+                        import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
+                        /*~~(Legacy Jdbc/SpringJdbc migration must move to BaseJavaMigration and migrate(Context); adapt Connection/JdbcTemplate access explicitly)~~>*/class LegacyMigration implements JdbcMigration {}
+                        """),
+                java(
+                        """
+                        import org.flywaydb.core.api.migration.JavaMigration;
+                        class DirectMigration implements JavaMigration {}
+                        """,
+                        """
+                        import org.flywaydb.core.api.migration.JavaMigration;
+                        /*~~(Direct JavaMigration implementations track an evolving interface; prefer BaseJavaMigration and verify getResolvedMigration/transaction behavior)~~>*/class DirectMigration implements JavaMigration {}
+                        """,
+                        source -> source.path("DirectMigration.java"))
+        );
+    }
+
+    @Test
+    void marksLegacyExtensionAndErrorCodeSpiTypes() {
+        rewriteRun(
+                spec -> spec.recipe(new FindFlywayJavaMigrationRisks()).parser(JavaParser.fromJavaVersion().dependsOn(
+                        "package org.flywaydb.core.extensibility; public interface ApiExtension {}",
+                        "package org.flywaydb.core.api; public enum ErrorCode { TEST }")),
+                java(
+                        """
+                        class LegacySpi {
+                            org.flywaydb.core.extensibility.ApiExtension extension;
+                            org.flywaydb.core.api.ErrorCode errorCode;
+                        }
+                        """,
+                        """
+                        class LegacySpi {
+                            org.flywaydb.core.extensibility./*~~(ApiExtension was replaced by ConfigurationExtension and is now obtained from PluginRegister; migrate the access path, not only the type name)~~>*/ApiExtension extension;
+                            org.flywaydb.core.api./*~~(ErrorCode changed from enum to interface; built-in constants moved to CoreErrorCode while custom plugins may implement ErrorCode)~~>*/ErrorCode errorCode;
+                        }
+                        """));
+    }
+
+    @Test
     void marksRemovedPropertyRisksButLeavesSafeValuesAlone() {
         rewriteRun(
                 spec -> spec.recipe(new FindFlywayPropertiesRisks()),
@@ -647,6 +703,198 @@ class FlywayMigrationTest implements RewriteTest {
                         """
                 )
         );
+    }
+
+    @Test
+    void marksVersionOwnershipRangeProfileShadowAndJavaBaselinePrecisely() {
+        rewriteRun(
+                spec -> spec.recipe(new FindFlywayBuildRisks()),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>risks</artifactId><version>1</version>
+                          <properties><java.version>11</java.version><flyway.version>9.20.0</flyway.version></properties>
+                          <profiles><profile><id>legacy</id><properties><flyway.version>7.15.0</flyway.version></properties></profile></profiles>
+                          <dependencies>
+                            <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency>
+                            <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>[9.0,12.0)</version></dependency>
+                            <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>${flyway.version}</version></dependency>
+                          </dependencies>
+                        </project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>risks</artifactId><version>1</version>
+                          <properties><!--~~(Flyway 11 requires Java 17; raise the owning compiler/toolchain baseline and CI/runtime JDK together)~~>--><java.version>11</java.version><flyway.version>9.20.0</flyway.version></properties>
+                          <profiles><profile><id>legacy</id><properties><flyway.version>7.15.0</flyway.version></properties></profile></profiles>
+                          <dependencies>
+                            <!--~~(Flyway version is inherited or managed externally; resolve the effective version and upgrade its owning BOM, parent, catalog, or constraint to 11.14.1)~~>--><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency>
+                            <!--~~(Flyway range/dynamic version is intentionally not rewritten; pin and validate the effective version before migration)~~>--><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>[9.0,12.0)</version></dependency>
+                            <!--~~(Flyway version property is unresolved, duplicated, or profile-shadowed; migrate each effective owner without changing unrelated profiles)~~>--><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>${flyway.version}</version></dependency>
+                          </dependencies>
+                        </project>
+                        """));
+    }
+
+    @Test
+    void acceptsVersionlessLeafOwnedByLocalTargetManagement() {
+        rewriteRun(
+                spec -> spec.recipe(new FindFlywayBuildRisks()),
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>managed</artifactId><version>1</version>
+                          <dependencyManagement><dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>11.14.1</version></dependency></dependencies></dependencyManagement>
+                          <dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency></dependencies>
+                          <build>
+                            <pluginManagement><plugins><plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId><version>11.14.1</version></plugin></plugins></pluginManagement>
+                            <plugins><plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId></plugin></plugins>
+                          </build>
+                        </project>
+                        """),
+                xml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>profile-scope</artifactId><version>1</version>
+                          <profiles><profile><id>managed-only-in-this-profile</id>
+                            <dependencyManagement><dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>11.14.1</version></dependency></dependencies></dependencyManagement>
+                            <build><pluginManagement><plugins><plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId><version>11.14.1</version></plugin></plugins></pluginManagement></build>
+                          </profile></profiles>
+                          <dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency></dependencies>
+                          <build><plugins><plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId></plugin></plugins></build>
+                        </project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>profile-scope</artifactId><version>1</version>
+                          <profiles><profile><id>managed-only-in-this-profile</id>
+                            <dependencyManagement><dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>11.14.1</version></dependency></dependencies></dependencyManagement>
+                            <build><pluginManagement><plugins><plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId><version>11.14.1</version></plugin></plugins></pluginManagement></build>
+                          </profile></profiles>
+                          <dependencies><!--~~(Flyway version is inherited or managed externally; resolve the effective version and upgrade its owning BOM, parent, catalog, or constraint to 11.14.1)~~>--><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency></dependencies>
+                          <build><plugins><!--~~(Flyway version is inherited or managed externally; resolve the effective version and upgrade its owning BOM, parent, catalog, or constraint to 11.14.1)~~>--><plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId></plugin></plugins></build>
+                        </project>
+                        """, source -> source.path("profile-scope/pom.xml")));
+    }
+
+    @Test
+    void preservesAndMarksDuplicateMavenPropertyDefinitions() {
+        rewriteRun(pomXml(
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>duplicate</artifactId><version>1</version>
+                  <properties><flyway.version>9.20.0</flyway.version><flyway.version>7.15.0</flyway.version></properties>
+                  <dependencies><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>${flyway.version}</version></dependency></dependencies>
+                </project>
+                """,
+                """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>duplicate</artifactId><version>1</version>
+                  <properties><flyway.version>9.20.0</flyway.version><flyway.version>7.15.0</flyway.version></properties>
+                  <dependencies><!--~~(Flyway version property is unresolved, duplicated, or profile-shadowed; migrate each effective owner without changing unrelated profiles)~~>--><dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>${flyway.version}</version></dependency></dependencies>
+                </project>
+                """));
+    }
+
+    @Test
+    void marksOwnedGradleDynamicAndMapVariantButNotFakeDsl() {
+        rewriteRun(
+                spec -> spec.recipe(new FindFlywayBuildRisks()),
+                buildGradle(
+                        """
+                        plugins { id 'org.flywaydb.flyway' }
+                        dependencies {
+                            implementation 'org.flywaydb:flyway-core:9.+'
+                            runtimeOnly group: 'org.flywaydb', name: 'flyway-core', version: '9.20.0', classifier: 'tests'
+                            compileOnly group: 'org.flywaydb', name: 'flyway-core'
+                            testRuntimeOnly 'org.flywaydb:flyway-core:9.20.0:tests'
+                        }
+                        fake { dependencies { implementation 'org.flywaydb:flyway-core:9.+' } }
+                        """,
+                        """
+                        plugins { /*~~(Flyway version is inherited or managed externally; resolve the effective version and upgrade its owning BOM, parent, catalog, or constraint to 11.14.1)~~>*/id 'org.flywaydb.flyway' }
+                        dependencies {
+                            /*~~(Flyway Gradle range/dynamic version is intentionally not rewritten; pin its effective owner before migration)~~>*/implementation 'org.flywaydb:flyway-core:9.+'
+                            /*~~(Flyway Core Gradle classifier/ext/type variant is not rewritten; verify the intended runtime artifact manually)~~>*/runtimeOnly group: 'org.flywaydb', name: 'flyway-core', version: '9.20.0', classifier: 'tests'
+                            /*~~(Flyway version is inherited or managed externally; resolve the effective version and upgrade its owning BOM, parent, catalog, or constraint to 11.14.1)~~>*/compileOnly group: 'org.flywaydb', name: 'flyway-core'
+                            /*~~(Flyway Core Gradle classifier/ext variant is not rewritten; verify the intended runtime artifact manually)~~>*/testRuntimeOnly 'org.flywaydb:flyway-core:9.20.0:tests'
+                        }
+                        fake { dependencies { implementation 'org.flywaydb:flyway-core:9.+' } }
+                        """));
+    }
+
+    @Test
+    void databaseModuleRiskIsIsolatedToTheOwningBuildFile() {
+        rewriteRun(
+                spec -> spec.recipe(new FindFlywayDatabaseModuleRisks()),
+                buildGradle("""
+                        dependencies {
+                            implementation 'org.flywaydb:flyway-core:11.14.1'
+                            implementation 'org.flywaydb:flyway-database-postgresql:11.14.1'
+                        }
+                        """, source -> source.path("service-a.gradle")),
+                buildGradle("""
+                        dependencies { runtimeOnly 'org.postgresql:postgresql:42.7.7' }
+                        """, source -> source.path("service-b.gradle")),
+                pomXml("""
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>plugin-only</artifactId><version>1</version>
+                          <build><plugins><plugin><groupId>example</groupId><artifactId>tool</artifactId><dependencies>
+                            <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>11.14.1</version></dependency>
+                            <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId><version>42.7.7</version></dependency>
+                          </dependencies></plugin></plugins></build>
+                        </project>
+                        """, source -> source.path("plugin-pom.xml"))
+        );
+    }
+
+    @Test
+    void ignoresGeneratedInstallAndUnownedFlywayLikeConfiguration() {
+        rewriteRun(
+                spec -> spec.recipe(recipe(MIGRATION_RECIPE)),
+                properties("""
+                        flyway.check.reportFilename=report.html
+                        flyway.cleanDisabled=false
+                        """, source -> source.path("target/generated/flyway.conf")),
+                text("select 1;\n", source -> source.path("install/db/callback/createSchema.sql")
+                        .afterRecipe(after -> assertEquals(Path.of("install/db/callback/createSchema.sql"), after.getSourcePath()))),
+                buildGradle("""
+                        flyway { checkReportFilename = 'keep.html' }
+                        """, source -> source.path("unowned.gradle"))
+        );
+    }
+
+    @Test
+    void generatedJavaAndCallbackLookalikesRemainUntouched() {
+        rewriteRun(
+                spec -> spec.recipe(recipe(MIGRATION_RECIPE)).parser(JavaParser.fromJavaVersion().classpath("flyway-core")),
+                java("""
+                        import org.flywaydb.core.Flyway;
+                        class GeneratedMigration { void run() { new Flyway(); } }
+                        """, source -> source.path("target/generated-sources/GeneratedMigration.java")),
+                text("select 1;\n", source -> source.path("src/main/resources/reports/createSchema.sql")
+                        .afterRecipe(after -> assertEquals(Path.of("src/main/resources/reports/createSchema.sql"), after.getSourcePath())))
+        );
+    }
+
+    @Test
+    void recommendedRecipeCombinesAutoAndMarkerAndIsIdempotent() {
+        rewriteRun(
+                spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1),
+                pomXml(
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>combined</artifactId><version>1</version>
+                          <properties><java.version>11</java.version></properties>
+                          <dependencies>
+                            <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>9.20.0</version></dependency>
+                            <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId><version>42.7.7</version></dependency>
+                          </dependencies>
+                        </project>
+                        """,
+                        """
+                        <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId><artifactId>combined</artifactId><version>1</version>
+                          <properties><!--~~(Flyway 11 requires Java 17; raise the owning compiler/toolchain baseline and CI/runtime JDK together)~~>--><java.version>11</java.version></properties>
+                          <dependencies>
+                            <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><version>11.14.1</version></dependency>
+                            <dependency>
+                              <groupId>org.flywaydb</groupId>
+                              <artifactId>flyway-database-postgresql</artifactId>
+                              <version>11.14.1</version>
+                            </dependency>
+                            <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId><version>42.7.7</version></dependency>
+                          </dependencies>
+                        </project>
+                        """));
     }
 
     private static Recipe recipe(String name) {

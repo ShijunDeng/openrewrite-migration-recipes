@@ -32,6 +32,7 @@ public final class FindFlywayMigrationFileRisks extends Recipe {
                 if (!(tree instanceof SourceFile source)) {
                     return tree;
                 }
+                if (!FlywayVersions.isProjectPath(source.getSourcePath())) return tree;
                 String path = source.getSourcePath().toString().replace('\\', '/');
                 if (!(path.startsWith("db/migration/") || path.contains("/db/migration/"))) {
                     return tree;
@@ -43,7 +44,7 @@ public final class FindFlywayMigrationFileRisks extends Recipe {
                 char prefix = Character.toUpperCase(name.charAt(0));
                 boolean candidate = prefix == 'V' || prefix == 'U' || prefix == 'R';
                 boolean valid = prefix == 'R' ? REPEATABLE.matcher(name).matches() : VERSIONED.matcher(name).matches();
-                return candidate && !valid ? SearchResult.found(source,
+                return candidate && !valid && source.getMarkers().findFirst(SearchResult.class).isEmpty() ? SearchResult.found(source,
                         "Filename violates Flyway's default migration naming; confirm custom prefixes/separator or rename before enabling validateMigrationNaming") : tree;
             }
         };

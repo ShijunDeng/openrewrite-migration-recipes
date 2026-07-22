@@ -43,21 +43,11 @@ recipeList:
   - com.huawei.clouds.openrewrite.flyway.AddFlywayDatabaseModules
   - com.huawei.clouds.openrewrite.flyway.MigrateFlywayProperties
   - com.huawei.clouds.openrewrite.flyway.MigrateFlywayBuildConfiguration
-  - org.openrewrite.java.ChangeMethodName:
-      methodPattern: org.flywaydb.core.api.configuration.Configuration getFailOnMissingTarget()
-      newMethodName: isFailOnMissingTarget
-  - org.openrewrite.java.ChangeMethodName:
-      methodPattern: org.flywaydb.core.api.configuration.Configuration getDetectEncoding()
-      newMethodName: isDetectEncoding
-  - org.openrewrite.java.ChangeMethodName:
-      methodPattern: org.flywaydb.core.api.configuration.Configuration getCreateSchemas()
-      newMethodName: isCreateSchemas
-  - org.openrewrite.java.ChangeMethodName:
-      methodPattern: org.flywaydb.core.api.configuration.Configuration getFailOnMissingLocations()
-      newMethodName: isFailOnMissingLocations
+  - com.huawei.clouds.openrewrite.flyway.MigrateFlywayConfigurationGetters
   - com.huawei.clouds.openrewrite.flyway.MigrateFlywayJavaApi
   - com.huawei.clouds.openrewrite.flyway.MigrateFlywayCallbackFilenames
   - com.huawei.clouds.openrewrite.flyway.FindFlywayJavaMigrationRisks
   - com.huawei.clouds.openrewrite.flyway.FindFlywayPropertiesRisks
+  - com.huawei.clouds.openrewrite.flyway.FindFlywayBuildRisks
   - com.huawei.clouds.openrewrite.flyway.FindFlywayDatabaseModuleRisks
   - com.huawei.clouds.openrewrite.flyway.FindFlywayMigrationFileRisks

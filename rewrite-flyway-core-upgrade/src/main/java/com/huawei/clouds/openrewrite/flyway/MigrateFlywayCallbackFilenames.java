@@ -29,6 +29,12 @@ public final class MigrateFlywayCallbackFilenames extends Recipe {
                     return tree;
                 }
                 Path path = source.getSourcePath();
+                if (!FlywayVersions.isProjectPath(path)) return tree;
+                String normalizedPath = path.toString().replace('\\', '/');
+                if (!(normalizedPath.contains("/db/callback/") || normalizedPath.startsWith("db/callback/") ||
+                      normalizedPath.contains("/flyway/callback/") || normalizedPath.startsWith("flyway/callback/"))) {
+                    return tree;
+                }
                 String name = path.getFileName().toString();
                 if (!(name.equals("createSchema.sql") || name.startsWith("createSchema__"))) {
                     return tree;

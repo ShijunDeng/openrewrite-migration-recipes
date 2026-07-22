@@ -32,16 +32,17 @@ com.huawei.clouds.openrewrite.flyway.UpgradeFlywayBuildPluginsTo11_14_1
 
 | 范围 | 自动处理 |
 | --- | --- |
-| Maven Core | 升级直接依赖和 `dependencyManagement` 中显式的九个版本；支持独占 Maven 属性 |
+| Maven Core | 只升级 project/profile 的标准 JAR 依赖和 `dependencyManagement` 中显式的九个版本；插件依赖、reporting 和任意嵌套 XML 不属于该声明 |
 | 共享 Maven 属性 | 属性还被其他声明引用时，不修改属性，而把 Flyway Core/插件自己的版本内联为 `11.14.1` |
-| Gradle Core | 升级 Groovy 字符串、Groovy map notation、Kotlin 字符串中的显式版本 |
+| Gradle Core | 只在顶层 `dependencies {}` 中升级 Groovy 字符串、无 classifier/ext/type 的 map notation 与 Kotlin 字符串 |
 | Gradle 版本变量 | 只在 `flywayVersion` 是该文件中 Core 坐标的独占变量时升级；共享变量保持不变 |
-| Maven/Gradle 插件 | 升级 `org.flywaydb:flyway-maven-plugin` 与插件 ID `org.flywaydb.flyway` 的九个显式版本；不跨到 `com.redgate.flyway` |
+| Maven/Gradle 插件 | 只升级 Maven `build/plugins`/`pluginManagement` 下的 `org.flywaydb:flyway-maven-plugin` 与顶层 `plugins {}` 的 ID `org.flywaydb.flyway`；不跨到 reporting、假 DSL 或 `com.redgate.flyway` |
 | 数据库 companion | Maven 项目已经迁到目标 Core 且存在直接 JDBC driver 时，加入确定的 PostgreSQL、MySQL/MariaDB、SQL Server、Oracle 或 DB2 模块；继承 Core 的版本表达式与 scope |
 | properties/conf | 精确迁移 `reportFilename`、Kerberos、SQL Server clean 及 Vault/Dapr/GCSM namespace；相似键不改 |
 | locations | `flyway.locations` 和 Flyway 插件配置中的无前缀位置显式改为 `classpath:`；已带前缀或环境变量的位置不改 |
 | Java API | 四个 `Configuration#get...` boolean getter 改为 `is...`；旧 `int Flyway.migrate()` 的值用法改为 `migrate().migrationsExecuted`，语句用法不改 |
 | callback | `Event.CREATE_SCHEMA` 改为 `BEFORE_CREATE_SCHEMA`；`createSchema.sql`/`createSchema__*.sql` 文件改为 `beforeCreateSchema...` |
+| 源码范围 | 所有 AUTO/MARK 都排除 `target`、`build`、`generated`、`install`、IDE/包管理缓存等生成树 |
 
 确定的配置键映射如下：
 
@@ -60,6 +61,8 @@ com.huawei.clouds.openrewrite.flyway.UpgradeFlywayBuildPluginsTo11_14_1
 
 推荐配方使用 `SearchResult` 标记以下位置：
 
+- Maven/Gradle Core 或插件的无版本外部管理、动态/区间版本、未解析或 profile 遮蔽属性、classifier/type/ext 变体；本地 `dependencyManagement` 已明确管理到 `11.14.1` 的无版本 leaf 不误报；
+- Flyway 所属 Maven 构建仍显式使用低于 Java 17 的 `java.version`/compiler baseline；
 - JDBC driver 或 `flyway.url` 已表明数据库，但源码集中缺少 Flyway 11 companion 模块；
 - `ignoreMissingMigrations`、`ignorePendingMigrations` 等旧布尔配置。它们必须合并为 `ignoreMigrationPatterns`，且要主动决定是否保留默认 `*:future`；
 - `cleanOnValidationError`。该 API 在目标源码中仍存在但已废弃，不能误报为已删除，也不能自动删掉；
@@ -73,10 +76,11 @@ com.huawei.clouds.openrewrite.flyway.UpgradeFlywayBuildPluginsTo11_14_1
 
 ### NO-OP：严格不处理
 
-- `8.2.2`、`9.20.1`、其他未列版本、版本区间、动态版本、版本目录变量；
+- `8.2.2`、`9.20.1`、其他未列字面量版本；版本区间、动态版本和间接所有者不自动修改而精确标记；
 - Spring Boot/BOM/父 POM 管理的无版本 Core 或插件；
 - 已经是 `11.14.1` 或更高的版本；
-- Redgate 商业版坐标、其他 `org.flywaydb` artifact 和相似名称；
+- Redgate 商业版坐标、其他 `org.flywaydb` artifact、classifier/type/ext 变体和相似名称；
+- Maven 插件依赖/reporting、Gradle 假 `dependencies/plugins/flyway` 嵌套 DSL，以及生成/install 目录；
 - 共享 Gradle 变量、无法静态确定的数据库、runtime secret 中的 URL；
 - 已带 `classpath:`、`filesystem:`、`s3:` 等前缀的位置。
 
@@ -104,22 +108,22 @@ com.huawei.clouds.openrewrite.flyway.UpgradeFlywayBuildPluginsTo11_14_1
 
 已有 companion 不重复添加；无版本 managed Core 不触发添加。H2 等仍由 Core 处理的数据库不会被虚构出 companion。
 
-## 关键不兼容点
+## 关键不兼容点与测试映射
 
-| 变化 | 本模块策略 |
-| --- | --- |
-| Java/构建基线提高 | 不改 toolchain；README 与迁移验收要求 JDK 17 |
-| `Flyway.migrate()` 从 `int` 变为 `MigrateResult` | 对旧类型归因下的值用法追加 `.migrationsExecuted` |
-| Configuration boolean getter 改名 | 四个可确定 getter 自动改名 |
-| 数据库实现模块化 | Maven 确定场景自动补模块，其余标记 |
-| `ignore*Migrations` 合并 | 语义依赖默认值，标记而不猜测 |
-| `ErrorCode` enum 演进为接口，内置常量迁到 `CoreErrorCode` | 标记 SPI 使用点 |
-| `ApiExtension` 演进为 `ConfigurationExtension`/`PluginRegister` | 标记访问路径，不只改类型名 |
-| 旧 Jdbc/SpringJdbc migration API | 标记类声明，要求迁到 `BaseJavaMigration#migrate(Context)` |
-| `Location(String)` 废弃 | 通配符构造标记；非通配符也建议人工核对资源语义 |
-| create-schema callback 名称变化 | Java enum 与 SQL callback 文件名自动迁移 |
-| clean/repair/baseline 安全边界 | 只标记，不执行、不启用 |
-| SQL migration 默认命名 | 只标记可疑文件，尊重自定义 prefix/separator/suffix |
+| 变化 | AUTO / MARK / NOOP | 对应测试 |
+| --- | --- | --- |
+| Java/构建基线提高 | MARK 低于 17 的所属 Maven baseline；不改 toolchain | `marksVersionOwnershipRangeProfileShadowAndJavaBaselinePrecisely` |
+| `Flyway.migrate()` 从 `int` 变为 `MigrateResult` | AUTO 对旧类型归因下的值用法追加 `.migrationsExecuted`；语句用法 NOOP | `preservesLegacyMigrateCountAndLeavesStatementMigrateAlone` |
+| Configuration boolean getter 改名 | AUTO 四个确定 getter，generated/install NOOP | `renamesCreateSchemaEventAndConfigurationGetters`、`generatedJavaAndCallbackLookalikesRemainUntouched` |
+| 构建声明 ownership | AUTO 仅标准 Maven/顶层 Gradle 所有者；versionless/range/shadow/variant MARK；fake/generated NOOP | `ignoresPluginDependenciesReportingPluginsAndGeneratedBuilds`、`marksOwnedGradleDynamicAndMapVariantButNotFakeDsl` |
+| 数据库实现模块化 | AUTO Maven 同一直接依赖块的确定 driver；同一 Gradle owner 缺 companion 时 MARK；跨文件/插件依赖 NOOP | `addsAllUnambiguousMavenDatabaseCompanions`、`databaseModuleRiskIsIsolatedToTheOwningBuildFile` |
+| `ignore*Migrations` 合并 | MARK，保留默认值决策 | `marksRemovedPropertyRisksButLeavesSafeValuesAlone` |
+| `ErrorCode`/`ApiExtension` SPI 演进 | MARK 使用点，不猜替代访问路径 | `marksLegacyExtensionAndErrorCodeSpiTypes` |
+| 旧 Jdbc/SpringJdbc migration API | MARK 类声明，要求迁到 `BaseJavaMigration#migrate(Context)` | `marksLegacyAndDirectJavaMigrationContractsIdempotently` |
+| `Location(String)` 废弃 | wildcard MARK；非通配符 NOOP | `marksLegacyJavaConfigurationDestructiveCallsAndWildcardLocations` |
+| create-schema callback 名称变化 | AUTO Java enum 与 Flyway callback 路径文件；相似路径 NOOP | `renamesCreateSchemaCallbackFilesAndPreservesOtherCallbacks`、`generatedJavaAndCallbackLookalikesRemainUntouched` |
+| clean/repair/baseline 安全边界 | MARK，不执行、不启用 | `marksLegacyJavaConfigurationDestructiveCallsAndWildcardLocations`、`marksRemovedPropertyRisksButLeavesSafeValuesAlone` |
+| SQL migration 默认命名 | MARK 可疑文件；非 migration 路径 NOOP | `marksInvalidDefaultSqlNamesAndAcceptsValidOrUnrelatedFiles` |
 
 ## 固定上游依据
 
@@ -149,7 +153,7 @@ com.huawei.clouds.openrewrite.flyway.UpgradeFlywayBuildPluginsTo11_14_1
 
 用例写法参考 OpenRewrite 官方固定提交中的 [`UpgradeDependencyVersionTest`](https://github.com/openrewrite/rewrite-java-dependencies/blob/decb8dbb2b5b726f8815efc51c85c34a60268bb0/src/test/java/org/openrewrite/java/dependencies/UpgradeDependencyVersionTest.java)、Maven [`UpgradePluginVersionTest`](https://github.com/openrewrite/rewrite/blob/1b1804a5af7692612398fcce034a846b48b5b8cf/rewrite-maven/src/test/java/org/openrewrite/maven/UpgradePluginVersionTest.java) 与 Gradle [`UpgradePluginVersionTest`](https://github.com/openrewrite/rewrite/blob/1b1804a5af7692612398fcce034a846b48b5b8cf/rewrite-gradle/src/test/java/org/openrewrite/gradle/plugins/UpgradePluginVersionTest.java)。
 
-当前 46 个测试覆盖九个表格源版本、Maven/Gradle/Groovy/Kotlin、属性隔离、managed/BOM、插件、五种数据库 companion、配置映射、Java API、回调文件、SQL 命名、正负例、SearchResult 和双 cycle 幂等。
+当前 63 个测试覆盖表格源/目标集合精确断言、九个源版本、Maven/Gradle/Groovy/Kotlin、严格 AST ownership、重复/共享/profile 属性、managed/BOM、range/dynamic、classifier/type/map variant、插件/fake DSL、五种数据库 companion、配置映射、Java API/SPI、generated/install、回调文件、SQL 命名、真实仓 fixture、AUTO+MARK、负例、SearchResult 和双 cycle 幂等。
 
 ## 使用与验收
 

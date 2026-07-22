@@ -2,6 +2,9 @@ package com.huawei.clouds.openrewrite.flyway;
 
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
+import org.openrewrite.SourceFile;
+import org.openrewrite.Tree;
+import org.openrewrite.TreeVisitor;
 import org.openrewrite.properties.PropertiesIsoVisitor;
 import org.openrewrite.properties.tree.Properties;
 
@@ -37,23 +40,26 @@ public final class MigrateFlywayProperties extends Recipe {
     }
 
     @Override
-    public PropertiesIsoVisitor<ExecutionContext> getVisitor() {
-        return new PropertiesIsoVisitor<ExecutionContext>() {
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return new TreeVisitor<Tree, ExecutionContext>() {
             @Override
-            public Properties.Entry visitEntry(Properties.Entry entry, ExecutionContext ctx) {
-                Properties.Entry e = super.visitEntry(entry, ctx);
-                String key = migrateKey(e.getKey());
-                if (!key.equals(e.getKey())) {
-                    e = e.withKey(key);
-                }
-                if ("flyway.locations".equals(key) || "spring.flyway.locations".equals(key)) {
-                    String value = e.getValue().getText();
-                    String normalized = normalizeLocations(value);
-                    if (!normalized.equals(value)) {
-                        e = e.withValue(e.getValue().withText(normalized));
+            public Tree visit(Tree tree, ExecutionContext ctx) {
+                if (!(tree instanceof Properties.File file) || !(tree instanceof SourceFile source) ||
+                    !FlywayVersions.isProjectPath(source.getSourcePath())) return tree;
+                return new PropertiesIsoVisitor<ExecutionContext>() {
+                    @Override
+                    public Properties.Entry visitEntry(Properties.Entry entry, ExecutionContext p) {
+                        Properties.Entry e = super.visitEntry(entry, p);
+                        String key = migrateKey(e.getKey());
+                        if (!key.equals(e.getKey())) e = e.withKey(key);
+                        if ("flyway.locations".equals(key) || "spring.flyway.locations".equals(key)) {
+                            String value = e.getValue().getText();
+                            String normalized = normalizeLocations(value);
+                            if (!normalized.equals(value)) e = e.withValue(e.getValue().withText(normalized));
+                        }
+                        return e;
                     }
-                }
-                return e;
+                }.visitNonNull(file, ctx);
             }
         };
     }
