@@ -68,7 +68,7 @@ mvn clean install
 
 ```bash
 mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:run \
-  -Drewrite.recipeArtifactCoordinates=io.github.shijundeng.openrewrite:rewrite-fastjson-to-jackson:1.0.0-SNAPSHOT \
+  -Drewrite.recipeArtifactCoordinates=com.huawei.clouds.openrewrite:rewrite-fastjson-to-jackson:1.0.0-SNAPSHOT \
   -Drewrite.activeRecipes=io.github.shijundeng.rewrite.fastjson.MigrateFastjsonToJackson
 ```
 
@@ -76,7 +76,7 @@ mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:run \
 
 ```bash
 mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:dryRun \
-  -Drewrite.recipeArtifactCoordinates=io.github.shijundeng.openrewrite:rewrite-fastjson-to-jackson:1.0.0-SNAPSHOT \
+  -Drewrite.recipeArtifactCoordinates=com.huawei.clouds.openrewrite:rewrite-fastjson-to-jackson:1.0.0-SNAPSHOT \
   -Drewrite.activeRecipes=io.github.shijundeng.rewrite.fastjson.MigrateFastjsonToJackson
 ```
 
@@ -96,7 +96,7 @@ repositories {
 }
 
 dependencies {
-    rewrite 'io.github.shijundeng.openrewrite:rewrite-fastjson-to-jackson:1.0.0-SNAPSHOT'
+    rewrite 'com.huawei.clouds.openrewrite:rewrite-fastjson-to-jackson:1.0.0-SNAPSHOT'
 }
 
 rewrite {
