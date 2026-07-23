@@ -117,6 +117,33 @@ class ActuatorSourceMigrationTest implements RewriteTest {
     }
 
     @Test
+    void officialJakartaLeavesSkipGeneratedJava() {
+        rewriteRun(java("""
+                import javax.servlet.http.HttpServletRequest;
+                class GeneratedEndpoint {
+                    HttpServletRequest request;
+                }
+                """, source -> source.path("target/generated-sources/GeneratedEndpoint.java")));
+    }
+
+    @Test
+    void officialJakartaCompositionIsIdempotentAcrossTwoCycles() {
+        rewriteRun(spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1), java(
+                """
+                import javax.servlet.http.HttpServletRequest;
+                class LegacyEndpoint {
+                    HttpServletRequest request;
+                }
+                """,
+                """
+                import jakarta.servlet.http.HttpServletRequest;
+                class LegacyEndpoint {
+                    HttpServletRequest request;
+                }
+                """));
+    }
+
+    @Test
     void marksApacheLicensedRealHttpTraceRepositoryFixture() throws IOException {
         rewriteRun(ActuatorSourceMigrationTest::riskSpec,
                 java(fixture("service-registry-httptrace.java"), source -> source
