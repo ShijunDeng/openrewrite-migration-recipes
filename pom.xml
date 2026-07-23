@@ -138,6 +138,7 @@
     <module>rewrite-commons-cli-upgrade</module>
     <module>rewrite-twelvemonkeys-imageio-jpeg-upgrade</module>
     <module>rewrite-disruptor-upgrade</module>
+    <module>rewrite-jsoup-upgrade</module>
   </modules>
 
   <dependencyManagement>

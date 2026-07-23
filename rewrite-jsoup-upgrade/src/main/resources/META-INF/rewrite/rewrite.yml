@@ -1,0 +1,36 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.jsoup
+packageName: com.huawei.clouds.openrewrite.jsoup
+description: Upgrade jsoup and automate deterministic compatibility work while marking application policy decisions.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jsoup.UpgradeJsoupTo1_21_1
+displayName: Upgrade workbook-selected jsoup dependencies to 1.21.1
+description: >-
+  Upgrade only exact org.jsoup:jsoup 1.14.2, 1.14.3, 1.15.3, 1.15.4, and 1.16.1 dependencies in owned
+  standard Maven and root Gradle declarations; preserve other versions, external owners, variants, and generated files.
+tags:
+  - jsoup
+  - html
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.jsoup.UpgradeSelectedJsoupDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jsoup.MigrateJsoupTo1_21_1
+displayName: Migrate jsoup applications to 1.21.1
+description: >-
+  Reuse the strict dependency upgrade, migrate removed public types and the deleted no-op normalise method, then
+  precisely mark network, streaming, cleaning, selector, DOM, serialization, XML, Android, ownership and packaging decisions.
+tags:
+  - jsoup
+  - html
+  - java
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.jsoup.UpgradeJsoupTo1_21_1
+  - com.huawei.clouds.openrewrite.jsoup.MigrateWhitelistToSafelist
+  - com.huawei.clouds.openrewrite.jsoup.RemoveDocumentNormalise
+  - com.huawei.clouds.openrewrite.jsoup.FindJsoupJavaRisks
+  - com.huawei.clouds.openrewrite.jsoup.FindJsoupBuildRisks
