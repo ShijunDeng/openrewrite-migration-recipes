@@ -1,0 +1,22 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.selenium.UpgradeSeleniumJavaTo4_41_0
+displayName: Upgrade workbook-selected Selenium Java dependency to 4.41.0
+description: >-
+  Upgrade only exact org.seleniumhq.selenium:selenium-java:4.8.1 declarations owned by the current Maven
+  project/profile or root Gradle dependencies block.
+recipeList:
+  - com.huawei.clouds.openrewrite.selenium.UpgradeSelectedSeleniumDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.selenium.MigrateSeleniumJavaTo4_41_0
+displayName: Migrate Selenium Java 4.8.1 to 4.41.0
+description: >-
+  Apply the strict workbook dependency upgrade first, automatically rewrite deterministic removed APIs,
+  and mark decisions that require application or infrastructure evidence.
+recipeList:
+  - com.huawei.clouds.openrewrite.selenium.UpgradeSeleniumJavaTo4_41_0
+  - com.huawei.clouds.openrewrite.selenium.MigrateChromeDriverLogLevel
+  - com.huawei.clouds.openrewrite.selenium.MigrateLegacyTimeouts
+  - com.huawei.clouds.openrewrite.selenium.FindSeleniumBuildRisks
+  - com.huawei.clouds.openrewrite.selenium.FindSeleniumJavaRisks

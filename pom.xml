@@ -139,6 +139,7 @@
     <module>rewrite-twelvemonkeys-imageio-jpeg-upgrade</module>
     <module>rewrite-disruptor-upgrade</module>
     <module>rewrite-jsoup-upgrade</module>
+    <module>rewrite-selenium-java-upgrade</module>
   </modules>
 
   <dependencyManagement>
