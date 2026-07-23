@@ -1,6 +1,8 @@
 package com.huawei.clouds.openrewrite.bcprovjdk18on;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.Recipe;
+import org.openrewrite.config.Environment;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -9,9 +11,12 @@ import org.openrewrite.test.TypeValidation;
 import static org.openrewrite.java.Assertions.java;
 
 class MigrateBcProv184JavaTest implements RewriteTest {
+    private static final String RECIPE =
+            "com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateDeterministicBcProv1_84Java";
+
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new MigrateBcProv184Java())
+        spec.recipe(recipe())
                 .parser(JavaParser.fromJavaVersion().classpath("bcprov-jdk18on"));
     }
 
@@ -30,6 +35,33 @@ class MigrateBcProv184JavaTest implements RewriteTest {
 
                 class Crypto {
                     BIKEParameters parameters = BIKEParameters.bike128;
+                }
+                """));
+    }
+
+    @Test
+    void migratesRealCipherRadarBikeKemShape() {
+        // Fixed fixture:
+        // https://github.com/nk-sentinel/CipherRadarTestProj/blob/bf3a5a08471f6571a0dd16595185a8ad21673ca5/java/BouncyCastlePQC.java#L20-L48
+        rewriteRun(java(
+                """
+                package benchmark;
+
+                import org.bouncycastle.pqc.crypto.bike.BIKEKEMGenerator;
+
+                public class BouncyCastlePQC {
+                    // EXPECTED: BIKE | - | - | info | quantum-safe
+                    public void bikeKEM() { new BIKEKEMGenerator(null); }
+                }
+                """,
+                """
+                package benchmark;
+
+                import org.bouncycastle.pqc.legacy.bike.BIKEKEMGenerator;
+
+                public class BouncyCastlePQC {
+                    // EXPECTED: BIKE | - | - | info | quantum-safe
+                    public void bikeKEM() { new BIKEKEMGenerator(null); }
                 }
                 """));
     }
@@ -194,6 +226,25 @@ class MigrateBcProv184JavaTest implements RewriteTest {
     }
 
     @Test
+    void fixesStaticImportedHpkeP384ConstantTypo() {
+        rewriteRun(java(
+                """
+                import static org.bouncycastle.crypto.hpke.HPKE.kem_P384_SHA348;
+
+                class HpkeConfig {
+                    short kem = kem_P384_SHA348;
+                }
+                """,
+                """
+                import static org.bouncycastle.crypto.hpke.HPKE.kem_P384_SHA384;
+
+                class HpkeConfig {
+                    short kem = kem_P384_SHA384;
+                }
+                """));
+    }
+
+    @Test
     void replacesRemovedEcPrivateKeyGetterWithExactFormerImplementation() {
         rewriteRun(java(
                 """
@@ -312,5 +363,9 @@ class MigrateBcProv184JavaTest implements RewriteTest {
                 import org.bouncycastle.asn1.sec.ECPrivateKey;
                 class Encoding { Object parameters(ECPrivateKey key) { return key.getParametersObject().toASN1Primitive(); } }
                 """));
+    }
+
+    private static Recipe recipe() {
+        return Environment.builder().scanRuntimeClasspath().build().activateRecipes(RECIPE);
     }
 }

@@ -17,14 +17,79 @@ recipeList:
   - com.huawei.clouds.openrewrite.bcprovjdk18on.UpgradeSelectedBcProvDependency
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateDeterministicBcProv1_84Java
-displayName: Migrate deterministic Bouncy Castle 1.84 Java API moves
-description: Apply only official source moves and byte-for-byte equivalent API replacements with attributed Bouncy Castle types.
+name: com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateAttributedBikePackage
+displayName: Move attributed Bouncy Castle BIKE types to the legacy package
+description: Move only fully attributed BIKE types while rejecting wildcard imports, unresolved imports, and Bouncy Castle-owned source packages.
 tags:
   - bouncycastle
   - bcprov
   - source-migration
+preconditions:
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.FindSafeBikePackageUse
 recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: org.bouncycastle.pqc.crypto.bike
+      newPackageName: org.bouncycastle.pqc.legacy.bike
+      recursive: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateAttributedPicnicPackage
+displayName: Move attributed Bouncy Castle Picnic types to the legacy package
+description: Move only fully attributed Picnic types while rejecting wildcard imports, unresolved imports, and Bouncy Castle-owned source packages.
+tags:
+  - bouncycastle
+  - bcprov
+  - source-migration
+preconditions:
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.FindSafePicnicPackageUse
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: org.bouncycastle.pqc.crypto.picnic
+      newPackageName: org.bouncycastle.pqc.legacy.picnic
+      recursive: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateAttributedRainbowPackage
+displayName: Move attributed Bouncy Castle Rainbow types to the legacy package
+description: Move only fully attributed Rainbow types while rejecting wildcard imports, unresolved imports, and Bouncy Castle-owned source packages.
+tags:
+  - bouncycastle
+  - bcprov
+  - source-migration
+preconditions:
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.FindSafeRainbowPackageUse
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: org.bouncycastle.pqc.crypto.rainbow
+      newPackageName: org.bouncycastle.pqc.legacy.rainbow
+      recursive: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateDeterministicBcProv1_84Java
+displayName: Migrate deterministic Bouncy Castle 1.84 Java API moves
+description: Directly compose official OpenRewrite leaves for package, type, method, and constant changes, plus the exact former ECPrivateKey getter implementation.
+tags:
+  - bouncycastle
+  - bcprov
+  - source-migration
+preconditions:
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.FindAuthoredSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateAttributedBikePackage
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateAttributedPicnicPackage
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateAttributedRainbowPackage
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.bouncycastle.pqc.jcajce.provider.util.WrapUtil
+      newFullyQualifiedTypeName: org.bouncycastle.jcajce.provider.asymmetric.util.WrapUtil
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.bouncycastle.util.Pack longToBigEndian(long, byte[], int, int)
+      newMethodName: longToBigEndian_Low
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.bouncycastle.crypto.hpke.HPKE.kem_P384_SHA348
+      fullyQualifiedConstantName: org.bouncycastle.crypto.hpke.HPKE.kem_P384_SHA384
   - com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateBcProv184Java
 ---
 type: specs.openrewrite.org/v1beta/recipe

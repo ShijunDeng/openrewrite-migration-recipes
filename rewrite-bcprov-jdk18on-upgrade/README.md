@@ -218,9 +218,38 @@ mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:dryRun \
 5. 覆盖 Provider 顺序、并发 class loader、PKCS12 高 iteration、ASN.1 深度/大小/畸形输入、PQC 参数、HKDF 多 IKM、序列化旧数据、滚动升级和回滚。
 6. 对最终 JAR/WAR/container image 运行签名与安全扫描；启动时打印实际 `Provider.Service` 和版本，灰度期间监控解析拒绝、签名失败、CPU/内存和 keystore 加载延迟。
 
+## 官方能力复用审计
+
+审计基线固定为：
+
+- OpenRewrite Core `8.87.5` 的 sources artifact，manifest 对应固定提交
+  [`b3008cc`](https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568)，
+  sources JAR SHA-256 为
+  `57ef3f3ce17fd0e5c3688d64a8260f8802a72dd6814cdb59a4b2b807023275f9`；
+- `org.openrewrite.recipe:rewrite-migrate-java:3.40.0`，manifest 对应固定提交
+  [`6584812`](https://github.com/openrewrite/rewrite-migrate-java/tree/658481254a6ee678f5f162e51d8d49ee01c75877)，
+  main JAR SHA-256 为
+  `8c00217ff2cf4dc9c139a1eff49ed1403fe20e010e42295f5aeb1dd9a5872dc6`。
+
+| 官方能力 | 审计结论 | 本模块处理 |
+| --- | --- | --- |
+| Core [`ChangePackage`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/ChangePackage.java) | 能完整更新 package/import/FQN/type attribution，但默认也会处理 package declaration 和仅有文本形态的 import | **直接组合复用三次**；每个 package 前分别增加归因、非星号 import、非 BC-owned package 和非 generated precondition |
+| Core [`ChangeType`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/ChangeType.java) | 能完整表达 `WrapUtil` 的类型、import 和使用点迁移 | **直接组合复用**，`ignoreDefinition=true` |
+| Core [`ChangeMethodName`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/ChangeMethodName.java) | 能按精确方法签名处理普通调用、static import 和 method reference | **直接组合复用**，只匹配四参数 `Pack.longToBigEndian` |
+| Core [`ReplaceConstantWithAnotherConstant`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/ReplaceConstantWithAnotherConstant.java) | 能依据字段归属处理限定引用与 static import | **直接组合复用**，只替换 `HPKE.kem_P384_SHA348` |
+| [`BounceCastleFromJdk15OntoJdk18On`](https://github.com/openrewrite/rewrite-migrate-java/blob/658481254a6ee678f5f162e51d8d49ee01c75877/src/main/resources/META-INF/rewrite/bouncycastle-jdk18on.yml) | 运行时树是 14 个 `ChangeDependency`：把七类 `-jdk15on` 与七类 `-jdk15to18` artifact 改成 `-jdk18on`，目标为 `latest.release` | **审计但不组合**；本任务输入已经是 `bcprov-jdk18on`，且只允许六个固定版本精确到 `1.84`，组合它会扩大 lineage、artifact 和版本边界 |
+| 官方通用依赖升级 recipe | 不能同时表达六版本白名单、root/profile owner、独占 property、variant 门禁和全部 NO-DOWNGRADE 条件 | 依赖升级保留严格 visitor；推荐树断言不存在官方宽 aggregate 或通用 `ChangeDependency` |
+| `ECPrivateKey#getParameters()` 表达式展开 | Core/rewrite-migrate-java catalog 没有“改方法并追加 `toASN1Primitive()`”的等价叶子 | 只保留这一处小型 typed gap visitor，并逐字复现旧方法体 |
+
+运行时 recipe-tree 测试会解开 declarative/delegating wrapper，精确断言三个
+`ChangePackage`、`ChangeType`、`ChangeMethodName`、常量替换及 EC gap 的顺序和全部
+options；同时激活官方 Bouncy Castle aggregate，逐项断言其 14 个坐标和
+`latest.release`，并证明本地推荐树没有把它或通用 `ChangeDependency` 带入。这样
+README 的复用结论和实际可执行 composition 由同一个测试门禁约束。
+
 ## 测试证据与真实仓库用例
 
-模块测试套件覆盖六个版本、Maven/Gradle 所有权与 NO-OP 门禁、BIKE/Picnic/Rainbow、WrapUtil、Pack、HPKE、EC getter 的确定性源码改写、构建/源码/配置 MARK、星号/未知 import 和第三方同包声明拒绝门禁、生成目录、同名 API、类型归因、marker 幂等和推荐组合配方顺序。
+模块测试套件覆盖六个版本、Maven/Gradle 所有权与 NO-OP 门禁、BIKE/Picnic/Rainbow、WrapUtil、Pack、HPKE、EC getter 的确定性源码改写、官方/本地运行时 recipe tree、构建/源码/配置 MARK、星号/未知 import 和第三方同包声明拒绝门禁、生成目录、同名 API、类型归因、marker 幂等和推荐组合配方顺序。
 
 测试形态来自固定到不可变 commit 的公开真实仓库，而不是只构造理想化片段：
 
@@ -228,8 +257,12 @@ mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.44.0:dryRun \
 - `cbomkit/sonar-cryptography` 的 [`BcEncapsulatedSecretGenerator`](https://github.com/cbomkit/sonar-cryptography/blob/e83dd0b39d33932325fcc71a7efb4e9f744d0bcd/java/src/main/java/com/ibm/plugin/rules/detection/bc/encapsulatedsecret/BcEncapsulatedSecretGenerator.java#L45-L59) 同时保存 BIKE 与旧 Kyber package 字符串，用于验证字符串扫描会暴露 Kyber removed/promoted 风险，却不会机械改写检测规则数据。
 - LUMII QKD 服务的 [`InjectableSphincsPlus`](https://github.com/LUMII-Syslab/qkd-as-a-service/blob/f1a5e862d33fcc4bc06f5cc8c202f902e818b425/pqproxy/src/main/java/lv/lumii/pqc/InjectableSphincsPlus.java#L38-L57) 把 `sha2_128f` 与 OID、code point 绑定，并在 [编码路径](https://github.com/LUMII-Syslab/qkd-as-a-service/blob/f1a5e862d33fcc4bc06f5cc8c202f902e818b425/pqproxy/src/main/java/lv/lumii/pqc/InjectableSphincsPlus.java#L107-L162) 手工处理参数前缀，证明 SPHINCS+ 不能只靠编译成功判断兼容。
 - Android `PQCBenchmark` 的 [`SphincsPlusAlgorithm`](https://github.com/Spuddy10345/PQCBenchmark/blob/f91482d015054e38a216d423b9fe019b7cb4b674/app/src/main/java/com/example/pqcbenchmark/SphincsPlusAlgorithm.java#L5-L31) 是无后缀 lightweight 参数的真实形态，用于保留“版本未知时不盲迁”的负例。
+- CipherRadar 测试工程的
+  [`BouncyCastlePQC`](https://github.com/nk-sentinel/CipherRadarTestProj/blob/bf3a5a08471f6571a0dd16595185a8ad21673ca5/java/BouncyCastlePQC.java#L20-L48)
+  直接实例化 `BIKEKEMGenerator`；测试保留其 package、注释、方法和构造调用形态，
+  验证官方 `ChangePackage` 叶子真实改写 import 与类型使用点，而不触碰同文件其他算法。
 
-OpenRewrite 测试结构参考固定 commit 中的 [`RewriteTest`](https://github.com/openrewrite/rewrite/blob/fb933bdb74f2f4dc10ec79387e29aa8f5a8a9503/rewrite-test/src/main/java/org/openrewrite/test/RewriteTest.java)、[`ChangePackageTest`](https://github.com/openrewrite/rewrite/blob/fb933bdb74f2f4dc10ec79387e29aa8f5a8a9503/rewrite-java-test/src/test/java/org/openrewrite/java/ChangePackageTest.java) 和 [`ChangeMethodNameTest`](https://github.com/openrewrite/rewrite/blob/fb933bdb74f2f4dc10ec79387e29aa8f5a8a9503/rewrite-java-test/src/test/java/org/openrewrite/java/ChangeMethodNameTest.java) 的 before/after、negative、cycle/idempotence 与类型归因模式。
+OpenRewrite 测试结构参考固定 commit 中的 [`RewriteTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-test/src/main/java/org/openrewrite/test/RewriteTest.java)、[`ChangePackageTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java-test/src/test/java/org/openrewrite/java/ChangePackageTest.java) 和 [`ChangeMethodNameTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java-test/src/test/java/org/openrewrite/java/ChangeMethodNameTest.java) 的 before/after、negative、cycle/idempotence 与类型归因模式。
 
 模块自检：
 
@@ -237,7 +270,7 @@ OpenRewrite 测试结构参考固定 commit 中的 [`RewriteTest`](https://githu
 mvn -f rewrite-bcprov-jdk18on-upgrade/pom.xml clean verify
 ```
 
-当前执行 **157** 项测试（0 failure / 0 error / 0 skip）。
+当前执行 **163** 项测试（0 failure / 0 error / 0 skip）。
 
 ## 官方依据（固定 commit）
 
