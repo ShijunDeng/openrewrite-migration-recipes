@@ -1,0 +1,19 @@
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
+
+class JavaSecCodeFixture {
+    private final ExpressionParser parser = new SpelExpressionParser();
+
+    Object vulnerable(String expression) {
+        StandardEvaluationContext context = new StandardEvaluationContext();
+        return parser.parseExpression(expression).getValue(context);
+    }
+
+    Object restricted(String expression) {
+        SimpleEvaluationContext context =
+                SimpleEvaluationContext.forReadOnlyDataBinding().build();
+        return parser.parseExpression(expression).getValue(context);
+    }
+}

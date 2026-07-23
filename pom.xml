@@ -164,6 +164,7 @@
     <module>rewrite-tomcat-catalina-upgrade</module>
     <module>rewrite-spring-boot-starter-actuator-upgrade</module>
     <module>rewrite-spring-kafka-upgrade</module>
+    <module>rewrite-spring-expression-upgrade</module>
   </modules>
 
   <dependencyManagement>

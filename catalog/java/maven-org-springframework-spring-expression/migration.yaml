@@ -14,11 +14,17 @@
     ],
     "canonicalIdentity": {
       "value": "org.springframework:spring-expression",
-      "status": "unverified",
-      "evidence": []
+      "status": "verified",
+      "evidence": [
+        "https://github.com/spring-projects/spring-framework/tree/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522",
+        "maven-central:jar-sha256:d710a44417d890353895b341a722d7d08199e2b7da52f0a11c0e92571e1d6e19",
+        "maven-central:pom-sha256:f3f99dfcd0b1229a15faaeda0fba11e3a25f85d01aa11737271a2bce854ef42a"
+      ]
     },
     "targetVersion": "6.2.19",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-spring-expression-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -37,9 +43,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -56,9 +62,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -75,9 +81,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -94,9 +100,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -113,9 +119,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -132,9 +138,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -151,9 +157,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -170,9 +176,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -189,9 +195,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -208,9 +214,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -227,9 +233,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -246,9 +252,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -265,9 +271,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -284,9 +290,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -303,9 +309,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -322,9 +328,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -341,9 +347,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -379,19 +385,46 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "verified",
+      "sourceVersions": [
+        "5.2.5.RELEASE",
+        "5.3.20",
+        "5.3.21",
+        "5.3.27",
+        "5.3.32",
+        "5.3.33",
+        "5.3.34",
+        "5.3.39",
+        "6.1.14",
+        "6.2.0",
+        "6.2.7",
+        "6.2.8",
+        "6.2.10",
+        "6.2.11",
+        "6.2.12",
+        "6.2.17",
+        "6.2.18"
+      ],
+      "targetVersion": "6.2.19",
+      "relation": "user-supplied-upgrade",
+      "action": "auto",
+      "statement": "用户补充的原子版本清单解开了 Excel #3251 的截断聚合显示；只有这 17 个精确版本进入 AUTO，聚合单元格本身仍保持 MARK。"
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "autoSourceWhitelist": [
       "5.2.5.RELEASE",
       "5.3.20",
       "5.3.21",
@@ -400,8 +433,17 @@
       "5.3.33",
       "5.3.34",
       "5.3.39",
-      "6.1.14"
+      "6.1.14",
+      "6.2.0",
+      "6.2.7",
+      "6.2.8",
+      "6.2.10",
+      "6.2.11",
+      "6.2.12",
+      "6.2.17",
+      "6.2.18"
     ],
+    "upgradeCandidatesPendingEvidence": [],
     "noopVersions": [],
     "conflictVersions": [],
     "unresolvedVersions": [
@@ -412,22 +454,52 @@
     {
       "id": "E-001",
       "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-framework/tree/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522",
+        "maven-central:jar-sha256:d710a44417d890353895b341a722d7d08199e2b7da52f0a11c0e92571e1d6e19",
+        "maven-central:pom-sha256:f3f99dfcd0b1229a15faaeda0fba11e3a25f85d01aa11737271a2bce854ef42a"
+      ],
+      "realFixtures": [
+        "spring-projects/spring-framework@6214eae8bd02c2ed7ab382bb8d16a9cc6de49522"
+      ]
     },
     {
       "id": "E-002",
       "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-framework/blob/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522/spring-expression/src/main/java/org/springframework/expression/spel/SpelParserConfiguration.java",
+        "https://github.com/spring-projects/spring-framework/blob/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522/spring-expression/src/main/java/org/springframework/expression/spel/ExpressionState.java",
+        "https://github.com/spring-projects/spring-framework/blob/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522/spring-expression/src/main/java/org/springframework/expression/PropertyAccessor.java"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-003",
       "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-test/src/main/java/org/openrewrite/test"
+      ],
+      "realFixtures": [
+        "spring-cloud/spring-cloud-gateway@f92a674effe0fa67750e258849604a4d766943dd",
+        "JoyChou93/java-sec-code@4711f4e186258c6e0dd5c3863e7c9592e7e9026a",
+        "datageartech/datagear@6398c73ecc9cc3844b54dc85b59d5565eaf66100",
+        "thymeleaf/thymeleaf@7448e91e73ac44666a7f8f74a5051a308b77122b"
+      ]
+    },
+    {
+      "id": "E-004",
+      "claim": "OpenRewrite 官方能力已检索、复用并通过组合测试",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568",
+        "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-maven/src/main/java/org/openrewrite/maven/UpdateMavenProjectPropertyJavaVersion.java",
+        "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-maven/src/main/java/org/openrewrite/maven/AddProperty.java",
+        "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-gradle/src/main/java/org/openrewrite/gradle/UpdateJavaCompatibility.java",
+        "https://github.com/openrewrite/rewrite-spring/blob/1868aeeadcc8f69c9db4d537dd44f0c6c5ba7fe8/src/main/resources/META-INF/rewrite/spring-framework-62.yml"
+      ],
       "realFixtures": []
     }
   ],
@@ -439,11 +511,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-002",
@@ -452,11 +531,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-003",
@@ -465,11 +551,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-004",
@@ -478,11 +571,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-005",
@@ -491,11 +591,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-006",
@@ -504,11 +611,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-007",
@@ -517,11 +631,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-008",
@@ -530,11 +651,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-009",
@@ -543,11 +671,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-010",
@@ -556,11 +691,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-011",
@@ -569,11 +711,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-012",
@@ -582,11 +731,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-013",
@@ -595,11 +751,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-014",
@@ -608,11 +771,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-015",
@@ -621,11 +791,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-016",
@@ -634,11 +811,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-017",
@@ -647,11 +831,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-018",
@@ -660,11 +851,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "treatment": "聚合显示不进入版本 AUTO；配方只接受用户补充的 17 个精确原子版本，并对 SpEL 行为、配置、构建和禁止降级风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-019",
@@ -673,16 +871,23 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 Java 17 与 Maven 参数元数据配方，并对 SpEL 上下文、accessor/resolver、编译、内部 API、配置及 10,000 次操作上限执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19",
+      "tests": [
+        "UpgradeSpringExpressionDependencyTest",
+        "SpringExpressionBuildTest",
+        "SpringExpressionSourceRisksTest",
+        "SpringExpressionConfigurationRisksTest",
+        "PreserveLegacyUnlimitedSpelOperationsTest",
+        "SpringExpressionRecommendedRecipeTest"
+      ]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }

@@ -1,0 +1,12 @@
+import java.util.Map;
+import org.springframework.expression.PropertyAccessor;
+
+class DataGearMapAccessorFixture implements PropertyAccessor {
+    Class<?>[] getSpecificTargetClasses() {
+        return new Class<?>[] {Map.class};
+    }
+
+    boolean canRead(Object target, String name) {
+        return target instanceof Map<?, ?> map && map.containsKey(name);
+    }
+}

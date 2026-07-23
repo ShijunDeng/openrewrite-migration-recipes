@@ -1,0 +1,67 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springexpression
+packageName: com.huawei.clouds.openrewrite.springexpression
+description: Strict Spring Expression dependency, build, source, and configuration migration recipes for 6.2.19.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springexpression.UpgradeSpringExpressionTo6_2_19
+displayName: Upgrade selected Spring Expression declarations to 6.2.19
+description: Upgrade only the 17 exact workbook-selected versions in unambiguous locally owned Maven and Gradle declarations.
+tags:
+  - spring
+  - spel
+  - java
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.springexpression.UpgradeSelectedSpringExpressionDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springexpression.ConfigureSpringExpression6Build
+displayName: Configure Spring Expression 6 build prerequisites
+description: Conditionally compose official OpenRewrite Java 17 and Maven parameter-metadata recipes for a locally owned Spring Expression declaration.
+tags:
+  - spring
+  - spel
+  - java
+  - build
+recipeList:
+  - com.huawei.clouds.openrewrite.springexpression.ConfigureSpringExpressionBuild
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springexpression.FindSpringExpression6_2Risks
+displayName: Find Spring Expression 6.2 migration risks
+description: Mark unresolved dependency ownership, Java and framework alignment, SpEL source behavior, security, and configuration decisions.
+tags:
+  - spring
+  - spel
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springexpression.FindSpringExpressionBuildRisks
+  - com.huawei.clouds.openrewrite.springexpression.FindSpringExpressionSourceRisks
+  - com.huawei.clouds.openrewrite.springexpression.FindSpringExpressionConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springexpression.PreservePre6_2_19UnlimitedSpelOperations
+displayName: Preserve legacy unlimited SpEL operations
+description: Explicit opt-in only; replace eligible parser configurations with the seven-argument constructor and Integer.MAX_VALUE maximum operations.
+tags:
+  - spring
+  - spel
+  - compatibility
+recipeList:
+  - com.huawei.clouds.openrewrite.springexpression.PreserveLegacyUnlimitedSpelOperations
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19
+displayName: Migrate Spring Expression applications to 6.2.19
+description: Strictly upgrade selected declarations, apply narrow official build prerequisites, and mark behavior-sensitive migration decisions without weakening the 6.2.19 operation limit.
+tags:
+  - spring
+  - spel
+  - java
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springexpression.UpgradeSpringExpressionTo6_2_19
+  - com.huawei.clouds.openrewrite.springexpression.ConfigureSpringExpression6Build
+  - com.huawei.clouds.openrewrite.springexpression.FindSpringExpression6_2Risks

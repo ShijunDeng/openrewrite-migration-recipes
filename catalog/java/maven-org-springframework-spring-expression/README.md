@@ -1,9 +1,9 @@
 # org.springframework:spring-expression / spring-expression 升级规格
 
-> 规格状态：`COMPLETE`；证据状态：`PENDING`；自动化状态：`CATALOG_ONLY`。
-> 本 README 已完成工作簿事实、禁止降级边界、不兼容点分类和后续配方验收契约；
-> 它不声称尚未固定官方证据的具体 API 已得到确认。
-> catalog 本身不包含配方代码；现有候选实现也将在全量规格覆盖完成后逐模块核验和完善。
+> 规格状态：`COMPLETE`；证据状态：`VERIFIED`；自动化状态：`IMPLEMENTED`。
+> 可执行实现位于
+> [`rewrite-spring-expression-upgrade`](../../../rewrite-spring-expression-upgrade)，覆盖精确
+> 依赖升级、官方构建配方复用、SpEL 风险定位和禁止降级守卫。
 
 ## 模块身份
 
@@ -13,120 +13,134 @@
 | Maven artifactId | `migration-spec-java-maven-org-springframework-spring-expression` |
 | groupId | `com.huawei.clouds.openrewrite` |
 | 规范表格标识 | `org.springframework:spring-expression`<br>`spring-expression` |
-| Catalog canonical identity | `org.springframework:spring-expression`（`UNVERIFIED`，只用于避免目录碰撞） |
+| Catalog canonical identity | `org.springframework:spring-expression`（`VERIFIED`） |
 | 归一语言类 | `java` |
 | Excel 原始语言 | `java` |
 | 目标版本 | `6.2.19` |
 | Excel 迁移边 | 19 |
 | 涉及微服务数 | 最大可见值 `12`；不同版本行不累加 |
-| 分桶 | `B1_Patch直升`, `B2_Minor单包`, `B4_Major单包` |
-| 难度 | `中`, `低` |
 | 工作簿 SHA-256 | `17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309` |
-| 候选实现模块 | `NONE`（尚无已识别的顶层实现模块） |
+| 实现模块 | `rewrite-spring-expression-upgrade` |
 
 ## Excel 事实快照
 
-本节逐字记录表格，不把自动分桶、难度或备注提升为官方兼容性结论。厂商后缀、
-截断显示、无法解析值和疑似跨发布线目标均原样保留。
+表格中的聚合显示仍逐字保留；用户随后提供的 17 个原子版本通过 `U-001` 单独记账，
+不把 `6.2.0 ... (共17个版本)` 解释成范围。
 
-| Excel 行 | 序号 | 软件名称 | 原始语言 | 原始版本 | 目标版本 | 微服务数 | 分桶 | 难度 | 保守方向/动作 | 原始备注 |
+| Excel 行 | 序号 | 软件名称 | 原始语言 | 原始版本 | 目标版本 | 微服务数 | 分桶 | 难度 | 动作 | 原始备注 |
 | ---: | ---: | --- | --- | --- | --- | ---: | --- | --- | --- | --- |
-| 1482 | 1481 | `org.springframework:spring-expression` | java | `5.2.5.RELEASE` | `6.2.19` | 12 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1483 | 1482 | `org.springframework:spring-expression` | java | `5.3.20` | `6.2.19` | 12 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1484 | 1483 | `org.springframework:spring-expression` | java | `5.3.21` | `6.2.19` | 12 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1485 | 1484 | `org.springframework:spring-expression` | java | `5.3.27` | `6.2.19` | 12 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1486 | 1485 | `org.springframework:spring-expression` | java | `5.3.32` | `6.2.19` | 12 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1487 | 1486 | `org.springframework:spring-expression` | java | `5.3.33` | `6.2.19` | 12 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1488 | 1487 | `org.springframework:spring-expression` | java | `5.3.34` | `6.2.19` | 12 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1489 | 1488 | `org.springframework:spring-expression` | java | `5.3.39` | `6.2.19` | 12 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2242 | 2241 | `spring-expression` | java | `5.2.5.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2243 | 2242 | `spring-expression` | java | `5.3.20` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2244 | 2243 | `spring-expression` | java | `5.3.21` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2245 | 2244 | `spring-expression` | java | `5.3.27` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2246 | 2245 | `spring-expression` | java | `5.3.32` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2247 | 2246 | `spring-expression` | java | `5.3.33` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2248 | 2247 | `spring-expression` | java | `5.3.34` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2249 | 2248 | `spring-expression` | java | `5.3.39` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 3250 | 3249 | `org.springframework:spring-expression` | java | `6.1.14` | `6.2.19` | 12 | B2_Minor单包 | 低 | upgrade-candidate/mark | 同大版本内minor升级，通常向后兼容 |
-| 3251 | 3250 | `org.springframework:spring-expression` | java | `6.2.0 ... (共17个版本)` | `6.2.19` | 12 | B1_Patch直升 | 低 | unknown/mark | 仅patch变更，无breaking change |
-| 4852 | 4851 | `spring-expression` | java | `6.1.14` | `6.2.19` | 0 | B2_Minor单包 | 低 | upgrade-candidate/mark | 同大版本内minor升级，通常向后兼容 |
+| 1482 | 1481 | `org.springframework:spring-expression` | java | `5.2.5.RELEASE` | `6.2.19` | 12 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1483 | 1482 | `org.springframework:spring-expression` | java | `5.3.20` | `6.2.19` | 12 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1484 | 1483 | `org.springframework:spring-expression` | java | `5.3.21` | `6.2.19` | 12 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1485 | 1484 | `org.springframework:spring-expression` | java | `5.3.27` | `6.2.19` | 12 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1486 | 1485 | `org.springframework:spring-expression` | java | `5.3.32` | `6.2.19` | 12 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1487 | 1486 | `org.springframework:spring-expression` | java | `5.3.33` | `6.2.19` | 12 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1488 | 1487 | `org.springframework:spring-expression` | java | `5.3.34` | `6.2.19` | 12 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1489 | 1488 | `org.springframework:spring-expression` | java | `5.3.39` | `6.2.19` | 12 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2242 | 2241 | `spring-expression` | java | `5.2.5.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2243 | 2242 | `spring-expression` | java | `5.3.20` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2244 | 2243 | `spring-expression` | java | `5.3.21` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2245 | 2244 | `spring-expression` | java | `5.3.27` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2246 | 2245 | `spring-expression` | java | `5.3.32` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2247 | 2246 | `spring-expression` | java | `5.3.33` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2248 | 2247 | `spring-expression` | java | `5.3.34` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2249 | 2248 | `spring-expression` | java | `5.3.39` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 3250 | 3249 | `org.springframework:spring-expression` | java | `6.1.14` | `6.2.19` | 12 | B2_Minor单包 | 低 | auto | 同大版本内minor升级，通常向后兼容 |
+| 3251 | 3250 | `org.springframework:spring-expression` | java | `6.2.0 ... (共17个版本)` | `6.2.19` | 12 | B1_Patch直升 | 低 | mark | 仅patch变更，无breaking change |
+| 4852 | 4851 | `spring-expression` | java | `6.1.14` | `6.2.19` | 0 | B2_Minor单包 | 低 | auto | 同大版本内minor升级，通常向后兼容 |
 
 ## 升级方向与禁止降级
 
-- 表格原始源版本记录（不是 AUTO 白名单）：`5.2.5.RELEASE`, `5.3.20`, `5.3.21`, `5.3.27`, `5.3.32`, `5.3.33`, `5.3.34`, `5.3.39`, `6.1.14`, `6.2.0 ... (共17个版本)`。
-- 升级候选边：`5.2.5.RELEASE`, `5.3.20`, `5.3.21`, `5.3.27`, `5.3.32`, `5.3.33`, `5.3.34`, `5.3.39`, `6.1.14`；在 E-001～E-003 完成前仍保持 `MARK`。
-- 相同版本 NOOP：`NONE`。
-- 潜在降级冲突：`NONE`。
-- 截断、聚合或无法可靠比较：`6.2.0 ... (共17个版本)`。
-- 任何高于目标的版本、更新发布线或无法可靠比较的厂商版本必须保持字节级不变，并在
-  真实依赖 owner 上标记 `目标版本冲突（禁止降级）`；本项目不存在回退路径。
-- 表外低版本、动态版本、范围、变量、BOM/platform、parent、catalog、workspace、
-  constraints 和锁文件不能被猜测式改写；应定位并迁移真正的版本 owner。
-- 若同一模块列出多个坐标或别名，配方必须分别证明身份；在官方 relocation 证据固定前，
-  不得因为 artifact 名相同而跨 group、生态或发行渠道改坐标。
-
+- AUTO 白名单仅包含 `5.2.5.RELEASE`、`5.3.20`、`5.3.21`、`5.3.27`、
+  `5.3.32`、`5.3.33`、`5.3.34`、`5.3.39`、`6.1.14`、`6.2.0`、
+  `6.2.7`、`6.2.8`、`6.2.10`、`6.2.11`、`6.2.12`、`6.2.17`、
+  `6.2.18`，目标固定为 `6.2.19`。
+- `6.2.19` 为 NOOP；`6.2.20+`、6.3、7.x 和未来发布线保持原文，并在真实 owner
+  上标记 `目标版本冲突（禁止降级）`。本任务没有任何回退路径。
+- 表外低版本、动态值、范围、共享或歧义属性、BOM/platform、parent、version catalog、
+  constraint、非标准制品和生成目录都不做猜测式修改。
+- 聚合单元格只保留为 MARK 事实；它不参与版本比较，也不扩大原子白名单。
 
 ## 不兼容点规格
 
-| ID | 维度 | 适用迁移边 | Excel 提示 | 官方确认事实 | 处置契约 |
-| --- | --- | --- | --- | --- | --- |
-| C-001 | 补丁行为 / 安全 / 回归 | Excel #3251 6.2.0 ... (共17个版本) [unknown/mark: 源版本单元格是截断或聚合显示，不是可执行配方的原子版本白名单。] → `6.2.19` | 仅patch变更，无breaking change | `UNVERIFIED` | 固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。 |
-| C-002 | 弃用 / 默认值 / 配置 / 运行时 | Excel #3250 6.1.14 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #4852 6.1.14 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。] → `6.2.19` | 同大版本内minor升级，通常向后兼容 | `UNVERIFIED` | 同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。 |
-| C-003 | 公开 API / 配置 / 默认行为 / 运行时 | Excel #1482 5.2.5.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1483 5.3.20 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1484 5.3.21 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1485 5.3.27 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1486 5.3.32 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1487 5.3.33 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1488 5.3.34 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1489 5.3.39 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2242 5.2.5.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2243 5.3.20 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2244 5.3.21 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2245 5.3.27 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2246 5.3.32 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2247 5.3.33 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2248 5.3.34 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2249 5.3.39 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。] → `6.2.19` | 跨1个大版本，需查changelog确认breaking API | `UNVERIFIED` | 建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。 |
+| ID | 维度 | 已验证不兼容点 | OpenRewrite 处置 |
+| --- | --- | --- | --- |
+| C-001 | 运行时基线 | Spring Framework 6 要求 Java 17，并切换到 Jakarta EE 9+ 命名空间 | 在本地明确拥有目标依赖时，复用官方 Java compatibility 配方；Java 21+ 不降级，Spring 依赖族和 `javax` 字符串表达式 MARK |
+| C-002 | 参数名 | Spring 6.1 移除 LocalVariableTable 参数名发现，方法/构造器解析需要 `-parameters` | Maven 缺失属性时复用官方 `AddProperty`；显式 `false`、Gradle task 和外部 owner 保持原样并 MARK |
+| C-003 | 安全边界 | `StandardEvaluationContext` 暴露类型、构造器、方法和 Bean；`SimpleEvaluationContext` 刻意限制能力 | 在具体 context、parser 和动态表达式调用上 MARK，不机械替换上下文 |
+| C-004 | accessor / resolver | Spring 6.2 优先尝试声明目标类型的 `PropertyAccessor`，自定义 accessor、resolver、varargs 和转换顺序需回归 | 按类型归因定位具体实现和注册点；业务顺序不自动猜测 |
+| C-005 | 编译模式 | `MIXED` / `IMMEDIATE` 依赖稳定运行时类型、成员可见性和 ClassLoader/JPMS 边界 | 标记配置、构造器和自定义 ClassLoader；要求 interpreted/compiled 双路径测试 |
+| C-006 | 内部 API | `spel.ast`、`ExpressionState` 和 support 包的诊断/内部成员不是稳定 SPI | 标记已知内部类型和成员，迁移到公开 SPI 由业务实现 |
+| C-007 | 操作上限 | 6.2.19 默认最多 10,000 次 SpEL 操作，超限抛出 `MAX_OPERATIONS_EXCEEDED` | 推荐配方标记旧构造器和全局覆盖；不自动放宽安全上限 |
+| C-008 | 配置与嵌入表达式 | JVM/POM/Docker 属性及 properties/YAML/XML 中的嵌入表达式可能改变行为或暴露强能力 | 在具体配置键和表达式节点 MARK，要求生产语料、安全和容量测试 |
 
-`UNVERIFIED` 表示 Excel 提示已进入规格，但尚未用不可变的官方 tag/commit、发布说明和
-制品元数据完成验证。此时允许 README 和精确 MARK 设计，不允许据此发明 API AUTO。
+`VERIFIED` 表示上述事实有固定源码或制品支持；表达式信任域、允许能力集合、业务
+accessor 顺序、容量阈值和回滚窗口仍需业务验收。
 
 ### `java` 生态最低核查项
 
-- 确认规范 Maven 坐标、relocation 关系，以及 parent/BOM/property/platform 的真实版本 owner。
-- 覆盖 Maven 与 Gradle；核查 JDK/字节码基线、包名和公开 API、反射、注解处理与 ServiceLoader。
-- 核查 JPMS/OSGi、shade/native-image、序列化/缓存/数据库数据，以及配置文件和框架联动。
+- Java 17+ 重新编译并保留参数元数据，统一 Spring Framework、Boot 和 Jakarta 依赖族。
+- 用生产表达式语料覆盖方法、类型、Bean、构造器、数组、赋值、集合选择/投影和拒绝路径。
+- 覆盖 interpreted/MIXED/IMMEDIATE、JPMS、ClassLoader、native image 与 10,000 次操作边界。
 
 ## 证据台账
 
-| Claim ID | 待证明事项 | 状态 | 固定官方证据 | 形成 AUTO 的条件 |
-| --- | --- | --- | --- | --- |
-| E-001 | 包/坐标身份、源版本和目标制品身份 | `UNVERIFIED` | 后续固定官网、registry/repository 元数据与 SHA | 身份无歧义且目标确为升级 |
-| E-002 | 每条迁移边的 API、配置和默认行为变化 | `UNVERIFIED` | 后续固定 release notes、迁移指南、tag/commit diff | 存在一一对应且语义等价的变换 |
-| E-003 | 真实工程中的用法和负例 | `UNVERIFIED` | 后续固定真实仓库 commit、路径、许可证与裁剪说明 | 正例、负例和上下文边界均可复现 |
+| Claim ID | 状态 | 固定证据 |
+| --- | --- | --- |
+| E-001 制品身份 | `VERIFIED` | Spring Framework `6.2.19` commit [`6214eae8`](https://github.com/spring-projects/spring-framework/tree/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522)；Maven Central JAR SHA-256 `d710a444...d6e19`、POM SHA-256 `f3f99dfc...f42a` |
+| E-002 API/配置/行为 | `VERIFIED` | 固定提交下的 [`SpelParserConfiguration`](https://github.com/spring-projects/spring-framework/blob/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522/spring-expression/src/main/java/org/springframework/expression/spel/SpelParserConfiguration.java)、[`ExpressionState`](https://github.com/spring-projects/spring-framework/blob/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522/spring-expression/src/main/java/org/springframework/expression/spel/ExpressionState.java) 和 `PropertyAccessor` 源码 |
+| E-003 真实用法 | `VERIFIED` | Spring Cloud Gateway `f92a674e`、java-sec-code `4711f4e1`、DataGear `6398c73e`、Thymeleaf `7448e91e` 固定 fixture |
+| E-004 官方能力复用 | `VERIFIED` | OpenRewrite core `8.87.5` 固定提交 [`b3008cc4`](https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568) 与三个实际复用类 |
 
-真实仓库只能证明“用法存在”，不能替代官方兼容性证据。推断必须显式标为
-`INFERENCE`；只有固定上游证据支持的事实才能改为 `VERIFIED`。
+真实仓库只证明调用形态存在；兼容性结论由 Spring 固定源码和目标制品支持。
+
+## 官方能力复用审计
+
+- 实际复用官方 `UpdateMavenProjectPropertyJavaVersion(17)`、`AddProperty`，以及两次
+  `UpdateJavaCompatibility(..., allowDowngrade=false)`。
+- 官方配方只在当前 Maven/Gradle 文件明确拥有选中或目标依赖时执行；组合测试读取
+  runtime recipe tree，并验证输出、执行顺序、Java 21 不降级和二次运行幂等。
+- 已审计官方
+  [`UpgradeSpringFramework_6_2`](https://github.com/openrewrite/rewrite-spring/blob/1868aeeadcc8f69c9db4d537dd44f0c6c5ba7fe8/src/main/resources/META-INF/rewrite/spring-framework-62.yml)；
+  它会宽泛升级整个 `org.springframework:*` 依赖族并执行大量 Web 迁移，不满足单制品、
+  17 个离散源版本和精确 `6.2.19` 的契约，因此不组合。
+- 官方通用依赖升级不能证明共享属性 owner，也不能表达本任务的离散白名单；该缺口由
+  `UpgradeSelectedSpringExpressionDependency` 实现。SpEL 信任边界、操作上限和业务
+  accessor 顺序没有等价官方自动修复，只做类型归因后的精确 MARK。
 
 ## 后续 OpenRewrite 配方契约
 
 ### AUTO
 
-- 当前阶段 AUTO 白名单为空；只有 E-001～E-003 变为 `VERIFIED` 后，升级候选边才可逐项进入；
-- 只处理经验证的原子源版本、明确坐标和当前文件拥有的标准依赖声明；
-- 更高版本永不降级，表外版本、变体和外部 owner 永不猜测；
-- 只实现有官方源码证明、上下文无歧义、行为等价且可幂等运行的 AST/配置修改；
-- 保留 scope、classifier/type、optional、exclusions、workspace/profile 和相邻内容。
+- 只把 17 个精确源版本的、当前文件明确拥有的标准 Maven/Gradle JAR 声明改为 `6.2.19`。
+- 只在安全前置条件成立时执行实际选定的官方构建配方；所有变换保留 scope、exclusions、
+  闭包、注释和其他元数据。
+- 危险的 `Integer.MAX_VALUE` 兼容开关是独立 opt-in 配方，不属于推荐组合。
 
 ### MARK
 
-- 在具体依赖、属性、BOM/platform、调用、类型、配置键或资源节点标记未决事项；
-- marker 必须说明业务 owner 需要作出的决定、所需证据和验收方法；
-- 不用文件级泛化告警代替精确定位，也不把 README 文字伪装成已执行迁移。
+- 在具体依赖、属性、调用、类型、构造器和配置节点标记 owner、Java/Jakarta、参数元数据、
+  context/accessor/resolver、编译、内部 API 与操作上限风险。
+- 高版本 marker 必须包含精确短语 `目标版本冲突（禁止降级）`。
 
 ### MANUAL
 
-- 运行时流量、安全策略、数据和 wire format、集群滚动策略、原生 ABI、性能容量、
-  外部服务兼容性与回滚均由业务证据决定；
-- 无法通过静态上下文证明安全的语义变换保持原样。
+- 表达式信任域、允许/拒绝能力、accessor/resolver 顺序、操作容量、原生镜像和回滚由
+  业务证据决定；无法静态证明语义等价的代码与配置保持原样。
 
 ## 测试与真实用例验收
 
-- 每个经验证的升级候选源版本才要求 AUTO 正例；目标/相同行为 NOOP；
-- 冲突、未知、截断和聚合版本保持不变并 MARK；所有更高版本和更高发布线验证禁止降级；
-- 覆盖对应生态的直接声明、共享 owner、BOM/platform/workspace、动态值、范围、锁文件和变体；
-- 覆盖同名业务符号、相似坐标、注释/字符串、生成目录、缓存和安装产物负例；
-- 每项 AUTO 有 before/after、类型或结构归因、两轮幂等和 aggregate 顺序测试；
-- 固定真实仓库 commit 与文件路径，记录裁剪内容；真实夹具不能取代官方差异证据；
-- 最终执行编译、单元/集成、行为、安全、性能、数据兼容、部署和回滚门禁。
+- 111 个测试覆盖全部 17 个白名单版本、Maven/Gradle Groovy/Kotlin、owner/profile/
+  variant、表外版本、目标 NOOP、所有高版本禁止降级和生成目录。
+- 覆盖官方配方实际 class、before/after、推荐组合顺序和两周期幂等，不接受只在 README
+  中声明“复用官方能力”。
+- 覆盖 parser/context/accessor/resolver/conversion/compiler/内部 API/配置风险、危险
+  opt-in 正负例，以及四个固定真实仓库 fixture。
+- 业务最低门禁包括 Java 17 编译、生产表达式回归、安全/性能/容量测试、Spring 依赖族
+  对齐、部署和回滚演练。
 
 ## 当前阶段结论
 
-本模块的不兼容点文档规格已经建立；官方证据、真实仓库夹具和可执行配方属于下一阶段。
-在 E-001～E-003 完成前，除严格版本所有权和禁止降级守卫外，不批准猜测式 AUTO。
+该模块的规格、固定证据和可执行实现均已完成。自动修改被限定在精确白名单、明确 owner
+和已验证的官方构建能力；SpEL 业务语义由配方精确定位但不擅自改写，任何高版本都不会被
+降级。

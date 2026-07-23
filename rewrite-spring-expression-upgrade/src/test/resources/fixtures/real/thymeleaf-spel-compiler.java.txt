@@ -1,0 +1,8 @@
+import org.springframework.expression.spel.SpelCompilerMode;
+import org.springframework.expression.spel.SpelParserConfiguration;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+
+class ThymeleafSpelCompilerFixture {
+    private final SpelExpressionParser parser = new SpelExpressionParser(
+            new SpelParserConfiguration(SpelCompilerMode.MIXED, null));
+}

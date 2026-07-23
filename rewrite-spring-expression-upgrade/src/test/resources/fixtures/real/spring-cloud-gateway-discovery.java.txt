@@ -1,0 +1,14 @@
+import org.springframework.expression.Expression;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
+
+class GatewayDiscoveryFixture {
+    private final SpelExpressionParser parser = new SpelExpressionParser();
+    private final SimpleEvaluationContext evaluationContext =
+            SimpleEvaluationContext.forReadOnlyDataBinding().build();
+
+    String routeUri(String urlExpression, Object serviceInstance) {
+        Expression expression = parser.parseExpression(urlExpression);
+        return expression.getValue(evaluationContext, String.class);
+    }
+}
