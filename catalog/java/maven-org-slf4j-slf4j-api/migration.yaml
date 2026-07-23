@@ -1,0 +1,399 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-java-maven-org-slf4j-slf4j-api",
+    "catalogPath": "catalog/java/maven-org-slf4j-slf4j-api",
+    "languageProfile": "java",
+    "rawIdentifiers": [
+      "org.slf4j:slf4j-api"
+    ],
+    "rawLanguages": [
+      "java"
+    ],
+    "canonicalIdentity": {
+      "value": "org.slf4j:slf4j-api",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "2.0.17",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 53,
+        "sequence": "52",
+        "software": "org.slf4j:slf4j-api",
+        "rawLanguage": "java",
+        "source": "1.7.25",
+        "target": "2.0.17",
+        "services": "157",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "slf4j 1.x->2.x 绑定机制变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 54,
+        "sequence": "53",
+        "software": "org.slf4j:slf4j-api",
+        "rawLanguage": "java",
+        "source": "1.7.26",
+        "target": "2.0.17",
+        "services": "157",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "slf4j 1.x->2.x 绑定机制变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 55,
+        "sequence": "54",
+        "software": "org.slf4j:slf4j-api",
+        "rawLanguage": "java",
+        "source": "1.7.30",
+        "target": "2.0.17",
+        "services": "157",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "slf4j 1.x->2.x 绑定机制变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 56,
+        "sequence": "55",
+        "software": "org.slf4j:slf4j-api",
+        "rawLanguage": "java",
+        "source": "1.7.32",
+        "target": "2.0.17",
+        "services": "157",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "slf4j 1.x->2.x 绑定机制变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 57,
+        "sequence": "56",
+        "software": "org.slf4j:slf4j-api",
+        "rawLanguage": "java",
+        "source": "1.7.34",
+        "target": "2.0.17",
+        "services": "157",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "slf4j 1.x->2.x 绑定机制变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 58,
+        "sequence": "57",
+        "software": "org.slf4j:slf4j-api",
+        "rawLanguage": "java",
+        "source": "1.7.35",
+        "target": "2.0.17",
+        "services": "157",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "slf4j 1.x->2.x 绑定机制变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 59,
+        "sequence": "58",
+        "software": "org.slf4j:slf4j-api",
+        "rawLanguage": "java",
+        "source": "1.7.36",
+        "target": "2.0.17",
+        "services": "157",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "slf4j 1.x->2.x 绑定机制变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2318,
+        "sequence": "2317",
+        "software": "org.slf4j:slf4j-api",
+        "rawLanguage": "java",
+        "source": "2.0.0",
+        "target": "2.0.17",
+        "services": "157",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2319,
+        "sequence": "2318",
+        "software": "org.slf4j:slf4j-api",
+        "rawLanguage": "java",
+        "source": "2.0.0-alpha1",
+        "target": "2.0.17",
+        "services": "157",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2320,
+        "sequence": "2319",
+        "software": "org.slf4j:slf4j-api",
+        "rawLanguage": "java",
+        "source": "2.0.6 ... (共11个版本)",
+        "target": "2.0.17",
+        "services": "157",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": false,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "源版本单元格是截断或聚合显示，不是可执行配方的原子版本白名单。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "1.7.25",
+      "1.7.26",
+      "1.7.30",
+      "1.7.32",
+      "1.7.34",
+      "1.7.35",
+      "1.7.36",
+      "2.0.0",
+      "2.0.0-alpha1"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": [
+      "2.0.6 ... (共11个版本)"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        53
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        54
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        55
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        56
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        57
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        58
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        59
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-008",
+      "edgeRows": [
+        2318
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-009",
+      "edgeRows": [
+        2319
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-010",
+      "edgeRows": [
+        2320
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

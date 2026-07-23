@@ -1,0 +1,134 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-java-maven-tk-mybatis-mapper-spring-boot-starter",
+    "catalogPath": "catalog/java/maven-tk-mybatis-mapper-spring-boot-starter",
+    "languageProfile": "java",
+    "rawIdentifiers": [
+      "tk.mybatis:mapper-spring-boot-starter"
+    ],
+    "rawLanguages": [
+      "java"
+    ],
+    "canonicalIdentity": {
+      "value": "tk.mybatis:mapper-spring-boot-starter",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "6.0.0",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 443,
+        "sequence": "442",
+        "software": "tk.mybatis:mapper-spring-boot-starter",
+        "rawLanguage": "java",
+        "source": "4.2.1",
+        "target": "6.0.0",
+        "services": "10",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "MyBatis跨多个大版本(4.2.1->6.0.0)，配置方式/注解API变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 444,
+        "sequence": "443",
+        "software": "tk.mybatis:mapper-spring-boot-starter",
+        "rawLanguage": "java",
+        "source": "4.2.3",
+        "target": "6.0.0",
+        "services": "10",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "MyBatis跨多个大版本(4.2.3->6.0.0)，配置方式/注解API变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "4.2.1",
+      "4.2.3"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        443
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        444
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

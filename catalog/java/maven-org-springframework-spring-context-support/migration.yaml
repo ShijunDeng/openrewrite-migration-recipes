@@ -1,0 +1,365 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-java-maven-org-springframework-spring-context-support",
+    "catalogPath": "catalog/java/maven-org-springframework-spring-context-support",
+    "languageProfile": "java",
+    "rawIdentifiers": [
+      "org.springframework:spring-context-support"
+    ],
+    "rawLanguages": [
+      "java"
+    ],
+    "canonicalIdentity": {
+      "value": "org.springframework:spring-context-support",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "6.2.19",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 297,
+        "sequence": "296",
+        "software": "org.springframework:spring-context-support",
+        "rawLanguage": "java",
+        "source": "1.0.2",
+        "target": "6.2.19",
+        "services": "22",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1280,
+        "sequence": "1279",
+        "software": "org.springframework:spring-context-support",
+        "rawLanguage": "java",
+        "source": "5.1.2.RELEASE",
+        "target": "6.2.19",
+        "services": "22",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1281,
+        "sequence": "1280",
+        "software": "org.springframework:spring-context-support",
+        "rawLanguage": "java",
+        "source": "5.2.5.RELEASE",
+        "target": "6.2.19",
+        "services": "22",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1282,
+        "sequence": "1281",
+        "software": "org.springframework:spring-context-support",
+        "rawLanguage": "java",
+        "source": "5.3.20",
+        "target": "6.2.19",
+        "services": "22",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1283,
+        "sequence": "1282",
+        "software": "org.springframework:spring-context-support",
+        "rawLanguage": "java",
+        "source": "5.3.23",
+        "target": "6.2.19",
+        "services": "22",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1284,
+        "sequence": "1283",
+        "software": "org.springframework:spring-context-support",
+        "rawLanguage": "java",
+        "source": "5.3.25",
+        "target": "6.2.19",
+        "services": "22",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1285,
+        "sequence": "1284",
+        "software": "org.springframework:spring-context-support",
+        "rawLanguage": "java",
+        "source": "5.3.27",
+        "target": "6.2.19",
+        "services": "22",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1286,
+        "sequence": "1285",
+        "software": "org.springframework:spring-context-support",
+        "rawLanguage": "java",
+        "source": "5.3.29",
+        "target": "6.2.19",
+        "services": "22",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2864,
+        "sequence": "2863",
+        "software": "org.springframework:spring-context-support",
+        "rawLanguage": "java",
+        "source": "6.0.11",
+        "target": "6.2.19",
+        "services": "22",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "1.0.2",
+      "5.1.2.RELEASE",
+      "5.2.5.RELEASE",
+      "5.3.20",
+      "5.3.23",
+      "5.3.25",
+      "5.3.27",
+      "5.3.29",
+      "6.0.11"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        297
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        1280
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        1281
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        1282
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        1283
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        1284
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        1285
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-008",
+      "edgeRows": [
+        1286
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-009",
+      "edgeRows": [
+        2864
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

@@ -1,0 +1,398 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-java-maven-com-google-guava-guava",
+    "catalogPath": "catalog/java/maven-com-google-guava-guava",
+    "languageProfile": "java",
+    "rawIdentifiers": [
+      "com.google.guava:guava"
+    ],
+    "rawLanguages": [
+      "java"
+    ],
+    "canonicalIdentity": {
+      "value": "com.google.guava:guava",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "33.5.0-jre",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 4,
+        "sequence": "3",
+        "software": "com.google.guava:guava",
+        "rawLanguage": "java",
+        "source": "21",
+        "target": "33.5.0-jre",
+        "services": "316",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Guava跨多个大版本(21.0->33.5.0-jre)，大量API废弃/移除",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 5,
+        "sequence": "4",
+        "software": "com.google.guava:guava",
+        "rawLanguage": "java",
+        "source": "29.0-jre",
+        "target": "33.5.0-jre",
+        "services": "316",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Guava跨多个大版本(29.0-jre->33.5.0-jre)，大量API废弃/移除",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 6,
+        "sequence": "5",
+        "software": "com.google.guava:guava",
+        "rawLanguage": "java",
+        "source": "30.1-jre",
+        "target": "33.5.0-jre",
+        "services": "316",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Guava跨多个大版本(30.1-jre->33.5.0-jre)，大量API废弃/移除",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 7,
+        "sequence": "6",
+        "software": "com.google.guava:guava",
+        "rawLanguage": "java",
+        "source": "30.1.1-jre",
+        "target": "33.5.0-jre",
+        "services": "316",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Guava跨多个大版本(30.1.1-jre->33.5.0-jre)，大量API废弃/移除",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 8,
+        "sequence": "7",
+        "software": "com.google.guava:guava",
+        "rawLanguage": "java",
+        "source": "31.1-jre",
+        "target": "33.5.0-jre",
+        "services": "316",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Guava跨多个大版本(31.1-jre->33.5.0-jre)，大量API废弃/移除",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 898,
+        "sequence": "897",
+        "software": "com.google.guava:guava",
+        "rawLanguage": "java",
+        "source": "32.0.0-jre",
+        "target": "33.5.0-jre",
+        "services": "316",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 899,
+        "sequence": "898",
+        "software": "com.google.guava:guava",
+        "rawLanguage": "java",
+        "source": "32.0.1-jre",
+        "target": "33.5.0-jre",
+        "services": "316",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 900,
+        "sequence": "899",
+        "software": "com.google.guava:guava",
+        "rawLanguage": "java",
+        "source": "32.1.0-jre",
+        "target": "33.5.0-jre",
+        "services": "316",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 901,
+        "sequence": "900",
+        "software": "com.google.guava:guava",
+        "rawLanguage": "java",
+        "source": "32.1.1-android",
+        "target": "33.5.0-jre",
+        "services": "316",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 902,
+        "sequence": "901",
+        "software": "com.google.guava:guava",
+        "rawLanguage": "java",
+        "source": "32.1.1-jre",
+        "target": "33.5.0-jre",
+        "services": "316",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "21",
+      "29.0-jre",
+      "30.1-jre",
+      "30.1.1-jre",
+      "31.1-jre",
+      "32.0.0-jre",
+      "32.0.1-jre",
+      "32.1.0-jre",
+      "32.1.1-android",
+      "32.1.1-jre"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        4
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        5
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        6
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        7
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        8
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        898
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        899
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-008",
+      "edgeRows": [
+        900
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-009",
+      "edgeRows": [
+        901
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-010",
+      "edgeRows": [
+        902
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

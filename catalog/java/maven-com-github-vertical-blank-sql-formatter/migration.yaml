@@ -1,0 +1,200 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-java-maven-com-github-vertical-blank-sql-formatter",
+    "catalogPath": "catalog/java/maven-com-github-vertical-blank-sql-formatter",
+    "languageProfile": "java",
+    "rawIdentifiers": [
+      "com.github.vertical-blank:sql-formatter"
+    ],
+    "rawLanguages": [
+      "java"
+    ],
+    "canonicalIdentity": {
+      "value": "com.github.vertical-blank:sql-formatter",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "15.6.5",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 414,
+        "sequence": "413",
+        "software": "com.github.vertical-blank:sql-formatter",
+        "rawLanguage": "java",
+        "source": "12.0.6",
+        "target": "15.6.5",
+        "services": "11",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 415,
+        "sequence": "414",
+        "software": "com.github.vertical-blank:sql-formatter",
+        "rawLanguage": "java",
+        "source": "12.2.0",
+        "target": "15.6.5",
+        "services": "11",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 416,
+        "sequence": "415",
+        "software": "com.github.vertical-blank:sql-formatter",
+        "rawLanguage": "java",
+        "source": "2.0.4",
+        "target": "15.6.5",
+        "services": "11",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 417,
+        "sequence": "416",
+        "software": "com.github.vertical-blank:sql-formatter",
+        "rawLanguage": "java",
+        "source": "3.1.0",
+        "target": "15.6.5",
+        "services": "11",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "12.0.6",
+      "12.2.0",
+      "2.0.4",
+      "3.1.0"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        414
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        415
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        416
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        417
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

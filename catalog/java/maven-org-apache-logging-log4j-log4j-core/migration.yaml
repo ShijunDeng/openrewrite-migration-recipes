@@ -1,0 +1,721 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-java-maven-org-apache-logging-log4j-log4j-core",
+    "catalogPath": "catalog/java/maven-org-apache-logging-log4j-log4j-core",
+    "languageProfile": "java",
+    "rawIdentifiers": [
+      "log4j-core",
+      "org.apache.logging.log4j:log4j-core"
+    ],
+    "rawLanguages": [
+      "java"
+    ],
+    "canonicalIdentity": {
+      "value": "org.apache.logging.log4j:log4j-core",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "2.25.5",
+    "candidateImplementationModules": [
+      "rewrite-log4j-core-upgrade"
+    ]
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 931,
+        "sequence": "930",
+        "software": "org.apache.logging.log4j:log4j-core",
+        "rawLanguage": "java",
+        "source": "2.13.3",
+        "target": "2.25.5",
+        "services": "222",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 932,
+        "sequence": "931",
+        "software": "org.apache.logging.log4j:log4j-core",
+        "rawLanguage": "java",
+        "source": "2.17.0",
+        "target": "2.25.5",
+        "services": "222",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 933,
+        "sequence": "932",
+        "software": "org.apache.logging.log4j:log4j-core",
+        "rawLanguage": "java",
+        "source": "2.17.1",
+        "target": "2.25.5",
+        "services": "222",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 934,
+        "sequence": "933",
+        "software": "org.apache.logging.log4j:log4j-core",
+        "rawLanguage": "java",
+        "source": "2.17.2",
+        "target": "2.25.5",
+        "services": "222",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 935,
+        "sequence": "934",
+        "software": "org.apache.logging.log4j:log4j-core",
+        "rawLanguage": "java",
+        "source": "2.18.0",
+        "target": "2.25.5",
+        "services": "222",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 936,
+        "sequence": "935",
+        "software": "org.apache.logging.log4j:log4j-core",
+        "rawLanguage": "java",
+        "source": "2.19.0",
+        "target": "2.25.5",
+        "services": "222",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 937,
+        "sequence": "936",
+        "software": "org.apache.logging.log4j:log4j-core",
+        "rawLanguage": "java",
+        "source": "2.20.0",
+        "target": "2.25.5",
+        "services": "222",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 938,
+        "sequence": "937",
+        "software": "org.apache.logging.log4j:log4j-core",
+        "rawLanguage": "java",
+        "source": "2.23.1",
+        "target": "2.25.5",
+        "services": "222",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 939,
+        "sequence": "938",
+        "software": "org.apache.logging.log4j:log4j-core",
+        "rawLanguage": "java",
+        "source": "2.24.1",
+        "target": "2.25.5",
+        "services": "222",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2184,
+        "sequence": "2183",
+        "software": "log4j-core",
+        "rawLanguage": "java",
+        "source": "2.13.3",
+        "target": "2.25.5",
+        "services": "0",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2185,
+        "sequence": "2184",
+        "software": "log4j-core",
+        "rawLanguage": "java",
+        "source": "2.17.0",
+        "target": "2.25.5",
+        "services": "0",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2186,
+        "sequence": "2185",
+        "software": "log4j-core",
+        "rawLanguage": "java",
+        "source": "2.17.1",
+        "target": "2.25.5",
+        "services": "0",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2187,
+        "sequence": "2186",
+        "software": "log4j-core",
+        "rawLanguage": "java",
+        "source": "2.17.2",
+        "target": "2.25.5",
+        "services": "0",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2188,
+        "sequence": "2187",
+        "software": "log4j-core",
+        "rawLanguage": "java",
+        "source": "2.18.0",
+        "target": "2.25.5",
+        "services": "0",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2189,
+        "sequence": "2188",
+        "software": "log4j-core",
+        "rawLanguage": "java",
+        "source": "2.19.0",
+        "target": "2.25.5",
+        "services": "0",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2190,
+        "sequence": "2189",
+        "software": "log4j-core",
+        "rawLanguage": "java",
+        "source": "2.20.0",
+        "target": "2.25.5",
+        "services": "0",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2191,
+        "sequence": "2190",
+        "software": "log4j-core",
+        "rawLanguage": "java",
+        "source": "2.23.1",
+        "target": "2.25.5",
+        "services": "0",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2192,
+        "sequence": "2191",
+        "software": "log4j-core",
+        "rawLanguage": "java",
+        "source": "2.24.1",
+        "target": "2.25.5",
+        "services": "0",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2303,
+        "sequence": "2302",
+        "software": "org.apache.logging.log4j:log4j-core",
+        "rawLanguage": "java",
+        "source": "2.25.3",
+        "target": "2.25.5",
+        "services": "222",
+        "bucket": "B3_Minor联动",
+        "difficulty": "低",
+        "note": "log4j联动组patch直升",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 4810,
+        "sequence": "4809",
+        "software": "log4j-core",
+        "rawLanguage": "java",
+        "source": "2.25.3",
+        "target": "2.25.5",
+        "services": "0",
+        "bucket": "B3_Minor联动",
+        "difficulty": "低",
+        "note": "log4j联动组patch直升",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "2.13.3",
+      "2.17.0",
+      "2.17.1",
+      "2.17.2",
+      "2.18.0",
+      "2.19.0",
+      "2.20.0",
+      "2.23.1",
+      "2.24.1",
+      "2.25.3"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        931
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        932
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        933
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        934
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        935
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        936
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        937
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-008",
+      "edgeRows": [
+        938
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-009",
+      "edgeRows": [
+        939
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-010",
+      "edgeRows": [
+        2184
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-011",
+      "edgeRows": [
+        2185
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-012",
+      "edgeRows": [
+        2186
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-013",
+      "edgeRows": [
+        2187
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-014",
+      "edgeRows": [
+        2188
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-015",
+      "edgeRows": [
+        2189
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-016",
+      "edgeRows": [
+        2190
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-017",
+      "edgeRows": [
+        2191
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-018",
+      "edgeRows": [
+        2192
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-019",
+      "edgeRows": [
+        2303
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-020",
+      "edgeRows": [
+        4810
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

@@ -1,0 +1,399 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-java-maven-io-netty-netty-codec",
+    "catalogPath": "catalog/java/maven-io-netty-netty-codec",
+    "languageProfile": "java",
+    "rawIdentifiers": [
+      "io.netty:netty-codec"
+    ],
+    "rawLanguages": [
+      "java"
+    ],
+    "canonicalIdentity": {
+      "value": "io.netty:netty-codec",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "4.1.136.Final",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 3756,
+        "sequence": "3755",
+        "software": "io.netty:netty-codec",
+        "rawLanguage": "java",
+        "source": "4.1.100.Final",
+        "target": "4.1.136.Final",
+        "services": "4",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 3757,
+        "sequence": "3756",
+        "software": "io.netty:netty-codec",
+        "rawLanguage": "java",
+        "source": "4.1.101.Final",
+        "target": "4.1.136.Final",
+        "services": "4",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 3758,
+        "sequence": "3757",
+        "software": "io.netty:netty-codec",
+        "rawLanguage": "java",
+        "source": "4.1.107.Final",
+        "target": "4.1.136.Final",
+        "services": "4",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 3759,
+        "sequence": "3758",
+        "software": "io.netty:netty-codec",
+        "rawLanguage": "java",
+        "source": "4.1.108.Final",
+        "target": "4.1.136.Final",
+        "services": "4",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 3760,
+        "sequence": "3759",
+        "software": "io.netty:netty-codec",
+        "rawLanguage": "java",
+        "source": "4.1.109.Final",
+        "target": "4.1.136.Final",
+        "services": "4",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 3761,
+        "sequence": "3760",
+        "software": "io.netty:netty-codec",
+        "rawLanguage": "java",
+        "source": "4.1.115.Final",
+        "target": "4.1.136.Final",
+        "services": "4",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 3762,
+        "sequence": "3761",
+        "software": "io.netty:netty-codec",
+        "rawLanguage": "java",
+        "source": "4.1.118.Final",
+        "target": "4.1.136.Final",
+        "services": "4",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 3763,
+        "sequence": "3762",
+        "software": "io.netty:netty-codec",
+        "rawLanguage": "java",
+        "source": "4.1.124.Final",
+        "target": "4.1.136.Final",
+        "services": "4",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 3764,
+        "sequence": "3763",
+        "software": "io.netty:netty-codec",
+        "rawLanguage": "java",
+        "source": "4.1.125.Final",
+        "target": "4.1.136.Final",
+        "services": "4",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 3765,
+        "sequence": "3764",
+        "software": "io.netty:netty-codec",
+        "rawLanguage": "java",
+        "source": "4.1.126.Final ... (共19个版本)",
+        "target": "4.1.136.Final",
+        "services": "4",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": false,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "源版本单元格是截断或聚合显示，不是可执行配方的原子版本白名单。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "4.1.100.Final",
+      "4.1.101.Final",
+      "4.1.107.Final",
+      "4.1.108.Final",
+      "4.1.109.Final",
+      "4.1.115.Final",
+      "4.1.118.Final",
+      "4.1.124.Final",
+      "4.1.125.Final"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": [
+      "4.1.126.Final ... (共19个版本)"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        3756
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        3757
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        3758
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        3759
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        3760
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        3761
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        3762
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-008",
+      "edgeRows": [
+        3763
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-009",
+      "edgeRows": [
+        3764
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-010",
+      "edgeRows": [
+        3765
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

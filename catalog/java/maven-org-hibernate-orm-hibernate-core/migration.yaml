@@ -1,0 +1,399 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-java-maven-org-hibernate-orm-hibernate-core",
+    "catalogPath": "catalog/java/maven-org-hibernate-orm-hibernate-core",
+    "languageProfile": "java",
+    "rawIdentifiers": [
+      "org.hibernate.orm:hibernate-core"
+    ],
+    "rawLanguages": [
+      "java"
+    ],
+    "canonicalIdentity": {
+      "value": "org.hibernate.orm:hibernate-core",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "7.2.12.Final",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 399,
+        "sequence": "398",
+        "software": "org.hibernate.orm:hibernate-core",
+        "rawLanguage": "java",
+        "source": "5.4.15.Final",
+        "target": "7.2.12.Final",
+        "services": "11",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Hibernate跨多个大版本(5.4.15.Final->7.2.12.Final)，ORM API/JPA注解大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 400,
+        "sequence": "399",
+        "software": "org.hibernate.orm:hibernate-core",
+        "rawLanguage": "java",
+        "source": "5.4.24.Final",
+        "target": "7.2.12.Final",
+        "services": "11",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Hibernate跨多个大版本(5.4.24.Final->7.2.12.Final)，ORM API/JPA注解大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 401,
+        "sequence": "400",
+        "software": "org.hibernate.orm:hibernate-core",
+        "rawLanguage": "java",
+        "source": "5.4.25.Final",
+        "target": "7.2.12.Final",
+        "services": "11",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Hibernate跨多个大版本(5.4.25.Final->7.2.12.Final)，ORM API/JPA注解大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 402,
+        "sequence": "401",
+        "software": "org.hibernate.orm:hibernate-core",
+        "rawLanguage": "java",
+        "source": "5.4.28.Final",
+        "target": "7.2.12.Final",
+        "services": "11",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Hibernate跨多个大版本(5.4.28.Final->7.2.12.Final)，ORM API/JPA注解大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 403,
+        "sequence": "402",
+        "software": "org.hibernate.orm:hibernate-core",
+        "rawLanguage": "java",
+        "source": "5.5.6",
+        "target": "7.2.12.Final",
+        "services": "11",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Hibernate跨多个大版本(5.5.6->7.2.12.Final)，ORM API/JPA注解大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 404,
+        "sequence": "403",
+        "software": "org.hibernate.orm:hibernate-core",
+        "rawLanguage": "java",
+        "source": "5.6.14.Final",
+        "target": "7.2.12.Final",
+        "services": "11",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Hibernate跨多个大版本(5.6.14.Final->7.2.12.Final)，ORM API/JPA注解大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 405,
+        "sequence": "404",
+        "software": "org.hibernate.orm:hibernate-core",
+        "rawLanguage": "java",
+        "source": "5.6.15.Final",
+        "target": "7.2.12.Final",
+        "services": "11",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Hibernate跨多个大版本(5.6.15.Final->7.2.12.Final)，ORM API/JPA注解大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 406,
+        "sequence": "405",
+        "software": "org.hibernate.orm:hibernate-core",
+        "rawLanguage": "java",
+        "source": "5.6.5.Final",
+        "target": "7.2.12.Final",
+        "services": "11",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Hibernate跨多个大版本(5.6.5.Final->7.2.12.Final)，ORM API/JPA注解大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 407,
+        "sequence": "406",
+        "software": "org.hibernate.orm:hibernate-core",
+        "rawLanguage": "java",
+        "source": "5.6.7.Final",
+        "target": "7.2.12.Final",
+        "services": "11",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Hibernate跨多个大版本(5.6.7.Final->7.2.12.Final)，ORM API/JPA注解大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 408,
+        "sequence": "407",
+        "software": "org.hibernate.orm:hibernate-core",
+        "rawLanguage": "java",
+        "source": "5.6.9.Final ... (共13个版本)",
+        "target": "7.2.12.Final",
+        "services": "11",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Hibernate跨多个大版本(5.6.9.Final ... (共13个版本)->7.2.12.Final)，ORM API/JPA注解大改",
+        "sourceAtomic": false,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "源版本单元格是截断或聚合显示，不是可执行配方的原子版本白名单。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "5.4.15.Final",
+      "5.4.24.Final",
+      "5.4.25.Final",
+      "5.4.28.Final",
+      "5.5.6",
+      "5.6.14.Final",
+      "5.6.15.Final",
+      "5.6.5.Final",
+      "5.6.7.Final"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": [
+      "5.6.9.Final ... (共13个版本)"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        399
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        400
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        401
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        402
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        403
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        404
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        405
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-008",
+      "edgeRows": [
+        406
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-009",
+      "edgeRows": [
+        407
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-010",
+      "edgeRows": [
+        408
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

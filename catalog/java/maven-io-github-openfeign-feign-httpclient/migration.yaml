@@ -1,0 +1,233 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-java-maven-io-github-openfeign-feign-httpclient",
+    "catalogPath": "catalog/java/maven-io-github-openfeign-feign-httpclient",
+    "languageProfile": "java",
+    "rawIdentifiers": [
+      "io.github.openfeign:feign-httpclient"
+    ],
+    "rawLanguages": [
+      "java"
+    ],
+    "canonicalIdentity": {
+      "value": "io.github.openfeign:feign-httpclient",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "13.6",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 409,
+        "sequence": "408",
+        "software": "io.github.openfeign:feign-httpclient",
+        "rawLanguage": "java",
+        "source": "10.4.0",
+        "target": "13.6",
+        "services": "11",
+        "bucket": "B5_Major联动",
+        "difficulty": "高",
+        "note": "httpcomponents联动组需同步升级，跨major有breaking change风险",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 410,
+        "sequence": "409",
+        "software": "io.github.openfeign:feign-httpclient",
+        "rawLanguage": "java",
+        "source": "12",
+        "target": "13.6",
+        "services": "11",
+        "bucket": "B5_Major联动",
+        "difficulty": "高",
+        "note": "httpcomponents联动组需同步升级，跨major有breaking change风险",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 411,
+        "sequence": "410",
+        "software": "io.github.openfeign:feign-httpclient",
+        "rawLanguage": "java",
+        "source": "12.1",
+        "target": "13.6",
+        "services": "11",
+        "bucket": "B5_Major联动",
+        "difficulty": "高",
+        "note": "httpcomponents联动组需同步升级，跨major有breaking change风险",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 412,
+        "sequence": "411",
+        "software": "io.github.openfeign:feign-httpclient",
+        "rawLanguage": "java",
+        "source": "12.2",
+        "target": "13.6",
+        "services": "11",
+        "bucket": "B5_Major联动",
+        "difficulty": "高",
+        "note": "httpcomponents联动组需同步升级，跨major有breaking change风险",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 413,
+        "sequence": "412",
+        "software": "io.github.openfeign:feign-httpclient",
+        "rawLanguage": "java",
+        "source": "12.4",
+        "target": "13.6",
+        "services": "11",
+        "bucket": "B5_Major联动",
+        "difficulty": "高",
+        "note": "httpcomponents联动组需同步升级，跨major有breaking change风险",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "10.4.0",
+      "12",
+      "12.1",
+      "12.2",
+      "12.4"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        409
+      ],
+      "dimension": "跨主版本 API + 依赖族联动",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同时执行主版本兼容矩阵和联动成员图；优先迁移 BOM/平台 owner，逐成员验证二进制、配置、协议和部署兼容性。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        410
+      ],
+      "dimension": "跨主版本 API + 依赖族联动",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同时执行主版本兼容矩阵和联动成员图；优先迁移 BOM/平台 owner，逐成员验证二进制、配置、协议和部署兼容性。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        411
+      ],
+      "dimension": "跨主版本 API + 依赖族联动",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同时执行主版本兼容矩阵和联动成员图；优先迁移 BOM/平台 owner，逐成员验证二进制、配置、协议和部署兼容性。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        412
+      ],
+      "dimension": "跨主版本 API + 依赖族联动",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同时执行主版本兼容矩阵和联动成员图；优先迁移 BOM/平台 owner，逐成员验证二进制、配置、协议和部署兼容性。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        413
+      ],
+      "dimension": "跨主版本 API + 依赖族联动",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同时执行主版本兼容矩阵和联动成员图；优先迁移 BOM/平台 owner，逐成员验证二进制、配置、协议和部署兼容性。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

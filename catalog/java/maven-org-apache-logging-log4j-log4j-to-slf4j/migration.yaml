@@ -1,0 +1,200 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-java-maven-org-apache-logging-log4j-log4j-to-slf4j",
+    "catalogPath": "catalog/java/maven-org-apache-logging-log4j-log4j-to-slf4j",
+    "languageProfile": "java",
+    "rawIdentifiers": [
+      "org.apache.logging.log4j:log4j-to-slf4j"
+    ],
+    "rawLanguages": [
+      "java"
+    ],
+    "canonicalIdentity": {
+      "value": "org.apache.logging.log4j:log4j-to-slf4j",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "2.25.4",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 1478,
+        "sequence": "1477",
+        "software": "org.apache.logging.log4j:log4j-to-slf4j",
+        "rawLanguage": "java",
+        "source": "2.13.2",
+        "target": "2.25.4",
+        "services": "12",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1479,
+        "sequence": "1478",
+        "software": "org.apache.logging.log4j:log4j-to-slf4j",
+        "rawLanguage": "java",
+        "source": "2.18.0",
+        "target": "2.25.4",
+        "services": "12",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1480,
+        "sequence": "1479",
+        "software": "org.apache.logging.log4j:log4j-to-slf4j",
+        "rawLanguage": "java",
+        "source": "2.19.0",
+        "target": "2.25.4",
+        "services": "12",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1481,
+        "sequence": "1480",
+        "software": "org.apache.logging.log4j:log4j-to-slf4j",
+        "rawLanguage": "java",
+        "source": "2.20.0",
+        "target": "2.25.4",
+        "services": "12",
+        "bucket": "B3_Minor联动",
+        "difficulty": "中",
+        "note": "log4j联动组需同步版本，minor升级需保持一致",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "2.13.2",
+      "2.18.0",
+      "2.19.0",
+      "2.20.0"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        1478
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        1479
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        1480
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        1481
+      ],
+      "dimension": "依赖族对齐 / BOM / 平台",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立联动成员图并迁移 BOM、platform、parent 或共享 property 的真实 owner；禁止只改一个叶子依赖造成二进制或运行时漂移。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}
