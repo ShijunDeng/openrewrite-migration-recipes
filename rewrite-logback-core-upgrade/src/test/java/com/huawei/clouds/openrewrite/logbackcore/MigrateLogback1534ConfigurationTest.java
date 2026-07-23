@@ -1,15 +1,20 @@
 package com.huawei.clouds.openrewrite.logbackcore;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.Recipe;
+import org.openrewrite.config.Environment;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.xml.Assertions.xml;
 
 class MigrateLogback1534ConfigurationTest implements RewriteTest {
+    private static final String RECIPE =
+            "com.huawei.clouds.openrewrite.logbackcore.MigrateDeterministicLogbackCore1_5_34";
+
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new MigrateLogback1534Configuration());
+        spec.recipe(recipe());
     }
 
     @Test
@@ -160,5 +165,9 @@ class MigrateLogback1534ConfigurationTest implements RewriteTest {
                         </configuration>
                         """,
                         source -> source.path("logback.xml")));
+    }
+
+    private static Recipe recipe() {
+        return Environment.builder().scanRuntimeClasspath().build().activateRecipes(RECIPE);
     }
 }

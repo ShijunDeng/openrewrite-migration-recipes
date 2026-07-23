@@ -103,7 +103,7 @@ public final class FindLogbackCore1534ConfigurationRisks extends Recipe {
                     return mark(tree, PACKAGING);
                 }
                 if (tree instanceof Xml.Document xml &&
-                    (MigrateLogback1534Configuration.logbackConfiguration(xml) ||
+                    (FindOwnedLogbackMigrationSources.logbackConfiguration(xml) ||
                      "web.xml".equalsIgnoreCase(file))) return xml(xml, ctx);
                 if (tree instanceof Properties.File properties) return properties(properties, ctx);
                 if (tree instanceof Yaml.Documents yaml) return yaml(yaml, ctx);

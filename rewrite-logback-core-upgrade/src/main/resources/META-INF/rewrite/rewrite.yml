@@ -13,11 +13,45 @@ type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.logbackcore.MigrateDeterministicLogbackCore1_5_34
 displayName: Migrate deterministic Logback Core 1.5.34 APIs and XML
 description: >-
-  Apply only exact official type, method and XML class-name replacements whose
-  semantics are proved by the fixed v_1.2.5/v_1.2.9 to v_1.5.34 sources.
+  Directly compose exact official type, method and XML class-name replacements
+  whose semantics are proved by the fixed v_1.2.5/v_1.2.9 to v_1.5.34 sources.
+preconditions:
+  - com.huawei.clouds.openrewrite.logbackcore.FindOwnedLogbackMigrationSources
 recipeList:
-  - com.huawei.clouds.openrewrite.logbackcore.MigrateLogback1534Java
-  - com.huawei.clouds.openrewrite.logbackcore.MigrateLogback1534Configuration
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: ch.qos.logback.core.hook.DelayingShutdownHook
+      newFullyQualifiedTypeName: ch.qos.logback.core.hook.DefaultShutdownHook
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP
+      newFullyQualifiedTypeName: ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: ch.qos.logback.core.joran.action.ActionConst
+      newFullyQualifiedTypeName: ch.qos.logback.core.joran.JoranConstants
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: ch.qos.logback.core.joran.spi.ConfigurationWatchList getMainURL()
+      newMethodName: getTopURL
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: ch.qos.logback.core.joran.spi.ConfigurationWatchList setMainURL(java.net.URL)
+      newMethodName: setTopURL
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.xml.ChangeTagAttribute:
+      elementName: //*
+      attributeName: class
+      newValue: ch.qos.logback.core.hook.DefaultShutdownHook
+      oldValue: '\Qch.qos.logback.core.hook.DelayingShutdownHook\E'
+      regex: true
+  - org.openrewrite.xml.ChangeTagAttribute:
+      elementName: //*
+      attributeName: class
+      newValue: ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy
+      oldValue: '\Qch.qos.logback.core.rolling.SizeAndTimeBasedFNATP\E'
+      regex: true
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.logbackcore.FindLogbackCore1_5_34BuildRisks
