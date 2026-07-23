@@ -28,10 +28,6 @@
       <artifactId>rewrite-gradle</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.openrewrite.recipe</groupId>
-      <artifactId>rewrite-java-dependencies</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-properties</artifactId>
     </dependency>

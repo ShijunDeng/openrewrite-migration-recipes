@@ -15,9 +15,12 @@ import org.openrewrite.marker.SearchResult;
 import org.openrewrite.xml.XmlIsoVisitor;
 import org.openrewrite.xml.tree.Xml;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** Mark build decisions that constrain a kafka-clients 4.1.2 migration. */
 public final class FindKafkaClientBuildRisks extends Recipe {
@@ -25,6 +28,12 @@ public final class FindKafkaClientBuildRisks extends Recipe {
             "java.version", "maven.compiler.release", "maven.compiler.source", "maven.compiler.target"
     );
     private static final Set<String> UNSUPPORTED_JAVA = Set.of("1.8", "8", "9", "10");
+    private static final Pattern FIXED_VERSION =
+            Pattern.compile("\\d+(?:\\.\\d+)+(?:[-.][A-Za-z][A-Za-z0-9.-]*)?");
+    private static final Pattern STRING_CLIENT_VERSION =
+            Pattern.compile("org[.]apache[.]kafka:kafka-clients:([^'\"),]+)");
+    private static final Pattern SINGLE_QUOTED_MAP_VERSION = Pattern.compile("version:'([^']+)'");
+    private static final Pattern DOUBLE_QUOTED_MAP_VERSION = Pattern.compile("version:\"([^\"]+)\"");
     private static final Set<String> COMPANION_ARTIFACTS = Set.of(
             "kafka-streams", "kafka-streams-test-utils", "kafka_2.12", "kafka_2.13", "connect-api",
             "connect-runtime", "connect", "connect-basic-auth-extension", "connect-file", "connect-json",
@@ -41,6 +50,7 @@ public final class FindKafkaClientBuildRisks extends Recipe {
             "This Kafka companion has an independent 4.x API/runtime matrix; align it with kafka-clients and review Java, Scala, Streams/Connect and broker compatibility";
     static final String CUSTOM_ARTIFACT_MESSAGE =
             "This classified or non-JAR kafka-clients artifact was not automatically changed; verify that the target publishes the same artifact shape";
+    static final String TARGET_CONFLICT = "目标版本冲突（禁止降级）";
 
     @Override
     public String getDisplayName() {
@@ -126,7 +136,8 @@ public final class FindKafkaClientBuildRisks extends Recipe {
                     }
                     String resolved = resolve(declared, properties);
                     if (!UpgradeSelectedKafkaClientsDependency.TARGET_VERSION.equals(resolved)) {
-                        return SearchResult.found(t, UNRESOLVED_MESSAGE);
+                        return SearchResult.found(t,
+                                targetConflict(resolved) ? TARGET_CONFLICT : UNRESOLVED_MESSAGE);
                     }
                 }
                 if ("org.apache.kafka".equals(group) && COMPANION_ARTIFACTS.contains(artifact)) {
@@ -152,7 +163,9 @@ public final class FindKafkaClientBuildRisks extends Recipe {
                 }
                 if (client(compact) && !targetClient(compact)) {
                     return SearchResult.found(m,
-                            customGradleClient(compact) ? CUSTOM_ARTIFACT_MESSAGE : UNRESOLVED_MESSAGE);
+                            customGradleClient(compact) ? CUSTOM_ARTIFACT_MESSAGE :
+                                    targetConflict(gradleClientVersion(compact)) ?
+                                            TARGET_CONFLICT : UNRESOLVED_MESSAGE);
                 }
                 if (companion(compact)) return SearchResult.found(m, COMPANION_MESSAGE);
                 return m;
@@ -181,7 +194,9 @@ public final class FindKafkaClientBuildRisks extends Recipe {
                 }
                 if (client(compact) && !targetClient(compact)) {
                     return SearchResult.found(m,
-                            customGradleClient(compact) ? CUSTOM_ARTIFACT_MESSAGE : UNRESOLVED_MESSAGE);
+                            customGradleClient(compact) ? CUSTOM_ARTIFACT_MESSAGE :
+                                    targetConflict(gradleClientVersion(compact)) ?
+                                            TARGET_CONFLICT : UNRESOLVED_MESSAGE);
                 }
                 if (companion(compact)) return SearchResult.found(m, COMPANION_MESSAGE);
                 return m;
@@ -320,6 +335,30 @@ public final class FindKafkaClientBuildRisks extends Recipe {
         String coordinate = end < 0 ? compact.substring(start) : compact.substring(start, end);
         String version = coordinate.substring(UpgradeSelectedKafkaClientsDependency.COORDINATE_PREFIX.length());
         return version.contains(":") || version.contains("@");
+    }
+
+    private static String gradleClientVersion(String compact) {
+        for (Pattern pattern : new Pattern[]{
+                STRING_CLIENT_VERSION, SINGLE_QUOTED_MAP_VERSION, DOUBLE_QUOTED_MAP_VERSION}) {
+            Matcher matcher = pattern.matcher(compact);
+            if (matcher.find()) return matcher.group(1);
+        }
+        return null;
+    }
+
+    static boolean targetConflict(String version) {
+        if (version == null || !FIXED_VERSION.matcher(version.trim()).matches()) return false;
+        String[] candidate = version.trim().split("[^0-9]+");
+        String[] target = UpgradeSelectedKafkaClientsDependency.TARGET_VERSION.split("\\.");
+        int length = Math.max(candidate.length, target.length);
+        for (int index = 0; index < length; index++) {
+            BigInteger left = new BigInteger(index < candidate.length && !candidate[index].isEmpty()
+                    ? candidate[index] : "0");
+            BigInteger right = new BigInteger(index < target.length ? target[index] : "0");
+            int comparison = left.compareTo(right);
+            if (comparison != 0) return comparison > 0;
+        }
+        return false;
     }
 
     private static boolean isRootDirectDependency(Cursor cursor) {

@@ -456,6 +456,19 @@ class MigrateKafkaClientsTest implements RewriteTest {
     }
 
     @Test
+    void recommendedRecipePreservesAndMarksHigherVersion() {
+        rewriteRun(
+                spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE)),
+                pomXml(pomWithVersion("4.2.1"), source -> source.after(actual -> actual).afterRecipe(after -> {
+                    String printed = after.printAll();
+                    assertTrue(printed.contains("<version>4.2.1</version>"), printed);
+                    assertTrue(printed.contains(FindKafkaClientBuildRisks.TARGET_CONFLICT), printed);
+                    assertTrue(!printed.contains("<version>4.1.2</version>"), printed);
+                }))
+        );
+    }
+
+    @Test
     void recommendedRecipeCombinesStrictBuildSourceConfigAutoAndPreciseMarks() {
         rewriteRun(
                 spec -> spec.recipe(environment().activateRecipes(MIGRATION_RECIPE))

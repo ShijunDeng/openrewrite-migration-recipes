@@ -15,10 +15,48 @@ recipeList:
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.kafka.MigrateDeterministicKafkaClientSourceAndConfig
 displayName: Migrate deterministic Kafka client 4.1 source and configuration
-description: Apply only one-to-one removed API, package, exception and JMX property replacements whose target is explicit in the Kafka 4.1 guide.
+description: Apply only one-to-one removed API, package, exception and JMX property replacements whose target is explicit in the Kafka 4.1 guide, using fixed OpenRewrite Core recipes.
 tags: [apache-kafka, kafka-clients, java, configuration, source-migration]
+preconditions:
+  - com.huawei.clouds.openrewrite.kafka.FindKafkaAuthoredSourceFiles
 recipeList:
-  - com.huawei.clouds.openrewrite.kafka.MigrateDeterministicKafkaClientSourceAndConfig
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.kafka.clients.admin.DescribeTopicsResult values()
+      newMethodName: topicNameValues
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.kafka.clients.admin.DescribeTopicsResult all()
+      newMethodName: allTopicNames
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.kafka.clients.admin.DeleteTopicsResult values()
+      newMethodName: topicNameValues
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.kafka.clients.consumer.MockConsumer setException(org.apache.kafka.common.KafkaException)
+      newMethodName: setPollException
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.kafka.clients.admin.UpdateFeaturesOptions dryRun(boolean)
+      newMethodName: validateOnly
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerLoginCallbackHandler
+      newFullyQualifiedTypeName: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerValidatorCallbackHandler
+      newFullyQualifiedTypeName: org.apache.kafka.common.security.oauthbearer.OAuthBearerValidatorCallbackHandler
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.kafka.common.errors.NotLeaderForPartitionException
+      newFullyQualifiedTypeName: org.apache.kafka.common.errors.NotLeaderOrFollowerException
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: metrics.jmx.blacklist
+      newPropertyKey: metrics.jmx.exclude
+      relaxedBinding: false
+      regex: false
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: metrics.jmx.whitelist
+      newPropertyKey: metrics.jmx.include
+      relaxedBinding: false
+      regex: false
+  - org.openrewrite.properties.DeleteProperty:
+      propertyKey: auto.include.jmx.reporter
+      relaxedBinding: false
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.kafka.AuditKafkaClient4Compatibility

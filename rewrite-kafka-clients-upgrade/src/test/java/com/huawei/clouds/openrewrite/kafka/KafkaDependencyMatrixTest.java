@@ -65,7 +65,8 @@ class KafkaDependencyMatrixTest implements RewriteTest {
             "0.11.0.3", "1.0.2", "2.0.1", "2.1.1", "2.2.2", "2.3.1", "2.4.0", "2.5.0",
             "2.6.3", "2.7.2", "2.8.2", "3.0.2", "3.1.0", "3.1.1", "3.2.3", "3.3.2",
             "3.4.2", "3.5.0", "3.5.2", "3.6.3", "3.7.1", "3.7.2", "3.8.0", "3.9.0",
-            "4.0.0", "4.0.1", "4.1.0", "4.1.1", "4.1.2", "4.2.0", "LATEST", "RELEASE",
+            "4.0.0", "4.0.1", "4.1.0", "4.1.1", "4.1.2", "4.1.3", "4.2.0", "4.2.1", "5.0.0",
+            "LATEST", "RELEASE",
             "[3.7,4.0)", "(,4.0]", "3.+", "3.x", "${revision}", "${kafka.version}-custom"
     })
     void preservesUnlistedTargetNewerRangeAndDynamicMavenVersions(String version) {
@@ -76,6 +77,7 @@ class KafkaDependencyMatrixTest implements RewriteTest {
     @ParameterizedTest(name = "preserves noncanonical Gradle declaration {0}")
     @ValueSource(strings = {
             "org.apache.kafka:kafka-clients:3.7.1", "org.apache.kafka:kafka-clients:4.1.2",
+            "org.apache.kafka:kafka-clients:4.1.3", "org.apache.kafka:kafka-clients:4.2.1",
             "org.apache.kafka:kafka-clients:3.+", "org.apache.kafka:kafka-clients:[3.7,4.0)",
             "org.apache.kafka:kafka-clients:3.7.0@zip", "org.apache.kafka:kafka-streams:3.7.0",
             "org.apache.kafka:kafka_2.13:3.7.0", "com.example:kafka-clients:3.7.0",

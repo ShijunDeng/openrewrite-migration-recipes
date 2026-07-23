@@ -61,10 +61,12 @@ class KafkaBuildRiskTest implements RewriteTest {
 
     @ParameterizedTest(name = "marks unresolved client {0}")
     @ValueSource(strings = {"2.4.1", "3.7.0", "3.7.1", "4.0.1", "4.1.1", "4.1.20", "[3.7,4.0)", "${kafka.version}", "LATEST"})
-    void marksUnresolvedUnlistedAndPreTargetClientDeclarations(String version) {
+    void marksUnselectedAndPreTargetClientDeclarations(String version) {
         assertPomMarker("<dependencies><dependency><groupId>org.apache.kafka</groupId><artifactId>kafka-clients</artifactId>" +
                         "<version>" + version + "</version></dependency></dependencies>",
-                FindKafkaClientBuildRisks.UNRESOLVED_MESSAGE);
+                FindKafkaClientBuildRisks.targetConflict(version) ?
+                        FindKafkaClientBuildRisks.TARGET_CONFLICT :
+                        FindKafkaClientBuildRisks.UNRESOLVED_MESSAGE);
     }
 
     @ParameterizedTest(name = "marks custom client artifact {0}")
@@ -115,7 +117,42 @@ class KafkaBuildRiskTest implements RewriteTest {
     @ValueSource(strings = {"3.7.0", "3.7.1", "4.1.1", "4.1.20", "3.+", "${kafkaVersion}"})
     void marksGradleUnresolvedClient(String version) {
         assertGroovyMarker("dependencies { implementation \"org.apache.kafka:kafka-clients:" + version + "\" }",
-                FindKafkaClientBuildRisks.UNRESOLVED_MESSAGE);
+                FindKafkaClientBuildRisks.targetConflict(version) ?
+                        FindKafkaClientBuildRisks.TARGET_CONFLICT :
+                        FindKafkaClientBuildRisks.UNRESOLVED_MESSAGE);
+    }
+
+    @Test
+    void marksHigherVersionsWithExactNoDowngradeMessageAcrossBuildDialects() {
+        rewriteRun(spec -> spec.recipe(environment().activateRecipes(AUDIT)),
+                xml(project("""
+                        <dependencies><dependency>
+                          <groupId>org.apache.kafka</groupId><artifactId>kafka-clients</artifactId>
+                          <version>5.0.0</version>
+                        </dependency></dependencies>
+                        """), source -> source.path("pom.xml").after(actual -> actual).afterRecipe(after -> {
+                            String printed = after.printAll();
+                            assertTrue(printed.contains("<version>5.0.0</version>"), printed);
+                            assertTrue(printed.contains(FindKafkaClientBuildRisks.TARGET_CONFLICT), printed);
+                        })),
+                buildGradle("""
+                        dependencies {
+                            implementation 'org.apache.kafka:kafka-clients:4.1.3'
+                        }
+                        """, source -> source.after(actual -> actual).afterRecipe(after -> {
+                            String printed = after.printAll();
+                            assertTrue(printed.contains("kafka-clients:4.1.3"), printed);
+                            assertTrue(printed.contains(FindKafkaClientBuildRisks.TARGET_CONFLICT), printed);
+                        })),
+                buildGradleKts("""
+                        dependencies {
+                            implementation("org.apache.kafka:kafka-clients:999999999999999999999999.0.0")
+                        }
+                        """, source -> source.after(actual -> actual).afterRecipe(after -> {
+                            String printed = after.printAll();
+                            assertTrue(printed.contains("999999999999999999999999.0.0"), printed);
+                            assertTrue(printed.contains(FindKafkaClientBuildRisks.TARGET_CONFLICT), printed);
+                        })));
     }
 
     @Test
