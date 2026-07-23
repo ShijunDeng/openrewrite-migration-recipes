@@ -58,6 +58,24 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>6.2.19</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>6.2.19</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-observation</artifactId>
+      <version>1.15.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.openrewrite.gradle.tooling</groupId>
       <artifactId>model</artifactId>
       <version>${rewrite.version}</version>

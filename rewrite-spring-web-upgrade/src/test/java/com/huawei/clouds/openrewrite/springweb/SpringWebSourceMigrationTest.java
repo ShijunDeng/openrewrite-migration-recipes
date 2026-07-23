@@ -469,6 +469,8 @@ class SpringWebSourceMigrationTest implements RewriteTest {
                             Object parse(String value, HttpRequest request, InetSocketAddress remote) {
                                 new DefaultUriTemplateHandler();
                                 UriComponentsBuilder.fromUriString(value);
+                                UriComponentsBuilder.fromHttpUrl(value);
+                                UriComponentsBuilder.fromHttpRequest(request);
                                 UriComponentsBuilder.parseForwardedFor(request, remote);
                                 CorsConfiguration cors = new CorsConfiguration();
                                 cors.setAllowedOrigins(List.of("*"));
@@ -790,6 +792,8 @@ class SpringWebSourceMigrationTest implements RewriteTest {
                 "package org.springframework.http.client; public interface ClientHttpResponse { int getRawStatusCode(); }",
                 "package org.springframework.web.util; public class UriComponentsBuilder { " +
                 "public static java.net.InetSocketAddress parseForwardedFor(org.springframework.http.HttpRequest request, java.net.InetSocketAddress remote) { return null; } " +
+                "public static UriComponentsBuilder fromHttpRequest(org.springframework.http.HttpRequest request) { return null; } " +
+                "public static UriComponentsBuilder fromHttpUrl(String value) { return null; } " +
                 "public static UriComponentsBuilder fromUriString(String value) { return null; } }",
                 "package org.springframework.web.util; public class ForwardedHeaderUtils { " +
                 "public static java.net.InetSocketAddress parseForwardedFor(java.net.URI uri, org.springframework.http.HttpHeaders headers, java.net.InetSocketAddress remote) { return null; } }",

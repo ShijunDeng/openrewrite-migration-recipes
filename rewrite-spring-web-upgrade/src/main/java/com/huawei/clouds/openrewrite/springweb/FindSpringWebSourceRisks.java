@@ -81,6 +81,11 @@ public final class FindSpringWebSourceRisks extends Recipe {
     private static final MethodMatcher PARSE_FORWARDED =
             new MethodMatcher("org.springframework.web.util.UriComponentsBuilder parseForwardedFor(" +
                               "org.springframework.http.HttpRequest,java.net.InetSocketAddress)");
+    private static final MethodMatcher URI_FROM_HTTP_REQUEST =
+            new MethodMatcher("org.springframework.web.util.UriComponentsBuilder fromHttpRequest(" +
+                              "org.springframework.http.HttpRequest)");
+    private static final MethodMatcher URI_FROM_HTTP_URL =
+            new MethodMatcher("org.springframework.web.util.UriComponentsBuilder fromHttpUrl(java.lang.String)");
     private static final MethodMatcher URI_FROM_STRING =
             new MethodMatcher("org.springframework.web.util.UriComponentsBuilder fromUriString(java.lang.String)");
     private static final MethodMatcher CORS_CREDENTIALS =
@@ -221,7 +226,8 @@ public final class FindSpringWebSourceRisks extends Recipe {
                     EXCEPTION_RAW_STATUS.matches(m)) {
                     return SpringWebSupport.mark(m, STATUS_CODE);
                 }
-                if (PARSE_FORWARDED.matches(m) || URI_FROM_STRING.matches(m) ||
+                if (PARSE_FORWARDED.matches(m) || URI_FROM_HTTP_REQUEST.matches(m) ||
+                    URI_FROM_HTTP_URL.matches(m) || URI_FROM_STRING.matches(m) ||
                     declaringTypeIn(m, REMOVED_URI_TYPES)) {
                     return SpringWebSupport.mark(m, URI_PATH);
                 }

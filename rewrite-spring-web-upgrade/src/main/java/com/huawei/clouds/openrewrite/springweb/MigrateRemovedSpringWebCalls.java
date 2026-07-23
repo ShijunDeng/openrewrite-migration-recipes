@@ -29,6 +29,9 @@ public final class MigrateRemovedSpringWebCalls extends Recipe {
     private static final MethodMatcher PARSE_FORWARDED = new MethodMatcher(
             "org.springframework.web.util.UriComponentsBuilder parseForwardedFor(" +
             "org.springframework.http.HttpRequest,java.net.InetSocketAddress)");
+    private static final MethodMatcher FROM_HTTP_REQUEST = new MethodMatcher(
+            "org.springframework.web.util.UriComponentsBuilder fromHttpRequest(" +
+            "org.springframework.http.HttpRequest)");
     private static final MethodMatcher RESOLVE_METHOD = new MethodMatcher(
             "org.springframework.http.HttpMethod resolve(java.lang.String)");
     private static final Set<String> STANDARD_METHODS =
@@ -42,9 +45,9 @@ public final class MigrateRemovedSpringWebCalls extends Recipe {
     @Override
     public String getDescription() {
         return "Replace HttpRequest.getMethodValue, standard literal HttpMethod.resolve calls, and " +
-               "side-effect-free parseForwardedFor calls with their Spring 6 APIs, plus the implicit-receiver " +
-               "status calls that rewrite-spring 6.35.0 cannot safely template. Explicit status-code calls are " +
-               "delegated to the official rewrite-spring recipes.";
+               "side-effect-free UriComponentsBuilder forwarded-header calls with their Spring 6 APIs, plus " +
+               "the implicit-receiver status calls that rewrite-spring 6.35.0 cannot safely template. Explicit " +
+               "status-code calls are delegated to the official rewrite-spring recipes.";
     }
 
     @Override
@@ -75,6 +78,18 @@ public final class MigrateRemovedSpringWebCalls extends Recipe {
                 }
                 if (RESOLVE_METHOD.matches(m) && standardLiteral(m)) {
                     return m.withName(m.getName().withSimpleName("valueOf"));
+                }
+                if (FROM_HTTP_REQUEST.matches(m) && m.getArguments().size() == 1 &&
+                    m.getArguments().get(0) instanceof J.Identifier request) {
+                    maybeRemoveImport("org.springframework.web.util.UriComponentsBuilder");
+                    maybeRemoveImport(
+                            "org.springframework.web.util.UriComponentsBuilder.fromHttpRequest");
+                    return JavaTemplate.builder(
+                                    "org.springframework.web.util.ForwardedHeaderUtils.adaptFromForwardedHeaders(" +
+                                    "#{any(org.springframework.http.HttpRequest)}.getURI(), " +
+                                    "#{any(org.springframework.http.HttpRequest)}.getHeaders())")
+                            .build()
+                            .apply(updateCursor(m), m.getCoordinates().replace(), request, request);
                 }
                 if (PARSE_FORWARDED.matches(m) && m.getArguments().size() == 2 &&
                     m.getArguments().get(0) instanceof J.Identifier request) {
