@@ -1,0 +1,42 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.elementplusiconsvue
+packageName: com.huawei.clouds.openrewrite.elementplusiconsvue
+description: Upgrade workbook-selected @element-plus/icons-vue declarations and migrate deterministic package entries while surfacing integration risks precisely.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.elementplusiconsvue.UpgradeElementPlusIconsVueTo2_3_2
+displayName: Upgrade @element-plus/icons-vue to 2.3.2
+description: Update only direct exact, caret, or tilde 0.2.4, 2.0.10, and 2.1.0 declarations to 2.3.2.
+tags:
+  - element-plus
+  - vue
+  - icons
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.elementplusiconsvue.UpgradeSelectedElementPlusIconsVueDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.elementplusiconsvue.AuditElementPlusIconsVue2_3_2
+displayName: Audit @element-plus/icons-vue 2.3.2 migration risks
+description: Mark manifest, source, template, style, registration, SSR, and tree-shaking decisions that need human ownership.
+recipeList:
+  - com.huawei.clouds.openrewrite.elementplusiconsvue.FindElementPlusIconsVueManifestRisks
+  - com.huawei.clouds.openrewrite.elementplusiconsvue.FindElementPlusIconsVueSourceRisks
+  - com.huawei.clouds.openrewrite.elementplusiconsvue.FindElementPlusIconsVueTemplateRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.elementplusiconsvue.MigrateElementPlusIconsVueTo2_3_2
+displayName: Migrate @element-plus/icons-vue to 2.3.2
+description: Apply the strict workbook upgrade, deterministic aggregate/global entry rewrites, and precise unresolved-risk markers.
+tags:
+  - element-plus
+  - vue
+  - icons
+  - javascript
+  - typescript
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.elementplusiconsvue.UpgradeElementPlusIconsVueTo2_3_2
+  - com.huawei.clouds.openrewrite.elementplusiconsvue.MigrateDeterministicElementPlusIconsVueEntries
+  - com.huawei.clouds.openrewrite.elementplusiconsvue.AuditElementPlusIconsVue2_3_2
