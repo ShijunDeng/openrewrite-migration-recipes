@@ -146,6 +146,7 @@
     <module>rewrite-org-json-upgrade</module>
     <module>rewrite-junit-platform-launcher-upgrade</module>
     <module>rewrite-commons-codec-upgrade</module>
+    <module>rewrite-jakarta-el-api-upgrade</module>
   </modules>
 
   <dependencyManagement>

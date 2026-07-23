@@ -1,0 +1,25 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jakartael.UpgradeJakartaElApiTo6_0_1
+displayName: Upgrade workbook-selected Jakarta EL API dependencies to 6.0.1
+description: >-
+  Upgrade only exact jakarta.el:jakarta.el-api versions 3.0.3 and 5.0.1 in declarations owned by the
+  current Maven project/profile or root Gradle dependencies block.
+recipeList:
+  - com.huawei.clouds.openrewrite.jakartael.UpgradeSelectedJakartaElApiDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jakartael.MigrateJakartaElApiTo6_0_1
+displayName: Migrate Jakarta EL API to 6.0.1
+description: >-
+  Apply the strict workbook dependency upgrade first; correct the removed MethodExpression spelling; migrate the
+  Javax EL package, resource references, provider service file and JPMS module name; then mark source/build decisions
+  that require application or runtime evidence.
+recipeList:
+  - com.huawei.clouds.openrewrite.jakartael.UpgradeJakartaElApiTo6_0_1
+  - com.huawei.clouds.openrewrite.jakartael.MigrateDeterministicJakartaElJava
+  - com.huawei.clouds.openrewrite.jakartael.MigrateJavaxElPackage
+  - com.huawei.clouds.openrewrite.jakartael.MigrateJavaxElReferences
+  - com.huawei.clouds.openrewrite.jakartael.MigrateJakartaElModuleName
+  - com.huawei.clouds.openrewrite.jakartael.FindJakartaEl6BuildRisks
+  - com.huawei.clouds.openrewrite.jakartael.FindJakartaEl6SourceRisks
