@@ -139,7 +139,8 @@ class UpgradeLog4jCoreDependencyTest implements RewriteTest {
 
     @ParameterizedTest(name = "out-of-workbook {0}")
     @ValueSource(strings = {"2.13.2", "2.13.4", "2.16.0", "2.17.3", "2.21.0",
-            "2.22.1", "2.23.0", "2.24.0", "2.24.2", "2.25.0", "2.25.4", "2.26.0"})
+            "2.22.1", "2.23.0", "2.24.0", "2.24.2", "2.25.0", "2.25.4",
+            "2.25.6", "2.26.0", "3.0.0-beta1"})
     void doesNotGuessOtherFixedVersions(String version) {
         rewriteRun(xml(pom(version), source -> source.path("pom.xml")));
     }

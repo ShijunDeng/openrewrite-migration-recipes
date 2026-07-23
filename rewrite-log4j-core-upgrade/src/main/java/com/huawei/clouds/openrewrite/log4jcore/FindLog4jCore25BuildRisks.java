@@ -15,6 +15,7 @@ import org.openrewrite.marker.SearchResult;
 import org.openrewrite.xml.XmlIsoVisitor;
 import org.openrewrite.xml.tree.Xml;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,6 +37,7 @@ public final class FindLog4jCore25BuildRisks extends Recipe {
     static final String OUTSIDE =
             "This fixed log4j-core version is outside the workbook source set and target; choose its support path " +
             "explicitly instead of widening the automatic recipe";
+    static final String NO_DOWNGRADE_PREFIX = "目标版本冲突（禁止降级）";
     static final String VARIANT =
             "This classified or non-JAR log4j-core artifact is outside deterministic scope; verify that 2.25.5 " +
             "publishes the required artifact shape before changing it";
@@ -112,7 +114,8 @@ public final class FindLog4jCore25BuildRisks extends Recipe {
                     if (Log4jCoreSupport.TARGET.equals(resolved)) return visited;
                     if (resolved == null || Log4jCoreSupport.SOURCES.contains(resolved) ||
                         !FIXED.matcher(resolved).matches()) return markVersion(visited, OWNER);
-                    return markVersion(visited, OUTSIDE);
+                    return markVersion(visited, higherThanTarget(resolved)
+                            ? targetConflictMessage(resolved) : OUTSIDE);
                 }
                 String companion = companionMessage(group, artifact, resolved);
                 return companion == null ? visited : markVersion(visited, companion);
@@ -191,7 +194,8 @@ public final class FindLog4jCore25BuildRisks extends Recipe {
             if (variant) return VARIANT;
             if (version == null || !FIXED.matcher(version).matches() ||
                 Log4jCoreSupport.SOURCES.contains(version)) return OWNER;
-            return Log4jCoreSupport.TARGET.equals(version) ? null : OUTSIDE;
+            if (Log4jCoreSupport.TARGET.equals(version)) return null;
+            return higherThanTarget(version) ? targetConflictMessage(version) : OUTSIDE;
         }
         return companionMessage(group, artifact, version);
     }
@@ -225,9 +229,30 @@ public final class FindLog4jCore25BuildRisks extends Recipe {
             if (parts.length > 3 || version != null && version.contains("@")) return VARIANT;
             if (version == null || !FIXED.matcher(version).matches() ||
                 Log4jCoreSupport.SOURCES.contains(version)) return OWNER;
-            return Log4jCoreSupport.TARGET.equals(version) ? null : OUTSIDE;
+            if (Log4jCoreSupport.TARGET.equals(version)) return null;
+            return higherThanTarget(version) ? targetConflictMessage(version) : OUTSIDE;
         }
         return companionMessage(group, artifact, version);
+    }
+
+    static String targetConflictMessage(String version) {
+        return NO_DOWNGRADE_PREFIX + ": " + version +
+               " is higher than the exact 2.25.5 target; it remains unchanged";
+    }
+
+    private static boolean higherThanTarget(String version) {
+        if (version == null || !FIXED.matcher(version).matches()) return false;
+        String[] candidate = version.split("[^0-9]+");
+        String[] target = Log4jCoreSupport.TARGET.split("\\.");
+        int length = Math.max(candidate.length, target.length);
+        for (int i = 0; i < length; i++) {
+            BigInteger left = new BigInteger(
+                    i < candidate.length && !candidate[i].isEmpty() ? candidate[i] : "0");
+            BigInteger right = new BigInteger(i < target.length ? target[i] : "0");
+            int comparison = left.compareTo(right);
+            if (comparison != 0) return comparison > 0;
+        }
+        return false;
     }
 
     private static boolean supportedDisruptor(String version) {

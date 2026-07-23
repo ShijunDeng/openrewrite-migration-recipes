@@ -1,17 +1,44 @@
 package com.huawei.clouds.openrewrite.log4jcore;
 
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
-import org.openrewrite.java.JavaIsoVisitor;
-import org.openrewrite.java.tree.J;
-import org.openrewrite.java.tree.JavaType;
-import org.openrewrite.java.tree.TypeUtils;
+import org.openrewrite.SourceFile;
+import org.openrewrite.Tree;
+import org.openrewrite.TreeVisitor;
+import org.openrewrite.java.ChangeMethodName;
+import org.openrewrite.marker.SearchResult;
 
-import java.util.Set;
+import java.util.List;
 
 /** Move deprecated/misspelled LoggerConfig filter builder methods to the 2.25 setter. */
 public final class MigrateLoggerConfigFilterBuilders extends Recipe {
-    private static final Set<String> LEGACY = Set.of("withtFilter", "withFilter");
+    private static final String FILTER = "org.apache.logging.log4j.core.Filter";
+    private static final String LOGGER_BUILDER =
+            "org.apache.logging.log4j.core.config.LoggerConfig.Builder";
+    private static final String ROOT_LOGGER_BUILDER =
+            "org.apache.logging.log4j.core.config.LoggerConfig.RootLogger.Builder";
+    private static final List<Recipe> MIGRATIONS = List.of(
+            new ChangeMethodName(
+                    LOGGER_BUILDER + " withtFilter(" + FILTER + ")",
+                    "setFilter",
+                    false,
+                    true),
+            new ChangeMethodName(
+                    LOGGER_BUILDER + " withFilter(" + FILTER + ")",
+                    "setFilter",
+                    false,
+                    true),
+            new ChangeMethodName(
+                    ROOT_LOGGER_BUILDER + " withtFilter(" + FILTER + ")",
+                    "setFilter",
+                    false,
+                    true)
+    );
+
+    static List<Recipe> officialCoreRecipes() {
+        return MIGRATIONS;
+    }
 
     @Override
     public String getDisplayName() {
@@ -24,33 +51,35 @@ public final class MigrateLoggerConfigFilterBuilders extends Recipe {
     }
 
     @Override
-    public JavaIsoVisitor<ExecutionContext> getVisitor() {
-        return new JavaIsoVisitor<ExecutionContext>() {
-            @Override
-            public J.CompilationUnit visitCompilationUnit(J.CompilationUnit cu, ExecutionContext ctx) {
-                return Log4jCoreSupport.generated(cu.getSourcePath()) ? cu :
-                        super.visitCompilationUnit(cu, ctx);
-            }
-
-            @Override
-            public J.MethodInvocation visitMethodInvocation(
-                    J.MethodInvocation invocation, ExecutionContext ctx) {
-                J.MethodInvocation visited = super.visitMethodInvocation(invocation, ctx);
-                JavaType.Method method = visited.getMethodType();
-                if (method == null || !LEGACY.contains(visited.getSimpleName()) ||
-                    !loggerConfigBuilder(method.getDeclaringType())) return visited;
-                JavaType.Method replacement = method.withName("setFilter");
-                return visited.withName(visited.getName().withSimpleName("setFilter").withType(replacement))
-                        .withMethodType(replacement);
-            }
-        };
+    public List<Recipe> getRecipeList() {
+        return MIGRATIONS.stream()
+                .map(MigrateLoggerConfigFilterBuilders::projectSourcesOnly)
+                .toList();
     }
 
-    private static boolean loggerConfigBuilder(JavaType type) {
-        JavaType.FullyQualified fq = TypeUtils.asFullyQualified(type);
-        if (fq == null) return false;
-        String name = fq.getFullyQualifiedName();
-        return name.startsWith("org.apache.logging.log4j.core.config.LoggerConfig$") &&
-               name.endsWith("Builder");
+    private static Recipe projectSourcesOnly(Recipe delegate) {
+        return new Recipe() {
+            @Override
+            public String getDisplayName() {
+                return delegate.getDisplayName();
+            }
+
+            @Override
+            public String getDescription() {
+                return delegate.getDescription();
+            }
+
+            @Override
+            public TreeVisitor<?, ExecutionContext> getVisitor() {
+                return Preconditions.check(new TreeVisitor<Tree, ExecutionContext>() {
+                    @Override
+                    public Tree visit(Tree tree, ExecutionContext ctx) {
+                        return tree instanceof SourceFile source &&
+                               !Log4jCoreSupport.generated(source.getSourcePath())
+                                ? SearchResult.found(tree) : tree;
+                    }
+                }, delegate.getVisitor());
+            }
+        };
     }
 }

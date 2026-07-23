@@ -74,6 +74,18 @@ class Log4jCoreRecommendedRecipeTest implements RewriteTest {
     }
 
     @Test
+    void recommendedRecipeNeverDowngradesAHigherFixedVersion() {
+        rewriteRun(xml(
+                UpgradeLog4jCoreDependencyTest.pom("2.26.0"),
+                source -> source.path("pom.xml").after(actual -> actual).afterRecipe(after -> {
+                    String printed = after.printAll();
+                    assertTrue(printed.contains("<version>2.26.0</version>"), printed);
+                    assertTrue(printed.contains(
+                            FindLog4jCore25BuildRisks.targetConflictMessage("2.26.0")), printed);
+                })));
+    }
+
+    @Test
     void recommendedRecipeIsIdempotentAcrossTwoCycles() {
         rewriteRun(spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1),
                 xml("<Configuration status=\"WARN\"><PatternLayout pattern=\"%m{nolookups}\"/></Configuration>",

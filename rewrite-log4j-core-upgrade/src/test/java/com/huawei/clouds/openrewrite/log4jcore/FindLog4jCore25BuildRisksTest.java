@@ -59,9 +59,16 @@ class FindLog4jCore25BuildRisksTest implements RewriteTest {
     }
 
     @ParameterizedTest(name = "fixed outside {0}")
-    @ValueSource(strings = {"2.13.2", "2.16.0", "2.21.0", "2.24.2", "2.25.4", "2.26.0"})
+    @ValueSource(strings = {"2.13.2", "2.16.0", "2.21.0", "2.24.2", "2.25.4"})
     void marksFixedVersionsOutsideWorkbook(String version) {
         markedXml(UpgradeLog4jCoreDependencyTest.pom(version), FindLog4jCore25BuildRisks.OUTSIDE);
+    }
+
+    @ParameterizedTest(name = "higher fixed version {0}")
+    @ValueSource(strings = {"2.25.6", "2.26.0", "3.0.0-beta1", "10.0.0"})
+    void marksHigherFixedVersionsAsForbiddenDowngrades(String version) {
+        markedXml(UpgradeLog4jCoreDependencyTest.pom(version),
+                FindLog4jCore25BuildRisks.targetConflictMessage(version));
     }
 
     @Test
@@ -227,6 +234,19 @@ class FindLog4jCore25BuildRisksTest implements RewriteTest {
                         "runtimeOnly(\"org.apache.logging.log4j:log4j-api:2.20.0\") }",
                         source -> source.after(actual -> actual).afterRecipe(after ->
                                 assertContains(after.printAll(), FindLog4jCore25BuildRisks.FAMILY))));
+    }
+
+    @Test
+    void marksHigherGradleVersionsAsForbiddenDowngrades() {
+        rewriteRun(
+                markedGradle(
+                        "dependencies { implementation 'org.apache.logging.log4j:log4j-core:2.26.0' }",
+                        FindLog4jCore25BuildRisks.targetConflictMessage("2.26.0")),
+                buildGradleKts(
+                        "dependencies { implementation(\"org.apache.logging.log4j:log4j-core:3.0.0-beta1\") }",
+                        source -> source.after(actual -> actual).afterRecipe(after ->
+                                assertContains(after.printAll(),
+                                        FindLog4jCore25BuildRisks.targetConflictMessage("3.0.0-beta1")))));
     }
 
     @Test

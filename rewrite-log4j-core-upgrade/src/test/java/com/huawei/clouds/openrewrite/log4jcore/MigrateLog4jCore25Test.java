@@ -40,9 +40,9 @@ class MigrateLog4jCore25Test implements RewriteTest {
 
     static Stream<Arguments> filterBuilders() {
         return Stream.of(
-                Arguments.of("logger typo", "LoggerConfig.Builder builder", "withtFilter"),
-                Arguments.of("logger deprecated", "LoggerConfig.Builder builder", "withFilter"),
-                Arguments.of("root typo", "LoggerConfig.RootLogger.Builder builder", "withtFilter")
+                Arguments.of("logger typo", "LoggerConfig.Builder", "withtFilter"),
+                Arguments.of("logger deprecated", "LoggerConfig.Builder", "withFilter"),
+                Arguments.of("root typo", "LoggerConfig.RootLogger.Builder", "withtFilter")
         );
     }
 
@@ -182,7 +182,16 @@ class MigrateLog4jCore25Test implements RewriteTest {
     @Test
     void generatedSourcesAndResourcesAreNoop() {
         rewriteRun(
-                java("class C { String p=\"%m{nolookups}\"; }",
+                java("""
+                        import org.apache.logging.log4j.core.Filter;
+                        import org.apache.logging.log4j.core.config.LoggerConfig;
+                        class C {
+                            String p="%m{nolookups}";
+                            void f(LoggerConfig.Builder builder, Filter filter) {
+                                builder.withtFilter(filter);
+                            }
+                        }
+                        """,
                         source -> source.path("target/generated-sources/C.java")),
                 xml("<Configuration><PatternLayout pattern=\"%m{nolookups}\"/></Configuration>",
                         source -> source.path("build/generated/log4j2.xml")));
