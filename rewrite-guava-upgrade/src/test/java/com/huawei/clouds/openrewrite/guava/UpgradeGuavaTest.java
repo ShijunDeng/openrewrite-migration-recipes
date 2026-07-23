@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openrewrite.Recipe;
 import org.openrewrite.config.Environment;
+import org.openrewrite.java.migrate.guava.NoGuavaCreateTempDir;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
@@ -333,14 +334,25 @@ class UpgradeGuavaTest implements RewriteTest {
     @Test
     void discoversAndValidatesPublicRecipes() {
         Environment environment = environment();
+        assertEquals("3.40.0",
+                NoGuavaCreateTempDir.class.getPackage().getImplementationVersion());
+        assertTrue(NoGuavaCreateTempDir.class.getProtectionDomain().getCodeSource()
+                        .getLocation().toString().contains("rewrite-migrate-java-3.40.0.jar"),
+                "Official Guava recipes must come from the pinned binary artifact");
         assertEquals(Set.of(
                 "21", "21.0", "29.0-jre", "30.1-jre", "30.1.1-jre", "31.1-jre",
                 "32.0.0-jre", "32.0.1-jre", "32.1.0-jre", "32.1.1-android", "32.1.1-jre"
         ), UpgradeSelectedGuavaDependency.SOURCE_VERSIONS);
         for (String name : new String[]{
                 UPGRADE, MIGRATE,
+                "com.huawei.clouds.openrewrite.guava.MigrateSelectedGuavaSources",
+                "com.huawei.clouds.openrewrite.guava.InlineSelectedGuavaMethodsOnJava11",
+                "com.huawei.clouds.openrewrite.guava.FindSelectedGuavaMigrationRisks",
                 "com.huawei.clouds.openrewrite.guava.FindGuavaAndroidFlavorMigration",
-                "com.huawei.clouds.openrewrite.guava.FindGuavaBuildMigrationRisks"
+                "com.huawei.clouds.openrewrite.guava.FindGuavaBuildMigrationRisks",
+                "org.openrewrite.java.migrate.guava.NoGuavaCreateTempDir",
+                "org.openrewrite.java.migrate.guava.NoGuavaDirectExecutor",
+                "com.google.guava.InlineGuavaMethods"
         }) {
             Recipe recipe = environment.activateRecipes(name);
             assertTrue(environment.listRecipes().stream().anyMatch(candidate -> name.equals(candidate.getName())));
@@ -362,7 +374,9 @@ class UpgradeGuavaTest implements RewriteTest {
 
     static Environment environment() {
         return Environment.builder()
-                .scanRuntimeClasspath("com.huawei.clouds.openrewrite.guava")
+                .scanRuntimeClasspath(
+                        "com.huawei.clouds.openrewrite.guava",
+                        "org.openrewrite.java.migrate.guava")
                 .scanYamlResources()
                 .build();
     }

@@ -58,6 +58,12 @@ final class Guava21Parser {
                 """,
                 """
                 package com.google.common.base;
+                public final class Strings {
+                    public static String repeat(String string, int count) { return null; }
+                }
+                """,
+                """
+                package com.google.common.base;
                 public interface Function<F, T> { T apply(F input); }
                 """,
                 """

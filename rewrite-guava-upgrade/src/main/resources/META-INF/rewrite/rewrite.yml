@@ -14,11 +14,10 @@ tags:
   - dependency-upgrade
   - migration
 recipeList:
-  - com.huawei.clouds.openrewrite.guava.MigrateCharMatcherConstants
-  - com.huawei.clouds.openrewrite.guava.AddGuavaDirectExecutor
-  - com.huawei.clouds.openrewrite.guava.FindGuavaMigrationRisks
-  - com.huawei.clouds.openrewrite.guava.FindGuavaAndroidFlavorMigration
-  - com.huawei.clouds.openrewrite.guava.FindGuavaBuildMigrationRisks
+  - com.huawei.clouds.openrewrite.guava.MarkSelectedGuavaProjects
+  - com.huawei.clouds.openrewrite.guava.MigrateSelectedGuavaSources
+  - com.huawei.clouds.openrewrite.guava.InlineSelectedGuavaMethodsOnJava11
+  - com.huawei.clouds.openrewrite.guava.FindSelectedGuavaMigrationRisks
   - com.huawei.clouds.openrewrite.guava.UpgradeSelectedGuavaDependency
 ---
 type: specs.openrewrite.org/v1beta/recipe
@@ -31,3 +30,38 @@ tags:
   - strict
 recipeList:
   - com.huawei.clouds.openrewrite.guava.UpgradeSelectedGuavaDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.MigrateSelectedGuavaSources
+displayName: Migrate selected Guava source APIs
+description: Run deterministic custom and official Java migrations only in projects proven to own one exact workbook source version.
+preconditions:
+  - com.huawei.clouds.openrewrite.guava.FindSelectedGuavaSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.guava.MigrateCharMatcherConstants
+  - com.huawei.clouds.openrewrite.guava.AddGuavaDirectExecutor
+  - org.openrewrite.java.migrate.guava.NoGuavaDirectExecutor
+  - org.openrewrite.java.migrate.guava.NoGuavaCreateTempDir
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.InlineSelectedGuavaMethodsOnJava11
+displayName: Inline selected Guava methods on Java 11+
+description: Reuse the official generated Guava 33 InlineMe catalog only for selected files whose target compatibility is Java 11 or newer.
+preconditions:
+  - com.huawei.clouds.openrewrite.guava.FindSelectedGuavaSourceFiles
+  - org.openrewrite.java.search.HasJavaVersion:
+      version: "[11,)"
+      checkTargetCompatibility: true
+recipeList:
+  - com.google.guava.InlineGuavaMethods
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.guava.FindSelectedGuavaMigrationRisks
+displayName: Find risks in selected Guava projects
+description: Mark behavior-sensitive source and build boundaries only in projects selected by the exact workbook source-version gate.
+preconditions:
+  - com.huawei.clouds.openrewrite.guava.FindSelectedGuavaSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.guava.FindGuavaMigrationRisks
+  - com.huawei.clouds.openrewrite.guava.FindGuavaAndroidFlavorMigration
+  - com.huawei.clouds.openrewrite.guava.FindGuavaBuildMigrationRisks

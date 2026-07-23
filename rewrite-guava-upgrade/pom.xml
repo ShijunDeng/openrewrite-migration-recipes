@@ -34,6 +34,11 @@
       <groupId>org.openrewrite.recipe</groupId>
       <artifactId>rewrite-java-dependencies</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.openrewrite.recipe</groupId>
+      <artifactId>rewrite-migrate-java</artifactId>
+      <version>3.40.0</version>
+    </dependency>
 
     <dependency>
       <groupId>org.openrewrite.gradle.tooling</groupId>
