@@ -5,6 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.openrewrite.javascript.rpc.JavaScriptRewriteRpc;
 import org.openrewrite.test.RewriteTest;
 
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openrewrite.javascript.Assertions.typescript;
 import static org.openrewrite.json.Assertions.json;
 
@@ -12,6 +16,15 @@ class WsEventSchedulingMigrationTest implements RewriteTest {
     @AfterAll
     static void stopRpc() {
         JavaScriptRewriteRpc.shutdownCurrent();
+    }
+
+    @Test
+    void rootPathHasLowerPrecedenceThanOneLevelWorkspace() {
+        PreserveWs816EventScheduling.Projects projects = new PreserveWs816EventScheduling.Projects();
+        projects.record(Path.of(""), PreserveWs816EventScheduling.VersionState.WS_8_16);
+        projects.record(Path.of("app"), PreserveWs816EventScheduling.VersionState.OTHER);
+        assertTrue(projects.isWs816Source(Path.of("src/root.ts")));
+        assertFalse(projects.isWs816Source(Path.of("app/src/nested.ts")));
     }
 
     @Test

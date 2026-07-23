@@ -44,12 +44,17 @@ public final class PreserveWs816EventScheduling extends ScanningRecipe<PreserveW
             for (Map.Entry<Path, VersionState> entry : roots.entrySet()) {
                 Path root = entry.getKey();
                 boolean matches = root.toString().isEmpty() || source.startsWith(root);
-                if (matches && (nearest == null || root.getNameCount() > nearest.getNameCount())) {
+                if (matches && (nearest == null || depth(root) > depth(nearest))) {
                     nearest = root;
                     state = entry.getValue();
                 }
             }
             return state == VersionState.WS_8_16;
+        }
+
+        private static int depth(Path path) {
+            // Path.of("").getNameCount() is 1 on the JDK even though it represents the workspace root.
+            return path.toString().isEmpty() ? 0 : path.getNameCount();
         }
     }
 

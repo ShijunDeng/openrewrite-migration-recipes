@@ -91,6 +91,6 @@ OpenRewrite 测试结构固定参考 [`rewrite@b3008cc4`](https://github.com/ope
 mvn -f rewrite-ws-upgrade/pom.xml clean verify
 ```
 
-当前独立验证执行 **149 个 test invocation**：覆盖全 worksheet 四版本和三种运算符、四个直接依赖区、复杂范围/protocol/未列版本/路径边界负例、workspace 最近所有者与冲突、before→after、空/单行/多行 options、ESM default/named/alias/namespace、CJS alias、动态 options NO-OP、精确 marker、官方与两个真实仓库 fixture、公开配方 discovery/validation 和两轮幂等。配方只修改 AST 节点，不对 JavaScript/TypeScript 做正则文本替换。
+当前独立验证执行 **150 个 test invocation**：覆盖全 worksheet 四版本和三种运算符、四个直接依赖区、复杂范围/protocol/未列版本/路径边界负例、workspace 最近所有者与冲突（包括空根路径与一级 workspace 的确定性优先级）、before→after、空/单行/多行 options、ESM default/named/alias/namespace、CJS alias、动态 options NO-OP、精确 marker、官方与两个真实仓库 fixture、公开配方 discovery/validation 和两轮幂等。配方只修改 AST 节点，不对 JavaScript/TypeScript 做正则文本替换。
 
 执行迁移后仍需由业务工程完成 package-manager install/lockfile 重生成，并至少运行：真实 `tsc`/build、客户端和服务端握手、鉴权/子协议、redirect/TLS/proxy、压缩和大消息、tiny fragments/chunks、heartbeat、close timeout、stream backpressure、进程 shutdown 及生产级并发负载测试。
