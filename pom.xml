@@ -150,6 +150,7 @@
     <module>rewrite-trino-jdbc-upgrade</module>
     <module>rewrite-junit-jupiter-api-upgrade</module>
     <module>rewrite-bson-upgrade</module>
+    <module>rewrite-junit-jupiter-upgrade</module>
   </modules>
 
   <dependencyManagement>

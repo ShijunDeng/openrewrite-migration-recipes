@@ -1,0 +1,25 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiteraggregate.UpgradeJUnitJupiterTo6_0_1
+displayName: Upgrade workbook-selected JUnit Jupiter aggregate dependencies to 6.0.1
+description: >-
+  Upgrade only exact org.junit.jupiter:junit-jupiter 5.8.2, 5.9.1, and 5.9.3 declarations owned by the current
+  Maven or root Gradle build, preserving external owners, variants, ranges, dynamic versions, and generated files.
+recipeList:
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.UpgradeSelectedJUnitJupiterDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnitJupiterTo6_0_1
+displayName: Migrate JUnit Jupiter aggregate 5.8.2/5.9.1/5.9.3 to 6.0.1
+description: >-
+  Reuse the public strict dependency upgrade, migrate deterministic Jupiter APIs, and then mark source,
+  configuration, baseline, dependency-alignment, removed-module, provider, and runtime behavior decisions.
+recipeList:
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.UpgradeJUnitJupiterTo6_0_1
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnitJupiter6Java
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnit6PlatformTypes
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnit6RemovedPlatformJava
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnitJupiter6SourceRisks
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnit6PlatformSourceRisks
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnitJupiter6ConfigurationRisks
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnitJupiter6BuildRisks
