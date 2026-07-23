@@ -1,0 +1,35 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.fastglob
+packageName: com.huawei.clouds.openrewrite.fastglob
+description: Upgrade the workbook-selected fast-glob declaration and expose matching, filesystem, path, and runtime migration work.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.fastglob.UpgradeFastGlobTo3_3_3
+displayName: Upgrade fast-glob to 3.3.3
+description: Update only exact, caret, or tilde direct fast-glob 3.2.2 declarations in package.json to 3.3.3 while preserving the operator.
+tags:
+  - fast-glob
+  - glob
+  - javascript
+  - nodejs
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.fastglob.UpgradeSelectedFastGlobDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.fastglob.MigrateFastGlobTo3_3_3
+displayName: Migrate fast-glob to 3.3.3
+description: Reuse the strict upgrade, normalize the documented ignore array contract, and mark exact manifest, matching, path, filesystem, traversal, stream, and output decisions.
+tags:
+  - fast-glob
+  - glob
+  - javascript
+  - typescript
+  - nodejs
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.fastglob.UpgradeFastGlobTo3_3_3
+  - com.huawei.clouds.openrewrite.fastglob.NormalizeFastGlobIgnoreOption
+  - com.huawei.clouds.openrewrite.fastglob.FindFastGlobManifestRisks
+  - com.huawei.clouds.openrewrite.fastglob.FindFastGlobJavaScriptRisks
