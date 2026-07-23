@@ -1,10 +1,16 @@
 package com.huawei.clouds.openrewrite.orgjson;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openrewrite.gradle.Assertions.buildGradle;
 import static org.openrewrite.gradle.Assertions.buildGradleKts;
@@ -99,6 +105,26 @@ class OrgJsonBuildRisksTest implements RewriteTest {
     @Test void generatedParentsAndSupportedJavaStayClean() {
         rewriteRun(xml(UpgradeOrgJsonDependencyTest.pom("20241224"), s -> s.path("target/pom.xml")),
                 buildGradle("sourceCompatibility='1.8'\ndependencies { implementation 'org.json:json:20250107' }"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1", "1.", "1.2", "1.2a", "1..RC1", "20250107", "3.11.2-RC1"})
+    void preservesAcceptedLiteralVersionForms(String version) {
+        assertTrue(FindOrgJsonBuildRisks.literalVersion(version));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"[1,2)", "1+meta", "latest.release", "1_0", "0!"})
+    void rejectsNonLiteralVersionForms(String version) {
+        assertFalse(FindOrgJsonBuildRisks.literalVersion(version));
+    }
+
+    @Test void rejectsLongInvalidVersionWithoutBacktrackingExplosion() {
+        assertTimeoutPreemptively(Duration.ofSeconds(2),
+                () -> {
+                    assertFalse(FindOrgJsonBuildRisks.literalVersion("0".repeat(100_000) + "!"));
+                    assertFalse(FindOrgJsonBuildRisks.literalVersion("1" + ".1".repeat(100_000) + "!"));
+                });
     }
 
     private static int count(String text,String needle){int n=0;for(int i=0;(i=text.indexOf(needle,i))>=0;i+=needle.length())n++;return n;}

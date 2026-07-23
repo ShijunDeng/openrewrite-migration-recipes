@@ -8,25 +8,17 @@ import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.JavaVisitor;
 import org.openrewrite.java.MethodMatcher;
 import org.openrewrite.java.tree.J;
-import org.openrewrite.java.tree.JavaType;
 
 /** Deterministic replacements for Platform APIs removed in JUnit 6. */
 public final class MigrateJUnit6RemovedPlatformJava extends Recipe {
     private static final String CONFIGURATION = "org.junit.platform.engine.ConfigurationParameters";
-    private static final String METHOD_SELECTOR = "org.junit.platform.engine.discovery.MethodSelector";
-    private static final String NESTED_SELECTOR = "org.junit.platform.engine.discovery.NestedMethodSelector";
     private static final String REQUEST_BUILDER =
             "org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder";
     private static final String REPORT_ENTRY = "org.junit.platform.engine.reporting.ReportEntry";
     private static final String REFLECTION_SUPPORT = "org.junit.platform.commons.support.ReflectionSupport";
     private static final String TEST_PLAN = "org.junit.platform.launcher.TestPlan";
     private static final String UNIQUE_ID = "org.junit.platform.engine.UniqueId";
-    private static final String UNRECOVERABLE = "org.junit.platform.commons.util.UnrecoverableExceptions";
     private static final MethodMatcher CONFIGURATION_SIZE = new MethodMatcher(CONFIGURATION + " size()");
-    private static final MethodMatcher OLD_METHOD_PARAMETER_TYPES =
-            new MethodMatcher(METHOD_SELECTOR + " getMethodParameterTypes()");
-    private static final MethodMatcher OLD_NESTED_PARAMETER_TYPES =
-            new MethodMatcher(NESTED_SELECTOR + " getMethodParameterTypes()");
     private static final MethodMatcher REQUEST_CONSTRUCTOR =
             new MethodMatcher(REQUEST_BUILDER + " <constructor>()");
     private static final MethodMatcher REPORT_CONSTRUCTOR =
@@ -37,8 +29,6 @@ public final class MigrateJUnit6RemovedPlatformJava extends Recipe {
             new MethodMatcher(TEST_PLAN + " getChildren(java.lang.String)");
     private static final MethodMatcher GET_IDENTIFIER_STRING =
             new MethodMatcher(TEST_PLAN + " getTestIdentifier(java.lang.String)");
-    private static final MethodMatcher OLD_UNRECOVERABLE_NAME =
-            new MethodMatcher(UNRECOVERABLE + " rethrowIfBlacklisted(java.lang.Throwable)");
 
     @Override
     public String getDisplayName() {
@@ -122,20 +112,7 @@ public final class MigrateJUnit6RemovedPlatformJava extends Recipe {
                     return identifier.apply(updateCursor(visited), visited.getCoordinates().replace(),
                             visited.getSelect(), visited.getArguments().get(0));
                 }
-                if (OLD_UNRECOVERABLE_NAME.matches(visited)) {
-                    JavaType.Method method = visited.getMethodType();
-                    if (method == null) return visited;
-                    JavaType.Method renamed = method.withName("rethrowIfUnrecoverable");
-                    return visited.withName(visited.getName().withSimpleName("rethrowIfUnrecoverable").withType(renamed))
-                            .withMethodType(renamed);
-                }
-                if (!(OLD_METHOD_PARAMETER_TYPES.matches(visited) ||
-                      OLD_NESTED_PARAMETER_TYPES.matches(visited))) return visited;
-                JavaType.Method method = visited.getMethodType();
-                if (method == null) return visited;
-                JavaType.Method renamed = method.withName("getParameterTypeNames");
-                return visited.withName(visited.getName().withSimpleName("getParameterTypeNames").withType(renamed))
-                        .withMethodType(renamed);
+                return visited;
             }
 
             @Override

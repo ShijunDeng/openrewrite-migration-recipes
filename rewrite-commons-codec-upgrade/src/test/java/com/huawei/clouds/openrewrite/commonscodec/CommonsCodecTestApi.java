@@ -40,6 +40,7 @@ final class CommonsCodecTestApi {
                 """
                 package org.apache.commons.codec.binary;
                 public class Base64 {
+                    public static final int MIME_CHUNK_SIZE = 76;
                     public Base64(){}
                     public Base64(boolean urlSafe){}
                     public Base64(int lineLength, byte[] lineSeparator){}
@@ -48,6 +49,14 @@ final class CommonsCodecTestApi {
                     public static boolean isArrayByteBase64(byte[] value){ return true; }
                     public static boolean isBase64(byte[] value){ return true; }
                     public static byte[] decodeBase64(byte[] value){ return value; }
+                    public static byte[] decodeBase64(String value){ return null; }
+                    public static byte[] encodeBase64(byte[] value){ return value; }
+                    public static byte[] encodeBase64(byte[] value, boolean chunked){ return value; }
+                    public static byte[] encodeBase64Chunked(byte[] value){ return value; }
+                    public static String encodeBase64String(byte[] value){ return null; }
+                    public static byte[] encodeBase64URLSafe(byte[] value){ return value; }
+                    public static String encodeBase64URLSafeString(byte[] value){ return null; }
+                    public byte[] encode(byte[] value){ return value; }
                     public byte[] decode(byte[] value){ return value; }
                     public static Builder builder(){ return new Builder(); }
                     public static class Builder {
@@ -70,6 +79,8 @@ final class CommonsCodecTestApi {
                     }
                 }
                 """,
+                "package org.apache.commons.codec.binary; public class Base64InputStream { public Base64InputStream(java.io.InputStream in){} }",
+                "package org.apache.commons.codec.binary; public class Base64OutputStream { public Base64OutputStream(java.io.OutputStream out){} }",
                 """
                 package org.apache.commons.codec.binary;
                 public class Base16 { public byte[] decode(byte[] value){ return value; } }

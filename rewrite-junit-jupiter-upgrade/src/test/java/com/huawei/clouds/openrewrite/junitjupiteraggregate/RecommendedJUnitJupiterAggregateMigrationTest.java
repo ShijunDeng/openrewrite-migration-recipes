@@ -6,7 +6,9 @@ import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.xml.Assertions.xml;
 
@@ -18,6 +20,16 @@ class RecommendedJUnitJupiterAggregateMigrationTest implements RewriteTest {
                         .scanRuntimeClasspath("com.huawei.clouds.openrewrite.junitjupiteraggregate")
                         .build()
                         .activateRecipes("com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnitJupiterTo6_0_1"));
+    }
+
+    @Test
+    void recommendedRecipeTreeIsDiscoveredAndValid() {
+        var recipe = Environment.builder()
+                .scanRuntimeClasspath("com.huawei.clouds.openrewrite.junitjupiteraggregate")
+                .build()
+                .activateRecipes(
+                        "com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnitJupiterTo6_0_1");
+        assertTrue(recipe.validate().isValid(), recipe.validate().toString());
     }
 
     @Test
@@ -41,7 +53,7 @@ class RecommendedJUnitJupiterAggregateMigrationTest implements RewriteTest {
     @Test
     void upgradesDependencyAndMigratesApacheHiveStoreShapeTogether() {
         rewriteRun(
-                xml(UpgradeJUnitJupiterDependencyTest.pom("5.8.2"),
+                pomXml(UpgradeJUnitJupiterDependencyTest.pom("5.8.2"),
                         UpgradeJUnitJupiterDependencyTest.pom("6.0.1"), source -> source.path("pom.xml")),
                 java(
                         """
@@ -70,7 +82,10 @@ class RecommendedJUnitJupiterAggregateMigrationTest implements RewriteTest {
 
     @Test
     void adaptsOldDynamicInterceptorWithoutDiscardingItsBody() {
-        rewriteRun(java(
+        rewriteRun(
+                xml(UpgradeJUnitJupiterDependencyTest.pom("5.9.1"),
+                        UpgradeJUnitJupiterDependencyTest.pom("6.0.1"), source -> source.path("pom.xml")),
+                java(
                 """
                   import org.junit.jupiter.api.extension.ExtensionContext;
                   import org.junit.jupiter.api.extension.InvocationInterceptor;
@@ -97,7 +112,10 @@ class RecommendedJUnitJupiterAggregateMigrationTest implements RewriteTest {
 
     @Test
     void combinesAutomaticMigrationWithSourceReviewMarkers() {
-        rewriteRun(java(
+        rewriteRun(
+                xml(UpgradeJUnitJupiterDependencyTest.pom("5.9.1"),
+                        UpgradeJUnitJupiterDependencyTest.pom("6.0.1"), source -> source.path("pom.xml")),
+                java(
                 """
                   import org.junit.jupiter.api.MethodOrderer;
                   import org.junit.jupiter.api.Nested;
@@ -130,8 +148,19 @@ class RecommendedJUnitJupiterAggregateMigrationTest implements RewriteTest {
     }
 
     @Test
+    void configurationIsOnlyMarkedInsideASelectedProject() {
+        rewriteRun(
+                xml(UpgradeJUnitJupiterDependencyTest.pom("6.0.1"), source -> source.path("pom.xml")),
+                properties("junit.jupiter.tempdir.scope=per_context\n",
+                        source -> source.path("src/test/resources/junit-platform.properties")));
+    }
+
+    @Test
     void migratesRemovedPlatformUtilityTypeAndMethodTogether() {
-        rewriteRun(java(
+        rewriteRun(
+                xml(UpgradeJUnitJupiterDependencyTest.pom("5.8.2"),
+                        UpgradeJUnitJupiterDependencyTest.pom("6.0.1"), source -> source.path("pom.xml")),
+                java(
                 """
                   import org.junit.platform.commons.util.BlacklistedExceptions;
                   class FailureSupport {
@@ -149,7 +178,10 @@ class RecommendedJUnitJupiterAggregateMigrationTest implements RewriteTest {
 
     @Test
     void combinesAggregatePlatformAutomaticMigrations() {
-        rewriteRun(java(
+        rewriteRun(
+                xml(UpgradeJUnitJupiterDependencyTest.pom("5.9.3"),
+                        UpgradeJUnitJupiterDependencyTest.pom("6.0.1"), source -> source.path("pom.xml")),
+                java(
                 """
                   import java.util.Map;
                   import org.junit.platform.engine.ConfigurationParameters;
@@ -196,7 +228,10 @@ class RecommendedJUnitJupiterAggregateMigrationTest implements RewriteTest {
 
     @Test
     void platformAutomaticMigrationsAreIdempotentInRecommendedRecipe() {
-        rewriteRun(spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1), java(
+        rewriteRun(spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1),
+                xml(UpgradeJUnitJupiterDependencyTest.pom("5.9.1"),
+                        UpgradeJUnitJupiterDependencyTest.pom("6.0.1"), source -> source.path("pom.xml")),
+                java(
                 """
                   import org.junit.platform.commons.util.PreconditionViolationException;
                   import org.junit.platform.engine.ConfigurationParameters;

@@ -3,20 +3,121 @@ type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.commonscodec.UpgradeCommonsCodecTo1_22_0
 displayName: Upgrade workbook-selected Apache Commons Codec dependencies to 1.22.0
 description: >-
-  Upgrade only exact commons-codec:commons-codec versions 1.11, 1.13, 1.14, 1.15, and 1.16.0 in declarations
-  owned by the current Maven project/profile or root Gradle dependencies block.
+  Capture exact project eligibility before edits, then upgrade only a nearest Maven or Gradle build root that owns
+  one non-conflicting commons-codec:commons-codec version from 1.11, 1.13, 1.14, 1.15, or 1.16.0.
 recipeList:
+  - com.huawei.clouds.openrewrite.commonscodec.MarkSelectedCommonsCodecProjects
+  - com.huawei.clouds.openrewrite.commonscodec.UpgradeSelectedCommonsCodecDependencyInMarkedProject
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonscodec.UpgradeSelectedCommonsCodecDependencyInMarkedProject
+displayName: Upgrade the selected Apache Commons Codec dependency
+description: >-
+  Run the official model-aware Maven/Gradle dependency recipe first, then retain the strict literal/property-aware
+  visitor as a fallback for unresolved raw syntax, only below a pre-upgrade selected build root.
+preconditions:
+  - com.huawei.clouds.openrewrite.commonscodec.FindSelectedCommonsCodecSourceFiles
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: commons-codec
+      artifactId: commons-codec
+      newVersion: 1.22.0
   - com.huawei.clouds.openrewrite.commonscodec.UpgradeSelectedCommonsCodecDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonscodec.ApplyOfficialSafeApacheBase64Migration
+displayName: Apply the official Apache Base64 migration where semantics are proven
+description: >-
+  Reuse org.openrewrite.apache.commons.codec.ApacheBase64ToJavaBase64 only for authored Java files whose complete
+  Commons Codec Base64 use is limited to statically qualified encoding calls with non-null bounded literal inputs.
+preconditions:
+  - com.huawei.clouds.openrewrite.commonscodec.FindSelectedCommonsCodecSourceFiles
+  - com.huawei.clouds.openrewrite.commonscodec.FindSafeOfficialCommonsCodecBase64Files
+recipeList:
+  - org.openrewrite.apache.commons.codec.ApacheBase64ToJavaBase64
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonscodec.MigrateDeterministicCommonsCodecJava
+displayName: Migrate deterministic Apache Commons Codec Java APIs
+description: >-
+  Reuse the official semantically guarded Base64 recipe and OpenRewrite core ChangeMethodName and
+  ReplaceConstantWithAnotherConstant leaves for every deterministic Java transformation.
+preconditions:
+  - com.huawei.clouds.openrewrite.commonscodec.FindSelectedCommonsCodecSourceFiles
+  - com.huawei.clouds.openrewrite.commonscodec.FindAuthoredCommonsCodecJavaFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.commonscodec.ApplyOfficialSafeApacheBase64Migration
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.commons.codec.digest.DigestUtils getShaDigest()
+      newMethodName: getSha1Digest
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.commons.codec.digest.DigestUtils sha(..)
+      newMethodName: sha1
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.commons.codec.digest.DigestUtils shaHex(..)
+      newMethodName: sha1Hex
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.commons.codec.binary.Base64 isArrayByteBase64(byte[])
+      newMethodName: isBase64
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.apache.commons.codec.Charsets.ISO_8859_1
+      fullyQualifiedConstantName: java.nio.charset.StandardCharsets.ISO_8859_1
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.apache.commons.codec.Charsets.US_ASCII
+      fullyQualifiedConstantName: java.nio.charset.StandardCharsets.US_ASCII
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.apache.commons.codec.Charsets.UTF_16
+      fullyQualifiedConstantName: java.nio.charset.StandardCharsets.UTF_16
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.apache.commons.codec.Charsets.UTF_16BE
+      fullyQualifiedConstantName: java.nio.charset.StandardCharsets.UTF_16BE
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.apache.commons.codec.Charsets.UTF_16LE
+      fullyQualifiedConstantName: java.nio.charset.StandardCharsets.UTF_16LE
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.apache.commons.codec.Charsets.UTF_8
+      fullyQualifiedConstantName: java.nio.charset.StandardCharsets.UTF_8
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonscodec.MigrateSelectedCommonsCodecJava
+displayName: Migrate Java only in workbook-selected Apache Commons Codec projects
+description: >-
+  Apply deterministic source changes only below a build root that proved one exact, non-conflicting workbook source
+  version before dependency edits.
+preconditions:
+  - com.huawei.clouds.openrewrite.commonscodec.FindSelectedCommonsCodecSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.commonscodec.MigrateDeterministicCommonsCodecJava
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonscodec.FindSelectedCommonsCodecRisks
+displayName: Find Apache Commons Codec risks only in selected projects
+description: >-
+  Mark build, Java behavior, and resource decisions only below a build root that proved one exact, non-conflicting
+  workbook source version before dependency edits.
+preconditions:
+  - com.huawei.clouds.openrewrite.commonscodec.FindSelectedCommonsCodecSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.commonscodec.FindCommonsCodecBuildRisks
+  - com.huawei.clouds.openrewrite.commonscodec.FindCommonsCodecJavaRisks
+  - com.huawei.clouds.openrewrite.commonscodec.FindCommonsCodecResourceRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.commonscodec.MigrateCommonsCodecTo1_22_0
 displayName: Migrate Apache Commons Codec to 1.22.0
 description: >-
-  Apply the strict workbook dependency upgrade first, migrate documented equivalent APIs, then mark source,
-  build, algorithm-output, error-policy, and OSGi decisions that require application evidence.
+  Capture exact source-version eligibility, upgrade the dependency, reuse the official Apache Base64 capability only
+  where its semantics are proven, reuse official core method and constant replacements, and mark remaining decisions
+  in selected projects.
 recipeList:
   - com.huawei.clouds.openrewrite.commonscodec.UpgradeCommonsCodecTo1_22_0
-  - com.huawei.clouds.openrewrite.commonscodec.MigrateDeprecatedCommonsCodecApis
-  - com.huawei.clouds.openrewrite.commonscodec.FindCommonsCodecBuildRisks
-  - com.huawei.clouds.openrewrite.commonscodec.FindCommonsCodecJavaRisks
-  - com.huawei.clouds.openrewrite.commonscodec.FindCommonsCodecResourceRisks
+  - com.huawei.clouds.openrewrite.commonscodec.MigrateSelectedCommonsCodecJava
+  - com.huawei.clouds.openrewrite.commonscodec.FindSelectedCommonsCodecRisks

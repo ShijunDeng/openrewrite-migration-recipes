@@ -32,32 +32,6 @@ class MigrateJUnit6RemovedPlatformJavaTest implements RewriteTest {
     }
 
     @Test
-    void migratesMethodSelectorGetterFromIntellijShape() {
-        rewriteRun(java(
-                """
-                  import org.junit.platform.engine.discovery.MethodSelector;
-                  class UniqueIdBuilder { String parameters(MethodSelector selector) { return selector.getMethodParameterTypes(); } }
-                  """,
-                """
-                  import org.junit.platform.engine.discovery.MethodSelector;
-                  class UniqueIdBuilder { String parameters(MethodSelector selector) { return selector.getParameterTypeNames(); } }
-                  """));
-    }
-
-    @Test
-    void migratesNestedMethodSelectorGetter() {
-        rewriteRun(java(
-                """
-                  import org.junit.platform.engine.discovery.NestedMethodSelector;
-                  class UniqueIdBuilder { String parameters(NestedMethodSelector selector) { return selector.getMethodParameterTypes(); } }
-                  """,
-                """
-                  import org.junit.platform.engine.discovery.NestedMethodSelector;
-                  class UniqueIdBuilder { String parameters(NestedMethodSelector selector) { return selector.getParameterTypeNames(); } }
-                  """));
-    }
-
-    @Test
     void migratesLauncherBuilderConstructorFromQuarkusShape() {
         rewriteRun(java(
                 """
@@ -122,19 +96,6 @@ class MigrateJUnit6RemovedPlatformJavaTest implements RewriteTest {
     }
 
     @Test
-    void renamesMaintainedUnrecoverableUtilityMethod() {
-        rewriteRun(java(
-                """
-                  import org.junit.platform.commons.util.UnrecoverableExceptions;
-                  class Failures { void rethrow(Throwable failure) { UnrecoverableExceptions.rethrowIfBlacklisted(failure); } }
-                  """,
-                """
-                  import org.junit.platform.commons.util.UnrecoverableExceptions;
-                  class Failures { void rethrow(Throwable failure) { UnrecoverableExceptions.rethrowIfUnrecoverable(failure); } }
-                  """));
-    }
-
-    @Test
     void maintainedMethodsAreNoop() {
         rewriteRun(java(
                 """
@@ -173,12 +134,10 @@ class MigrateJUnit6RemovedPlatformJavaTest implements RewriteTest {
                 """
                   import java.util.Map;
                   import org.junit.platform.engine.ConfigurationParameters;
-                  import org.junit.platform.engine.discovery.MethodSelector;
                   import org.junit.platform.engine.reporting.ReportEntry;
                   import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
                   class PlatformSupport {
                       int size(ConfigurationParameters p) { return p.size(); }
-                      String names(MethodSelector s) { return s.getMethodParameterTypes(); }
                       Object request() { return new LauncherDiscoveryRequestBuilder(); }
                       ReportEntry report() { return new ReportEntry(); }
                   }
@@ -186,12 +145,10 @@ class MigrateJUnit6RemovedPlatformJavaTest implements RewriteTest {
                 """
                   import java.util.Map;
                   import org.junit.platform.engine.ConfigurationParameters;
-                  import org.junit.platform.engine.discovery.MethodSelector;
                   import org.junit.platform.engine.reporting.ReportEntry;
                   import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
                   class PlatformSupport {
                       int size(ConfigurationParameters p) { return p.keySet().size(); }
-                      String names(MethodSelector s) { return s.getParameterTypeNames(); }
                       Object request() { return LauncherDiscoveryRequestBuilder.request(); }
                       ReportEntry report() { return ReportEntry.from(Map.of()); }
                   }

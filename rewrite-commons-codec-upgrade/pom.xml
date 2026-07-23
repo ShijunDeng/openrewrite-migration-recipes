@@ -19,6 +19,15 @@
     <dependency><groupId>org.openrewrite</groupId><artifactId>rewrite-java</artifactId></dependency>
     <dependency><groupId>org.openrewrite</groupId><artifactId>rewrite-kotlin</artifactId><version>${rewrite.version}</version></dependency>
     <dependency><groupId>org.openrewrite</groupId><artifactId>rewrite-xml</artifactId><version>${rewrite.version}</version></dependency>
+    <dependency>
+      <groupId>org.openrewrite.recipe</groupId>
+      <artifactId>rewrite-java-dependencies</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite.recipe</groupId>
+      <artifactId>rewrite-apache</artifactId>
+      <version>2.28.0</version>
+    </dependency>
     <dependency><groupId>org.openrewrite</groupId><artifactId>rewrite-test</artifactId><scope>test</scope></dependency>
     <dependency><groupId>org.openrewrite</groupId><artifactId>rewrite-java-17</artifactId><scope>test</scope></dependency>
     <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>

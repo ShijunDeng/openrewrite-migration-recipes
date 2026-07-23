@@ -14,6 +14,8 @@ README、机器可读 manifest 和禁降级契约，不进入默认 Maven reacto
 
 用户指定的高优先级 Java 清单已完成 25/25，官方能力复用与提交记录见
 [`docs/high-priority-java-ledger.md`](docs/high-priority-java-ledger.md)。
+既有模块的补充官方能力复审、双 JDK 结果与远端门禁修复记录见
+[`docs/official-reuse-audit-ledger.md`](docs/official-reuse-audit-ledger.md)。
 
 ## Modules
 

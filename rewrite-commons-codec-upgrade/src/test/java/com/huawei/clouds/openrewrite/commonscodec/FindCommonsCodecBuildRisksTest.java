@@ -49,7 +49,11 @@ class FindCommonsCodecBuildRisksTest implements RewriteTest {
         rewriteRun(
                 xml(pom(dep("1.22.0")), source -> source.path("pom.xml")),
                 xml(pom("<properties><codec.version>1.22.0</codec.version></properties><dependencies>" +
-                        dep("${codec.version}") + "</dependencies>"), source -> source.path("property/pom.xml")));
+                        dep("${codec.version}") + "</dependencies>"), source -> source.path("property/pom.xml")),
+                xml(pom("<dependencyManagement>" + dep("1.22.0") +
+                        "</dependencyManagement><dependencies><dependency>" +
+                        "<groupId>commons-codec</groupId><artifactId>commons-codec</artifactId>" +
+                        "</dependency></dependencies>"), source -> source.path("managed/pom.xml")));
     }
 
     @ParameterizedTest(name = "Maven Java {0}")

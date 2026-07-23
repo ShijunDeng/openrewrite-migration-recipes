@@ -8,28 +8,35 @@ import org.openrewrite.test.RewriteTest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.test.SourceSpecs.text;
 import static org.openrewrite.xml.Assertions.xml;
 
 class RecommendedCommonsCodecMigrationTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(Environment.builder().scanRuntimeClasspath("com.huawei.clouds.openrewrite.commonscodec").build()
+        spec.recipe(Environment.builder().scanRuntimeClasspath(
+                                "com.huawei.clouds.openrewrite.commonscodec",
+                                "org.openrewrite.apache.commons.codec",
+                                "org.openrewrite.java.dependencies").build()
                         .activateRecipes("com.huawei.clouds.openrewrite.commonscodec.MigrateCommonsCodecTo1_22_0"))
                 .parser(JavaParser.fromJavaVersion().dependsOn(CommonsCodecTestApi.sources()));
     }
 
     @Test
-    void upgradesDependencyBeforeMigratingDigestApi() {
+    void officialModelAwareUpgradeRunsBeforeMigratingDigestApi() {
         rewriteRun(
-                xml(pom("1.11"), pom("1.22.0"), source -> source.path("pom.xml")),
+                pomXml(pom("1.11"), pom("1.22.0")),
                 java("import org.apache.commons.codec.digest.DigestUtils; class Guid { byte[] id(byte[] b){return DigestUtils.sha(b);} }",
                         "import org.apache.commons.codec.digest.DigestUtils; class Guid { byte[] id(byte[] b){return DigestUtils.sha1(b);} }"));
     }
 
     @Test
     void migratesPredicateAndCharsetInOneCycle() {
-        rewriteRun(java(
+        rewriteRun(
+                xml(pom("1.13"), pom("1.22.0"),
+                        source -> source.path("pom.xml")),
+                java(
                 """
                 import org.apache.commons.codec.Charsets;
                 import org.apache.commons.codec.binary.Base64;
@@ -47,16 +54,22 @@ class RecommendedCommonsCodecMigrationTest implements RewriteTest {
 
     @Test
     void keepsMurmurCorrectionAsExplicitDecision() {
-        rewriteRun(java("import org.apache.commons.codec.digest.MurmurHash3; class T { int x(byte[] b){return MurmurHash3.hash32(b);} }",
-                source -> source.after(actual -> actual).afterRecipe(after ->
-                        assertTrue(after.printAll().contains("persisted-key migration"), after::printAll))));
+        rewriteRun(
+                xml(pom("1.14"), pom("1.22.0"),
+                        source -> source.path("pom.xml")),
+                java("import org.apache.commons.codec.digest.MurmurHash3; class T { int x(byte[] b){return MurmurHash3.hash32(b);} }",
+                        source -> source.after(actual -> actual).afterRecipe(after ->
+                                assertTrue(after.printAll().contains("persisted-key migration"), after::printAll))));
     }
 
     @Test
     void realOpenRefineShapeIsMarkedNotRewritten() {
-        rewriteRun(java("import org.apache.commons.codec.language.ColognePhonetic; class Keyer { String key(String s){return new ColognePhonetic().colognePhonetic(s);} }",
-                source -> source.after(actual -> actual).afterRecipe(after ->
-                        assertTrue(after.printAll().contains("rebuild golden data"), after::printAll))));
+        rewriteRun(
+                xml(pom("1.15"), pom("1.22.0"),
+                        source -> source.path("pom.xml")),
+                java("import org.apache.commons.codec.language.ColognePhonetic; class Keyer { String key(String s){return new ColognePhonetic().colognePhonetic(s);} }",
+                        source -> source.after(actual -> actual).afterRecipe(after ->
+                                assertTrue(after.printAll().contains("rebuild golden data"), after::printAll))));
     }
 
     @Test
@@ -70,9 +83,12 @@ class RecommendedCommonsCodecMigrationTest implements RewriteTest {
 
     @Test
     void pureAutoMigrationIsIdempotent() {
-        rewriteRun(spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1), java(
-                "import org.apache.commons.codec.digest.DigestUtils; class T { String x(String s){return DigestUtils.shaHex(s);} }",
-                "import org.apache.commons.codec.digest.DigestUtils; class T { String x(String s){return DigestUtils.sha1Hex(s);} }"));
+        rewriteRun(spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1),
+                xml(pom("1.16.0"), pom("1.22.0"),
+                        source -> source.path("pom.xml")),
+                java(
+                        "import org.apache.commons.codec.digest.DigestUtils; class T { String x(String s){return DigestUtils.shaHex(s);} }",
+                        "import org.apache.commons.codec.digest.DigestUtils; class T { String x(String s){return DigestUtils.sha1Hex(s);} }"));
     }
 
     private static String pom(String version) {

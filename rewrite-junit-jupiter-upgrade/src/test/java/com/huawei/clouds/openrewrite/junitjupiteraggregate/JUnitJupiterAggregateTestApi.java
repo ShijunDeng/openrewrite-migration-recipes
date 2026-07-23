@@ -79,7 +79,41 @@ final class JUnitJupiterAggregateTestApi {
                 "public static void main(String... args){} public static Object execute(String... args){return null;} }",
                 "package org.junit.jupiter.api.io; public @interface TempDir { String SCOPE_PROPERTY_NAME = \"scope\"; }",
                 "package org.junit.jupiter.engine; public class Constants { " +
-                "public static final String TEMP_DIR_SCOPE_PROPERTY_NAME = \"scope\"; }",
+                "public static final String TEMP_DIR_SCOPE_PROPERTY_NAME = \"scope\"; " +
+                "public static final String DEFAULT_DISPLAY_NAME_GENERATOR_PROPERTY_NAME = \"display\"; }",
+                "package org.junit.jupiter.api; public class Constants { " +
+                "public static final String TEMP_DIR_SCOPE_PROPERTY_NAME = \"scope\"; " +
+                "public static final String DEFAULT_DISPLAY_NAME_GENERATOR_PROPERTY_NAME = \"display\"; }",
+                "package org.junit.jupiter.params; public @interface ParameterizedTest { " +
+                "String DISPLAY_NAME_PLACEHOLDER = \"{displayName}\"; String INDEX_PLACEHOLDER = \"{index}\"; " +
+                "String ARGUMENTS_PLACEHOLDER = \"{arguments}\"; String ARGUMENTS_WITH_NAMES_PLACEHOLDER = \"{argumentsWithNames}\"; " +
+                "String ARGUMENT_SET_NAME_PLACEHOLDER = \"{argumentSetName}\"; " +
+                "String ARGUMENT_SET_NAME_OR_ARGUMENTS_WITH_NAMES_PLACEHOLDER = \"{argumentSetNameOrArgumentsWithNames}\"; " +
+                "String DEFAULT_DISPLAY_NAME = \"[{index}] {argumentSetNameOrArgumentsWithNames}\"; }",
+                "package org.junit.jupiter.params; public final class ParameterizedInvocationConstants { " +
+                "public static final String DISPLAY_NAME_PLACEHOLDER = \"{displayName}\"; " +
+                "public static final String INDEX_PLACEHOLDER = \"{index}\"; " +
+                "public static final String ARGUMENTS_PLACEHOLDER = \"{arguments}\"; " +
+                "public static final String ARGUMENTS_WITH_NAMES_PLACEHOLDER = \"{argumentsWithNames}\"; " +
+                "public static final String ARGUMENT_SET_NAME_PLACEHOLDER = \"{argumentSetName}\"; " +
+                "public static final String ARGUMENT_SET_NAME_OR_ARGUMENTS_WITH_NAMES_PLACEHOLDER = \"{argumentSetNameOrArgumentsWithNames}\"; " +
+                "public static final String DEFAULT_DISPLAY_NAME = \"[{index}] {argumentSetNameOrArgumentsWithNames}\"; }",
+                "package org.junit.platform.engine.reporting; public interface OutputDirectoryProvider {}",
+                "package org.junit.platform.engine; public interface OutputDirectoryCreator {}",
+                "package org.junit.platform.commons.support; public interface Resource {}",
+                "package org.junit.platform.commons.io; public interface Resource {}",
+                "package org.junit.jupiter.api.extension; public interface MediaType {}",
+                "package org.junit.jupiter.api; public interface MediaType {}",
+                "package org.junit.jupiter.params.support; public interface ParameterInfo {}",
+                "package org.junit.jupiter.params; public interface ParameterInfo {}",
+                "package org.junit.platform.engine.discovery; public class DiscoverySelectors { " +
+                "public static Object selectClasspathResource(java.util.Set<String> resources){return null;} " +
+                "public static Object selectClasspathResourceByName(java.util.Set<String> resources){return null;} }",
+                "package org.junit.platform.engine.discovery; public class ClasspathResourceSelector { " +
+                "public java.util.Set<String> getClasspathResources(){return null;} " +
+                "public java.util.Set<String> getResources(){return null;} }",
+                "package org.junit.platform.testkit.engine; public class Executions { " +
+                "public Executions started(){return this;} public Executions finished(){return this;} }",
                 "package org.junit.jupiter.api.extension; public interface DynamicTestInvocationContext {}",
                 "package org.junit.jupiter.api.extension; public interface InvocationInterceptor { " +
                 "interface Invocation<T> { T proceed() throws Throwable; } " +

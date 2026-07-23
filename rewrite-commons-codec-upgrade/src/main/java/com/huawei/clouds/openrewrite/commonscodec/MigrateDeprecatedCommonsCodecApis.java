@@ -1,24 +1,20 @@
 package com.huawei.clouds.openrewrite.commonscodec;
 
-import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
-import org.openrewrite.java.JavaIsoVisitor;
-import org.openrewrite.java.JavaTemplate;
-import org.openrewrite.java.tree.J;
-import org.openrewrite.java.tree.JavaType;
-import org.openrewrite.java.tree.TypeUtils;
+import org.openrewrite.java.ChangeMethodName;
+import org.openrewrite.java.ReplaceConstantWithAnotherConstant;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
-/** Apply only replacements whose old implementation delegates directly to the documented replacement. */
+/**
+ * Binary-compatible entry point retained for callers of the original public
+ * recipe class. Every transformation delegates to OpenRewrite core recipes.
+ */
+@Deprecated(since = "1.0.0", forRemoval = false)
 public final class MigrateDeprecatedCommonsCodecApis extends Recipe {
-    private static final Map<String, String> DIGEST_METHODS = Map.of(
-            "getShaDigest", "getSha1Digest",
-            "sha", "sha1",
-            "shaHex", "sha1Hex");
-    private static final Set<String> CHARSET_FIELDS = Set.of(
-            "ISO_8859_1", "US_ASCII", "UTF_16", "UTF_16BE", "UTF_16LE", "UTF_8");
+    private static final List<String> CHARSET_FIELDS = List.of(
+            "ISO_8859_1", "US_ASCII", "UTF_16",
+            "UTF_16BE", "UTF_16LE", "UTF_8");
 
     @Override
     public String getDisplayName() {
@@ -27,59 +23,39 @@ public final class MigrateDeprecatedCommonsCodecApis extends Recipe {
 
     @Override
     public String getDescription() {
-        return "Rename DigestUtils SHA-1 delegates and Base64.isArrayByteBase64(), and replace qualified " +
-               "Commons Codec charset constants with the Java 8 StandardCharsets equivalents.";
+        return "Compatibility wrapper that delegates deterministic method and constant migrations to " +
+               "OpenRewrite core recipes; use MigrateCommonsCodecTo1_22_0 for project gating and risk markers.";
     }
 
     @Override
-    public JavaIsoVisitor<ExecutionContext> getVisitor() {
-        return new JavaIsoVisitor<ExecutionContext>() {
-            @Override
-            public J.CompilationUnit visitCompilationUnit(J.CompilationUnit compilationUnit, ExecutionContext ctx) {
-                return UpgradeSelectedCommonsCodecDependency.generated(compilationUnit.getSourcePath())
-                        ? compilationUnit : super.visitCompilationUnit(compilationUnit, ctx);
-            }
-
-            @Override
-            public J.MethodInvocation visitMethodInvocation(J.MethodInvocation invocation, ExecutionContext ctx) {
-                J.MethodInvocation visited = super.visitMethodInvocation(invocation, ctx);
-                JavaType.Method method = visited.getMethodType();
-                if (method == null) return visited;
-                String owner = owner(method.getDeclaringType());
-                String replacement = null;
-                if ("org.apache.commons.codec.digest.DigestUtils".equals(owner)) {
-                    replacement = DIGEST_METHODS.get(method.getName());
-                } else if ("org.apache.commons.codec.binary.Base64".equals(owner) &&
-                           "isArrayByteBase64".equals(method.getName())) {
-                    replacement = "isBase64";
-                }
-                if (replacement == null) return visited;
-                if (visited.getSelect() == null) {
-                    maybeRemoveImport(owner + "." + method.getName());
-                    maybeAddImport(owner, replacement);
-                }
-                JavaType.Method replacementType = method.withName(replacement);
-                return visited.withName(visited.getName().withSimpleName(replacement).withType(replacementType))
-                        .withMethodType(replacementType);
-            }
-
-            @Override
-            public J.FieldAccess visitFieldAccess(J.FieldAccess fieldAccess, ExecutionContext ctx) {
-                J.FieldAccess visited = super.visitFieldAccess(fieldAccess, ctx);
-                if (!CHARSET_FIELDS.contains(visited.getSimpleName()) ||
-                    !"org.apache.commons.codec.Charsets".equals(owner(visited.getTarget().getType()))) return visited;
-                maybeRemoveImport("org.apache.commons.codec.Charsets");
-                maybeAddImport("java.nio.charset.StandardCharsets");
-                return JavaTemplate.builder("StandardCharsets." + visited.getSimpleName())
-                        .imports("java.nio.charset.StandardCharsets")
-                        .build()
-                        .apply(getCursor(), visited.getCoordinates().replace());
-            }
-        };
+    public List<Recipe> getRecipeList() {
+        return List.of(
+                new ChangeMethodName(
+                        "org.apache.commons.codec.digest.DigestUtils getShaDigest()",
+                        "getSha1Digest", false, true),
+                new ChangeMethodName(
+                        "org.apache.commons.codec.digest.DigestUtils sha(..)",
+                        "sha1", false, true),
+                new ChangeMethodName(
+                        "org.apache.commons.codec.digest.DigestUtils shaHex(..)",
+                        "sha1Hex", false, true),
+                new ChangeMethodName(
+                        "org.apache.commons.codec.binary.Base64 isArrayByteBase64(byte[])",
+                        "isBase64", false, true),
+                constant("ISO_8859_1"),
+                constant("US_ASCII"),
+                constant("UTF_16"),
+                constant("UTF_16BE"),
+                constant("UTF_16LE"),
+                constant("UTF_8"));
     }
 
-    private static String owner(JavaType type) {
-        JavaType.FullyQualified fullyQualified = TypeUtils.asFullyQualified(type);
-        return fullyQualified == null ? "" : fullyQualified.getFullyQualifiedName();
+    private static Recipe constant(String field) {
+        if (!CHARSET_FIELDS.contains(field)) {
+            throw new IllegalArgumentException("Unsupported charset field: " + field);
+        }
+        return new ReplaceConstantWithAnotherConstant(
+                "org.apache.commons.codec.Charsets." + field,
+                "java.nio.charset.StandardCharsets." + field);
     }
 }

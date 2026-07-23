@@ -8,6 +8,12 @@ updates:
       time: "02:00"
       timezone: Asia/Shanghai
     open-pull-requests-limit: 5
+    # Recipe-module POMs intentionally model vulnerable/legacy source
+    # versions. Only the root build toolchain is maintained by Dependabot.
+    exclude-paths:
+      - "rewrite-*-upgrade/**"
+    # Avoid rebasing every open maintenance PR after each recipe commit.
+    rebase-strategy: disabled
     # Product-library versions are migration inputs/targets copied from the
     # approved spreadsheet. Updating them independently changes recipe
     # semantics, so Dependabot is limited to the recipe toolchain and build.
@@ -39,7 +45,4 @@ updates:
       time: "02:30"
       timezone: Asia/Shanghai
     open-pull-requests-limit: 5
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - version-update:semver-major
+    rebase-strategy: disabled

@@ -41,6 +41,8 @@ public final class UpgradeSelectedCommonsCodecDependency extends Recipe {
             "node_modules", "bower_components", "vendor", ".pnpm", ".yarn", ".npm", ".angular", ".nx",
             ".next", ".nuxt", ".cache", ".git", ".vscode", ".turbo", ".parcel-cache", ".vite",
             "coverage", ".output", "tmp", "temp", "report", "reports", "storybook-static", "test-results");
+    private static final Set<String> AUTHORED_SOURCE_KINDS = Set.of(
+            "java", "kotlin", "groovy", "scala", "resources");
 
     @Override
     public String getDisplayName() {
@@ -191,7 +193,7 @@ public final class UpgradeSelectedCommonsCodecDependency extends Recipe {
     }
 
     static boolean isGradleDependencyInvocation(Cursor cursor, J.MethodInvocation invocation) {
-        if (!CONFIGURATIONS.contains(invocation.getSimpleName()) || invocation.getSelect() != null) return false;
+        if (!isDependencyConfigurationInvocation(invocation)) return false;
         boolean foundRootDependencies = false;
         for (Cursor current = cursor.getParent(); current != null; current = current.getParent()) {
             if (current.getValue() instanceof J.MethodInvocation ancestor) {
@@ -204,12 +206,34 @@ public final class UpgradeSelectedCommonsCodecDependency extends Recipe {
         return foundRootDependencies;
     }
 
+    static boolean isDependencyConfigurationInvocation(J.MethodInvocation invocation) {
+        return CONFIGURATIONS.contains(invocation.getSimpleName()) && invocation.getSelect() == null;
+    }
+
     static boolean generated(Path path) {
         Path parent = path.normalize().getParent();
         if (parent == null) return false;
+        boolean authoredSourceTree = authoredSourceTree(parent);
         for (Path part : parent) {
             String value = part.toString().toLowerCase(Locale.ROOT);
-            if (GENERATED_DIRECTORIES.contains(value) || value.startsWith("generated") || value.startsWith("install")) return true;
+            if (GENERATED_DIRECTORIES.contains(value) ||
+                !authoredSourceTree &&
+                (value.startsWith("generated") || value.startsWith("install"))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean authoredSourceTree(Path path) {
+        for (int i = 2; i < path.getNameCount(); i++) {
+            if ("src".equalsIgnoreCase(path.getName(i - 2).toString()) &&
+                ("main".equalsIgnoreCase(path.getName(i - 1).toString()) ||
+                 "test".equalsIgnoreCase(path.getName(i - 1).toString())) &&
+                AUTHORED_SOURCE_KINDS.contains(
+                        path.getName(i).toString().toLowerCase(Locale.ROOT))) {
+                return true;
+            }
         }
         return false;
     }

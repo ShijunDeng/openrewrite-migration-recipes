@@ -3,23 +3,170 @@ type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.junitjupiteraggregate.UpgradeJUnitJupiterTo6_0_1
 displayName: Upgrade workbook-selected JUnit Jupiter aggregate dependencies to 6.0.1
 description: >-
-  Upgrade only exact org.junit.jupiter:junit-jupiter 5.8.2, 5.9.1, and 5.9.3 declarations owned by the current
-  Maven or root Gradle build, preserving external owners, variants, ranges, dynamic versions, and generated files.
+  Capture an exact non-conflicting source-version project before edits, use the official unified Maven/Gradle
+  UpgradeDependencyVersion first, and retain the strict raw-syntax visitor as a fallback for unresolved build models.
 recipeList:
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MarkSelectedJUnitJupiterAggregateProjects
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.UpgradeSelectedJUnitJupiterAggregateWithOfficialFallback
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiteraggregate.UpgradeSelectedJUnitJupiterAggregateWithOfficialFallback
+displayName: Upgrade the selected JUnit Jupiter aggregate dependency
+description: >-
+  Upgrade only files whose nearest build root proved one exact workbook source version; the official model-aware
+  recipe runs first and the existing strict visitor handles raw Maven or Gradle syntax that has no dependency model.
+preconditions:
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindSelectedJUnitJupiterAggregateFiles
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.junit.jupiter
+      artifactId: junit-jupiter
+      newVersion: 6.0.1
   - com.huawei.clouds.openrewrite.junitjupiteraggregate.UpgradeSelectedJUnitJupiterDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateOfficialJUnitJupiter6Leaves
+displayName: Apply safe official JUnit 5.13, 5.14, and 6 migration leaves
+description: >-
+  Reuse individually reviewed OpenRewrite leaves without activating the broad JUnit5to6Migration aggregate,
+  dependency widening, source deletion, configuration deletion, JRE pruning, or JUnit Pioneer migration.
+recipeList:
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.junit.jupiter.api.extension.ExtensionContext$Store getOrComputeIfAbsent(..)
+      newMethodName: computeIfAbsent
+      matchOverrides: true
+      ignoreDefinition: true
+  - org.openrewrite.java.testing.junit6.MigrateMethodOrdererAlphanumeric
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.RepairMethodOrdererTypeMetadata
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedTest.DISPLAY_NAME_PLACEHOLDER
+      fullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedInvocationConstants.DISPLAY_NAME_PLACEHOLDER
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedTest.INDEX_PLACEHOLDER
+      fullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedInvocationConstants.INDEX_PLACEHOLDER
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedTest.ARGUMENTS_PLACEHOLDER
+      fullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedInvocationConstants.ARGUMENTS_PLACEHOLDER
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedTest.ARGUMENTS_WITH_NAMES_PLACEHOLDER
+      fullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedInvocationConstants.ARGUMENTS_WITH_NAMES_PLACEHOLDER
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedTest.ARGUMENT_SET_NAME_PLACEHOLDER
+      fullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedInvocationConstants.ARGUMENT_SET_NAME_PLACEHOLDER
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedTest.ARGUMENT_SET_NAME_OR_ARGUMENTS_WITH_NAMES_PLACEHOLDER
+      fullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedInvocationConstants.ARGUMENT_SET_NAME_OR_ARGUMENTS_WITH_NAMES_PLACEHOLDER
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedTest.DEFAULT_DISPLAY_NAME
+      fullyQualifiedConstantName: org.junit.jupiter.params.ParameterizedInvocationConstants.DEFAULT_DISPLAY_NAME
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.junit.platform.engine.reporting.OutputDirectoryProvider
+      newFullyQualifiedTypeName: org.junit.platform.engine.OutputDirectoryCreator
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.junit.platform.commons.support.Resource
+      newFullyQualifiedTypeName: org.junit.platform.commons.io.Resource
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.junit.jupiter.api.extension.MediaType
+      newFullyQualifiedTypeName: org.junit.jupiter.api.MediaType
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.junit.jupiter.params.support.ParameterInfo
+      newFullyQualifiedTypeName: org.junit.jupiter.params.ParameterInfo
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.junit.platform.engine.discovery.DiscoverySelectors selectClasspathResource(java.util.Set)
+      newMethodName: selectClasspathResourceByName
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.junit.platform.engine.discovery.ClasspathResourceSelector getClasspathResources()
+      newMethodName: getResources
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.junit.jupiter.engine.Constants
+      newFullyQualifiedTypeName: org.junit.jupiter.api.Constants
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.junit.platform.testkit.engine.Executions started()
+      newMethodName: finished
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.junit.platform.commons.util.PreconditionViolationException
+      newFullyQualifiedTypeName: org.junit.platform.commons.PreconditionViolationException
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.junit.platform.commons.util.BlacklistedExceptions
+      newFullyQualifiedTypeName: org.junit.platform.commons.util.UnrecoverableExceptions
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.junit.platform.commons.util.UnrecoverableExceptions rethrowIfBlacklisted(java.lang.Throwable)
+      newMethodName: rethrowIfUnrecoverable
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.junit.platform.engine.discovery.MethodSelector getMethodParameterTypes()
+      newMethodName: getParameterTypeNames
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.junit.platform.engine.discovery.NestedMethodSelector getMethodParameterTypes()
+      newMethodName: getParameterTypeNames
+      matchOverrides: false
+      ignoreDefinition: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateDeterministicJUnitJupiter6Gaps
+displayName: Apply body-preserving JUnit 6 migrations not covered by safe official leaves
+description: >-
+  Preserve old interceptor bodies and replace removed Platform calls whose factory, Optional, UniqueId, or
+  collection expression cannot be represented by the reviewed generic official leaves.
+recipeList:
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnitJupiter6Java
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnit6RemovedPlatformJava
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateSelectedJUnitJupiter6Sources
+displayName: Migrate source only in workbook-selected JUnit Jupiter aggregate projects
+description: >-
+  Apply reviewed official leaves and local semantic-gap recipes only below a build root that proved one exact,
+  non-conflicting workbook source version before dependency edits.
+preconditions:
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindSelectedJUnitJupiterAggregateFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateOfficialJUnitJupiter6Leaves
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateDeterministicJUnitJupiter6Gaps
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiteraggregate.AutoMigrateSelectedJUnitJupiterAggregateTo6_0_1
+displayName: Automatically migrate selected JUnit Jupiter aggregate projects to 6.0.1
+description: >-
+  Capture exact dependency ownership, perform the selected dependency upgrade, and apply source automation only
+  inside those selected project roots; this recipe intentionally omits review markers.
+recipeList:
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.UpgradeJUnitJupiterTo6_0_1
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateSelectedJUnitJupiter6Sources
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiteraggregate.FindSelectedJUnitJupiter6SourceAndConfigurationRisks
+displayName: Find JUnit Jupiter 6 risks only in selected projects
+description: >-
+  Mark source and configuration decisions only below a build root that proved one exact, non-conflicting workbook
+  source version before dependency edits.
+preconditions:
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindSelectedJUnitJupiterAggregateFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnitJupiter6SourceRisks
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnit6PlatformSourceRisks
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnitJupiter6ConfigurationRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnitJupiterTo6_0_1
 displayName: Migrate JUnit Jupiter aggregate 5.8.2/5.9.1/5.9.3 to 6.0.1
 description: >-
-  Reuse the public strict dependency upgrade, migrate deterministic Jupiter APIs, and then mark source,
-  configuration, baseline, dependency-alignment, removed-module, provider, and runtime behavior decisions.
+  Capture exact source-version eligibility, upgrade through the official dependency recipe plus strict fallback,
+  apply only reviewed official leaves and local semantic gaps, and mark unresolved decisions without deleting code.
 recipeList:
   - com.huawei.clouds.openrewrite.junitjupiteraggregate.UpgradeJUnitJupiterTo6_0_1
-  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnitJupiter6Java
-  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnit6PlatformTypes
-  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateJUnit6RemovedPlatformJava
-  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnitJupiter6SourceRisks
-  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnit6PlatformSourceRisks
-  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnitJupiter6ConfigurationRisks
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.MigrateSelectedJUnitJupiter6Sources
   - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindJUnitJupiter6BuildRisks
+  - com.huawei.clouds.openrewrite.junitjupiteraggregate.FindSelectedJUnitJupiter6SourceAndConfigurationRisks

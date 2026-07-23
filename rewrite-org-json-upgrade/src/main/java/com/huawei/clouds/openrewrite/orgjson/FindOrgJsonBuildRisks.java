@@ -25,7 +25,8 @@ import java.util.regex.Pattern;
 
 /** Marks dependency ownership, Java baseline, module and packaging decisions. */
 public final class FindOrgJsonBuildRisks extends Recipe {
-    private static final Pattern LITERAL_VERSION = Pattern.compile("(?:\\d+[.]?)+(?:(?:[-.])[A-Za-z0-9]+)*");
+    private static final Pattern LITERAL_VERSION = Pattern.compile(
+            "\\d++(?:\\.\\d++(?=[.-]|$))*+\\.?(?:[.-][A-Za-z0-9]++)*+");
     private static final Pattern PROPERTY = Pattern.compile("\\$\\{([^}]+)}");
     private static final Set<String> JAVA_KEYS = Set.of("java.version", "maven.compiler.source", "maven.compiler.target", "maven.compiler.release", "source", "target", "release");
 
@@ -133,7 +134,7 @@ public final class FindOrgJsonBuildRisks extends Recipe {
                                 "This workbook-selected org.json version property is shared outside matching dependency versions; split ownership before upgrading it to 20250107");
                     }
                 }
-                if (resolved != null && !LITERAL_VERSION.matcher(resolved).matches()) resolved = null;
+                if (resolved != null && !literalVersion(resolved)) resolved = null;
                 if (resolved == null) return SearchResult.found(visited,
                         "This org.json version is externally or ambiguously owned; resolve its parent/property/catalog and upgrade the actual owner to 20250107");
                 if (!OrgJsonSupport.SOURCES.contains(resolved) && !OrgJsonSupport.TARGET.equals(resolved)) return SearchResult.found(visited,
@@ -242,6 +243,10 @@ public final class FindOrgJsonBuildRisks extends Recipe {
         if (!OrgJsonSupport.SOURCES.contains(version) && !OrgJsonSupport.TARGET.equals(version))
             return SearchResult.found(method, "This fixed org.json version is outside the workbook source whitelist; do not widen AUTO scope");
         return method;
+    }
+
+    static boolean literalVersion(String version) {
+        return LITERAL_VERSION.matcher(version).matches();
     }
 
     private static boolean javaCompatibility(J.Assignment assignment, Cursor cursor) {

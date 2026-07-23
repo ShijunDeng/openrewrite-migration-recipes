@@ -114,6 +114,28 @@ public final class FindCommonsCodecBuildRisks extends Recipe {
             }
         }.visitNonNull(document, ctx);
 
+        Set<String> managedTargetScopes = new java.util.HashSet<>();
+        new XmlIsoVisitor<ExecutionContext>() {
+            @Override
+            public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext ec) {
+                Xml.Tag visited = super.visitTag(tag, ec);
+                if (isRawPrimary(getCursor(), visited) &&
+                    isManagedDependency(getCursor()) &&
+                    visited.getChild("classifier").isEmpty() &&
+                    "jar".equals(visited.getChildValue("type").orElse("jar")) &&
+                    UpgradeSelectedCommonsCodecDependency.TARGET.equals(resolve(
+                            getCursor(),
+                            visited.getChildValue("version")
+                                    .map(String::trim).orElse(null),
+                            properties, propertyDefinitions))) {
+                    String profile = profile(getCursor());
+                    managedTargetScopes.add(
+                            profile == null ? "ROOT" : profile);
+                }
+                return visited;
+            }
+        }.visitNonNull(document, ctx);
+
         return (Xml.Document) new XmlIsoVisitor<ExecutionContext>() {
             @Override
             public Xml.Tag visitTag(Xml.Tag tag, ExecutionContext ec) {
@@ -122,9 +144,14 @@ public final class FindCommonsCodecBuildRisks extends Recipe {
                     if (t.getChild("classifier").isPresent() || !"jar".equals(t.getChildValue("type").orElse("jar"))) {
                         return mark(t, VARIANT);
                     }
-                    if (!UpgradeSelectedCommonsCodecDependency.TARGET.equals(resolve(
-                            getCursor(), t.getChildValue("version").map(String::trim).orElse(null),
-                            properties, propertyDefinitions))) {
+                    String rawVersion = t.getChildValue("version")
+                            .map(String::trim).orElse(null);
+                    if (!(rawVersion == null &&
+                          managedTargetVisible(
+                                  getCursor(), managedTargetScopes)) &&
+                        !UpgradeSelectedCommonsCodecDependency.TARGET.equals(resolve(
+                                getCursor(), rawVersion,
+                                properties, propertyDefinitions))) {
                         return mark(t, VERSION);
                     }
                 }
@@ -142,6 +169,24 @@ public final class FindCommonsCodecBuildRisks extends Recipe {
         return UpgradeSelectedCommonsCodecDependency.isProjectDependency(cursor, tag) &&
                UpgradeSelectedCommonsCodecDependency.GROUP.equals(tag.getChildValue("groupId").orElse(null)) &&
                UpgradeSelectedCommonsCodecDependency.ARTIFACT.equals(tag.getChildValue("artifactId").orElse(null));
+    }
+
+    private static boolean isManagedDependency(Cursor dependencyCursor) {
+        Cursor dependencies = dependencyCursor.getParentTreeCursor();
+        if (!(dependencies.getValue() instanceof Xml.Tag dependenciesTag) ||
+            !"dependencies".equals(dependenciesTag.getName())) {
+            return false;
+        }
+        Cursor owner = dependencies.getParentTreeCursor();
+        return owner.getValue() instanceof Xml.Tag ownerTag &&
+               "dependencyManagement".equals(ownerTag.getName());
+    }
+
+    private static boolean managedTargetVisible(
+            Cursor cursor, Set<String> managedTargetScopes) {
+        String profile = profile(cursor);
+        return managedTargetScopes.contains("ROOT") ||
+               profile != null && managedTargetScopes.contains(profile);
     }
 
     private static MavenScopes primaryScopes(Xml.Document document, ExecutionContext ctx) {
