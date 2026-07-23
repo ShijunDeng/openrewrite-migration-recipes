@@ -138,6 +138,20 @@ class SpringWebMvcBuildRisksTest implements RewriteTest {
     }
 
     @Test
+    void arbitrarilyLargeCompanionVersionsDoNotOverflowBuildRiskScan() {
+        rewriteRun(xml(project("<dependencies>" + target("6.2.19", "") +
+                "<dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-dependencies</artifactId>" +
+                "<version>999999999999999999999999.0</version><type>pom</type><scope>import</scope></dependency>" +
+                "<dependency><groupId>org.apache.tomcat.embed</groupId><artifactId>tomcat-embed-core</artifactId>" +
+                "<version>999999999999999999999999.0</version></dependency></dependencies>"),
+                source -> source.path("pom.xml").after(actual -> {
+                    assertTrue(actual.contains(FindSpringWebMvc6BuildRisks.BOOT), actual);
+                    assertFalse(actual.contains(FindSpringWebMvc6BuildRisks.CONTAINER), actual);
+                    return actual;
+                })));
+    }
+
+    @Test
     void profileTargetDoesNotLeakIntoSiblingProfile() {
         rewriteRun(pomXml(project("""
                 <profiles>

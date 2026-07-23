@@ -11,10 +11,20 @@
   </parent>
   <artifactId>rewrite-spring-webmvc-upgrade</artifactId>
   <name>OpenRewrite Spring Web MVC Upgrade</name>
-  <description>Strict Spring Web MVC 5.2/5.3 to 6.2.19 migration recipes.</description>
+  <description>Strict Spring Web MVC 5.2 through 6.2 migration recipes targeting 6.2.19.</description>
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-spring-webmvc-upgrade</url>
 
   <dependencies>
+    <!--
+      Reuse only the pinned Jakarta Servlet leaves whose runtime behavior is
+      safe for a Spring MVC 5.x -> 6.2 migration. Broad Jakarta EE and Java
+      migration aggregates remain deliberately outside the runtime tree.
+    -->
+    <dependency>
+      <groupId>org.openrewrite.recipe</groupId>
+      <artifactId>rewrite-migrate-java</artifactId>
+      <version>3.40.0</version>
+    </dependency>
     <dependency>
       <groupId>org.openrewrite.recipe</groupId>
       <artifactId>rewrite-spring</artifactId>
@@ -53,6 +63,24 @@
     <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-java-17</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>6.2.19</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

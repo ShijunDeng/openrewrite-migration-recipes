@@ -17,9 +17,102 @@ recipeList:
   - com.huawei.clouds.openrewrite.springwebmvc.UpgradeSelectedSpringWebMvcDependency
 ---
 type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebmvc.MigrateSpringWebMvcServletNamespaces
+displayName: Migrate supported Servlet source namespaces to Jakarta
+description: Reuse the exact official Core ChangePackage leaf while refusing to manufacture Jakarta names for Servlet types removed without a syntax-only replacement.
+tags:
+  - spring
+  - spring-webmvc
+  - jakarta-servlet
+  - source-migration
+preconditions:
+  - com.huawei.clouds.openrewrite.springwebmvc.IsSpringWebMvcNonGeneratedSource
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: javax.servlet.SingleThreadModel
+      includeImplicit: true
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: javax.servlet.http.HttpSessionContext
+      includeImplicit: true
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: javax.servlet.http.HttpUtils
+      includeImplicit: true
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.servlet
+      newPackageName: jakarta.servlet
+      recursive: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebmvc.MigrateSpringWebMvcServlet6Apis
+displayName: Migrate deterministic Servlet 6 call sites
+description: Reuse every return-type-safe leaf from the official Servlet 6 removal recipe plus the official RFC 6265 Cookie migration; leave HttpSession.getValueNames for a precise marker.
+tags:
+  - spring
+  - spring-webmvc
+  - jakarta-servlet
+  - source-migration
+preconditions:
+  - com.huawei.clouds.openrewrite.springwebmvc.IsSpringWebMvcNonGeneratedSource
+recipeList:
+  # Safe leaves from the pinned official RemovalsServletJakarta10 tree.
+  # The omitted getValueNames() -> getAttributeNames() rename changes
+  # String[] to Enumeration<String> and therefore requires owner review.
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletRequest  isRequestedSessionIdFromUrl()
+      newMethodName: isRequestedSessionIdFromURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletRequestWrapper  isRequestedSessionIdFromUrl()
+      newMethodName: isRequestedSessionIdFromURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletResponse encodeUrl(String)
+      newMethodName: encodeURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletResponseWrapper encodeUrl(String)
+      newMethodName: encodeURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletResponse encodeRedirectUrl(String)
+      newMethodName: encodeRedirectURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletResponseWrapper encodeRedirectUrl(String)
+      newMethodName: encodeRedirectURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpSession getValue(String)
+      newMethodName: getAttribute
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpSession putValue(String, Object)
+      newMethodName: setAttribute
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpSession removeValue(String)
+      newMethodName: removeAttribute
+  - org.openrewrite.java.DeleteMethodArgument:
+      methodPattern: jakarta.servlet.http.HttpServletResponse setStatus(int, String)
+      argumentIndex: 1
+  - org.openrewrite.java.DeleteMethodArgument:
+      methodPattern: jakarta.servlet.http.HttpServletResponseWrapper setStatus(int, String)
+      argumentIndex: 1
+  - org.openrewrite.java.ReorderMethodArguments:
+      methodPattern: jakarta.servlet.ServletContext log(Exception, String)
+      newParameterNames: [ ex, str ]
+      oldParameterNames: [ str, ex ]
+      matchOverrides: true
+  - org.openrewrite.java.migrate.jakarta.UpdateGetRealPath
+  - org.openrewrite.java.DeleteMethodArgument:
+      methodPattern: jakarta.servlet.UnavailableException <constructor>(jakarta.servlet.Servlet, String)
+      argumentIndex: 0
+  - org.openrewrite.java.DeleteMethodArgument:
+      methodPattern: jakarta.servlet.UnavailableException <constructor>(int, jakarta.servlet.Servlet, String)
+      argumentIndex: 1
+  - org.openrewrite.java.ReorderMethodArguments:
+      methodPattern: jakarta.servlet.UnavailableException <constructor>(int, String)
+      oldParameterNames: [ in, str ]
+      newParameterNames: [ str, in ]
+      matchOverrides: true
+  - org.openrewrite.java.migrate.jakarta.ServletCookieBehaviorChangeRFC6265
+---
+type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springwebmvc.MigrateDeterministicSpringWebMvc6Java
 displayName: Migrate deterministic Spring Web MVC 6 Java APIs
-description: Reuse precise official Spring Framework recipes for Servlet namespaces, removed MVC adapters, exception status types, and response status accessors; retain a local interceptor migration only to preserve the removed adapter's async contract and existing interfaces.
+description: Reuse precise official Spring Framework, Core, and Jakarta Servlet leaves for namespaces, removed Servlet/MVC APIs, media types, exception status types, and response status accessors; retain one local interceptor gap only to preserve the removed adapter's async contract and existing interfaces.
 tags:
   - spring
   - spring-webmvc
@@ -28,14 +121,30 @@ tags:
 preconditions:
   - com.huawei.clouds.openrewrite.springwebmvc.IsSpringWebMvcNonGeneratedSource
 recipeList:
-  - org.openrewrite.java.ChangePackage:
-      oldPackageName: javax.servlet
-      newPackageName: jakarta.servlet
-      recursive: true
+  - com.huawei.clouds.openrewrite.springwebmvc.MigrateSpringWebMvcServletNamespaces
+  - com.huawei.clouds.openrewrite.springwebmvc.MigrateSpringWebMvcServlet6Apis
+  - org.openrewrite.java.spring.framework.MigrateUtf8MediaTypes
+  - org.openrewrite.java.spring.framework.MigrateMethodArgumentNotValidExceptionErrorMethod
   - org.openrewrite.java.spring.framework.MigrateWebMvcConfigurerAdapter
   - com.huawei.clouds.openrewrite.springwebmvc.MigrateHandlerInterceptorAdapterPreservingAsyncContract
   - org.openrewrite.java.spring.framework.MigrateResponseEntityExceptionHandlerHttpStatusToHttpStatusCode
+  - org.openrewrite.java.ChangeMethodInvocationReturnType:
+      methodPattern: org.springframework.http.ResponseEntity getStatusCode()
+      newReturnType: org.springframework.http.HttpStatusCode
   - org.openrewrite.java.spring.framework.MigrateResponseStatusException
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebmvc.MigrateSelectedSpringWebMvc6Java
+displayName: Migrate deterministic APIs only in selected Spring Web MVC projects
+description: Apply the audited official source composition only below a build root that proved one exact, non-conflicting workbook source version before dependency edits.
+tags:
+  - spring
+  - spring-webmvc
+  - source-version-gate
+preconditions:
+  - com.huawei.clouds.openrewrite.springwebmvc.FindSelectedSpringWebMvcSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebmvc.MigrateDeterministicSpringWebMvc6Java
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6BuildMigrationRisks
@@ -63,6 +172,20 @@ recipeList:
   - com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6ConfigurationRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebmvc.FindSelectedSpringWebMvc6SourceAndConfigurationRisks
+displayName: Find Spring Web MVC risks only in selected projects
+description: Run source and configuration risk searches only below a build root that proved one exact, non-conflicting workbook source version before dependency edits.
+tags:
+  - spring
+  - spring-webmvc
+  - source-version-gate
+  - search
+preconditions:
+  - com.huawei.clouds.openrewrite.springwebmvc.FindSelectedSpringWebMvcSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6SourceAndConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springwebmvc.MigrateSpringWebMvcTo6_2_19
 displayName: Migrate Spring Web MVC applications to 6.2.19
 description: Strictly upgrade selected declarations, automate proven-equivalent Servlet and adapter changes, and mark every remaining Spring 6 build, source, and configuration decision.
@@ -72,7 +195,8 @@ tags:
   - jakarta-ee
   - migration
 recipeList:
+  - com.huawei.clouds.openrewrite.springwebmvc.MarkSelectedSpringWebMvcProjects
   - com.huawei.clouds.openrewrite.springwebmvc.UpgradeSpringWebMvcTo6_2_19
-  - com.huawei.clouds.openrewrite.springwebmvc.MigrateDeterministicSpringWebMvc6Java
+  - com.huawei.clouds.openrewrite.springwebmvc.MigrateSelectedSpringWebMvc6Java
   - com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6BuildMigrationRisks
-  - com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6SourceAndConfigurationRisks
+  - com.huawei.clouds.openrewrite.springwebmvc.FindSelectedSpringWebMvc6SourceAndConfigurationRisks

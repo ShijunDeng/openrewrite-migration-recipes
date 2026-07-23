@@ -15,6 +15,7 @@ import org.openrewrite.marker.SearchResult;
 import org.openrewrite.xml.XmlIsoVisitor;
 import org.openrewrite.xml.tree.Xml;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -482,20 +483,21 @@ public final class FindSpringWebMvc6BuildRisks extends Recipe {
         if (value == null) return true;
         Matcher matcher = Pattern.compile("^(\\d+)(?:[.](\\d+))?.*").matcher(value);
         if (!matcher.matches()) return true;
-        int major = Integer.parseInt(matcher.group(1));
-        int minor = matcher.group(2) == null ? 0 : Integer.parseInt(matcher.group(2));
-        return major != 3 || minor < 4;
+        BigInteger major = new BigInteger(matcher.group(1));
+        BigInteger minor = new BigInteger(matcher.group(2) == null ? "0" : matcher.group(2));
+        return !BigInteger.valueOf(3).equals(major) || minor.compareTo(BigInteger.valueOf(4)) < 0;
     }
 
     private static boolean legacyContainer(String artifact, String version) {
         if (version == null) return true;
         Matcher matcher = Pattern.compile("^(\\d+)(?:[.](\\d+))?.*").matcher(version);
         if (!matcher.matches()) return true;
-        int major = Integer.parseInt(matcher.group(1));
-        if (artifact.startsWith("tomcat")) return major < 10;
-        if (artifact.startsWith("jetty")) return major < 11;
-        int minor = matcher.group(2) == null ? 0 : Integer.parseInt(matcher.group(2));
-        return major < 2 || major == 2 && minor < 3;
+        BigInteger major = new BigInteger(matcher.group(1));
+        if (artifact.startsWith("tomcat")) return major.compareTo(BigInteger.TEN) < 0;
+        if (artifact.startsWith("jetty")) return major.compareTo(BigInteger.valueOf(11)) < 0;
+        BigInteger minor = new BigInteger(matcher.group(2) == null ? "0" : matcher.group(2));
+        return major.compareTo(BigInteger.valueOf(2)) < 0 ||
+               BigInteger.valueOf(2).equals(major) && minor.compareTo(BigInteger.valueOf(3)) < 0;
     }
 
     private static boolean legacyJavaAssignment(J.Assignment assignment, Cursor cursor) {
@@ -503,16 +505,18 @@ public final class FindSpringWebMvc6BuildRisks extends Recipe {
         if (!variable.endsWith("sourceCompatibility") && !variable.endsWith("targetCompatibility")) return false;
         String value = assignment.getAssignment().printTrimmed(cursor).replace("'", "").replace("\"", "");
         Matcher numeric = Pattern.compile("(?:1[.])?(\\d+)").matcher(value);
-        if (numeric.matches()) return Integer.parseInt(numeric.group(1)) < 17;
+        if (numeric.matches()) return new BigInteger(numeric.group(1)).compareTo(BigInteger.valueOf(17)) < 0;
         Matcher constant = Pattern.compile("(?:JavaVersion[.])?VERSION_(?:1_)?(\\d+)").matcher(value);
-        return constant.matches() && Integer.parseInt(constant.group(1)) < 17;
+        return constant.matches() &&
+               new BigInteger(constant.group(1)).compareTo(BigInteger.valueOf(17)) < 0;
     }
 
     private static boolean legacyToolchain(J.MethodInvocation method) {
         if (!"of".equals(method.getSimpleName()) || method.getArguments().size() != 1 ||
             !(method.getArguments().get(0) instanceof J.Literal literal) ||
             !(literal.getValue() instanceof Number number) || method.getSelect() == null) return false;
-        return number.intValue() < 17 && method.getSelect().printTrimmed().endsWith("JavaLanguageVersion");
+        return new BigDecimal(number.toString()).compareTo(BigDecimal.valueOf(17)) < 0 &&
+               method.getSelect().printTrimmed().endsWith("JavaLanguageVersion");
     }
 
     private static boolean isMavenCompilerPlugin(Cursor cursor, Xml.Tag tag) {

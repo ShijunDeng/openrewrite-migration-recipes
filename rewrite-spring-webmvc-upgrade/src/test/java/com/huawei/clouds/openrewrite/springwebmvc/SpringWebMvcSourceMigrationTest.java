@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openrewrite.config.Environment;
 import org.openrewrite.java.JavaParser;
+import org.openrewrite.java.spring.framework.MigrateHandlerInterceptor;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 import org.openrewrite.test.RecipeSpec;
@@ -91,6 +92,22 @@ class SpringWebMvcSourceMigrationTest implements RewriteTest {
     }
 
     @Test
+    void pinnedOfficialHandlerRecipeDemonstratesThePreservedContractGap() {
+        rewriteRun(spec -> spec.recipe(new MigrateHandlerInterceptor())
+                        .parser(parser()).typeValidationOptions(TypeValidation.none()),
+                java("""
+                    import java.io.Serializable;
+                    import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+                    class AuditInterceptor extends HandlerInterceptorAdapter implements Serializable { }
+                    """, source -> source.after(actual -> {
+                    assertTrue(actual.contains("implements HandlerInterceptor"), actual);
+                    assertFalse(actual.contains("implements Serializable"), actual);
+                    assertFalse(actual.contains("AsyncHandlerInterceptor"), actual);
+                    return actual;
+                })));
+    }
+
+    @Test
     void localHandlerGapPreservesAsyncCallbackAndExistingInterface() {
         rewriteRun(java(
                 """
@@ -171,6 +188,38 @@ class SpringWebMvcSourceMigrationTest implements RewriteTest {
     }
 
     @Test
+    void migratesReducedSmallSsmAuthenticationInterceptorFixture() {
+        // xenv/S-mall-ssm@3d9e77f, AuthInterceptor.java.
+        rewriteRun(java(
+                """
+                package tmall.interceptor;
+                import javax.servlet.http.HttpServletRequest;
+                import javax.servlet.http.HttpServletResponse;
+                import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+                public class AuthInterceptor extends HandlerInterceptorAdapter {
+                    @Override
+                    public boolean preHandle(HttpServletRequest request,
+                                             HttpServletResponse response,
+                                             Object handler) throws Exception {
+                        Object user = request.getSession().getAttribute("user");
+                        if (user == null) {
+                            response.sendRedirect("/login?refer=/");
+                            return false;
+                        }
+                        return true;
+                    }
+                }
+                """, source -> source.after(actual -> {
+                    assertTrue(actual.contains("implements AsyncHandlerInterceptor"), actual);
+                    assertTrue(actual.contains("import jakarta.servlet.http.HttpServletRequest;"), actual);
+                    assertTrue(actual.contains("import jakarta.servlet.http.HttpServletResponse;"), actual);
+                    assertTrue(actual.contains("request.getSession().getAttribute(\"user\")"), actual);
+                    assertTrue(actual.contains("response.sendRedirect(\"/login?refer=/\")"), actual);
+                    return actual;
+                })));
+    }
+
+    @Test
     void officialRecipeRemovesNoopWebMvcAdapterSuperCall() {
         rewriteRun(java(
                 """
@@ -208,6 +257,61 @@ class SpringWebMvcSourceMigrationTest implements RewriteTest {
                   class CustomWebMvcConfigurerAdapter {}
                   class Other extends CustomWebMvcConfigurerAdapter {}
                   """));
+    }
+
+    @Test
+    void officialMethodArgumentNotValidRecipeUsesBindErrorUtils() {
+        rewriteRun(java(
+                """
+                import org.springframework.context.MessageSource;
+                import org.springframework.validation.ObjectError;
+                import org.springframework.web.bind.MethodArgumentNotValidException;
+
+                import java.util.List;
+                import java.util.Locale;
+                import java.util.Map;
+
+                class ValidationErrors {
+                    List<String> simple(List<ObjectError> errors) {
+                        return MethodArgumentNotValidException.errorsToStringList(errors);
+                    }
+                    List<String> localized(List<ObjectError> errors,
+                                           MessageSource messages, Locale locale) {
+                        return MethodArgumentNotValidException.errorsToStringList(
+                                errors, messages, locale);
+                    }
+                    Map<ObjectError, String> resolved(
+                            MethodArgumentNotValidException exception,
+                            MessageSource messages, Locale locale) {
+                        return exception.resolveErrorMessages(messages, locale);
+                    }
+                }
+                """,
+                """
+                import org.springframework.context.MessageSource;
+                import org.springframework.validation.ObjectError;
+                import org.springframework.web.bind.MethodArgumentNotValidException;
+                import org.springframework.web.util.BindErrorUtils;
+
+                import java.util.List;
+                import java.util.Locale;
+                import java.util.Map;
+
+                class ValidationErrors {
+                    List<String> simple(List<ObjectError> errors) {
+                        return BindErrorUtils.resolve(errors).values().stream().toList();
+                    }
+                    List<String> localized(List<ObjectError> errors,
+                                           MessageSource messages, Locale locale) {
+                        return BindErrorUtils.resolve(errors, messages, locale).values().stream().toList();
+                    }
+                    Map<ObjectError, String> resolved(
+                            MethodArgumentNotValidException exception,
+                            MessageSource messages, Locale locale) {
+                        return BindErrorUtils.resolve(exception.getAllErrors(), messages, locale);
+                    }
+                }
+                """));
     }
 
     @Test
@@ -358,6 +462,22 @@ class SpringWebMvcSourceMigrationTest implements RewriteTest {
     }
 
     @Test
+    void marksResponseEntityStatusCallsWhoseEnclosingContractNeedsReview() {
+        rewriteRun(SpringWebMvcSourceMigrationTest::riskSpec, java("""
+                import org.springframework.http.HttpStatus;
+                import org.springframework.http.ResponseEntity;
+                class StatusContract {
+                    HttpStatus status(ResponseEntity<String> response) {
+                        return response.getStatusCode();
+                    }
+                }
+                """, source -> source.after(actual -> {
+            assertTrue(actual.contains(FindSpringWebMvc6SourceRisks.STATUS), actual);
+            return actual;
+        })));
+    }
+
+    @Test
     void sourceMarkersIgnoreSameNamedUnrelatedTypesAndGeneratedFiles() {
         rewriteRun(SpringWebMvcSourceMigrationTest::riskSpec,
                 java("""
@@ -490,6 +610,21 @@ class SpringWebMvcSourceMigrationTest implements RewriteTest {
                 "package org.springframework.web.servlet.config.annotation; public class ResourceHandlerRegistration { public ResourceHandlerRegistration addResourceLocations(String... s){return this;} }",
                 "package org.springframework.web.servlet.config.annotation; public class ResourceHandlerRegistry { public ResourceHandlerRegistration addResourceHandler(String... s){return new ResourceHandlerRegistration();} }",
                 "package org.springframework.context.annotation; public @interface Configuration {}",
+                "package org.springframework.context; public interface MessageSource {}",
+                "package org.springframework.validation; public class ObjectError {}",
+                "package org.springframework.web.bind; public class MethodArgumentNotValidException extends RuntimeException { " +
+                "public static java.util.List<String> errorsToStringList(" +
+                "java.util.List<? extends org.springframework.validation.ObjectError> errors) { return null; } " +
+                "public static java.util.List<String> errorsToStringList(" +
+                "java.util.List<? extends org.springframework.validation.ObjectError> errors, " +
+                "org.springframework.context.MessageSource source, java.util.Locale locale) { return null; } " +
+                "public java.util.Map<org.springframework.validation.ObjectError, String> resolveErrorMessages(" +
+                "org.springframework.context.MessageSource source, java.util.Locale locale) { return null; } " +
+                "public java.util.List<org.springframework.validation.ObjectError> getAllErrors() { return null; } }",
+                "package org.springframework.web.util; public class BindErrorUtils { " +
+                "public static <E> java.util.Map<E, String> resolve(java.util.List<E> errors) { return null; } " +
+                "public static <E> java.util.Map<E, String> resolve(java.util.List<E> errors, " +
+                "org.springframework.context.MessageSource source, java.util.Locale locale) { return null; } }",
                 "package org.springframework.web.servlet.function.support; public class RouterFunctionMapping { public void setOrder(int order){} }",
                 "package org.springframework.web.servlet.mvc.method.annotation; public class ResponseBodyEmitter { public void send(Object o) throws Exception{} }",
                 "package org.springframework.web.servlet.mvc.method.annotation; public class SseEmitter extends ResponseBodyEmitter {}",
@@ -499,7 +634,8 @@ class SpringWebMvcSourceMigrationTest implements RewriteTest {
                 "package org.springframework.web.bind.annotation; public @interface CookieValue { String defaultValue() default \"\"; }",
                 "package org.springframework.web.bind.annotation; public @interface ExceptionHandler { Class<?>[] value() default {}; }",
                 "package org.springframework.web.servlet.mvc.method.annotation; public abstract class ResponseEntityExceptionHandler {}",
-                "package org.springframework.http; public enum HttpStatus { BAD_REQUEST }"
+                "package org.springframework.http; public enum HttpStatus { BAD_REQUEST }",
+                "package org.springframework.http; public class ResponseEntity<T> { public HttpStatus getStatusCode(){return null;} }"
         );
     }
 

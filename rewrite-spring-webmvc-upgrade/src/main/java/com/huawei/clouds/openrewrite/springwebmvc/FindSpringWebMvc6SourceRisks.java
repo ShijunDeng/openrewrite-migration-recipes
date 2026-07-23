@@ -12,6 +12,7 @@ import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 import org.openrewrite.marker.SearchResult;
 
+import java.util.List;
 import java.util.Set;
 
 /** Type-aware Spring MVC 5.x to 6.2 source review markers. */
@@ -25,6 +26,14 @@ public final class FindSpringWebMvc6SourceRisks extends Recipe {
             "org.springframework.web.servlet.resource.GzipResourceResolver",
             "org.springframework.web.servlet.resource.AppCacheManifestTransformer",
             "org.springframework.web.multipart.commons.CommonsMultipartResolver"
+    );
+    private static final Set<String> REMOVED_SERVLET_TYPES = Set.of(
+            "javax.servlet.SingleThreadModel",
+            "javax.servlet.http.HttpSessionContext",
+            "javax.servlet.http.HttpUtils",
+            "jakarta.servlet.SingleThreadModel",
+            "jakarta.servlet.http.HttpSessionContext",
+            "jakarta.servlet.http.HttpUtils"
     );
     private static final Set<String> PATH_METHODS = Set.of(
             "setPatternParser", "setUseTrailingSlashMatch", "setUseSuffixPatternMatch",
@@ -52,6 +61,20 @@ public final class FindSpringWebMvc6SourceRisks extends Recipe {
             "org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration addResourceLocations(..)");
     private static final MethodMatcher ROUTER_ORDER = new MethodMatcher(
             "org.springframework.web.servlet.function.support.RouterFunctionMapping setOrder(..)");
+    private static final MethodMatcher JAVAX_SESSION_VALUE_NAMES = new MethodMatcher(
+            "javax.servlet.http.HttpSession getValueNames()");
+    private static final MethodMatcher JAKARTA_SESSION_VALUE_NAMES = new MethodMatcher(
+            "jakarta.servlet.http.HttpSession getValueNames()");
+    private static final MethodMatcher RESPONSE_ENTITY_STATUS = new MethodMatcher(
+            "org.springframework.http.ResponseEntity getStatusCode()");
+    private static final List<MethodMatcher> SERVLET_COOKIE_GETTERS = List.of(
+            new MethodMatcher("javax.servlet.http.Cookie getComment()"),
+            new MethodMatcher("javax.servlet.http.Cookie getVersion()"),
+            new MethodMatcher("javax.servlet.SessionCookieConfig getComment()"),
+            new MethodMatcher("jakarta.servlet.http.Cookie getComment()"),
+            new MethodMatcher("jakarta.servlet.http.Cookie getVersion()"),
+            new MethodMatcher("jakarta.servlet.SessionCookieConfig getComment()")
+    );
 
     static final String REMOVED =
             "This Spring MVC API was removed in Framework 6; choose the documented replacement and preserve custom behavior explicitly";
@@ -79,6 +102,12 @@ public final class FindSpringWebMvc6SourceRisks extends Recipe {
             "ResponseEntityExceptionHandler override signatures and status handling changed to HttpStatusCode; recompile every override and preserve headers, ProblemDetail, and response body semantics";
     static final String JAKARTA =
             "Spring MVC 6 uses Jakarta Servlet and Jakarta Validation APIs; migrate this remaining javax type and its dependency owner";
+    static final String SERVLET_REMOVED =
+            "Servlet 6 removed this type without a syntax-only replacement; redesign the affected request, session, or concurrency contract before migrating the namespace";
+    static final String SERVLET_RETURN_TYPE =
+            "Servlet 6 removed HttpSession.getValueNames(); getAttributeNames() returns Enumeration<String> rather than String[], so adapt iteration, ordering, and array consumers explicitly";
+    static final String SERVLET_COOKIE =
+            "Servlet 6 removed this RFC 6265 Cookie getter; replace used return values deliberately (comment is absent and version is no longer part of the contract)";
 
     @Override
     public String getDisplayName() {
@@ -105,6 +134,7 @@ public final class FindSpringWebMvc6SourceRisks extends Recipe {
                         String type = i.getTypeName();
                         if (type.startsWith("org.springframework.web.servlet.view.tiles3.")) return mark(i, TILES);
                         if (REMOVED_TYPES.contains(type)) return mark(i, REMOVED);
+                        if (REMOVED_SERVLET_TYPES.contains(type)) return mark(i, SERVLET_REMOVED);
                         if (type.startsWith("javax.servlet.") || type.startsWith("javax.validation.")) return mark(i, JAKARTA);
                         return i;
                     }
@@ -118,12 +148,22 @@ public final class FindSpringWebMvc6SourceRisks extends Recipe {
                         if (TypeUtils.isAssignableTo(HANDLER_INTERCEPTOR, cd.getType())) return mark(cd, INTERCEPTOR);
                         if (cd.getExtends() != null && TypeUtils.isOfClassType(
                                 cd.getExtends().getType(), RESPONSE_EXCEPTION_HANDLER)) return mark(cd, EXCEPTION);
+                        if (cd.getExtends() != null && isTypeIn(cd.getExtends().getType(), REMOVED_SERVLET_TYPES)) {
+                            return mark(cd, SERVLET_REMOVED);
+                        }
                         return cd;
                     }
 
                     @Override
                     public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext ec) {
                         J.MethodInvocation m = super.visitMethodInvocation(method, ec);
+                        if (JAVAX_SESSION_VALUE_NAMES.matches(m) || JAKARTA_SESSION_VALUE_NAMES.matches(m)) {
+                            return mark(m, SERVLET_RETURN_TYPE);
+                        }
+                        if (SERVLET_COOKIE_GETTERS.stream().anyMatch(matcher -> matcher.matches(m))) {
+                            return mark(m, SERVLET_COOKIE);
+                        }
+                        if (RESPONSE_ENTITY_STATUS.matches(m)) return mark(m, STATUS);
                         if (PATH_MATCH.matches(m) && PATH_METHODS.contains(m.getSimpleName())) return mark(m, PATH);
                         if (CONTENT_NEGOTIATION.matches(m) && CONTENT_NEGOTIATION_METHODS.contains(m.getSimpleName())) return mark(m, PATH);
                         if (DISPATCHER.matches(m)) return mark(m, EXCEPTION);
@@ -133,6 +173,23 @@ public final class FindSpringWebMvc6SourceRisks extends Recipe {
                         if (ROUTER_ORDER.matches(m)) return mark(m, ROUTER);
                         if (declaringTypeIn(m, EMITTER_TYPES)) return mark(m, EMITTER);
                         return m;
+                    }
+
+                    @Override
+                    public J.VariableDeclarations visitVariableDeclarations(J.VariableDeclarations multiVariable,
+                                                                            ExecutionContext ec) {
+                        J.VariableDeclarations variables = super.visitVariableDeclarations(multiVariable, ec);
+                        return isTypeIn(variables.getType(), REMOVED_SERVLET_TYPES)
+                                ? mark(variables, SERVLET_REMOVED) : variables;
+                    }
+
+                    @Override
+                    public J.NewClass visitNewClass(J.NewClass newClass, ExecutionContext ec) {
+                        J.NewClass n = super.visitNewClass(newClass, ec);
+                        if (isTypeIn(n.getType(), REMOVED_SERVLET_TYPES)) return mark(n, SERVLET_REMOVED);
+                        return TypeUtils.isOfClassType(n.getType(),
+                                "org.springframework.web.servlet.function.support.RouterFunctionMapping")
+                                ? mark(n, ROUTER) : n;
                     }
 
                     @Override
@@ -148,14 +205,6 @@ public final class FindSpringWebMvc6SourceRisks extends Recipe {
                         if ("org.springframework.web.bind.annotation.ExceptionHandler".equals(type) &&
                             handlesNotFoundException(a)) return mark(a, EXCEPTION);
                         return a;
-                    }
-
-                    @Override
-                    public J.NewClass visitNewClass(J.NewClass newClass, ExecutionContext ec) {
-                        J.NewClass n = super.visitNewClass(newClass, ec);
-                        return TypeUtils.isOfClassType(n.getType(),
-                                "org.springframework.web.servlet.function.support.RouterFunctionMapping")
-                                ? mark(n, ROUTER) : n;
                     }
 
                     @Override
@@ -203,6 +252,10 @@ public final class FindSpringWebMvc6SourceRisks extends Recipe {
         JavaType.Method methodType = method.getMethodType();
         if (methodType == null) return false;
         return types.stream().anyMatch(type -> TypeUtils.isAssignableTo(type, methodType.getDeclaringType()));
+    }
+
+    private static boolean isTypeIn(JavaType type, Set<String> types) {
+        return types.stream().anyMatch(candidate -> TypeUtils.isOfClassType(type, candidate));
     }
 
     private static boolean handlesNotFoundException(J.Annotation annotation) {

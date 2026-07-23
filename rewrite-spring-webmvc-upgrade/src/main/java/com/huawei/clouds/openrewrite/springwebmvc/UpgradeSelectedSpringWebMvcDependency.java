@@ -31,7 +31,10 @@ public final class UpgradeSelectedSpringWebMvcDependency extends Recipe {
     static final String TARGET = "6.2.19";
     static final Set<String> SOURCE_VERSIONS = Set.of(
             "5.2.5.RELEASE", "5.2.9.RELEASE", "5.3.21", "5.3.23", "5.3.26",
-            "5.3.27", "5.3.30", "5.3.31", "5.3.32", "5.3.33"
+            "5.3.27", "5.3.30", "5.3.31", "5.3.32", "5.3.33", "5.3.34",
+            "5.3.39", "6.0.11", "6.0.17", "6.0.19", "6.1.14", "6.2.0",
+            "6.2.7", "6.2.8", "6.2.10", "6.2.11", "6.2.12", "6.2.17",
+            "6.2.18"
     );
     private static final String PREFIX = GROUP + ":" + ARTIFACT + ":";
     private static final Pattern PROPERTY_REFERENCE = Pattern.compile("\\$\\{([^}]+)}");
@@ -56,7 +59,7 @@ public final class UpgradeSelectedSpringWebMvcDependency extends Recipe {
 
     @Override
     public String getDescription() {
-        return "Upgrade only exact org.springframework:spring-webmvc versions visible in workbook rows 1297-1306 " +
+        return "Upgrade only the 24 exact org.springframework:spring-webmvc versions supplied for the high-priority migration " +
                "when Maven or root Gradle ownership and the standard JAR artifact shape are unambiguous.";
     }
 

@@ -113,6 +113,52 @@ class SpringWebMvcOfficialMigrationTest implements RewriteTest {
     }
 
     @Test
+    void officialMediaTypeRecipeMigratesRemovedUtf8Constants() {
+        rewriteRun(java(
+                """
+                  import org.springframework.http.MediaType;
+                  class Media {
+                      MediaType type = MediaType.APPLICATION_JSON_UTF8;
+                      String value = MediaType.APPLICATION_PROBLEM_JSON_UTF8_VALUE;
+                  }
+                  """,
+                """
+                  import org.springframework.http.MediaType;
+                  class Media {
+                      MediaType type = MediaType.APPLICATION_JSON;
+                      String value = MediaType.APPLICATION_PROBLEM_JSON_VALUE;
+                  }
+                  """));
+    }
+
+    @Test
+    void officialResponseEntityReturnTypeRecipeMigratesOnlyTheSafeDirectVariable() {
+        rewriteRun(java(
+                """
+                  import org.springframework.http.HttpStatus;
+                  import org.springframework.http.ResponseEntity;
+                  class Status {
+                      HttpStatus status(ResponseEntity<String> response) {
+                          HttpStatus status = response.getStatusCode();
+                          return status;
+                      }
+                  }
+                """,
+                """
+                  import org.springframework.http.HttpStatus;
+                  import org.springframework.http.HttpStatusCode;
+                  import org.springframework.http.ResponseEntity;
+
+                  class Status {
+                      HttpStatus status(ResponseEntity<String> response) {
+                          HttpStatusCode status = response.getStatusCode();
+                          return status;
+                      }
+                  }
+                  """));
+    }
+
+    @Test
     void generatedSourceIsNoopForEveryOfficialComponent() {
         rewriteRun(java(
                 """

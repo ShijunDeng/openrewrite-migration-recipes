@@ -27,20 +27,33 @@ class UpgradeSpringWebMvcTest implements RewriteTest {
         spec.recipe(recipe(UPGRADE));
     }
 
-    @ParameterizedTest(name = "Maven upgrades visible workbook source {0}")
+    @ParameterizedTest(name = "Maven upgrades exact high-priority source {0}")
     @ValueSource(strings = {
             "5.2.5.RELEASE", "5.2.9.RELEASE", "5.3.21", "5.3.23", "5.3.26",
-            "5.3.27", "5.3.30", "5.3.31", "5.3.32", "5.3.33"
+            "5.3.27", "5.3.30", "5.3.31", "5.3.32", "5.3.33", "5.3.34",
+            "5.3.39", "6.0.11", "6.0.17", "6.0.19", "6.1.14", "6.2.0",
+            "6.2.7", "6.2.8", "6.2.10", "6.2.11", "6.2.12", "6.2.17",
+            "6.2.18"
     })
-    void upgradesEveryVisibleWorkbookVersion(String version) {
-        rewriteRun(xml(pom(version), pom("6.2.19"), source -> source.path("pom.xml")));
+    void upgradesEveryHighPrioritySourceVersion(String version) {
+        rewriteRun(
+                xml(pom(version), pom("6.2.19"), source -> source.path("pom.xml")),
+                buildGradle("dependencies { implementation 'org.springframework:spring-webmvc:" + version + "' }",
+                        "dependencies { implementation 'org.springframework:spring-webmvc:6.2.19' }",
+                        source -> source.path("build.gradle")),
+                buildGradleKts("dependencies { implementation(\"org.springframework:spring-webmvc:" + version + "\") }",
+                        "dependencies { implementation(\"org.springframework:spring-webmvc:6.2.19\") }",
+                        source -> source.path("build.gradle.kts")));
     }
 
     @Test
-    void whitelistAndTargetExactlyMatchTheVisibleWorkbookContract() {
+    void whitelistAndTargetExactlyMatchTheUserSuppliedContract() {
         assertEquals(java.util.Set.of(
                         "5.2.5.RELEASE", "5.2.9.RELEASE", "5.3.21", "5.3.23", "5.3.26",
-                        "5.3.27", "5.3.30", "5.3.31", "5.3.32", "5.3.33"),
+                        "5.3.27", "5.3.30", "5.3.31", "5.3.32", "5.3.33", "5.3.34",
+                        "5.3.39", "6.0.11", "6.0.17", "6.0.19", "6.1.14", "6.2.0",
+                        "6.2.7", "6.2.8", "6.2.10", "6.2.11", "6.2.12", "6.2.17",
+                        "6.2.18"),
                 UpgradeSelectedSpringWebMvcDependency.SOURCE_VERSIONS);
         assertEquals("6.2.19", UpgradeSelectedSpringWebMvcDependency.TARGET);
     }
@@ -104,6 +117,18 @@ class UpgradeSpringWebMvcTest implements RewriteTest {
     @ValueSource(strings = {"6.2.20", "6.3.0", "7.0.0"})
     void higherVersionsAreNeverDowngraded(String version) {
         rewriteRun(xml(pom(version), source -> source.path("pom.xml")));
+    }
+
+    @Test
+    void arbitrarilyLargeHigherVersionCannotOverflowOrDowngrade() {
+        String version = "999999999999999999999999999999999999.0.0";
+        rewriteRun(specification -> specification.recipe(recipe(MIGRATE)),
+                xml(pom(version), source -> source.path("pom.xml").after(actual -> {
+                    assertTrue(actual.contains("<version>" + version + "</version>"), actual);
+                    assertTrue(actual.contains(FindSpringWebMvc6BuildRisks.TARGET_CONFLICT), actual);
+                    assertFalse(actual.contains("<version>6.2.19</version>"), actual);
+                    return actual;
+                })));
     }
 
     @Test
@@ -188,16 +213,23 @@ class UpgradeSpringWebMvcTest implements RewriteTest {
     void discoversAllPublicRecipesAndAggregateParity() {
         Environment environment = Environment.builder().scanRuntimeClasspath().build();
         String[] names = {
+                "com.huawei.clouds.openrewrite.springwebmvc.MarkSelectedSpringWebMvcProjects",
                 UPGRADE,
+                "com.huawei.clouds.openrewrite.springwebmvc.MigrateSpringWebMvcServletNamespaces",
+                "com.huawei.clouds.openrewrite.springwebmvc.MigrateSpringWebMvcServlet6Apis",
                 "com.huawei.clouds.openrewrite.springwebmvc.MigrateDeterministicSpringWebMvc6Java",
+                "com.huawei.clouds.openrewrite.springwebmvc.MigrateSelectedSpringWebMvc6Java",
                 "com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6BuildMigrationRisks",
                 "com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6SourceAndConfigurationRisks",
+                "com.huawei.clouds.openrewrite.springwebmvc.FindSelectedSpringWebMvc6SourceAndConfigurationRisks",
                 MIGRATE
         };
         for (String name : names) assertEquals(name, environment.activateRecipes(name).getName());
         Recipe aggregate = environment.activateRecipes(MIGRATE);
-        assertTrue(aggregate.getRecipeList().size() >= 4);
-        assertEquals(UPGRADE, aggregate.getRecipeList().get(0).getName());
+        assertTrue(aggregate.getRecipeList().size() >= 5);
+        assertEquals("com.huawei.clouds.openrewrite.springwebmvc.MarkSelectedSpringWebMvcProjects",
+                aggregate.getRecipeList().get(0).getName());
+        assertEquals(UPGRADE, aggregate.getRecipeList().get(1).getName());
     }
 
     private static Recipe recipe(String name) {
