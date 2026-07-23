@@ -14,11 +14,17 @@
     ],
     "canonicalIdentity": {
       "value": "org.springframework.boot:spring-boot",
-      "status": "unverified",
-      "evidence": []
+      "status": "verified",
+      "evidence": [
+        "https://github.com/spring-projects/spring-boot/tree/c069bce9fb096f7e146695459d69bf653dece1e6",
+        "maven-central:jar-sha256:1d3ea175f61f492d95cbca457d6cc9cf1b696b550422c1b424d50dfa58f7da15",
+        "maven-central:pom-sha256:9040aaafea6765582ec52256b53240673d2cec23ca5d4b92a9abed86cce7375a"
+      ]
     },
     "targetVersion": "3.5.15",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-spring-boot-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -37,9 +43,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -56,9 +62,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -75,9 +81,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -94,9 +100,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -113,9 +119,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -132,9 +138,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -151,9 +157,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -170,9 +176,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -189,9 +195,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -208,9 +214,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -227,9 +233,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -246,9 +252,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -265,9 +271,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -284,9 +290,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -303,9 +309,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -322,9 +328,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -360,9 +366,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -379,19 +385,59 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码和配置 AUTO 还受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "verified",
+      "sourceVersions": [
+        "2.1.3.RELEASE",
+        "2.3.4.RELEASE",
+        "2.6.6",
+        "2.7.10",
+        "2.7.12",
+        "2.7.17",
+        "2.7.18",
+        "3.1.3",
+        "3.1.6",
+        "3.2.0",
+        "3.2.9",
+        "3.2.12",
+        "3.4.0",
+        "3.4.3",
+        "3.4.5",
+        "3.4.6",
+        "3.4.9",
+        "3.4.12",
+        "3.5.12"
+      ],
+      "targetVersion": "3.5.15",
+      "relation": "user-supplied-upgrade",
+      "action": "auto",
+      "statement": "用户高优先级清单批准 19 个精确 Spring Boot 源版本升级到 3.5.15；实现仅修改明确 owner，且只在升级前根扫描证明版本白名单唯一成立时执行历史源码和配置 AUTO。"
+    },
+    {
+      "id": "U-002",
+      "status": "verified",
+      "sourceVersions": [
+        "3.2.0 ... (共19个版本)"
+      ],
+      "targetVersion": "3.5.15",
+      "relation": "workbook-aggregate",
+      "action": "mark",
+      "statement": "Excel 行 2893 是截断聚合事实，不是原子构建版本；其展开后的 19 个精确版本以用户最新清单为唯一 AUTO 白名单，原聚合文本保持 MARK。"
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "autoSourceWhitelist": [
       "2.1.3.RELEASE",
       "2.3.4.RELEASE",
       "2.6.6",
@@ -400,8 +446,19 @@
       "2.7.17",
       "2.7.18",
       "3.1.3",
-      "3.1.6"
+      "3.1.6",
+      "3.2.0",
+      "3.2.9",
+      "3.2.12",
+      "3.4.0",
+      "3.4.3",
+      "3.4.5",
+      "3.4.6",
+      "3.4.9",
+      "3.4.12",
+      "3.5.12"
     ],
+    "upgradeCandidatesPendingEvidence": [],
     "noopVersions": [],
     "conflictVersions": [],
     "unresolvedVersions": [
@@ -412,22 +469,47 @@
     {
       "id": "E-001",
       "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-boot/tree/0c8b382d42db22b92efcf47000d0ff9ef4971629",
+        "https://github.com/spring-projects/spring-boot/tree/c069bce9fb096f7e146695459d69bf653dece1e6",
+        "maven-central:jar-sha256:1d3ea175f61f492d95cbca457d6cc9cf1b696b550422c1b424d50dfa58f7da15",
+        "maven-central:pom-sha256:9040aaafea6765582ec52256b53240673d2cec23ca5d4b92a9abed86cce7375a"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-002",
       "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide/eeac9539123659067e2918b9c225fb7798a46857",
+        "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2-Release-Notes/b268e20b0887126a98936822ce6208a085a5dd1e",
+        "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.4-Release-Notes/914b118934e73d0c2d6ed21c0a7c02417f502403",
+        "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.5-Release-Notes/7ba79e6015545ec4e835daa93c07164e6e9e19cb",
+        "https://github.com/spring-projects/spring-boot/tree/c069bce9fb096f7e146695459d69bf653dece1e6"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-003",
       "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
+      "status": "verified",
       "officialSources": [],
+      "realFixtures": [
+        "spring-projects/spring-boot@0c8b382d42db22b92efcf47000d0ff9ef4971629",
+        "spring-projects/spring-boot@c069bce9fb096f7e146695459d69bf653dece1e6"
+      ]
+    },
+    {
+      "id": "E-004",
+      "claim": "OpenRewrite 官方能力已检索、复用并用实际 recipe tree 证明边界",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite-spring/tree/d28afcb6661ad413539056de0936c5489ff9d8ee",
+        "https://github.com/openrewrite/rewrite/tree/91e23c2858176877428ddc03e146d2bb023217a8",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/test/java/org/openrewrite/java/spring/boot2/MoveAutoConfigurationToImportsFileTest.java"
+      ],
       "realFixtures": []
     }
   ],
@@ -439,11 +521,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-002",
@@ -452,11 +542,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-003",
@@ -465,11 +563,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-004",
@@ -478,11 +584,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-005",
@@ -491,11 +605,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-006",
@@ -504,11 +626,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-007",
@@ -517,11 +647,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-008",
@@ -530,11 +668,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-009",
@@ -543,11 +689,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-010",
@@ -556,11 +710,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-011",
@@ -569,11 +731,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-012",
@@ -582,11 +752,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-013",
@@ -595,11 +773,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-014",
@@ -608,11 +794,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-015",
@@ -621,11 +815,19 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-016",
@@ -634,11 +836,19 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-017",
@@ -647,11 +857,19 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-018",
@@ -660,11 +878,19 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     },
     {
       "id": "C-019",
@@ -673,16 +899,24 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15",
+      "tests": [
+        "SpringBootVersionUpgradeTest",
+        "SpringBootBuildRisksTest",
+        "SpringBootOfficialConfigurationMigrationTest",
+        "SpringBootOfficialSourceMigrationTest",
+        "SpringBootSelectedProjectGateTest",
+        "SpringBootSourceAndConfigurationRisksTest",
+        "SpringBootOfficialRecipeReuseTest"
+      ]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }

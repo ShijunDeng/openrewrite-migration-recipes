@@ -1,0 +1,777 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springboot
+packageName: com.huawei.clouds.openrewrite.springboot
+description: Strictly upgrade Spring Boot to 3.5.15, reuse precise official migrations, and locate behavior-sensitive boundaries.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.UpgradeSpringBootTo3_5_15
+displayName: Upgrade workbook-selected Spring Boot owners to 3.5.15
+description: Upgrade only the 19 exact workbook source versions in locally owned Spring Boot dependency, parent, BOM, and Maven or Gradle plugin declarations.
+tags:
+  - spring-boot
+  - java
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.UpgradeSelectedSpringBootVersion
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_2
+displayName: Apply Spring Boot 2.2 configuration migrations
+description: Reuse the precise official Spring Boot 2.2 property migration leaves.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  - org.openrewrite.java.spring.boot2.SpringBootProperties_2_2
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_3
+displayName: Apply Spring Boot 2.3 configuration migrations
+description: Reuse the official Spring Boot 2.3 property leaves except the key that the official 3.5 recipe reverses.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  # Official Boot 2.3 and 3.5 reverse the preferred-json-mapper key. This
+  # adapter delegates all official 2.3 leaves except that one conflicting leaf.
+  - com.huawei.clouds.openrewrite.springboot.SpringBoot23PropertiesWithout35Conflict
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_4
+displayName: Apply Spring Boot 2.4 configuration migrations
+description: Reuse the precise official Spring Boot 2.4 property migration leaves.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  - org.openrewrite.java.spring.boot2.SpringBootProperties_2_4
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MergeBootstrapIntoApplicationExplicitly
+displayName: Merge Spring Cloud bootstrap YAML into application YAML explicitly
+description: Opt in to the official destructive Spring Boot 2.4 migration that merges bootstrap YAML documents and deletes the migrated bootstrap file.
+tags:
+  - spring-boot
+  - configuration
+  - explicit-opt-in
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindAuthoredSpringBootSourceFiles
+recipeList:
+  - org.openrewrite.java.spring.boot2.MergeBootstrapYamlWithApplicationYaml
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_5
+displayName: Apply Spring Boot 2.5 configuration migrations
+description: Reuse the official database credential and property migrations introduced in Spring Boot 2.5.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  - org.openrewrite.java.spring.boot2.MigrateDatabaseCredentials
+  - org.openrewrite.java.spring.boot2.SpringBootProperties_2_5
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_6
+displayName: Apply Spring Boot 2.6 configuration migrations
+description: Reuse the precise official Spring Boot 2.6 property migration leaves.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  - org.openrewrite.java.spring.boot2.SpringBootProperties_2_6
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_7
+displayName: Apply Spring Boot 2.7 configuration migrations
+description: Reuse precise official Spring Boot 2.7 property, SAML, and physical naming strategy migrations.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  - org.openrewrite.java.spring.boot2.SpringBootProperties_2_7
+  - org.openrewrite.java.spring.boot2.SamlRelyingPartyPropertyApplicationPropertiesMove
+  - org.openrewrite.yaml.ChangeKey:
+      oldKeyPath: $.spring.security.saml2.relyingparty.registration.*[?(@.identityprovider)]
+      newKey: assertingparty
+  - org.openrewrite.java.spring.ChangeSpringPropertyValue:
+      propertyKey: spring.jpa.hibernate.naming.physical-strategy
+      oldValue: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      newValue: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_0
+displayName: Apply Spring Boot 3.0 configuration migrations
+description: Reuse precise official Spring Boot 3.0 header, property, and actuator sanitization migrations.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  # Run the precise rename before SpringBootProperties_3_0 comments the legacy
+  # key, preserving the official request-header migration.
+  - org.openrewrite.java.spring.boot3.MigrateMaxHttpHeaderSize
+  - org.openrewrite.java.spring.boot3.SpringBootProperties_3_0
+  - org.openrewrite.java.spring.boot3.ActuatorEndpointSanitization
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_1
+displayName: Apply Spring Boot 3.1 configuration migrations
+description: Reuse the precise official Spring Boot 3.1 property migration leaves.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  - org.openrewrite.java.spring.boot3.SpringBootProperties_3_1
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_2
+displayName: Apply Spring Boot 3.2 configuration migrations
+description: Reuse the precise official Spring Boot 3.2 property migration leaves.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  - org.openrewrite.java.spring.boot3.SpringBootProperties_3_2
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_3
+displayName: Apply Spring Boot 3.3 configuration migrations
+description: Reuse the precise official Spring Boot 3.3 property migration leaves.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  - org.openrewrite.java.spring.boot3.SpringBootProperties_3_3
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_4
+displayName: Apply Spring Boot 3.4 configuration migrations
+description: Reuse the precise official Spring Boot 3.4 property migration leaves.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  - org.openrewrite.java.spring.boot3.SpringBootProperties_3_4
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_5
+displayName: Apply Spring Boot 3.5 configuration migrations
+description: Reuse the precise official Spring Boot 3.5 property migration leaves.
+tags:
+  - spring-boot
+  - configuration
+recipeList:
+  - org.openrewrite.java.spring.boot3.SpringBootProperties_3_5
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateOfficialSpringBootConfiguration
+displayName: Migrate Spring Boot configuration with official recipes
+description: Apply every precise official Spring Boot configuration migration from 2.2 through 3.5 to authored files.
+tags:
+  - spring-boot
+  - configuration
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindAuthoredSpringBootSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_2
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_3
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_4
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_5
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_6
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_7
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_0
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_1
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_2
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_3
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_4
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_5
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_2
+displayName: Migrate selected projects across the Spring Boot 2.2 configuration boundary
+description: Apply the Spring Boot 2.2 configuration leaves only to selected projects whose captured source version predates 2.2.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.2"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_2
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_3
+displayName: Migrate selected projects across the Spring Boot 2.3 configuration boundary
+description: Apply the Spring Boot 2.3 configuration leaves only to selected projects whose captured source version predates 2.3.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.3"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_3
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_4
+displayName: Migrate selected projects across the Spring Boot 2.4 configuration boundary
+description: Apply the Spring Boot 2.4 configuration leaves only to selected projects whose captured source version predates 2.4.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.4"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_4
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_5
+displayName: Migrate selected projects across the Spring Boot 2.5 configuration boundary
+description: Apply the Spring Boot 2.5 configuration leaves only to selected projects whose captured source version predates 2.5.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.5"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_5
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_6
+displayName: Migrate selected projects across the Spring Boot 2.6 configuration boundary
+description: Apply the Spring Boot 2.6 configuration leaves only to selected projects whose captured source version predates 2.6.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.6"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_6
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_7
+displayName: Migrate selected projects across the Spring Boot 2.7 configuration boundary
+description: Apply the Spring Boot 2.7 configuration leaves only to selected projects whose captured source version predates 2.7.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.7"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_2_7
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_0
+displayName: Migrate selected projects across the Spring Boot 3.0 configuration boundary
+description: Apply the Spring Boot 3.0 configuration leaves only to selected projects whose captured source version predates 3.0.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "3.0"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_0
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_1
+displayName: Migrate selected projects across the Spring Boot 3.1 configuration boundary
+description: Apply the Spring Boot 3.1 configuration leaves only to selected projects whose captured source version predates 3.1.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "3.1"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_1
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_2
+displayName: Migrate selected projects across the Spring Boot 3.2 configuration boundary
+description: Apply the Spring Boot 3.2 configuration leaves only to selected projects whose captured source version predates 3.2.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "3.2"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_2
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_3
+displayName: Migrate selected projects across the Spring Boot 3.3 configuration boundary
+description: Apply the Spring Boot 3.3 configuration leaves only to selected projects whose captured source version predates 3.3.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "3.3"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_3
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_4
+displayName: Migrate selected projects across the Spring Boot 3.4 configuration boundary
+description: Apply the Spring Boot 3.4 configuration leaves only to selected projects whose captured source version predates 3.4.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "3.4"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_4
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_5
+displayName: Migrate selected projects across the Spring Boot 3.5 configuration boundary
+description: Apply the Spring Boot 3.5 configuration leaves only to selected projects whose captured source version predates 3.5.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "3.5"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootConfiguration_3_5
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration
+displayName: Migrate configuration only in workbook-selected Spring Boot projects
+description: Apply each audited official configuration release band only below selected build roots that predate it.
+tags:
+  - spring-boot
+  - configuration
+  - source-version-gate
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_2
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_3
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_4
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_5
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_6
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_2_7
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_0
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_1
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_2
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_3
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_4
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration_3_5
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_2
+displayName: Apply Spring Boot 2.2 source migrations
+description: Reuse precise official Boot and OpenRewrite Core leaves introduced for the Spring Boot 2.2 boundary.
+tags:
+  - spring-boot
+  - java
+  - source-migration
+recipeList:
+  - org.openrewrite.java.spring.boot2.MigrateApplicationHealthIndicatorToPingHealthIndicator
+  - org.openrewrite.java.spring.boot2.MigrateWebTestClientBuilderCustomizerPackageName
+  - org.openrewrite.java.spring.boot2.MigrateConfigurationPropertiesBindingPostProcessorValidatorBeanName
+  - org.openrewrite.java.spring.boot2.MigrateDiskSpaceHealthIndicatorConstructor
+  - org.openrewrite.java.spring.boot2.SpringBootMavenPluginMigrateAgentToAgents
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.test.rule.OutputCapture
+      newFullyQualifiedTypeName: org.springframework.boot.test.system.OutputCaptureRule
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_3
+displayName: Apply Spring Boot 2.3 source migrations
+description: Reuse precise official Boot leaves introduced for the Spring Boot 2.3 boundary.
+tags:
+  - spring-boot
+  - java
+  - source-migration
+recipeList:
+  - org.openrewrite.java.spring.boot2.MigrateRestClientBuilderCustomizerPackageName
+  - org.openrewrite.java.spring.boot2.MigrateErrorPropertiesIncludeStackTraceConstants
+  - org.openrewrite.java.spring.boot2.GetErrorAttributes
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_4
+displayName: Apply Spring Boot 2.4 source migrations
+description: Reuse precise official Boot leaves introduced for the Spring Boot 2.4 boundary.
+tags:
+  - spring-boot
+  - java
+  - source-migration
+recipeList:
+  - org.openrewrite.java.spring.boot2.MigrateUndertowServletWebServerFactoryIsEagerInitFilters
+  - org.openrewrite.java.spring.boot2.MigrateUndertowServletWebServerFactorySetEagerInitFilters
+  - org.openrewrite.java.spring.boot2.MigrateLoggingSystemPropertyConstants
+  - org.openrewrite.java.spring.boot2.MigrateHsqlEmbeddedDatabaseConnection
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_5
+displayName: Apply Spring Boot 2.5 source migrations
+description: Reuse precise official Boot and OpenRewrite Core leaves introduced for the Spring Boot 2.5 boundary.
+tags:
+  - spring-boot
+  - java
+  - source-migration
+recipeList:
+  - org.openrewrite.java.spring.boot2.MigrateActuatorMediaTypeToApiVersion
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.autoconfigure.data.jpa.EntityManagerFactoryDependsOnPostProcessor
+      newFullyQualifiedTypeName: org.springframework.boot.autoconfigure.orm.jpa.EntityManagerFactoryDependsOnPostProcessor
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.autoconfigure.web.ResourceProperties
+      newFullyQualifiedTypeName: org.springframework.boot.autoconfigure.web.WebProperties$Resources
+  - org.openrewrite.java.spring.boot2.DatabaseComponentAndBeanInitializationOrdering
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_7
+displayName: Apply Spring Boot 2.7 source migrations
+description: Reuse precise official OpenRewrite Core type moves introduced for the Spring Boot 2.7 boundary.
+tags:
+  - spring-boot
+  - java
+  - source-migration
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.web.server.LocalServerPort
+      newFullyQualifiedTypeName: org.springframework.boot.test.web.server.LocalServerPort
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.actuate.autoconfigure.web.server.LocalManagementPort
+      newFullyQualifiedTypeName: org.springframework.boot.test.web.server.LocalManagementPort
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.rsocket.context.LocalRSocketServerPort
+      newFullyQualifiedTypeName: org.springframework.boot.test.rsocket.server.LocalRSocketServerPort
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      newFullyQualifiedTypeName: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_0
+displayName: Apply Spring Boot 3.0 source migrations
+description: Reuse precise official Boot, Framework, and OpenRewrite Core leaves introduced for the Spring Boot 3.0 boundary.
+tags:
+  - spring-boot
+  - java
+  - jakarta
+  - source-migration
+recipeList:
+  - org.openrewrite.java.spring.boot3.RemoveEnableBatchProcessing
+  - org.openrewrite.java.spring.boot3.RemoveConstructorBindingAnnotation
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.context.properties.ConstructorBinding
+      newFullyQualifiedTypeName: org.springframework.boot.context.properties.bind.ConstructorBinding
+      ignoreDefinition: false
+  - org.openrewrite.java.spring.boot3.ConfigurationOverEnableSecurity
+  - org.openrewrite.java.spring.boot3.RenameLogbackToLogbackSpring
+  - org.openrewrite.java.spring.boot3.RemoveSolrAutoConfigurationExclude
+  - org.openrewrite.java.spring.boot3.MigrateWebMvcTagsToObservationConvention
+  - org.openrewrite.java.spring.framework.BeanMethodReturnNull
+  # Exact source-only Jakarta subset of the official Javax migration tree.
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.servlet
+      newPackageName: jakarta.servlet
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.validation
+      newPackageName: jakarta.validation
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.persistence
+      newPackageName: jakarta.persistence
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.inject
+      newPackageName: jakarta.inject
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.bind
+      newPackageName: jakarta.xml.bind
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.ws.rs
+      newPackageName: jakarta.ws.rs
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.mail
+      newPackageName: jakarta.mail
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.activation
+      newPackageName: jakarta.activation
+      recursive: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.PostConstruct
+      newFullyQualifiedTypeName: jakarta.annotation.PostConstruct
+      ignoreDefinition: false
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.PreDestroy
+      newFullyQualifiedTypeName: jakarta.annotation.PreDestroy
+      ignoreDefinition: false
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.Resource
+      newFullyQualifiedTypeName: jakarta.annotation.Resource
+      ignoreDefinition: false
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.Generated
+      newFullyQualifiedTypeName: jakarta.annotation.Generated
+      ignoreDefinition: false
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.Priority
+      newFullyQualifiedTypeName: jakarta.annotation.Priority
+      ignoreDefinition: false
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.annotation.ManagedBean
+      newFullyQualifiedTypeName: jakarta.annotation.ManagedBean
+      ignoreDefinition: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_1
+displayName: Apply Spring Boot 3.1 source migrations
+description: Reuse the precise official Spring Data repository REST configurer migration introduced for Spring Boot 3.1.
+tags:
+  - spring-boot
+  - java
+  - source-migration
+recipeList:
+  - org.openrewrite.java.spring.data.MigrateRepositoryRestConfigurerAdapter
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_2
+displayName: Apply Spring Boot 3.2 source migrations
+description: Reuse precise official Boot and corrected OpenRewrite Core type-move leaves introduced for Spring Boot 3.2.
+tags:
+  - spring-boot
+  - java
+  - source-migration
+recipeList:
+  - org.openrewrite.java.spring.boot3.MigrateHooksToReactorContextProperty
+  - org.openrewrite.java.spring.boot3.RelocateLauncherClasses
+  # rewrite-spring 6.35.0's spring-boot-32.yml points TaskSchedulerBuilder at
+  # ThreadPoolTaskExecutorBuilder. Spring Boot's pinned 3.2 release notes and
+  # the 3.5.15 target API identify ThreadPoolTaskSchedulerBuilder instead.
+  # Keep the official Core ChangeType mechanism while correcting that parameter.
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.task.TaskSchedulerBuilder
+      newFullyQualifiedTypeName: org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.task.TaskSchedulerCustomizer
+      newFullyQualifiedTypeName: org.springframework.boot.task.ThreadPoolTaskSchedulerCustomizer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.task.TaskExecutorBuilder
+      newFullyQualifiedTypeName: org.springframework.boot.task.ThreadPoolTaskExecutorBuilder
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.task.TaskExecutorCustomizer
+      newFullyQualifiedTypeName: org.springframework.boot.task.ThreadPoolTaskExecutorCustomizer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.boot.autoconfigure.transaction.PlatformTransactionManagerCustomizer
+      newFullyQualifiedTypeName: org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizer
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_4
+displayName: Apply Spring Boot 3.4 source migrations
+description: Reuse precise official Boot leaves introduced for the Spring Boot 3.4 boundary.
+tags:
+  - spring-boot
+  - java
+  - source-migration
+recipeList:
+  - org.openrewrite.java.spring.boot3.ReplaceRestTemplateBuilderMethods
+  - org.openrewrite.java.spring.boot3.AddValidToNestedConfigProperties
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateOfficialSpringBootSourceVisitors
+displayName: Migrate deterministic Spring Boot source visitors
+description: Reuse precise official Boot, Framework, Data, and OpenRewrite Core leaves across every supported release band.
+tags:
+  - spring-boot
+  - java
+  - jakarta
+  - source-migration
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindAuthoredSpringBootSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_2
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_3
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_4
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_5
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_7
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_0
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_1
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_2
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_4
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateOfficialSpringBootSource
+displayName: Migrate deterministic Spring Boot source with official recipes
+description: Apply generated-safe official source visitors and delegate authored auto-configuration scanning and generation to the official Spring Boot recipe.
+tags:
+  - spring-boot
+  - java
+  - jakarta
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.MigrateOfficialSpringBootSourceVisitors
+  - com.huawei.clouds.openrewrite.springboot.MoveAuthoredAutoConfigurationToImportsFile
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_2_2
+displayName: Migrate selected projects across the Spring Boot 2.2 source boundary
+description: Apply Spring Boot 2.2 source leaves only to selected projects whose captured source version predates 2.2.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.2"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_2
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_2_3
+displayName: Migrate selected projects across the Spring Boot 2.3 source boundary
+description: Apply Spring Boot 2.3 source leaves only to selected projects whose captured source version predates 2.3.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.3"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_3
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_2_4
+displayName: Migrate selected projects across the Spring Boot 2.4 source boundary
+description: Apply Spring Boot 2.4 source leaves only to selected projects whose captured source version predates 2.4.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.4"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_4
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_2_5
+displayName: Migrate selected projects across the Spring Boot 2.5 source boundary
+description: Apply Spring Boot 2.5 source leaves only to selected projects whose captured source version predates 2.5.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.5"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_5
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_2_7
+displayName: Migrate selected projects across the Spring Boot 2.7 source boundary
+description: Apply Spring Boot 2.7 source leaves only to selected projects whose captured source version predates 2.7.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "2.7"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_2_7
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_3_0
+displayName: Migrate selected projects across the Spring Boot 3.0 source boundary
+description: Apply Spring Boot 3.0 source leaves only to selected projects whose captured source version predates 3.0.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "3.0"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_0
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_3_1
+displayName: Migrate selected projects across the Spring Boot 3.1 source boundary
+description: Apply Spring Boot 3.1 source leaves only to selected projects whose captured source version predates 3.1.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "3.1"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_1
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_3_2
+displayName: Migrate selected projects across the Spring Boot 3.2 source boundary
+description: Apply Spring Boot 3.2 source leaves only to selected projects whose captured source version predates 3.2.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "3.2"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_2
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_3_4
+displayName: Migrate selected projects across the Spring Boot 3.4 source boundary
+description: Apply Spring Boot 3.4 source leaves only to selected projects whose captured source version predates 3.4.
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootMigrationSourceFiles:
+      targetRelease: "3.4"
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.SpringBootSourceVisitors_3_4
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors
+displayName: Migrate source visitors only in workbook-selected Spring Boot projects
+description: Apply each audited official source release band only below selected build roots that predate it.
+tags:
+  - spring-boot
+  - java
+  - source-version-gate
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_2_2
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_2_3
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_2_4
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_2_5
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_2_7
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_3_0
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_3_1
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_3_2
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors_3_4
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.ChangeCassandraDriverCoordinatesExplicitly
+displayName: Change Cassandra driver coordinates explicitly for Spring Boot 3.3
+description: Opt in to the official cross-artifact Cassandra driver coordinate migration; this is intentionally excluded from the default Spring Boot tree.
+tags:
+  - spring-boot
+  - dependency-migration
+  - explicit-opt-in
+recipeList:
+  - org.openrewrite.java.spring.boot3.ChangeCassandraGroupId
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.UpdatePrometheusPushgatewayExplicitly
+displayName: Update Prometheus Pushgateway coordinates explicitly for Spring Boot 3.5
+description: Opt in to the official cross-artifact Prometheus Pushgateway coordinate migration; this is intentionally excluded from the default Spring Boot tree.
+tags:
+  - spring-boot
+  - dependency-migration
+  - explicit-opt-in
+recipeList:
+  - org.openrewrite.java.spring.boot3.UpdatePrometheusPushgateway
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSource
+displayName: Migrate source only in workbook-selected Spring Boot projects
+description: Run gated official source visitors and gated official auto-configuration scanning only for exact selected source-version projects.
+tags:
+  - spring-boot
+  - java
+  - source-version-gate
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSourceVisitors
+  - com.huawei.clouds.openrewrite.springboot.MoveSelectedAutoConfigurationToImportsFile
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.FindSpringBoot3_5Risks
+displayName: Find Spring Boot 3.5 migration risks
+description: Mark version ownership, forbidden downgrades, runtime baseline, companion alignment, and behavior-sensitive source or configuration decisions.
+tags:
+  - spring-boot
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.FindSpringBoot35BuildRisks
+  - com.huawei.clouds.openrewrite.springboot.FindSpringBoot35SourceRisks
+  - com.huawei.clouds.openrewrite.springboot.FindSpringBoot35ConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBoot3_5SourceAndConfigurationRisks
+displayName: Find Spring Boot 3.5 source and configuration risks in selected projects
+description: Mark application-owned source and configuration decisions only below a build root that proved one exact workbook source version before dependency edits.
+tags:
+  - spring-boot
+  - search
+  - source-version-gate
+preconditions:
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBootSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.FindSpringBoot35SourceRisks
+  - com.huawei.clouds.openrewrite.springboot.FindSpringBoot35ConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBoot3_5Risks
+displayName: Find Spring Boot 3.5 risks with project-scoped application searches
+description: Inspect Boot build declarations globally for ownership or forbidden downgrade decisions, but run source and configuration searches only inside exact selected project roots.
+tags:
+  - spring-boot
+  - search
+  - source-version-gate
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.FindSpringBoot35BuildRisks
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBoot3_5SourceAndConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springboot.MigrateSpringBootTo3_5_15
+displayName: Migrate Spring Boot applications to 3.5.15
+description: Scan exact source-version ownership, strictly upgrade selected owners, apply precise official migrations only inside eligible project roots, and mark remaining application-owned decisions.
+tags:
+  - spring-boot
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springboot.MarkSelectedSpringBootProjects
+  - com.huawei.clouds.openrewrite.springboot.UpgradeSpringBootTo3_5_15
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootConfiguration
+  - com.huawei.clouds.openrewrite.springboot.MigrateSelectedSpringBootSource
+  - com.huawei.clouds.openrewrite.springboot.FindSelectedSpringBoot3_5Risks
