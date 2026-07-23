@@ -140,6 +140,7 @@
     <module>rewrite-disruptor-upgrade</module>
     <module>rewrite-jsoup-upgrade</module>
     <module>rewrite-selenium-java-upgrade</module>
+    <module>rewrite-commons-pool2-upgrade</module>
   </modules>
 
   <dependencyManagement>

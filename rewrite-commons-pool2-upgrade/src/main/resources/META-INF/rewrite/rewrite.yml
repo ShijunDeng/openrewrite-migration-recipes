@@ -1,0 +1,37 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.commonspool2
+packageName: com.huawei.clouds.openrewrite.commonspool2
+description: Upgrade Apache Commons Pool 2 and automate deterministic compatibility work while marking application policy decisions.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonspool2.UpgradeCommonsPool2To2_13_1
+displayName: Upgrade workbook-selected Apache Commons Pool 2 dependencies to 2.13.1
+description: >-
+  Upgrade only exact org.apache.commons:commons-pool2 2.6.0, 2.8.0, 2.8.1, 2.9.0, 2.10.0, and 2.11.1
+  dependencies in owned standard Maven and root Gradle declarations; preserve other versions, external owners,
+  variants, nested DSLs and generated files.
+tags:
+  - apache-commons-pool
+  - object-pool
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.commonspool2.UpgradeSelectedCommonsPool2Dependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonspool2.MigrateCommonsPool2To2_13_1
+displayName: Migrate Apache Commons Pool 2 applications to 2.13.1
+description: >-
+  Reuse the strict dependency upgrade, replace deprecated millisecond setters with exact Duration equivalents,
+  then precisely mark borrowing, capacity, concurrency, validation, eviction, abandoned-object, timing,
+  ownership, Java baseline and packaging decisions.
+tags:
+  - apache-commons-pool
+  - object-pool
+  - java
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.commonspool2.UpgradeCommonsPool2To2_13_1
+  - com.huawei.clouds.openrewrite.commonspool2.MigrateCommonsPool2DurationSetters
+  - com.huawei.clouds.openrewrite.commonspool2.FindCommonsPool2JavaRisks
+  - com.huawei.clouds.openrewrite.commonspool2.FindCommonsPool2BuildRisks
