@@ -1,0 +1,36 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.trinojdbc
+packageName: com.huawei.clouds.openrewrite.trinojdbc
+description: Upgrade Trino JDBC and automate deterministic compatibility work while marking application policy decisions.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.trinojdbc.UpgradeTrinoJdbcTo453
+displayName: Upgrade workbook-selected Trino JDBC dependency to 453
+description: >-
+  Upgrade only exact io.trino:trino-jdbc 418 dependencies in owned standard Maven and root Gradle declarations;
+  preserve other versions, external owners, variants, nested DSLs and generated files.
+tags:
+  - trino
+  - jdbc
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.trinojdbc.UpgradeSelectedTrinoJdbcDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.trinojdbc.MigrateTrinoJdbcTo453
+displayName: Migrate Trino JDBC applications from 418 to 453
+description: >-
+  Reuse the strict dependency upgrade, automate the equivalent prepared-statement property/API renames,
+  then precisely mark URL/security, prepared statement, metadata, conversion, session, lifecycle,
+  ownership, Java baseline and packaging decisions.
+tags:
+  - trino
+  - jdbc
+  - java
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.trinojdbc.UpgradeTrinoJdbcTo453
+  - com.huawei.clouds.openrewrite.trinojdbc.MigrateTrinoJdbc418Apis
+  - com.huawei.clouds.openrewrite.trinojdbc.FindTrinoJdbcJavaRisks
+  - com.huawei.clouds.openrewrite.trinojdbc.FindTrinoJdbcBuildRisks

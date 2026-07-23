@@ -147,6 +147,7 @@
     <module>rewrite-junit-platform-launcher-upgrade</module>
     <module>rewrite-commons-codec-upgrade</module>
     <module>rewrite-jakarta-el-api-upgrade</module>
+    <module>rewrite-trino-jdbc-upgrade</module>
   </modules>
 
   <dependencyManagement>
