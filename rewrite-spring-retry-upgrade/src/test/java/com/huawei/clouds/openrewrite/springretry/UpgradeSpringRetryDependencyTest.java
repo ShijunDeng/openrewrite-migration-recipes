@@ -125,15 +125,15 @@ class UpgradeSpringRetryDependencyTest implements RewriteTest {
                 buildGradle(
                         "dependencies { implementation 'org.springframework.retry:spring-retry:1.3.4' }",
                         "dependencies { implementation 'org.springframework.retry:spring-retry:2.0.13' }",
-                        source -> source.path("string.gradle")),
+                        source -> source.path("string/build.gradle")),
                 buildGradle(
                         "dependencies { runtimeOnly group: 'org.springframework.retry', name: 'spring-retry', version: '1.3.4' }",
                         "dependencies { runtimeOnly group: 'org.springframework.retry', name: 'spring-retry', version: '2.0.13' }",
-                        source -> source.path("map.gradle")),
+                        source -> source.path("map/build.gradle")),
                 buildGradle(
                         "dependencies { testImplementation([group: 'org.springframework.retry', name: 'spring-retry', version: '1.3.4']) }",
                         "dependencies { testImplementation([group: 'org.springframework.retry', name: 'spring-retry', version: '2.0.13']) }",
-                        source -> source.path("map-literal.gradle")),
+                        source -> source.path("map-literal/build.gradle")),
                 buildGradleKts(
                         "dependencies { implementation(\"org.springframework.retry:spring-retry:1.3.4\") }",
                         "dependencies { implementation(\"org.springframework.retry:spring-retry:2.0.13\") }"));
@@ -199,6 +199,37 @@ class UpgradeSpringRetryDependencyTest implements RewriteTest {
                         "</dependencies></plugin></plugins></build>"), source -> source.path("plugin/pom.xml")));
     }
 
+    @Test
+    void standaloneRecipeBlocksMixedSourceAndNonSourceVersionsAtOneRoot() {
+        String mixed = SpringRetryTestSupport.project("<dependencies>" +
+                SpringRetryTestSupport.dependency("1.3.4", "") +
+                SpringRetryTestSupport.dependency("2.0.13", "") +
+                SpringRetryTestSupport.dependency("2.0.14", "") +
+                SpringRetryTestSupport.dependency("1.3.3", "") +
+                "</dependencies>");
+        rewriteRun(xml(mixed, source -> source.path("mixed/pom.xml")));
+    }
+
+    @Test
+    void standaloneRecipeBlocksALiteralWhenAnotherOwnerIsAmbiguous() {
+        String conflicted = SpringRetryTestSupport.project(
+                "<properties><v>1.3.4</v></properties><dependencies>" +
+                SpringRetryTestSupport.dependency("1.3.4", "") +
+                SpringRetryTestSupport.dependency("${v}", "") +
+                "<dependency><groupId>example</groupId><artifactId>shared</artifactId>" +
+                "<version>${v}</version></dependency></dependencies>");
+        rewriteRun(xml(conflicted, source -> source.path("ambiguous-owner/pom.xml")));
+    }
+
+    @Test
+    void standaloneRecipeBlocksPropagatingParentWhenNestedRootIsTarget() {
+        rewriteRun(
+                xml(SpringRetryTestSupport.pom("1.3.4"),
+                        source -> source.path("nested/pom.xml")),
+                xml(SpringRetryTestSupport.pom("2.0.13"),
+                        source -> source.path("nested/child/pom.xml")));
+    }
+
     @ParameterizedTest(name = "generated/cache parent {0}")
     @ValueSource(strings = {
             "target", "build", "generated", "generatedSources", "install", "installation", ".gradle", ".m2",
@@ -219,11 +250,20 @@ class UpgradeSpringRetryDependencyTest implements RewriteTest {
     }
 
     @Test
-    void publicStrictRecipeContainsOnlyTheCustomWhitelistUpgrade() {
+    void publicStrictRecipeMarksTheProjectThenRunsOfficialFirstWithFallback() {
         var recipe = Environment.builder().scanRuntimeClasspath(
                 "com.huawei.clouds.openrewrite.springretry").build().activateRecipes(RECIPE);
-        assertEquals(1, recipe.getRecipeList().size());
-        assertEquals("com.huawei.clouds.openrewrite.springretry.UpgradeSelectedSpringRetryDependency",
+        assertEquals(2, recipe.getRecipeList().size());
+        assertEquals("com.huawei.clouds.openrewrite.springretry.MarkSelectedSpringRetryProjects",
                 recipe.getRecipeList().get(0).getName());
+        assertEquals("com.huawei.clouds.openrewrite.springretry.UpgradeMarkedSpringRetryDependencyTo2_0_13",
+                recipe.getRecipeList().get(1).getName());
+        var executable = recipe.getRecipeList().get(1).getRecipeList().stream()
+                .map(child -> child.getName())
+                .filter(name -> !"org.openrewrite.config.DeclarativeRecipe$PreconditionBellwether".equals(name))
+                .toList();
+        assertEquals(java.util.List.of(
+                "org.openrewrite.java.dependencies.UpgradeDependencyVersion",
+                "com.huawei.clouds.openrewrite.springretry.UpgradeSelectedSpringRetryDependency"), executable);
     }
 }

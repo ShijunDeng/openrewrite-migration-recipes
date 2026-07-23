@@ -8,46 +8,78 @@ type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springretry.UpgradeSpringRetryTo2_0_13
 displayName: Upgrade Spring Retry 1.3.4 to 2.0.13
 description: >-
-  Upgrade only exact org.springframework.retry:spring-retry 1.3.4 declarations
-  whose version is locally and unambiguously owned. Other versions are unchanged.
+  First capture exact, non-conflicting 1.3.4 project ownership, then upgrade
+  only selected build files. Other versions and project roots are unchanged.
 tags:
   - spring
   - retry
   - java
   - dependency-upgrade
 recipeList:
-  - com.huawei.clouds.openrewrite.springretry.UpgradeSelectedSpringRetryDependency
+  - com.huawei.clouds.openrewrite.springretry.MarkSelectedSpringRetryProjects
+  - com.huawei.clouds.openrewrite.springretry.UpgradeMarkedSpringRetryDependencyTo2_0_13
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springretry.UpgradeSpringRetryBuildToJava17
 displayName: Upgrade selected Spring Retry builds to Java 17
 description: >-
-  Run the fixed official UpgradeJavaVersion recipe only on authored build files
-  that contain an exact locally resolved Spring Retry 1.3.4 declaration.
+  Capture exact project eligibility before edits, then run the fixed official
+  UpgradeJavaVersion recipe only inside those selected project roots.
 tags:
   - spring
   - retry
   - java17
   - official-openrewrite
+recipeList:
+  - com.huawei.clouds.openrewrite.springretry.MarkSelectedSpringRetryProjects
+  - com.huawei.clouds.openrewrite.springretry.UpgradeMarkedSpringRetryBuildToJava17
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springretry.UpgradeMarkedSpringRetryBuildToJava17
+displayName: Upgrade Java to 17 inside marked Spring Retry projects
+description: Run the official Java baseline leaf only on files carrying the exact pre-upgrade project marker.
+tags:
+  - spring
+  - retry
+  - source-version-gate
 preconditions:
-  - com.huawei.clouds.openrewrite.springretry.FindSpringRetry134BuildFiles
+  - com.huawei.clouds.openrewrite.springretry.FindSelectedSpringRetryBuildFiles
 recipeList:
   - org.openrewrite.java.migrate.UpgradeJavaVersion:
       version: 17
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.springretry.MigrateDeterministicSpringRetry20Java
-displayName: Migrate deterministic Spring Retry 2.0 Java APIs
+name: com.huawei.clouds.openrewrite.springretry.UpgradeMarkedSpringRetryDependencyTo2_0_13
+displayName: Upgrade Spring Retry only inside marked projects
+description: Run the strict declaration-level dependency recipe only below an exact, non-conflicting 1.3.4 build root.
+tags:
+  - spring
+  - retry
+  - source-version-gate
+preconditions:
+  - com.huawei.clouds.openrewrite.springretry.FindSelectedSpringRetryBuildFiles
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.retry
+      artifactId: spring-retry
+      newVersion: 2.0.13
+      overrideManagedVersion: false
+  # The official Maven delegate requires Maven resolution markers. Keep the
+  # strict local visitor as a deterministic fallback for raw XML source sets;
+  # it is a no-op after the official recipe has already upgraded a declaration.
+  - com.huawei.clouds.openrewrite.springretry.UpgradeSelectedSpringRetryDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springretry.MigrateOfficialSpringRetry20JavaLeaves
+displayName: Internal official Spring Retry 2.0 Java leaves
 description: >-
-  Reuse fixed official core recipes to replace deprecated annotation aliases
-  and RetryTemplateBuilder.withinMillis without touching generated source.
+  Internal raw bundle of fixed official core recipes. Activate the guarded
+  MigrateDeterministicSpringRetry20Java recipe instead.
 tags:
   - spring
   - retry
   - java
   - official-openrewrite
-preconditions:
-  - com.huawei.clouds.openrewrite.springretry.FindAuthoredSourceFiles
 recipeList:
   - org.openrewrite.java.ChangeAnnotationAttributeName:
       annotationType: org.springframework.retry.annotation.Retryable
@@ -80,6 +112,38 @@ recipeList:
       ignoreDefinition: false
 ---
 type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springretry.MigrateDeterministicSpringRetry20Java
+displayName: Safely migrate deterministic Spring Retry 2.0 Java APIs
+description: Protect conflicting annotations, run the fixed official leaves on safe annotations, restore conflicts, and exclude generated sources.
+tags:
+  - spring
+  - retry
+  - java
+  - official-openrewrite
+preconditions:
+  - com.huawei.clouds.openrewrite.springretry.FindAuthoredSourceFiles
+  - com.huawei.clouds.openrewrite.springretry.FindPendingSpringRetryAnnotationMigration
+recipeList:
+  # Declarative preconditions are source-file scoped. Shield conflicts before
+  # the official leaves so a safe annotation in the same file can still migrate.
+  - com.huawei.clouds.openrewrite.springretry.ProtectSpringRetryAnnotationAliasConflicts
+  - com.huawei.clouds.openrewrite.springretry.MigrateOfficialSpringRetry20JavaLeaves
+  - com.huawei.clouds.openrewrite.springretry.RestoreSpringRetryAnnotationAliasConflicts
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springretry.MigrateSelectedSpringRetry20Java
+displayName: Migrate deterministic APIs only in selected Spring Retry projects
+description: Run the safe deterministic migration only below a build root that proved exact, non-conflicting 1.3.4 ownership before edits.
+tags:
+  - spring
+  - retry
+  - source-version-gate
+preconditions:
+  - com.huawei.clouds.openrewrite.springretry.FindSelectedSpringRetryProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springretry.MigrateDeterministicSpringRetry20Java
+---
+type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springretry.FindSpringRetry2_0_13BuildRisks
 displayName: Find Spring Retry 2.0.13 build risks
 description: >-
@@ -108,6 +172,20 @@ recipeList:
   - com.huawei.clouds.openrewrite.springretry.FindSpringRetry20SourceRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springretry.FindSelectedSpringRetry2_0SourceRisks
+displayName: Find Spring Retry 2.0 source risks only in selected projects
+description: Run source risk searches only below a build root that proved exact, non-conflicting 1.3.4 ownership before edits.
+tags:
+  - spring
+  - retry
+  - source-version-gate
+  - search
+preconditions:
+  - com.huawei.clouds.openrewrite.springretry.FindSelectedSpringRetryProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springretry.FindSpringRetry2_0SourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springretry.MigrateSpringRetryTo2_0_13
 displayName: Migrate Spring Retry 1.3.4 applications to 2.0.13
 description: >-
@@ -122,6 +200,6 @@ tags:
 recipeList:
   - com.huawei.clouds.openrewrite.springretry.UpgradeSpringRetryBuildToJava17
   - com.huawei.clouds.openrewrite.springretry.UpgradeSpringRetryTo2_0_13
-  - com.huawei.clouds.openrewrite.springretry.MigrateDeterministicSpringRetry20Java
+  - com.huawei.clouds.openrewrite.springretry.MigrateSelectedSpringRetry20Java
   - com.huawei.clouds.openrewrite.springretry.FindSpringRetry2_0_13BuildRisks
-  - com.huawei.clouds.openrewrite.springretry.FindSpringRetry2_0SourceRisks
+  - com.huawei.clouds.openrewrite.springretry.FindSelectedSpringRetry2_0SourceRisks

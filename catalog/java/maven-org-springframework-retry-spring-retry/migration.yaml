@@ -173,7 +173,7 @@
       "targetVersion": "2.0.13",
       "relation": "user-supplied-upgrade",
       "action": "auto",
-      "statement": "用户最新高优先级清单只批准 Spring Retry 1.3.4 精确升级到 2.0.13；依赖 owner、Java 17 与确定性 API 迁移均受测试保护。"
+      "statement": "用户最新高优先级清单只批准 Spring Retry 1.3.4 精确升级到 2.0.13；pre-upgrade project marker 先整根验证依赖 owner，再门控官方 UpgradeDependencyVersion(2.0.13)、官方 Java 17 与确定性 API 迁移。"
     },
     {
       "id": "U-002",
@@ -190,6 +190,18 @@
       "relation": "workbook-outside-current-priority",
       "action": "mark",
       "statement": "这些工作簿事实不在最新高优先级精确白名单内；本次保持原文并等待后续指示，不猜测扩大 AUTO 范围。"
+    },
+    {
+      "id": "U-003",
+      "status": "verified",
+      "sourceVersions": [
+        "1.3.4",
+        "2.0.13"
+      ],
+      "targetVersion": "2.0.13",
+      "relation": "mixed-root-conflict",
+      "action": "mark",
+      "statement": "同一构建根同时出现 1.3.4 与 2.0.13 时，项目资格 marker 阻断该根全部 AUTO；构建风险配方在两个声明上显式标记 owner 冲突，且不泄漏 Java、Spring、Micrometer、AOP 或打包迁移风险。"
     }
   ],
   "policy": {
@@ -253,11 +265,12 @@
     },
     {
       "id": "E-004",
-      "claim": "OpenRewrite 官方能力已检索、复用并通过运行时组合测试",
+      "claim": "OpenRewrite 官方能力已检索、固定版本复用并通过运行时组合测试；依赖升级优先使用官方能力，raw XML resolution gap 才使用本地 fallback；六个官方注解属性叶由 selected-project annotation 冲突保护前后包围，但叶本身保持直接复用",
       "status": "verified",
       "officialSources": [
         "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/ChangeAnnotationAttributeName.java",
         "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/ChangeMethodName.java",
+        "https://github.com/openrewrite/rewrite-java-dependencies/blob/decb8dbb2b5b726f8815efc51c85c34a60268bb0/src/main/java/org/openrewrite/java/dependencies/UpgradeDependencyVersion.java",
         "https://github.com/openrewrite/rewrite-migrate-java/blob/658481254a6ee678f5f162e51d8d49ee01c75877/src/main/java/org/openrewrite/java/migrate/UpgradeJavaVersion.java",
         "https://github.com/openrewrite/rewrite-spring/tree/d28afcb6661ad413539056de0936c5489ff9d8ee"
       ],
@@ -324,11 +337,14 @@
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
       "evidenceStatus": "verified",
-      "disposition": "auto+mark",
-      "treatment": "把精确且本地拥有的 1.3.4 依赖升级到 2.0.13；实际运行官方 UpgradeJavaVersion(17)、六个 ChangeAnnotationAttributeName 和 ChangeMethodName，并对 listener、rethrow/buildAdvice、表达式、stateful/cache、policy/backoff、Micrometer、AOP 与打包边界执行结构化 MARK。",
+      "disposition": "auto-and-mark",
+      "treatment": "pre-upgrade project marker 仅选择整根唯一、无冲突且本地拥有的 1.3.4；父 POM 普通 dependencies 与 dependencyManagement 都视为会向嵌套构建根继承/传播，任一未选中嵌套根会阻断父级 AUTO 与源码风险。在 marker 后优先运行 rewrite-java-dependencies 1.59.0 的官方 UpgradeDependencyVersion(2.0.13)，raw XML 缺失 Maven resolution marker 时才由严格 fallback 补位。随后实际运行官方 UpgradeJavaVersion(17)、六个 ChangeAnnotationAttributeName 和 ChangeMethodName；同一 Retryable/CircuitBreaker 的 value+include、旧属性+目标属性或 exclude+noRetryFor 碰撞会在 annotation 节点精确 MARK并阻断该 annotation 的属性 AUTO，同文件安全 annotation 仍由官方叶迁移。listener、rethrow/buildAdvice、表达式、stateful/cache、policy/backoff、Micrometer、AOP 与打包边界执行结构化 MARK；同根 source+target 显式 MARK 并阻断全部 AUTO。",
       "recipe": "com.huawei.clouds.openrewrite.springretry.MigrateSpringRetryTo2_0_13",
       "tests": [
         "UpgradeSpringRetryDependencyTest",
+        "SpringRetryOfficialDependencyUpgradeTest",
+        "SpringRetryProjectGateTest",
+        "SpringRetryAnnotationConflictGateTest",
         "SpringRetryBuildRisksTest",
         "SpringRetryOfficialMigrationTest",
         "SpringRetrySourceRisksTest",

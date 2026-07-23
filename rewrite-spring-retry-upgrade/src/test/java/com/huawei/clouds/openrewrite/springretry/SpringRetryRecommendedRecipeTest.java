@@ -17,6 +17,12 @@ import static org.openrewrite.xml.Assertions.xml;
 class SpringRetryRecommendedRecipeTest implements RewriteTest {
     private static final String BASELINE =
             "com.huawei.clouds.openrewrite.springretry.UpgradeSpringRetryBuildToJava17";
+    private static final String UPGRADE =
+            "com.huawei.clouds.openrewrite.springretry.UpgradeSpringRetryTo2_0_13";
+    private static final String SELECTED_MIGRATION =
+            "com.huawei.clouds.openrewrite.springretry.MigrateSelectedSpringRetry20Java";
+    private static final String SELECTED_SOURCE_RISKS =
+            "com.huawei.clouds.openrewrite.springretry.FindSelectedSpringRetry2_0SourceRisks";
     private static final String RECIPE =
             "com.huawei.clouds.openrewrite.springretry.MigrateSpringRetryTo2_0_13";
 
@@ -26,21 +32,61 @@ class SpringRetryRecommendedRecipeTest implements RewriteTest {
         List<String> names = recipe.getRecipeList().stream().map(Recipe::getName).toList();
         assertEquals(List.of(
                 BASELINE,
-                "com.huawei.clouds.openrewrite.springretry.UpgradeSpringRetryTo2_0_13",
-                "com.huawei.clouds.openrewrite.springretry.MigrateDeterministicSpringRetry20Java",
+                UPGRADE,
+                SELECTED_MIGRATION,
                 "com.huawei.clouds.openrewrite.springretry.FindSpringRetry2_0_13BuildRisks",
-                "com.huawei.clouds.openrewrite.springretry.FindSpringRetry2_0SourceRisks"), names);
+                SELECTED_SOURCE_RISKS), names);
 
         Recipe baseline = SpringRetryTestSupport.recipe(BASELINE);
-        assertTrue(baseline.getRecipeList().stream()
-                .map(Recipe::getName)
-                .anyMatch("org.openrewrite.java.migrate.UpgradeJavaVersion"::equals),
-                baseline.getRecipeList().toString());
-        Recipe javaMigration = recipe.getRecipeList().get(2);
+        assertEquals(List.of(
+                "com.huawei.clouds.openrewrite.springretry.MarkSelectedSpringRetryProjects",
+                "com.huawei.clouds.openrewrite.springretry.UpgradeMarkedSpringRetryBuildToJava17"),
+                baseline.getRecipeList().stream().map(Recipe::getName).toList());
+        Recipe javaBaseline = baseline.getRecipeList().get(1);
+        assertEquals(1, executableChildren(javaBaseline).stream()
+                .filter(child -> "org.openrewrite.java.migrate.UpgradeJavaVersion"
+                        .equals(child.getName())).count());
+
+        Recipe selectedUpgrade = recipe.getRecipeList().get(1);
+        assertEquals(List.of(
+                "com.huawei.clouds.openrewrite.springretry.MarkSelectedSpringRetryProjects",
+                "com.huawei.clouds.openrewrite.springretry.UpgradeMarkedSpringRetryDependencyTo2_0_13"),
+                selectedUpgrade.getRecipeList().stream().map(Recipe::getName).toList());
+        Recipe markedUpgrade = selectedUpgrade.getRecipeList().get(1);
+        assertEquals(List.of(
+                "org.openrewrite.java.dependencies.UpgradeDependencyVersion",
+                "com.huawei.clouds.openrewrite.springretry.UpgradeSelectedSpringRetryDependency"),
+                executableChildren(markedUpgrade).stream().map(Recipe::getName).toList());
+        List<Recipe> selectedMigrationChildren = executableChildren(recipe.getRecipeList().get(2));
+        assertEquals(List.of(
+                "com.huawei.clouds.openrewrite.springretry.MigrateDeterministicSpringRetry20Java"),
+                selectedMigrationChildren.stream().map(Recipe::getName).toList());
+        List<Recipe> guardedMigrationChildren = executableChildren(selectedMigrationChildren.get(0));
+        assertEquals(List.of(
+                "com.huawei.clouds.openrewrite.springretry.ProtectSpringRetryAnnotationAliasConflicts",
+                "com.huawei.clouds.openrewrite.springretry.MigrateOfficialSpringRetry20JavaLeaves",
+                "com.huawei.clouds.openrewrite.springretry.RestoreSpringRetryAnnotationAliasConflicts"),
+                guardedMigrationChildren.stream().map(Recipe::getName).toList());
+        Recipe javaMigration = guardedMigrationChildren.get(1);
         assertTrue(javaMigration.getRecipeList().stream().map(Recipe::getName)
                 .anyMatch("org.openrewrite.java.ChangeAnnotationAttributeName"::equals));
         assertTrue(javaMigration.getRecipeList().stream().map(Recipe::getName)
                 .anyMatch("org.openrewrite.java.ChangeMethodName"::equals));
+        assertTrue(javaMigration.getRecipeList().stream()
+                .allMatch(child -> child.getClass().getProtectionDomain().getCodeSource()
+                        .getLocation().toString().contains("/8.87.5/")),
+                javaMigration.getRecipeList().toString());
+        Recipe selectedRisks = recipe.getRecipeList().get(4);
+        assertEquals(List.of(
+                "com.huawei.clouds.openrewrite.springretry.FindSpringRetry2_0SourceRisks"),
+                executableChildren(selectedRisks).stream().map(Recipe::getName).toList());
+    }
+
+    private static List<Recipe> executableChildren(Recipe recipe) {
+        return recipe.getRecipeList().stream()
+                .filter(child -> !"org.openrewrite.config.DeclarativeRecipe$PreconditionBellwether"
+                        .equals(child.getName()))
+                .toList();
     }
 
     @Test

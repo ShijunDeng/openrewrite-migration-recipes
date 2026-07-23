@@ -28,13 +28,48 @@ class SpringRetryOfficialMigrationTest implements RewriteTest {
     @Test
     void compositionUsesAllSevenFixedOfficialCoreRecipes() {
         Recipe recipe = SpringRetryTestSupport.recipe(RECIPE);
-        List<String> names = recipe.getRecipeList().stream().map(Recipe::getName).toList();
+        List<Recipe> guardedChildren = executableChildren(recipe);
+        assertEquals(List.of(
+                "com.huawei.clouds.openrewrite.springretry.ProtectSpringRetryAnnotationAliasConflicts",
+                "com.huawei.clouds.openrewrite.springretry.MigrateOfficialSpringRetry20JavaLeaves",
+                "com.huawei.clouds.openrewrite.springretry.RestoreSpringRetryAnnotationAliasConflicts"),
+                guardedChildren.stream().map(Recipe::getName).toList());
+
+        List<String> names = guardedChildren.get(1).getRecipeList().stream()
+                .map(Recipe::getName)
+                .toList();
         assertEquals(6, names.stream()
                 .filter("org.openrewrite.java.ChangeAnnotationAttributeName"::equals).count(), names.toString());
         assertEquals(1, names.stream().filter("org.openrewrite.java.ChangeMethodName"::equals).count(),
                 names.toString());
         assertFalse(names.contains("org.openrewrite.java.ChangeType"), names.toString());
         assertFalse(names.stream().anyMatch(name -> name.contains("UpgradeDependencyVersion")), names.toString());
+    }
+
+    private static List<Recipe> executableChildren(Recipe recipe) {
+        return recipe.getRecipeList().stream()
+                .filter(child -> !"org.openrewrite.config.DeclarativeRecipe$PreconditionBellwether"
+                        .equals(child.getName()))
+                .toList();
+    }
+
+    @Test
+    void fixedRuntimeCatalogHasNoDedicatedOfficialSpringRetryMajorMigration() {
+        List<String> runtimeRecipes = SpringRetryTestSupport.environment().listRecipes().stream()
+                .map(Recipe::getName)
+                .toList();
+        assertTrue(runtimeRecipes.stream().anyMatch(
+                name -> name.startsWith("org.openrewrite.java.spring.")),
+                "rewrite-spring runtime catalog was not scanned");
+        List<String> officialRetryRecipes = runtimeRecipes.stream()
+                .filter(name -> name.startsWith("org.openrewrite."))
+                .filter(name -> {
+                    String lower = name.toLowerCase();
+                    return lower.contains("springretry") || lower.contains("spring.retry");
+                })
+                .sorted()
+                .toList();
+        assertTrue(officialRetryRecipes.isEmpty(), officialRetryRecipes.toString());
     }
 
     @Test
