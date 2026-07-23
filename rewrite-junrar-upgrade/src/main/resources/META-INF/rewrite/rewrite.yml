@@ -1,0 +1,137 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.junrar
+packageName: com.huawei.clouds.openrewrite.junrar
+description: Strictly migrate Junrar 7.5.5/7.5.8 to 7.5.10 and expose extraction compatibility decisions.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junrar.UpgradeJunrarTo7_5_10
+displayName: Upgrade selected Junrar dependencies to 7.5.10
+description: >-
+  Upgrade only exact com.github.junrar:junrar 7.5.5 and 7.5.8 declarations
+  whose Maven or root Gradle owner is local, exclusive and unambiguous.
+tags:
+  - junrar
+  - java
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.junrar.MarkSelectedJunrarProjects
+  - com.huawei.clouds.openrewrite.junrar.UpgradeSelectedJunrarDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junrar.InventoryJunrarExtractionEntrypoints
+displayName: Inventory Junrar extraction entry points
+description: >-
+  Directly reuse fixed OpenRewrite Core FindMethods leaves to locate exact
+  Junrar extraction, stream and archive-entry path calls in authored source.
+tags:
+  - junrar
+  - java
+  - official-openrewrite
+  - search
+preconditions:
+  - com.huawei.clouds.openrewrite.junrar.FindAuthoredJavaSource
+recipeList:
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: com.github.junrar.Junrar extract(..)
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: com.github.junrar.Archive extractFile(..)
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: com.github.junrar.Archive getInputStream(..)
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: com.github.junrar.rarfile.FileHeader getFileName()
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: com.github.junrar.rarfile.FileHeader getFileNameW()
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: com.github.junrar.rarfile.FileHeader getFileNameString()
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: com.github.junrar.rarfile.FileHeader getFileNameByteArray()
+      matchOverrides: false
+  - org.openrewrite.java.search.FindMethods:
+      methodPattern: com.github.junrar.volume.InputStreamVolume getLength()
+      matchOverrides: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junrar.InventorySelectedJunrarExtractionEntrypoints
+displayName: Inventory Junrar extraction entry points in selected projects
+description: >-
+  Run the eight official Core FindMethods leaves only below a build root that
+  proved one exact, non-conflicting Junrar 7.5.5 or 7.5.8 owner before edits.
+tags:
+  - junrar
+  - java
+  - official-openrewrite
+  - source-version-gate
+  - search
+preconditions:
+  - com.huawei.clouds.openrewrite.junrar.FindSelectedJunrarProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.junrar.InventoryJunrarExtractionEntrypoints
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junrar.FindJunrar7_5_10BuildRisks
+displayName: Find Junrar 7.5.10 build risks
+description: >-
+  Mark unresolved owners, source-version variants, exact no-downgrade
+  conflicts, and selected-project SLF4J 1.7/2.0 or packaging boundaries.
+tags:
+  - junrar
+  - build
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.junrar.MarkSelectedJunrarProjects
+  - com.huawei.clouds.openrewrite.junrar.FindJunrar7510BuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junrar.FindJunrar7_5_10SourceRisks
+displayName: Find Junrar 7.5.10 source risks
+description: >-
+  Mark exact destination, custom path, archive-format, stream-length and
+  exception/rollback boundaries that require application decisions.
+tags:
+  - junrar
+  - java
+  - security
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.junrar.FindJunrar7510SourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junrar.FindSelectedJunrar7_5_10SourceRisks
+displayName: Find Junrar 7.5.10 source risks in selected projects
+description: >-
+  Run behavior and security risk searches only below a build root that proved
+  one exact, non-conflicting Junrar 7.5.5 or 7.5.8 owner before edits.
+tags:
+  - junrar
+  - java
+  - security
+  - source-version-gate
+  - search
+preconditions:
+  - com.huawei.clouds.openrewrite.junrar.FindSelectedJunrarProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.junrar.FindJunrar7_5_10SourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junrar.MigrateJunrarTo7_5_10
+displayName: Migrate Junrar applications to 7.5.10
+description: >-
+  Strictly upgrade only selected Junrar versions, run the official exact API
+  inventory, then mark every remaining build, security, behavior and rollback
+  decision. Target and higher versions are never downgraded.
+tags:
+  - junrar
+  - java
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.junrar.UpgradeJunrarTo7_5_10
+  - com.huawei.clouds.openrewrite.junrar.InventorySelectedJunrarExtractionEntrypoints
+  - com.huawei.clouds.openrewrite.junrar.FindJunrar7_5_10BuildRisks
+  - com.huawei.clouds.openrewrite.junrar.FindSelectedJunrar7_5_10SourceRisks

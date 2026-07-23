@@ -14,11 +14,16 @@
     ],
     "canonicalIdentity": {
       "value": "com.github.junrar:junrar",
-      "status": "unverified",
-      "evidence": []
+      "status": "verified",
+      "evidence": [
+        "https://github.com/junrar/junrar/tree/e36ee091ad7311a021e1c928ada103a3eab2d890",
+        "maven-central:jar-sha256:d0c7c8374247d2b610c4a254405c62272d269bb641e233482938e4f098570e7a"
+      ]
     },
     "targetVersion": "7.5.10",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-junrar-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -37,9 +42,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "固定 tag、Maven Central 制品、上游安全修复和真实工程用法已验证；仅允许受最近构建根及依赖 owner 守卫约束的精确 7.5.5 AUTO。"
         }
       },
       {
@@ -56,9 +61,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "固定 tag、Maven Central 制品、上游安全修复和真实工程用法已验证；仅允许受最近构建根及依赖 owner 守卫约束的精确 7.5.8 AUTO。"
         }
       },
       {
@@ -75,9 +80,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "工作簿别名已归一到经固定证据验证的 com.github.junrar:junrar；仅允许受最近构建根及依赖 owner 守卫约束的精确 7.5.5 AUTO。"
         }
       },
       {
@@ -94,22 +99,35 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "工作簿别名已归一到经固定证据验证的 com.github.junrar:junrar；仅允许受最近构建根及依赖 owner 守卫约束的精确 7.5.8 AUTO。"
         }
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "verified",
+      "sourceVersions": [
+        "7.5.5",
+        "7.5.8"
+      ],
+      "targetVersion": "7.5.10",
+      "relation": "user-supplied-upgrade",
+      "action": "auto",
+      "statement": "用户高优先级清单批准 Junrar 7.5.5/7.5.8 精确升级到 7.5.10；目标、表外和未来版本不进入 AUTO。"
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "autoSourceWhitelist": [
       "7.5.5",
       "7.5.8"
     ],
+    "upgradeCandidatesPendingEvidence": [],
     "noopVersions": [],
     "conflictVersions": [],
     "unresolvedVersions": []
@@ -117,23 +135,52 @@
   "evidence": [
     {
       "id": "E-001",
-      "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
+      "claim": "源版本、目标版本与 Maven 制品身份",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/junrar/junrar/tree/dabca2849b46384765542301f96078097d2c14f6",
+        "https://github.com/junrar/junrar/tree/97bf405418d0997717d55e0556045ff80945e099",
+        "https://github.com/junrar/junrar/tree/e36ee091ad7311a021e1c928ada103a3eab2d890",
+        "maven-central:jar-sha256:e01b949687e2a5b4c68011c1702aa5d2cc8e6c458656ac2c91658b69cebb1bb3",
+        "maven-central:jar-sha256:7d45487c6f83f2e5e4eaf03b9ab700df468d5b278230cea0642bdd0b5f995e61",
+        "maven-central:jar-sha256:d0c7c8374247d2b610c4a254405c62272d269bb641e233482938e4f098570e7a"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-002",
-      "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
+      "claim": "7.5.5/7.5.8 到 7.5.10 的路径安全、RAR 解析、stream、异常与运行时行为变化",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/junrar/junrar/security/advisories/GHSA-j273-m5qq-6825",
+        "https://github.com/junrar/junrar/commit/947ff1d33f00f940aa68ae2593500291d799d954",
+        "https://github.com/junrar/junrar/commit/d77e9a836e8ef47b4f36686e32f14d6f56149805",
+        "https://github.com/junrar/junrar/commit/964801cd1261f830c5cd9dbe87644e66e762b07e",
+        "https://github.com/junrar/junrar/commit/9b69c6b752ca3bc942427d7eb9465f4f604877c0",
+        "https://github.com/junrar/junrar/commit/ad7ad33b84623262ef22d33fdc090252501a016f"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-003",
-      "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
-      "officialSources": [],
+      "claim": "真实工程中的依赖、Archive/FileHeader 用法、负例、幂等性与行为验收",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-test/src/main/java/org/openrewrite/test"
+      ],
+      "realFixtures": [
+        "Stirling-Tools/Stirling-PDF@cd3a59f0777d37648069847fc8ee2e8c77215329"
+      ]
+    },
+    {
+      "id": "E-004",
+      "claim": "OpenRewrite 官方能力已检索、复用并通过运行时组合测试",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/search/FindMethods.java",
+        "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-core/src/main/java/org/openrewrite/semver/LatestRelease.java",
+        "https://github.com/openrewrite/rewrite-java-dependencies/tree/decb8dbb2b5b726f8815efc51c85c34a60268bb0"
+      ],
       "realFixtures": []
     }
   ],
@@ -143,57 +190,93 @@
       "edgeRows": [
         3072
       ],
-      "dimension": "补丁行为 / 安全 / 回归",
+      "dimension": "路径安全 / 反斜杠穿越 / SLF4J 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "依赖 owner 精确升级到 7.5.10；官方 FindMethods 与自定义类型归因 MARK 定位目标目录、entry 路径、自定义解包、异常清理和 SLF4J 1.7→2.0 风险。",
+      "recipe": "com.huawei.clouds.openrewrite.junrar.MigrateJunrarTo7_5_10",
+      "tests": [
+        "UpgradeJunrarDependencyTest",
+        "JunrarSelectedProjectGateTest",
+        "FindJunrarBuildRisksTest",
+        "FindJunrarSourceRisksTest",
+        "OfficialJunrarInventoryTest",
+        "OfficialJunrarRecipeAuditTest",
+        "JunrarRecommendedRecipeTest",
+        "UpstreamCompatibilityEvidenceTest"
+      ]
     },
     {
       "id": "C-002",
       "edgeRows": [
         3073
       ],
-      "dimension": "补丁行为 / 安全 / 回归",
+      "dimension": "路径安全 / sibling-prefix / RAR 与 stream 行为",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "依赖 owner 精确升级到 7.5.10；官方 FindMethods 与自定义类型归因 MARK 定位 canonical containment、自定义输出流、RAR header、stream 长度和异常回滚风险。",
+      "recipe": "com.huawei.clouds.openrewrite.junrar.MigrateJunrarTo7_5_10",
+      "tests": [
+        "UpgradeJunrarDependencyTest",
+        "JunrarSelectedProjectGateTest",
+        "FindJunrarBuildRisksTest",
+        "FindJunrarSourceRisksTest",
+        "OfficialJunrarInventoryTest",
+        "OfficialJunrarRecipeAuditTest",
+        "JunrarRecommendedRecipeTest",
+        "UpstreamCompatibilityEvidenceTest"
+      ]
     },
     {
       "id": "C-003",
       "edgeRows": [
         4877
       ],
-      "dimension": "补丁行为 / 安全 / 回归",
+      "dimension": "路径安全 / 反斜杠穿越 / SLF4J 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "工作簿别名归一到相同 Maven 制品；依赖 owner 精确升级，并对目录逃逸、自定义解包、异常清理和 SLF4J 运行时边界执行与 Excel #3072 相同的 MARK 契约。",
+      "recipe": "com.huawei.clouds.openrewrite.junrar.MigrateJunrarTo7_5_10",
+      "tests": [
+        "UpgradeJunrarDependencyTest",
+        "JunrarSelectedProjectGateTest",
+        "FindJunrarBuildRisksTest",
+        "FindJunrarSourceRisksTest",
+        "OfficialJunrarInventoryTest",
+        "OfficialJunrarRecipeAuditTest",
+        "JunrarRecommendedRecipeTest",
+        "UpstreamCompatibilityEvidenceTest"
+      ]
     },
     {
       "id": "C-004",
       "edgeRows": [
         4878
       ],
-      "dimension": "补丁行为 / 安全 / 回归",
+      "dimension": "路径安全 / sibling-prefix / RAR 与 stream 行为",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "工作簿别名归一到相同 Maven 制品；依赖 owner 精确升级，并对 canonical containment、自定义输出流、RAR header、stream 长度和异常回滚执行与 Excel #3073 相同的 MARK 契约。",
+      "recipe": "com.huawei.clouds.openrewrite.junrar.MigrateJunrarTo7_5_10",
+      "tests": [
+        "UpgradeJunrarDependencyTest",
+        "JunrarSelectedProjectGateTest",
+        "FindJunrarBuildRisksTest",
+        "FindJunrarSourceRisksTest",
+        "OfficialJunrarInventoryTest",
+        "OfficialJunrarRecipeAuditTest",
+        "JunrarRecommendedRecipeTest",
+        "UpstreamCompatibilityEvidenceTest"
+      ]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }
