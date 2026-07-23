@@ -72,6 +72,32 @@ class ZooKeeperConfigurationMigrationTest implements RewriteTest {
     }
 
     @Test
+    void exactYamlGapChangesOnlyTheOldScalarAcrossDocuments() {
+        rewriteRun(spec -> spec.recipe(migrationRecipe()),
+                yaml("""
+                        zookeeper:
+                          audit:
+                            impl:
+                              class: org.apache.zookeeper.audit.Log4jAuditLogger
+                        ---
+                        zookeeper:
+                          audit:
+                            impl:
+                              class: ${AUDIT_LOGGER}
+                        """, """
+                        zookeeper:
+                          audit:
+                            impl:
+                              class: org.apache.zookeeper.audit.Slf4jAuditLogger
+                        ---
+                        zookeeper:
+                          audit:
+                            impl:
+                              class: ${AUDIT_LOGGER}
+                        """));
+    }
+
+    @Test
     void generatedConfigurationsAreIgnored() {
         rewriteRun(spec -> spec.recipe(migrationRecipe()),
                 properties("zookeeper.audit.impl.class=org.apache.zookeeper.audit.Log4jAuditLogger",

@@ -128,9 +128,9 @@ class MigrateDeterministicZooKeeperApisTest implements RewriteTest {
     }
 
     @Test
-    void realZooKeeper4730FixtureUsesOfficialMethodRename() {
+    void realZooKeeper4730PurgeTxnLogFixtureUsesOfficialMethodRename() {
         // Fixed source evidence: apache/zookeeper @ b8eb6a301beceae92a60e8be1a8d716a1109c82f
-        // (ZOOKEEPER-4730, Apache-2.0). The original admin-server logic called getDataDir().
+        // (ZOOKEEPER-4730, Apache-2.0). PurgeTxnLog used the accessor for transaction logs.
         rewriteRun(spec -> spec.recipe(recipe()).parser(legacyParser()),
                 java("""
                         /*
@@ -139,14 +139,37 @@ class MigrateDeterministicZooKeeperApisTest implements RewriteTest {
                          */
                         import java.io.File;
                         import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
-                        class Commands {
-                            static File getLogDir(FileTxnSnapLog txnLogFactory) {
-                                return txnLogFactory.getDataDir();
+                        class PurgeTxnLog {
+                            static File[] transactionLogs(FileTxnSnapLog txnLog) {
+                                return txnLog.getDataDir().listFiles();
                             }
                         }
                         """, source -> source.after(actual -> actual).afterRecipe(after ->
-                        assertTrue(after.printAll().contains("txnLogFactory.getDataLogDir()"),
+                        assertTrue(after.printAll().contains("txnLog.getDataLogDir().listFiles()"),
                                 after.printAll()))));
+    }
+
+    @Test
+    void realApacheDorisGetDataDirLookalikeIsUntouched() {
+        // apache/doris @ 8a1bf788e290dc5832c4bd432a34d0e8b4c42906, Apache-2.0.
+        // StorageMediaMigrationTask owns an unrelated business accessor with the same method name.
+        rewriteRun(spec -> spec.recipe(recipe()).parser(legacyParser()),
+                java("""
+                        /*
+                         * Licensed to the Apache Software Foundation (ASF) under one
+                         * or more contributor license agreements.
+                         */
+                        package org.apache.doris.task;
+                        class StorageMediaMigrationTask {
+                            private String dataDir;
+                            public String getDataDir() {
+                                return dataDir;
+                            }
+                            public void setDataDir(String dataDir) {
+                                this.dataDir = dataDir;
+                            }
+                        }
+                        """));
     }
 
     @Test

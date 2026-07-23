@@ -30,6 +30,9 @@ the evidence still required.
 
 The current high-priority task is an allow-list, not a semver range. The catalog also retains two
 vendor-suffixed workbook values that are outside this task's approved source set.
+The seven exact priority inputs are `{3.4.14, 3.6.0, 3.7.1, 3.8.3, 3.8.4, 3.9.3, 3.9.4}`;
+the first five are upgrade inputs, while the two `3.9.x` values are explicitly conflicts rather
+than permission to downgrade.
 
 | Workbook version | Target | Action | Reason |
 | --- | --- | --- | --- |
@@ -263,22 +266,47 @@ Validate the resolved graph against the organization's security targets, then sm
 
 ## Official OpenRewrite capability reuse audit
 
-The module is compiled against OpenRewrite Core `8.87.5`, pinned by upstream tag commit
-[`b3008cc4a1f0c43f562da16e5933a2a56d9bc568`](https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568).
-Runtime composition tests inspect the activated recipe tree, not merely YAML text.
+The audit pins the actual runtime JAR, manifest commit and SHA-256 rather than trusting a Maven
+version string alone. This matters here: the freshly downloaded `rewrite-java:8.87.5` JAR identifies
+itself in its manifest as `8.88.0-SNAPSHOT` at commit `91e23c...`; the coordinate and exact binary
+hash are therefore both asserted by tests instead of hiding that upstream publishing anomaly.
+
+| Audited artifact | Immutable runtime evidence | Scope |
+| --- | --- | --- |
+| `org.openrewrite:rewrite-java:8.87.5` | manifest [`91e23c2858176877428ddc03e146d2bb023217a8`](https://github.com/openrewrite/rewrite/tree/91e23c2858176877428ddc03e146d2bb023217a8); SHA-256 `a378253fe0c0865ab39d1743e468fe3d2557d7760e0a6897de294ca18ea90043` | Provides the two Java leaves used at runtime. |
+| `org.openrewrite:rewrite-properties:8.87.5` | manifest [`b3008cc4a1f0c43f562da16e5933a2a56d9bc568`](https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568); SHA-256 `887bc2c9802e8824e47103fcd9cef614161c9cbef1b0b66adfe996c999f3f656` | Provides the exact old/new Properties leaf. |
+| `org.openrewrite:rewrite-yaml:8.87.5` | manifest [`b3008cc4a1f0c43f562da16e5933a2a56d9bc568`](https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568); SHA-256 `ee7b98ffc6360ee2407516de0a7a5dc6595e462a9d2f33e462afe6fe0298354e` | Audited for `ChangeValue`; not composed because it lacks an old-value guard. |
+| `org.openrewrite.recipe:rewrite-java-dependencies:1.59.0` | manifest [`decb8dbb2b5b726f8815efc51c85c34a60268bb0`](https://github.com/openrewrite/rewrite-java-dependencies/tree/decb8dbb2b5b726f8815efc51c85c34a60268bb0); SHA-256 `b5c5ffaa0aea06cbbb8ae110ed138261bce621806c789f14ea0f3fe92cf95550` | Test-scope audit of the rejected generic dependency selector. |
+| `org.openrewrite.recipe:rewrite-apache:2.28.0` | manifest [`b0424eb13da62085a34a7e84a3987ac78227b70b`](https://github.com/openrewrite/rewrite-apache/tree/b0424eb13da62085a34a7e84a3987ac78227b70b); SHA-256 `1841723a57e3dad3a47777a311275f1d18fed8e197c99aa3526503e7c8a06d17` | Test-scope catalog audit only. Its Moderne Source Available code is not copied into this module. |
 
 | Official capability | Decision | Actual use / reason |
 | --- | --- | --- |
-| [`ChangeMethodName`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/ChangeMethodName.java) | REUSED | Type-aware `FileTxnSnapLog.getDataDir()` → `getDataLogDir()`, including method references. |
-| [`ChangeType`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/ChangeType.java) | REUSED | Type-aware `Log4jAuditLogger` → `Slf4jAuditLogger`. |
-| [`ChangePropertyValue`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-properties/src/main/java/org/openrewrite/properties/ChangePropertyValue.java) | REUSED | Exact `zookeeper.audit.impl.class` Properties value. |
-| `UpgradeDependencyVersion` | NOT USED | Cannot encode the exact five-version allow-list, preserve/mark 3.9 conflicts and enforce this module's local-owner isolation in one declarative operation. |
-| generic YAML `ChangeValue` | NOT USED | A path-only value replacement does not guarantee the old scalar is exactly the retired logger FQCN; the custom visitor closes this small safety gap. |
-| ZooKeeper-specific official recipe | UNAVAILABLE | The official catalog/source audit found no ZooKeeper-specific upgrade recipe to compose at this target. |
+| [`ChangeMethodName`](https://github.com/openrewrite/rewrite/blob/91e23c2858176877428ddc03e146d2bb023217a8/rewrite-java/src/main/java/org/openrewrite/java/ChangeMethodName.java) | **DIRECTLY COMPOSED** | Exact method pattern `org.apache.zookeeper.server.persistence.FileTxnSnapLog getDataDir()`, new name `getDataLogDir`, `matchOverrides=false`, `ignoreDefinition=true`. Calls and method references are type-aware. |
+| [`ChangeType`](https://github.com/openrewrite/rewrite/blob/91e23c2858176877428ddc03e146d2bb023217a8/rewrite-java/src/main/java/org/openrewrite/java/ChangeType.java) | **DIRECTLY COMPOSED** | Exact old/new audit logger FQCNs with `ignoreDefinition=true`. |
+| [`ChangePropertyValue`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-properties/src/main/java/org/openrewrite/properties/ChangePropertyValue.java) | **DIRECTLY COMPOSED** | Exact key, exact old/new value, `regex=false`, `relaxedBinding=false`. |
+| [`ChangeValue`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-yaml/src/main/java/org/openrewrite/yaml/ChangeValue.java) | **AUDITED, EXCLUDED** | Its public options are only `keyPath`, replacement `value` and `filePattern`; it has no `oldValue`. A file-level precondition is still unsafe when one YAML document contains the retired FQCN and another contains `${AUDIT_LOGGER}`. The small local visitor changes only the exact old scalar. |
+| [`UpgradeDependencyVersion`](https://github.com/openrewrite/rewrite-java-dependencies/blob/decb8dbb2b5b726f8815efc51c85c34a60268bb0/src/main/java/org/openrewrite/java/dependencies/UpgradeDependencyVersion.java) | **AUDITED, EXCLUDED** | A generic version selector cannot encode the five-value AUTO allow-list, local-owner isolation, exact workbook conflicts, or the `目标版本冲突（禁止降级）` no-downgrade contract. |
+| broad Apache/Java migration aggregates | **AUDITED, EXCLUDED** | They would change unrelated dependencies, language baselines or APIs beyond the ZooKeeper task. Runtime-tree tests reject every `org.openrewrite.apache.*`, `org.openrewrite.java.migrate.*`, generic Maven/Gradle dependency selector and non-local ZooKeeper node. |
+| ZooKeeper-specific official recipe | **UNAVAILABLE** | The fixed `rewrite-apache:2.28.0` source tree and activated catalog contain no path or recipe name containing `zookeeper`; the test first proves the catalog loaded, then proves this absence. |
 
-The current [OpenRewrite recipe catalog](https://docs.openrewrite.org/recipes) has Apache-focused
-recipes for several projects but no ZooKeeper-specific `3.8.6` migration. The module therefore
-uses official generic primitives wherever their preconditions match and custom code only for:
+The activated recommended tree, with internal precondition bellwethers omitted, is fixed as:
+
+```text
+MigrateZooKeeperTo3_8_6
+├── UpgradeSelectedZooKeeperDependency
+├── FindZooKeeper386BuildRisks
+├── MigrateDeterministicZooKeeperApis
+│   ├── org.openrewrite.java.ChangeMethodName
+│   └── org.openrewrite.java.ChangeType
+├── MigrateDeterministicZooKeeperConfiguration
+│   ├── org.openrewrite.properties.ChangePropertyValue
+│   └── MigrateZooKeeperYamlAuditLogger
+├── FindZooKeeper386SourceRisks
+└── FindZooKeeperConfigurationRisks
+```
+
+Every safe official leaf is declared directly in `rewrite.yml`; there is no local Java or
+Properties wrapper to duplicate it. Custom code remains only for:
 
 - strict allow-list dependency ownership;
 - exact YAML old-value protection;
@@ -289,6 +317,12 @@ uses official generic primitives wherever their preconditions match and custom c
 that explicitly supplies `target/`, `build/`, generated, installation, cache or vendor output from
 having those files changed.
 
+The before/after, attributed-type, no-op and cycle structure follows the fixed OpenRewrite Core
+tests for [`ChangeMethodName`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java-test/src/test/java/org/openrewrite/java/ChangeMethodNameTest.java),
+[`ChangeType`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java-test/src/test/java/org/openrewrite/java/ChangeTypeTest.java),
+[`ChangePropertyValue`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-properties/src/test/java/org/openrewrite/properties/ChangePropertyValueTest.java)
+and [`ChangeValue`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-yaml/src/test/java/org/openrewrite/yaml/ChangeValueTest.java).
+
 ## Real-repository fixtures
 
 Tests use small license-preserving fragments from immutable commits. They are behavioral fixtures,
@@ -296,25 +330,27 @@ not copied current-default-branch examples.
 
 | Repository and fixed source | Why it is included | Expected result |
 | --- | --- | --- |
-| [Apache ZooKeeper ZOOKEEPER-4730](https://github.com/apache/zookeeper/commit/b8eb6a301beceae92a60e8be1a8d716a1109c82f) | Real `FileTxnSnapLog.getDataDir()` admin use. | Official method recipe changes it to `getDataLogDir()`. |
+| [Apache ZooKeeper ZOOKEEPER-4730](https://github.com/apache/zookeeper/commit/b8eb6a301beceae92a60e8be1a8d716a1109c82f) | Real `PurgeTxnLog` transaction-log call to `FileTxnSnapLog.getDataDir()`. | Official method leaf changes only the attributed call to `getDataLogDir()`. |
 | [Apache ZooKeeper ZOOKEEPER-4427](https://github.com/apache/zookeeper/commit/85551f9be5b054fa4aee0636597b12bda2ecb2e8) | Real audit implementation transition. | Official type and exact configuration recipes encode the rename. |
 | [Apache HBase `HQuorumPeer` at `872616e4...`](https://github.com/apache/hbase/blob/872616e4b45bf2994a63092b272987187bf3e161/hbase-zookeeper/src/main/java/org/apache/hadoop/hbase/zookeeper/HQuorumPeer.java) | Embedded quorum configuration and server lifecycle. | Quorum/reconfiguration and server-internal markers. |
 | [Apache NiFi `ZooKeeperStateServer` at `c7c745e8...`](https://github.com/apache/nifi/blob/c7c745e8c8dcc7518b9d03720c85879cf29281be/nifi-framework-bundle/nifi-framework-extensions/nifi-framework-zookeeper-bundle/nifi-framework-zookeeper-state-provider/src/main/java/org/apache/nifi/controller/state/providers/zookeeper/server/ZooKeeperStateServer.java) | Embedded server, `FileTxnSnapLog`, connection factory and TLS utility. | Persistence, server-internal and TLS markers. |
 | [Apache Pinot `ZkStarter` at `86535a9b...`](https://github.com/apache/pinot/blob/86535a9b6b3ec5e959bff9fb2d8cc14f59fc68aa/pinot-common/src/main/java/org/apache/pinot/common/utils/ZkStarter.java) | Extends `ZooKeeperServerMain` to expose protected lifecycle. | Server-internal marker; no speculative rewrite. |
+| [Apache Doris `StorageMediaMigrationTask` at `8a1bf788...`](https://github.com/apache/doris/blob/8a1bf788e290dc5832c4bd432a34d0e8b4c42906/fe/fe-core/src/main/java/org/apache/doris/task/StorageMediaMigrationTask.java) | Real unrelated business `getDataDir()` accessor. | Negative fixture remains byte-for-byte unchanged because it is not owned by `FileTxnSnapLog`. |
 
 All listed repositories use Apache-2.0 licensing. Fixtures retain an ASF license header and include
 only the minimum code needed to prove recipe behavior.
 
 ## Test and acceptance matrix
 
-The module currently contains **169 automated test invocations**:
+The module currently contains **175 automated test invocations**:
 
 - 74 strict dependency tests;
 - 32 build-risk/no-downgrade tests;
-- 9 official deterministic Java API tests;
-- 27 deterministic configuration and structured-risk tests;
+- 10 official deterministic Java API tests;
+- 28 deterministic configuration and structured-risk tests;
 - 17 type-attributed source-risk and real-repository tests;
-- 10 recommended-composition/runtime-tree tests.
+- 10 recommended-composition/runtime-tree tests;
+- 4 pinned official artifact/catalog/activated-tree audit tests.
 
 Coverage includes:
 
@@ -325,11 +361,14 @@ Coverage includes:
 - root/profile Maven property ownership and ambiguous/shared-property rejection;
 - dependency management, plugin scope, variants, lookalikes and nested Gradle DSLs;
 - generated/cache/install path exclusion;
-- official recipe classes in the runtime activated tree;
+- exact official recipe classes and options in the runtime activated tree;
+- fixed official JAR filename, manifest commit and SHA-256;
+- absence of ZooKeeper recipes in the loaded fixed Apache catalog;
+- rejection of Apache/Java aggregates and Maven/Gradle/dependency selectors;
 - attributed calls, method references, type changes and lookalike rejection;
-- exact Properties and dotted/nested YAML values;
+- exact Properties and dotted/nested YAML values, including mixed-document placeholder preservation;
 - client, watch, ACL, transaction, reconfiguration, persistence, Jute, TLS/SASL and audit markers;
-- real Apache ZooKeeper, HBase, NiFi and Pinot fragments;
+- real Apache ZooKeeper, HBase, NiFi and Pinot positive fragments plus an Apache Doris negative fragment;
 - multi-recipe ordering and two-cycle idempotency.
 
 Run the module gate independently:
