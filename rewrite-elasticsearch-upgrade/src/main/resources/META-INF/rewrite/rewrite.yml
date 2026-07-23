@@ -1,0 +1,110 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.elasticsearch
+packageName: com.huawei.clouds.openrewrite.elasticsearch
+description: >-
+  Identity-safe Testcontainers Elasticsearch migration recipes. The target
+  1.21.4 belongs to org.testcontainers:elasticsearch, not Elasticsearch Server.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.elasticsearch.UpgradeTestcontainersElasticsearchTo1_21_4
+displayName: Upgrade Testcontainers Elasticsearch 1.17.6 to 1.21.4
+description: >-
+  Upgrade only exact, locally owned org.testcontainers:elasticsearch 1.17.6
+  declarations. org.elasticsearch:elasticsearch and all other versions remain unchanged.
+tags:
+  - testcontainers
+  - elasticsearch
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.elasticsearch.MarkSelectedElasticsearchProjects
+  - com.huawei.clouds.openrewrite.elasticsearch.UpgradeSelectedTestcontainersElasticsearchDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.elasticsearch.MakeSelectedElasticsearchContainerImageExplicit
+displayName: Make the ElasticsearchContainer default image explicit in selected projects
+description: >-
+  Execute the fixed official OpenRewrite leaf only in authored Java files
+  whose nearest pre-upgrade build root exclusively owns the exact source coordinate.
+preconditions:
+  - com.huawei.clouds.openrewrite.elasticsearch.FindSelectedElasticsearchProjectFiles
+  - com.huawei.clouds.openrewrite.elasticsearch.FindAuthoredElasticsearchContainerSources
+recipeList:
+  - org.openrewrite.java.testing.testcontainers.ExplicitContainerImage:
+      containerClass: org.testcontainers.elasticsearch.ElasticsearchContainer
+      image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+      parseImage: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.elasticsearch.MakeElasticsearchContainerImageExplicit
+displayName: Make the ElasticsearchContainer default image explicit
+description: >-
+  Reuse the fixed official OpenRewrite leaf recipe to replace the deprecated
+  no-argument ElasticsearchContainer constructor with the same 7.9.2 image
+  used as the default by both Testcontainers 1.17.6 and 1.21.4.
+tags:
+  - testcontainers
+  - elasticsearch
+  - official-openrewrite
+recipeList:
+  - com.huawei.clouds.openrewrite.elasticsearch.MarkSelectedElasticsearchProjects
+  - com.huawei.clouds.openrewrite.elasticsearch.MakeSelectedElasticsearchContainerImageExplicit
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.elasticsearch.FindElasticsearch1_21_4BuildRisks
+displayName: Find Testcontainers Elasticsearch 1.21.4 build risks
+description: >-
+  Mark Elasticsearch Server identity conflicts, no-downgrade conflicts,
+  unsupported source versions, unresolved version owners and artifact variants.
+tags:
+  - testcontainers
+  - elasticsearch
+  - build
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.elasticsearch.FindElasticsearchBuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.elasticsearch.FindSelectedElasticsearchContainer1_21_4SourceRisks
+displayName: Find Testcontainers Elasticsearch 1.21.4 source risks in selected projects
+description: >-
+  Mark runtime behavior boundaries only in files whose nearest pre-upgrade
+  build root exclusively owns org.testcontainers:elasticsearch:1.17.6.
+preconditions:
+  - com.huawei.clouds.openrewrite.elasticsearch.FindSelectedElasticsearchProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.elasticsearch.FindElasticsearchContainerSourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.elasticsearch.FindElasticsearchContainer1_21_4SourceRisks
+displayName: Find Testcontainers Elasticsearch 1.21.4 source risks
+description: >-
+  Mark network alias, disk threshold, OSS image and lazy CA certificate
+  behavior boundaries at the affected Java source locations.
+tags:
+  - testcontainers
+  - elasticsearch
+  - java
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.elasticsearch.MarkSelectedElasticsearchProjects
+  - com.huawei.clouds.openrewrite.elasticsearch.FindSelectedElasticsearchContainer1_21_4SourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.elasticsearch.MigrateElasticsearchTo1_21_4
+displayName: Migrate Testcontainers Elasticsearch 1.17.6 to 1.21.4
+description: >-
+  Make the default container image explicit with one audited official leaf,
+  strictly upgrade only org.testcontainers:elasticsearch 1.17.6, and mark
+  every remaining coordinate identity, ownership and runtime behavior decision.
+tags:
+  - testcontainers
+  - elasticsearch
+  - java
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.elasticsearch.MarkSelectedElasticsearchProjects
+  - com.huawei.clouds.openrewrite.elasticsearch.MakeSelectedElasticsearchContainerImageExplicit
+  - com.huawei.clouds.openrewrite.elasticsearch.UpgradeSelectedTestcontainersElasticsearchDependency
+  - com.huawei.clouds.openrewrite.elasticsearch.FindElasticsearch1_21_4BuildRisks
+  - com.huawei.clouds.openrewrite.elasticsearch.FindSelectedElasticsearchContainer1_21_4SourceRisks

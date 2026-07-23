@@ -13,11 +13,18 @@
     ],
     "canonicalIdentity": {
       "value": "elasticsearch",
-      "status": "unverified",
-      "evidence": []
+      "status": "verified",
+      "evidence": [
+        "version-split:1.17.6/1.21.4=org.testcontainers:elasticsearch;7.x=org.elasticsearch:elasticsearch",
+        "https://github.com/testcontainers/testcontainers-java/commit/4a2ca136cf10e257336fd5621b20c444ed430df2",
+        "https://github.com/testcontainers/testcontainers-java/commit/d509c81e3395215fad43971e968e638afd65f463",
+        "https://github.com/elastic/elasticsearch/commit/747e1cc71def077253878a59143c1f785afa92b9"
+      ]
     },
     "targetVersion": "1.21.4",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-elasticsearch-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -38,7 +45,7 @@
           "relation": "conflict",
           "action": "mark",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。"
+          "reason": "7.10.2 属于 org.elasticsearch:elasticsearch Server 发布线，而目标 1.21.4 属于 org.testcontainers:elasticsearch；保持原文并标记组件身份冲突，禁止跨组件改写。"
         }
       },
       {
@@ -57,7 +64,7 @@
           "relation": "conflict",
           "action": "mark",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。"
+          "reason": "7.10.2-hw-ei-315005 属于 Elasticsearch Server 厂商发布线，而目标 1.21.4 属于 Testcontainers 模块；保持原文并标记组件身份冲突。"
         }
       },
       {
@@ -76,7 +83,7 @@
           "relation": "conflict",
           "action": "mark",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。"
+          "reason": "7.17.9 属于 org.elasticsearch:elasticsearch Server 发布线，而目标 1.21.4 属于 org.testcontainers:elasticsearch；保持原文并标记组件身份冲突，禁止跨组件改写。"
         }
       },
       {
@@ -95,7 +102,7 @@
           "relation": "conflict",
           "action": "mark",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。"
+          "reason": "7.9.3 属于 org.elasticsearch:elasticsearch Server 发布线，而目标 1.21.4 属于 org.testcontainers:elasticsearch；保持原文并标记组件身份冲突，禁止跨组件改写。"
         }
       },
       {
@@ -112,21 +119,49 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "1.17.6 与目标 1.21.4 均已验证为 org.testcontainers:elasticsearch；允许在升级前最近构建根、单一身份和精确所有权守卫下 AUTO。"
         }
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "verified",
+      "sourceVersions": [
+        "1.17.6"
+      ],
+      "targetVersion": "1.21.4",
+      "relation": "user-supplied-upgrade",
+      "action": "auto",
+      "statement": "用户高优先级项中的 1.17.6 与目标 1.21.4 已固定为 org.testcontainers:elasticsearch；只允许该精确身份和源版本进入 AUTO。"
+    },
+    {
+      "id": "U-002",
+      "status": "verified",
+      "sourceVersions": [
+        "7.10.2",
+        "7.10.2-hw-ei-315005",
+        "7.17.9",
+        "7.9.3"
+      ],
+      "targetVersion": "1.21.4",
+      "relation": "identity-conflict",
+      "action": "mark",
+      "statement": "这些 7.x 行属于 Elasticsearch Server 发布线，与 Testcontainers Elasticsearch 1.21.4 不是同一组件；全部保持原文并标记组件身份冲突，禁止跨组件转换或降级。"
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "identityConflictMarker": "组件身份冲突（禁止跨组件改写）",
+    "identityBoundaryMarker": "组件身份边界",
+    "autoSourceWhitelist": [
       "1.17.6"
     ],
+    "upgradeCandidatesPendingEvidence": [],
     "noopVersions": [],
     "conflictVersions": [
       "7.10.2",
@@ -139,96 +174,116 @@
   "evidence": [
     {
       "id": "E-001",
-      "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "claim": "bare elasticsearch 的版本分裂身份与源/目标制品身份",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/testcontainers/testcontainers-java/commit/4a2ca136cf10e257336fd5621b20c444ed430df2",
+        "https://github.com/testcontainers/testcontainers-java/commit/d509c81e3395215fad43971e968e638afd65f463",
+        "https://github.com/elastic/elasticsearch/commit/c4138e51121ef06a6404866cddc601906fe5c868",
+        "https://github.com/elastic/elasticsearch/commit/747e1cc71def077253878a59143c1f785afa92b9",
+        "https://github.com/elastic/elasticsearch/commit/ef48222227ee6b9e70e502f0f0daa52435ee634d",
+        "maven-central:org.testcontainers:elasticsearch:1.17.6:jar-sha256:82cd1d4474ed671ad2c720f0504ff21b390d192f7e1fbacaa394dd12fc65dd2f",
+        "maven-central:org.testcontainers:elasticsearch:1.21.4:jar-sha256:cfe21e8ae098bc90e2c9eb5aedee41754918e1ea5e1f997017f31e46c9faba90"
+      ],
+      "realFixtures": [
+        "testcontainers/testcontainers-java@4a2ca136cf10e257336fd5621b20c444ed430df2"
+      ]
     },
     {
       "id": "E-002",
-      "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
+      "claim": "Testcontainers Elasticsearch 1.17.6 到 1.21.4 的构造、network alias、磁盘水位、OSS 镜像与 CA/SSL 行为变化",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/testcontainers/testcontainers-java/blob/4a2ca136cf10e257336fd5621b20c444ed430df2/modules/elasticsearch/src/main/java/org/testcontainers/elasticsearch/ElasticsearchContainer.java",
+        "https://github.com/testcontainers/testcontainers-java/blob/d509c81e3395215fad43971e968e638afd65f463/modules/elasticsearch/src/main/java/org/testcontainers/elasticsearch/ElasticsearchContainer.java",
+        "maven-central:org.testcontainers:elasticsearch:1.17.6:pom-sha256:377adf1fe98c498bc610949137abc629f5c9903f4185203f4ea41331113f7d8e",
+        "maven-central:org.testcontainers:elasticsearch:1.21.4:pom-sha256:62cee215feb60c1c2a9b439eb133e33f17e8933bb2e7f2cbae3b162428a5f5ca"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-003",
-      "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
-      "officialSources": [],
+      "claim": "真实工程用法、身份负例、最近构建根隔离与幂等性验收",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/testcontainers/testcontainers-java/blob/4a2ca136cf10e257336fd5621b20c444ed430df2/modules/elasticsearch/src/test/java/org/testcontainers/elasticsearch/ElasticsearchContainerTest.java"
+      ],
+      "realFixtures": [
+        "testcontainers/testcontainers-java@4a2ca136cf10e257336fd5621b20c444ed430df2",
+        "elastic/apm-agent-java@08ac41b483e5fa692b025ed7631a137078341803"
+      ]
+    },
+    {
+      "id": "E-004",
+      "claim": "OpenRewrite 官方 ExplicitContainerImage 已检索、复用并通过固定运行时树审计",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite-testing-frameworks/commit/2b5d8526dc226ff4794716133b2d0780eb257530",
+        "maven-central:rewrite-testing-frameworks:3.42.0:jar-sha256:77755fabca4585afcc85fec416792d8f663b0e92d1da95c6b28779e985eebff6"
+      ],
       "realFixtures": []
     }
   ],
   "incompatibilities": [
     {
       "id": "C-001",
-      "edgeRows": [
-        881
-      ],
-      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "edgeRows": [881],
+      "dimension": "组件身份 / 禁止跨坐标改写",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "treatment": "7.10.2 是 Elasticsearch Server，不是 Testcontainers 模块；保持声明原文并在真实 owner 标记组件身份冲突，不得改成 1.21.4。",
+      "recipe": "com.huawei.clouds.openrewrite.elasticsearch.MigrateElasticsearchTo1_21_4",
+      "tests": ["ElasticsearchBuildRisksTest", "ElasticsearchRecommendedRecipeTest", "ElasticsearchSelectedProjectGateTest"]
     },
     {
       "id": "C-002",
-      "edgeRows": [
-        882
-      ],
-      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "edgeRows": [882],
+      "dimension": "组件身份 / 厂商发布线",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "treatment": "厂商后缀 7.10.2-hw-ei-315005 属于 Elasticsearch Server 身份边界；保留原文和厂商语义，只标记组件身份冲突。",
+      "recipe": "com.huawei.clouds.openrewrite.elasticsearch.MigrateElasticsearchTo1_21_4",
+      "tests": ["ElasticsearchBuildRisksTest", "ElasticsearchRecommendedRecipeTest", "ElasticsearchSelectedProjectGateTest"]
     },
     {
       "id": "C-003",
-      "edgeRows": [
-        883
-      ],
-      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "edgeRows": [883],
+      "dimension": "组件身份 / 禁止跨坐标改写",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "treatment": "7.17.9 是 Elasticsearch Server，不是 Testcontainers 模块；保持声明原文并标记组件身份冲突，不得改成或降到 1.21.4。",
+      "recipe": "com.huawei.clouds.openrewrite.elasticsearch.MigrateElasticsearchTo1_21_4",
+      "tests": ["ElasticsearchBuildRisksTest", "ElasticsearchRecommendedRecipeTest", "ElasticsearchSelectedProjectGateTest"]
     },
     {
       "id": "C-004",
-      "edgeRows": [
-        884
-      ],
-      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "edgeRows": [884],
+      "dimension": "组件身份 / 禁止跨坐标改写",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "treatment": "7.9.3 是 Elasticsearch Server，不是 Testcontainers 模块；保持声明原文并在真实 owner 标记组件身份冲突，不得改成 1.21.4。",
+      "recipe": "com.huawei.clouds.openrewrite.elasticsearch.MigrateElasticsearchTo1_21_4",
+      "tests": ["ElasticsearchBuildRisksTest", "ElasticsearchRecommendedRecipeTest", "ElasticsearchSelectedProjectGateTest"]
     },
     {
       "id": "C-005",
-      "edgeRows": [
-        4864
-      ],
-      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "edgeRows": [4864],
+      "dimension": "Testcontainers API / 默认值 / 容器运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto-and-mark",
+      "treatment": "只把最近构建根明确拥有的 org.testcontainers:elasticsearch:1.17.6 升级到 1.21.4；复用官方 ExplicitContainerImage，并精确标记 network alias、磁盘水位、OSS 镜像和 CA/SSL 行为风险。",
+      "recipe": "com.huawei.clouds.openrewrite.elasticsearch.MigrateElasticsearchTo1_21_4",
+      "tests": ["UpgradeTestcontainersElasticsearchDependencyTest", "ElasticsearchOfficialRecipeReuseTest", "ElasticsearchOfficialSourceMigrationTest", "ElasticsearchContainerSourceRisksTest", "ElasticsearchSelectedProjectGateTest", "ElasticsearchRecommendedRecipeTest"]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }

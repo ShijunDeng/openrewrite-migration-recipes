@@ -529,7 +529,7 @@
 | [migration-spec-nodejs-egg-scripts](../catalog/nodejs/egg-scripts/README.md) | `egg-scripts` | `nodejs` (nodejs) | `3.1.0` | 2 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
 | [migration-spec-nodejs-egg-ts-helper](../catalog/nodejs/egg-ts-helper/README.md) | `egg-ts-helper` | `nodejs` (nodejs) | `3.2.0` | 2 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
 | [migration-spec-nodejs-ejs](../catalog/nodejs/ejs/README.md) | `ejs` | `nodejs` (nodejs) | `3.1.10` | 1 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
-| [migration-spec-java-bare-elasticsearch](../catalog/java/bare-elasticsearch/README.md) | `elasticsearch` | `java` (java) | `1.21.4` | 5 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
+| [migration-spec-java-bare-elasticsearch](../catalog/java/bare-elasticsearch/README.md) | `elasticsearch` | `java` (java) | `1.21.4` | 5 | `COMPLETE/VERIFIED/IMPLEMENTED` | `rewrite-elasticsearch-upgrade` |
 | [migration-spec-python-pypi-elasticsearch](../catalog/python/pypi-elasticsearch/README.md) | `elasticsearch` | `python` (python) | `7.17.12` | 5 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
 | [migration-spec-nodejs-element-plus](../catalog/nodejs/element-plus/README.md) | `element-plus` | `nodejs` (nodejs) | `2.14.0` | 7 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
 | [migration-spec-nodejs-element-ui](../catalog/nodejs/element-ui/README.md) | `element-ui` | `nodejs` (nodejs) | `2.15.14` | 7 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |

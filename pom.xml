@@ -175,6 +175,7 @@
     <module>rewrite-spring-security-core-upgrade</module>
     <module>rewrite-spring-retry-upgrade</module>
     <module>rewrite-junrar-upgrade</module>
+    <module>rewrite-elasticsearch-upgrade</module>
   </modules>
 
   <dependencyManagement>

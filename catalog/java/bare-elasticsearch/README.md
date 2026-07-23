@@ -1,9 +1,10 @@
 # elasticsearch 升级规格
 
-> 规格状态：`COMPLETE`；证据状态：`PENDING`；自动化状态：`CATALOG_ONLY`。
-> 本 README 已完成工作簿事实、禁止降级边界、不兼容点分类和后续配方验收契约；
-> 它不声称尚未固定官方证据的具体 API 已得到确认。
-> catalog 本身不包含配方代码；现有候选实现也将在全量规格覆盖完成后逐模块核验和完善。
+> 规格状态：`COMPLETE`；证据状态：`VERIFIED`；自动化状态：`IMPLEMENTED`。
+> 可执行实现位于
+> [`rewrite-elasticsearch-upgrade`](../../../rewrite-elasticsearch-upgrade)。
+> 本项是已验证的“同名版本分裂”：只有 `1.17.6 → 1.21.4` 属于 Testcontainers；
+> 四个 7.x 行属于 Elasticsearch Server，只允许 MARK。
 
 ## 模块身份
 
@@ -13,7 +14,7 @@
 | Maven artifactId | `migration-spec-java-bare-elasticsearch` |
 | groupId | `com.huawei.clouds.openrewrite` |
 | 规范表格标识 | `elasticsearch` |
-| Catalog canonical identity | `elasticsearch`（`UNVERIFIED`，只用于避免目录碰撞） |
+| Catalog canonical identity | `elasticsearch`（`VERIFIED` 的版本分裂 bare name，不代表单一 Maven 坐标） |
 | 归一语言类 | `java` |
 | Excel 原始语言 | `java` |
 | 目标版本 | `1.21.4` |
@@ -22,96 +23,115 @@
 | 分桶 | `B2_Minor单包`, `B6_Multi-major单包` |
 | 难度 | `低`, `高` |
 | 工作簿 SHA-256 | `17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309` |
-| 候选实现模块 | `NONE`（尚无已识别的顶层实现模块） |
+| 实现模块 | `rewrite-elasticsearch-upgrade` |
 
 ## Excel 事实快照
 
-本节逐字记录表格，不把自动分桶、难度或备注提升为官方兼容性结论。厂商后缀、
-截断显示、无法解析值和疑似跨发布线目标均原样保留。
+本节保留五行工作簿事实。版本与固定上游制品比对后，只有 `1.17.6` 与目标
+`1.21.4` 同属 `org.testcontainers:elasticsearch`；7.x 行属于
+`org.elasticsearch:elasticsearch` Server 发布线。
 
-| Excel 行 | 序号 | 软件名称 | 原始语言 | 原始版本 | 目标版本 | 微服务数 | 分桶 | 难度 | 保守方向/动作 | 原始备注 |
+| Excel 行 | 序号 | 软件名称 | 原始语言 | 原始版本 | 目标版本 | 微服务数 | 分桶 | 难度 | 身份方向/动作 | 原始备注 |
 | ---: | ---: | --- | --- | --- | --- | ---: | --- | --- | --- | --- |
-| 881 | 880 | `elasticsearch` | java | `7.10.2` | `1.21.4` | 0 | B6_Multi-major单包 | 高 | conflict/mark | 跨2+个大版本，breaking change概率极高，需API迁移 |
-| 882 | 881 | `elasticsearch` | java | `7.10.2-hw-ei-315005` | `1.21.4` | 0 | B6_Multi-major单包 | 高 | conflict/mark | 跨2+个大版本，breaking change概率极高，需API迁移 |
-| 883 | 882 | `elasticsearch` | java | `7.17.9` | `1.21.4` | 0 | B6_Multi-major单包 | 高 | conflict/mark | 跨2+个大版本，breaking change概率极高，需API迁移 |
-| 884 | 883 | `elasticsearch` | java | `7.9.3` | `1.21.4` | 0 | B6_Multi-major单包 | 高 | conflict/mark | 跨2+个大版本，breaking change概率极高，需API迁移 |
-| 4864 | 4863 | `elasticsearch` | java | `1.17.6` | `1.21.4` | 0 | B2_Minor单包 | 低 | upgrade-candidate/mark | 同大版本内minor升级，通常向后兼容 |
+| 881 | 880 | `elasticsearch` | java | `7.10.2` | `1.21.4` | 0 | B6_Multi-major单包 | 高 | identity-conflict/mark | 跨2+个大版本，breaking change概率极高，需API迁移 |
+| 882 | 881 | `elasticsearch` | java | `7.10.2-hw-ei-315005` | `1.21.4` | 0 | B6_Multi-major单包 | 高 | identity-conflict/mark | 跨2+个大版本，breaking change概率极高，需API迁移 |
+| 883 | 882 | `elasticsearch` | java | `7.17.9` | `1.21.4` | 0 | B6_Multi-major单包 | 高 | identity-conflict/mark | 跨2+个大版本，breaking change概率极高，需API迁移 |
+| 884 | 883 | `elasticsearch` | java | `7.9.3` | `1.21.4` | 0 | B6_Multi-major单包 | 高 | identity-conflict/mark | 跨2+个大版本，breaking change概率极高，需API迁移 |
+| 4864 | 4863 | `elasticsearch` | java | `1.17.6` | `1.21.4` | 0 | B2_Minor单包 | 低 | upgrade/auto | 同大版本内minor升级，通常向后兼容 |
 
 ## 升级方向与禁止降级
 
-- 表格原始源版本记录（不是 AUTO 白名单）：`1.17.6`, `7.10.2`, `7.10.2-hw-ei-315005`, `7.17.9`, `7.9.3`。
-- 升级候选边：`1.17.6`；在 E-001～E-003 完成前仍保持 `MARK`。
-- 相同版本 NOOP：`NONE`。
-- 潜在降级冲突：`7.10.2`, `7.10.2-hw-ei-315005`, `7.17.9`, `7.9.3`。
-- 截断、聚合或无法可靠比较：`NONE`。
-- 任何高于目标的版本、更新发布线或无法可靠比较的厂商版本必须保持字节级不变，并在
-  真实依赖 owner 上标记 `目标版本冲突（禁止降级）`；本项目不存在回退路径。
-- 表外低版本、动态版本、范围、变量、BOM/platform、parent、catalog、workspace、
-  constraints 和锁文件不能被猜测式改写；应定位并迁移真正的版本 owner。
-- 若同一模块列出多个坐标或别名，配方必须分别证明身份；在官方 relocation 证据固定前，
-  不得因为 artifact 名相同而跨 group、生态或发行渠道改坐标。
-
+- 唯一 AUTO 白名单是
+  `org.testcontainers:elasticsearch:1.17.6 → 1.21.4`。推荐配方先扫描最近
+  Maven/Gradle 构建根，只有单一、无冲突的精确 owner 才获得升级前 marker。
+- `org.testcontainers:elasticsearch:1.21.4`、其他白名单外低版本、动态/范围、
+  parent/BOM/platform/catalog、共享或遮蔽属性、classifier/variant 和生成目录均 NOOP。
+- 未来 Testcontainers 版本保持原文，并在真实版本节点标记
+  `目标版本冲突（禁止降级）`。
+- `7.9.3`、`7.10.2`、`7.10.2-hw-ei-315005`、`7.17.9` 属于 Elasticsearch
+  Server 身份，保持原文；前两个精确标记 `组件身份冲突（禁止跨组件改写）`，
+  其余 Server 版本标记 `组件身份边界`。这不是 7.x 到 1.x 的迁移路线，也不存在
+  坐标转换或版本回退。
+- 同一根混有 Server 身份、目标/未来/表外 Testcontainers 版本或多个 owner 时，
+  连其中的 `1.17.6` 也不会 AUTO，源码配方和风险搜索同样被阻断。
 
 ## 不兼容点规格
 
-| ID | 维度 | 适用迁移边 | Excel 提示 | 官方确认事实 | 处置契约 |
-| --- | --- | --- | --- | --- | --- |
-| C-001 | 弃用 / 默认值 / 配置 / 运行时 | Excel #4864 1.17.6 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。] → `1.21.4` | 同大版本内minor升级，通常向后兼容 | `UNVERIFIED` | 同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。 |
-| C-002 | 多主版本 API / 数据 / 协议 / 工具链 | Excel #881 7.10.2 [conflict/mark: 保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。]<br>Excel #882 7.10.2-hw-ei-315005 [conflict/mark: 保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。]<br>Excel #883 7.17.9 [conflict/mark: 保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。]<br>Excel #884 7.9.3 [conflict/mark: 保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。] → `1.21.4` | 跨2+个大版本，breaking change概率极高，需API迁移 | `UNVERIFIED` | 按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。 |
-
-`UNVERIFIED` 表示 Excel 提示已进入规格，但尚未用不可变的官方 tag/commit、发布说明和
-制品元数据完成验证。此时允许 README 和精确 MARK 设计，不允许据此发明 API AUTO。
+| ID | 维度 | 已验证不兼容点 | OpenRewrite 处置 |
+| --- | --- | --- | --- |
+| C-001 | 组件身份 | bare name 同时承载 Testcontainers 模块 1.x 与 Elasticsearch Server 7.x，目标 `1.21.4` 只属于前者 | 精确识别 Maven 坐标；四个 Server 行仅 MARK，绝不换 groupId 或降级 |
+| C-002 | 容器构造 | `ElasticsearchContainer()` 依赖隐式默认镜像；目标版本支持显式镜像构造 | 复用官方 `ExplicitContainerImage`，固定同一默认镜像 `7.9.2`，不暗中升级镜像 |
+| C-003 | network alias | 1.17.6 自动产生随机 `elasticsearch-*` alias，1.21.4 已删除该行为 | 在容器构造、network/host 查询节点 MARK，要求显式 DNS/alias 集成测试 |
+| C-004 | 磁盘水位 | 1.21.4 新增 `cluster.routing.allocation.disk.threshold_enabled=false` 默认环境变量 | 在构造和对应 `withEnv` 精确 MARK，验证覆盖顺序与低磁盘测试语义 |
+| C-005 | 镜像兼容 | 7.10.2 后 OSS 镜像不再受支持；目标版本扩大部分 compatible image name | 精确标记 `elasticsearch-oss` 字符串，不擅自改变发行版、许可证、registry 或 tag |
+| C-006 | CA / SSL | CA 从启动回调缓存改为调用时惰性复制，证书缺失的异常链和调用时机变化 | 标记 `caCertAsBytes`、`createSslContextFromCa`、`withCertPath`，由容器生命周期测试决策 |
+| C-007 | 所有权 / 构建根 | 混合身份、共享属性、外部 owner、variant 和嵌套构建根无法证明安全 AUTO | 升级前 scanner 统一门控依赖、官方源码 leaf 与风险 visitor |
 
 ### `java` 生态最低核查项
 
-- 确认规范 Maven 坐标、relocation 关系，以及 parent/BOM/property/platform 的真实版本 owner。
-- 覆盖 Maven 与 Gradle；核查 JDK/字节码基线、包名和公开 API、反射、注解处理与 ServiceLoader。
-- 核查 JPMS/OSGi、shade/native-image、序列化/缓存/数据库数据，以及配置文件和框架联动。
+- 明确 `org.testcontainers:elasticsearch` 与 `org.elasticsearch:elasticsearch`，
+  统一真实版本 owner；两个 Testcontainers JAR 均为 Java 8 class baseline。
+- 覆盖容器启动、固定 network alias、跨容器 DNS、并行隔离、磁盘水位、OSS/默认/自定义
+  镜像、registry 认证和 CA/SSL 生命周期。
+- 不把测试容器依赖升级等同于 Elasticsearch Server 集群、索引、协议或数据升级。
 
 ## 证据台账
 
-| Claim ID | 待证明事项 | 状态 | 固定官方证据 | 形成 AUTO 的条件 |
-| --- | --- | --- | --- | --- |
-| E-001 | 包/坐标身份、源版本和目标制品身份 | `UNVERIFIED` | 后续固定官网、registry/repository 元数据与 SHA | 身份无歧义且目标确为升级 |
-| E-002 | 每条迁移边的 API、配置和默认行为变化 | `UNVERIFIED` | 后续固定 release notes、迁移指南、tag/commit diff | 存在一一对应且语义等价的变换 |
-| E-003 | 真实工程中的用法和负例 | `UNVERIFIED` | 后续固定真实仓库 commit、路径、许可证与裁剪说明 | 正例、负例和上下文边界均可复现 |
+| Claim ID | 状态 | 固定证据 |
+| --- | --- | --- |
+| E-001 版本分裂身份 | `VERIFIED` | Testcontainers `1.17.6` [`4a2ca136`](https://github.com/testcontainers/testcontainers-java/commit/4a2ca136cf10e257336fd5621b20c444ed430df2)、`1.21.4` [`d509c81e`](https://github.com/testcontainers/testcontainers-java/commit/d509c81e3395215fad43971e968e638afd65f463)；Elasticsearch Server `v7.9.3` [`c4138e51`](https://github.com/elastic/elasticsearch/commit/c4138e51121ef06a6404866cddc601906fe5c868)、`v7.10.2` [`747e1cc7`](https://github.com/elastic/elasticsearch/commit/747e1cc71def077253878a59143c1f785afa92b9)、`v7.17.9` [`ef482222`](https://github.com/elastic/elasticsearch/commit/ef48222227ee6b9e70e502f0f0daa52435ee634d) |
+| E-002 目标行为 | `VERIFIED` | 两个固定 Testcontainers commit 下的 `ElasticsearchContainer` 实现；源/目标 JAR SHA-256 `82cd1d44...dd2f` / `cfe21e8a...ba90`，POM SHA-256 `377adf1f...7d8e` / `62cee215...f5ca` |
+| E-003 真实用法 | `VERIFIED` | `testcontainers/testcontainers-java@4a2ca136` 与 `elastic/apm-agent-java@08ac41b4` 固定路径 fixture |
+| E-004 官方能力复用 | `VERIFIED` | `rewrite-testing-frameworks:3.42.0` commit [`2b5d8526`](https://github.com/openrewrite/rewrite-testing-frameworks/commit/2b5d8526dc226ff4794716133b2d0780eb257530)，JAR SHA-256 `77755fab...ebff6` |
 
-真实仓库只能证明“用法存在”，不能替代官方兼容性证据。推断必须显式标为
-`INFERENCE`；只有固定上游证据支持的事实才能改为 `VERIFIED`。
+bare name 无法在单个 `canonicalIdentity.value` 中表达按版本拆分的两个 Maven 坐标，
+因此保留工作簿原值 `elasticsearch`；`canonicalIdentity.evidence`、方向策略和实现
+共同固定上述分裂，不能把它解释为任意跨坐标 relocation。
+
+## 官方能力复用审计
+
+- 推荐配方直接执行官方
+  `org.openrewrite.java.testing.testcontainers.ExplicitContainerImage`，参数固定为
+  `ElasticsearchContainer`、镜像 `docker.elastic.co/elasticsearch/elasticsearch:7.9.2`
+  和 `parseImage: false`。
+- 运行时树测试固定官方 JAR 版本、commit、SHA 和参数，并证明
+  `ExplicitContainerImages`、`Testcontainers2Migration` 等宽聚合未被激活。
+- 官方通用依赖 selector 无法表达版本分裂身份、升级前最近构建根、混装冲突和属性
+  owner；只有这部分缺口使用最小自定义 scanner/visitor。
 
 ## 后续 OpenRewrite 配方契约
 
 ### AUTO
 
-- 当前阶段 AUTO 白名单为空；只有 E-001～E-003 变为 `VERIFIED` 后，升级候选边才可逐项进入；
-- 只处理经验证的原子源版本、明确坐标和当前文件拥有的标准依赖声明；
-- 更高版本永不降级，表外版本、变体和外部 owner 永不猜测；
-- 只实现有官方源码证明、上下文无歧义、行为等价且可幂等运行的 AST/配置修改；
-- 保留 scope、classifier/type、optional、exclusions、workspace/profile 和相邻内容。
+- 只把 marker 证明的 `org.testcontainers:elasticsearch:1.17.6` 本地标准 owner 改为
+  `1.21.4`，并在依赖改写前运行官方显式镜像 leaf。
+- 保留 scope、profile、dependencyManagement、optional、exclusions 与相邻结构；
+  目标/表外/未来、Server、混装、外部 owner 和 variant 均不进入 AUTO。
 
 ### MARK
 
-- 在具体依赖、属性、BOM/platform、调用、类型、配置键或资源节点标记未决事项；
-- marker 必须说明业务 owner 需要作出的决定、所需证据和验收方法；
-- 不用文件级泛化告警代替精确定位，也不把 README 文字伪装成已执行迁移。
+- `7.9.3`/`7.10.2` 标记 `组件身份冲突（禁止跨组件改写）`，其他 Server 版本标记
+  `组件身份边界`；未来 Testcontainers 版本标记 `目标版本冲突（禁止降级）`。
+- 在具体 owner、variant、容器构造、network、磁盘环境变量、镜像与 CA/SSL 调用处
+  标记不能静态证明等价的决策。
 
 ### MANUAL
 
-- 运行时流量、安全策略、数据和 wire format、集群滚动策略、原生 ABI、性能容量、
-  外部服务兼容性与回滚均由业务证据决定；
-- 无法通过静态上下文证明安全的语义变换保持原样。
+- Elasticsearch Server 集群/索引/数据/协议升级完全不属于本配方。
+- alias/DNS、磁盘保护、镜像发行版与许可证、registry、证书生命周期、并行测试隔离、
+  容器运行时与回滚由集成测试和业务证据决定。
 
 ## 测试与真实用例验收
 
-- 每个经验证的升级候选源版本才要求 AUTO 正例；目标/相同行为 NOOP；
-- 冲突、未知、截断和聚合版本保持不变并 MARK；所有更高版本和更高发布线验证禁止降级；
-- 覆盖对应生态的直接声明、共享 owner、BOM/platform/workspace、动态值、范围、锁文件和变体；
-- 覆盖同名业务符号、相似坐标、注释/字符串、生成目录、缓存和安装产物负例；
-- 每项 AUTO 有 before/after、类型或结构归因、两轮幂等和 aggregate 顺序测试；
-- 固定真实仓库 commit 与文件路径，记录裁剪内容；真实夹具不能取代官方差异证据；
-- 最终执行编译、单元/集成、行为、安全、性能、数据兼容、部署和回滚门禁。
+- 7 个测试类、116 个 test invocations，失败/错误/跳过均为 0。
+- 覆盖 Maven literal/property/profile/dependencyManagement、Groovy/Kotlin、
+  shared/shadowed/external owner、catalog/platform/variant、应用脚本与嵌套 DSL。
+- 覆盖目标/表外/未来、四个 Server 事实、混合身份、无构建根/嵌套根源码泄漏、
+  任意精度禁止降级和所有五行工作簿决策。
+- 覆盖官方运行时树与参数、无参/显式/同名构造、network/disk/OSS/CA 风险、两份固定
+  真实仓库 fixture、生成目录以及两周期幂等。
 
 ## 当前阶段结论
 
-本模块的不兼容点文档规格已经建立；官方证据、真实仓库夹具和可执行配方属于下一阶段。
-在 E-001～E-003 完成前，除严格版本所有权和禁止降级守卫外，不批准猜测式 AUTO。
+该模块规格、分裂身份证据和可执行实现均已完成。唯一 AUTO 是 Testcontainers
+`1.17.6 → 1.21.4`；Elasticsearch Server 7.x 永远不会被转换或降级。

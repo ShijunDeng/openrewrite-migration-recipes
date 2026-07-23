@@ -93,6 +93,7 @@ README、机器可读 manifest 和禁降级契约，不进入默认 Maven reacto
 | [`rewrite-log4j-1-2-api-upgrade`](rewrite-log4j-1-2-api-upgrade) | `com.huawei.clouds.openrewrite.log4j12api.MigrateLog4j12ApiTo2_25_5` | 将六个精确 Log4j 1.2 API bridge 版本升级到 2.25.5，默认不擅自选择日志后端；直接拥有 Log4j Core 后可用 opt-in 组合官方源码叶子，并定位配置、旧 API、classpath、bridge 环和依赖族风险 |
 | [`rewrite-spring-retry-upgrade`](rewrite-spring-retry-upgrade) | `com.huawei.clouds.openrewrite.springretry.MigrateSpringRetryTo2_0_13` | 将当前高优先级精确 Spring Retry 1.3.4 升级到 2.0.13，复用官方 Java 17、注解属性和方法迁移配方，并定位 listener、表达式、stateful/cache、policy/backoff、AOP、指标及依赖族风险 |
 | [`rewrite-junrar-upgrade`](rewrite-junrar-upgrade) | `com.huawei.clouds.openrewrite.junrar.MigrateJunrarTo7_5_10` | 将 Junrar 7.5.5/7.5.8 精确升级到 7.5.10；按升级前最近构建根门控，直接复用官方 `FindMethods` 和 `LatestRelease`，并定位路径穿越、自定义解包、RAR/stream、异常回滚、SLF4J 与打包风险；目标/表外版本 NOOP，未来版本禁止降级 |
+| [`rewrite-elasticsearch-upgrade`](rewrite-elasticsearch-upgrade) | `com.huawei.clouds.openrewrite.elasticsearch.MigrateElasticsearchTo1_21_4` | 解析 bare `elasticsearch` 的版本分裂身份：仅将 `org.testcontainers:elasticsearch:1.17.6` 升级到 1.21.4，并复用官方 `ExplicitContainerImage`；Elasticsearch Server 7.x 只标记组件身份冲突，绝不跨坐标转换或降级 |
 
 后续迁移应新增独立模块，例如：
 
