@@ -1,0 +1,266 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-other-other-openssl",
+    "catalogPath": "catalog/other/other-openssl",
+    "languageProfile": "other",
+    "rawIdentifiers": [
+      "openssl"
+    ],
+    "rawLanguages": [
+      "other"
+    ],
+    "canonicalIdentity": {
+      "value": "openssl",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "1.1.1t",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 3444,
+        "sequence": "3443",
+        "software": "openssl",
+        "rawLanguage": "other",
+        "source": "1.1.1d",
+        "target": "1.1.1t",
+        "services": "8",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      },
+      {
+        "excelRow": 3445,
+        "sequence": "3444",
+        "software": "openssl",
+        "rawLanguage": "other",
+        "source": "1.1.1k",
+        "target": "1.1.1t",
+        "services": "8",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      },
+      {
+        "excelRow": 3446,
+        "sequence": "3445",
+        "software": "openssl",
+        "rawLanguage": "other",
+        "source": "1.1.1l",
+        "target": "1.1.1t",
+        "services": "8",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      },
+      {
+        "excelRow": 3447,
+        "sequence": "3446",
+        "software": "openssl",
+        "rawLanguage": "other",
+        "source": "1.1.1q",
+        "target": "1.1.1t",
+        "services": "8",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      },
+      {
+        "excelRow": 3448,
+        "sequence": "3447",
+        "software": "openssl",
+        "rawLanguage": "other",
+        "source": "1.1.1q-hw-1.0",
+        "target": "1.1.1t",
+        "services": "8",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      },
+      {
+        "excelRow": 3449,
+        "sequence": "3448",
+        "software": "openssl",
+        "rawLanguage": "other",
+        "source": "1.1.1u",
+        "target": "1.1.1t",
+        "services": "8",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": [
+      "1.1.1d",
+      "1.1.1k",
+      "1.1.1l",
+      "1.1.1q",
+      "1.1.1q-hw-1.0",
+      "1.1.1u"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        3444
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        3445
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        3446
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        3447
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        3448
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        3449
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

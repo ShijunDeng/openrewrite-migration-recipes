@@ -1,0 +1,200 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-other-other-protobuf",
+    "catalogPath": "catalog/other/other-protobuf",
+    "languageProfile": "other",
+    "rawIdentifiers": [
+      "protobuf"
+    ],
+    "rawLanguages": [
+      "other"
+    ],
+    "canonicalIdentity": {
+      "value": "protobuf",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "0.15.0",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 613,
+        "sequence": "612",
+        "software": "protobuf",
+        "rawLanguage": "other",
+        "source": "3.19.3",
+        "target": "0.15.0",
+        "services": "4",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "protobuf跨多个大版本(3.19.3->0.15.0)，proto2/proto3差异",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "conflict",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。"
+        }
+      },
+      {
+        "excelRow": 614,
+        "sequence": "613",
+        "software": "protobuf",
+        "rawLanguage": "other",
+        "source": "3.20.3",
+        "target": "0.15.0",
+        "services": "4",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "protobuf跨多个大版本(3.20.3->0.15.0)，proto2/proto3差异",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "conflict",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。"
+        }
+      },
+      {
+        "excelRow": 615,
+        "sequence": "614",
+        "software": "protobuf",
+        "rawLanguage": "other",
+        "source": "3.21.12",
+        "target": "0.15.0",
+        "services": "4",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "protobuf跨多个大版本(3.21.12->0.15.0)，proto2/proto3差异",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "conflict",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。"
+        }
+      },
+      {
+        "excelRow": 616,
+        "sequence": "615",
+        "software": "protobuf",
+        "rawLanguage": "other",
+        "source": "3.5.1",
+        "target": "0.15.0",
+        "services": "4",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "protobuf跨多个大版本(3.5.1->0.15.0)，proto2/proto3差异",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "conflict",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [],
+    "noopVersions": [],
+    "conflictVersions": [
+      "3.19.3",
+      "3.20.3",
+      "3.21.12",
+      "3.5.1"
+    ],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        613
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        614
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        615
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        616
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

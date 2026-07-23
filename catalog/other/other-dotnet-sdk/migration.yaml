@@ -1,0 +1,135 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-other-other-dotnet-sdk",
+    "catalogPath": "catalog/other/other-dotnet-sdk",
+    "languageProfile": "other",
+    "rawIdentifiers": [
+      "dotnet-sdk"
+    ],
+    "rawLanguages": [
+      "other"
+    ],
+    "canonicalIdentity": {
+      "value": "dotnet-sdk",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "3.1.410",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 838,
+        "sequence": "837",
+        "software": "dotnet-sdk",
+        "rawLanguage": "other",
+        "source": "5.0.400",
+        "target": "3.1.410",
+        "services": "1",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "conflict",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。"
+        }
+      },
+      {
+        "excelRow": 4666,
+        "sequence": "4665",
+        "software": "dotnet-sdk",
+        "rawLanguage": "other",
+        "source": "3.1.410",
+        "target": "3.1.410",
+        "services": "1",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "same",
+          "action": "noop",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "源与目标逐字相同；保持 NOOP，不把相同行伪装成升级。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [],
+    "noopVersions": [
+      "3.1.410"
+    ],
+    "conflictVersions": [
+      "5.0.400"
+    ],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        838
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        4666
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "noop",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}
