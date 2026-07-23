@@ -1,0 +1,24 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.log4jcore.UpgradeLog4jCoreTo2_25_5
+displayName: Upgrade workbook-selected Apache Log4j Core dependencies to 2.25.5
+description: >-
+  Upgrade only exact org.apache.logging.log4j:log4j-core versions 2.13.3, 2.17.0, 2.17.1,
+  2.17.2, 2.18.0, 2.19.0, 2.20.0, 2.23.1, 2.24.1 and 2.25.3 in owned standard
+  Maven or root Gradle declarations.
+recipeList:
+  - com.huawei.clouds.openrewrite.log4jcore.UpgradeSelectedLog4jCoreDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.log4jcore.MigrateLog4jCoreTo2_25_5
+displayName: Migrate Apache Log4j Core to 2.25.5
+description: >-
+  Apply the strict workbook dependency upgrade, migrate deterministic LoggerConfig and removed
+  Pattern Layout APIs, then mark exact dependency-family, plugin, packaging, security, JMX,
+  date/time, exception-rendering, JNDI, script and serialization decisions.
+recipeList:
+  - com.huawei.clouds.openrewrite.log4jcore.UpgradeLog4jCoreTo2_25_5
+  - com.huawei.clouds.openrewrite.log4jcore.MigrateLog4jCore25
+  - com.huawei.clouds.openrewrite.log4jcore.FindLog4jCore25BuildRisks
+  - com.huawei.clouds.openrewrite.log4jcore.FindLog4jCore25SourceRisks
+  - com.huawei.clouds.openrewrite.log4jcore.FindLog4jCore25ConfigurationRisks
