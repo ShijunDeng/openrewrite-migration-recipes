@@ -1,0 +1,101 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-go-github-com-alexbrainman-odbc",
+    "catalogPath": "catalog/go/github-com-alexbrainman-odbc",
+    "languageProfile": "go",
+    "rawIdentifiers": [
+      "github.com/alexbrainman/odbc"
+    ],
+    "rawLanguages": [
+      "go"
+    ],
+    "canonicalIdentity": {
+      "value": "github.com/alexbrainman/odbc",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "v0.0.0-20241104074637-25af894ea08b",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 4056,
+        "sequence": "4055",
+        "software": "github.com/alexbrainman/odbc",
+        "rawLanguage": "go",
+        "source": "v0.0.0-20211220213544-9c9a2e61c5e2",
+        "target": "v0.0.0-20241104074637-25af894ea08b",
+        "services": "3",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": [
+      "v0.0.0-20211220213544-9c9a2e61c5e2"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        4056
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

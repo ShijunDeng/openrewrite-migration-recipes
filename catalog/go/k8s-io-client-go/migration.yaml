@@ -1,0 +1,399 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-go-k8s-io-client-go",
+    "catalogPath": "catalog/go/k8s-io-client-go",
+    "languageProfile": "go",
+    "rawIdentifiers": [
+      "k8s.io/client-go"
+    ],
+    "rawLanguages": [
+      "go"
+    ],
+    "canonicalIdentity": {
+      "value": "k8s.io/client-go",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "v0.35.3",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 2927,
+        "sequence": "2926",
+        "software": "k8s.io/client-go",
+        "rawLanguage": "go",
+        "source": "v0.19.16",
+        "target": "v0.35.3",
+        "services": "20",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2928,
+        "sequence": "2927",
+        "software": "k8s.io/client-go",
+        "rawLanguage": "go",
+        "source": "v0.19.16-s1.0.5",
+        "target": "v0.35.3",
+        "services": "20",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2929,
+        "sequence": "2928",
+        "software": "k8s.io/client-go",
+        "rawLanguage": "go",
+        "source": "v0.22.17",
+        "target": "v0.35.3",
+        "services": "20",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2930,
+        "sequence": "2929",
+        "software": "k8s.io/client-go",
+        "rawLanguage": "go",
+        "source": "v0.22.3",
+        "target": "v0.35.3",
+        "services": "20",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2931,
+        "sequence": "2930",
+        "software": "k8s.io/client-go",
+        "rawLanguage": "go",
+        "source": "v0.23.0",
+        "target": "v0.35.3",
+        "services": "20",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2932,
+        "sequence": "2931",
+        "software": "k8s.io/client-go",
+        "rawLanguage": "go",
+        "source": "v0.24.1",
+        "target": "v0.35.3",
+        "services": "20",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2933,
+        "sequence": "2932",
+        "software": "k8s.io/client-go",
+        "rawLanguage": "go",
+        "source": "v0.24.3",
+        "target": "v0.35.3",
+        "services": "20",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2934,
+        "sequence": "2933",
+        "software": "k8s.io/client-go",
+        "rawLanguage": "go",
+        "source": "v0.25.4",
+        "target": "v0.35.3",
+        "services": "20",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2935,
+        "sequence": "2934",
+        "software": "k8s.io/client-go",
+        "rawLanguage": "go",
+        "source": "v0.25.5",
+        "target": "v0.35.3",
+        "services": "20",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2936,
+        "sequence": "2935",
+        "software": "k8s.io/client-go",
+        "rawLanguage": "go",
+        "source": "v0.26.1 ... (共14个版本)",
+        "target": "v0.35.3",
+        "services": "20",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": false,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "源版本单元格是截断或聚合显示，不是可执行配方的原子版本白名单。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "v0.19.16",
+      "v0.19.16-s1.0.5",
+      "v0.22.17",
+      "v0.22.3",
+      "v0.23.0",
+      "v0.24.1",
+      "v0.24.3",
+      "v0.25.4",
+      "v0.25.5"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": [
+      "v0.26.1 ... (共14个版本)"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        2927
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        2928
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        2929
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        2930
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        2931
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        2932
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        2933
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-008",
+      "edgeRows": [
+        2934
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-009",
+      "edgeRows": [
+        2935
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-010",
+      "edgeRows": [
+        2936
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

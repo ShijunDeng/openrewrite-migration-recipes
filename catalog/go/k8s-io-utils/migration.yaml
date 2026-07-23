@@ -1,0 +1,267 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-go-k8s-io-utils",
+    "catalogPath": "catalog/go/k8s-io-utils",
+    "languageProfile": "go",
+    "rawIdentifiers": [
+      "k8s.io/utils"
+    ],
+    "rawLanguages": [
+      "go"
+    ],
+    "canonicalIdentity": {
+      "value": "k8s.io/utils",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "v0.0.0-20260210185600-b8788abfbbc2",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 2755,
+        "sequence": "2754",
+        "software": "k8s.io/utils",
+        "rawLanguage": "go",
+        "source": "v0.0.0-20211116205334-6203023598ed",
+        "target": "v0.0.0-20260210185600-b8788abfbbc2",
+        "services": "28",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      },
+      {
+        "excelRow": 2756,
+        "sequence": "2755",
+        "software": "k8s.io/utils",
+        "rawLanguage": "go",
+        "source": "v0.0.0-20220922133306-665eaaec4324",
+        "target": "v0.0.0-20260210185600-b8788abfbbc2",
+        "services": "28",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      },
+      {
+        "excelRow": 2757,
+        "sequence": "2756",
+        "software": "k8s.io/utils",
+        "rawLanguage": "go",
+        "source": "v0.0.0-20221128185143-99ec85e7a448",
+        "target": "v0.0.0-20260210185600-b8788abfbbc2",
+        "services": "28",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      },
+      {
+        "excelRow": 2758,
+        "sequence": "2757",
+        "software": "k8s.io/utils",
+        "rawLanguage": "go",
+        "source": "v0.0.0-20230406110748-d93618cff8a2",
+        "target": "v0.0.0-20260210185600-b8788abfbbc2",
+        "services": "28",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      },
+      {
+        "excelRow": 2759,
+        "sequence": "2758",
+        "software": "k8s.io/utils",
+        "rawLanguage": "go",
+        "source": "v0.0.0-20230505201702-9f6742963106",
+        "target": "v0.0.0-20260210185600-b8788abfbbc2",
+        "services": "28",
+        "bucket": "B0_无需升级",
+        "difficulty": "低",
+        "note": "版本相同或无法解析，可忽略",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "数字前缀相同但限定符或版本文字不同；未证明顺序前保持原样并 MARK。"
+        }
+      },
+      {
+        "excelRow": 2760,
+        "sequence": "2759",
+        "software": "k8s.io/utils",
+        "rawLanguage": "go",
+        "source": "v0.19.14-r1.0.0",
+        "target": "v0.0.0-20260210185600-b8788abfbbc2",
+        "services": "28",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "conflict",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "保守数字比较显示源版本高于目标；保持原文并标记目标版本冲突（禁止降级）。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [],
+    "noopVersions": [],
+    "conflictVersions": [
+      "v0.19.14-r1.0.0"
+    ],
+    "unresolvedVersions": [
+      "v0.0.0-20211116205334-6203023598ed",
+      "v0.0.0-20220922133306-665eaaec4324",
+      "v0.0.0-20221128185143-99ec85e7a448",
+      "v0.0.0-20230406110748-d93618cff8a2",
+      "v0.0.0-20230505201702-9f6742963106"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        2755
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        2756
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        2757
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        2758
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        2759
+      ],
+      "dimension": "版本身份 / 所有权",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "先区分源目标确实相同与版本无法解析；前者保持 NOOP，后者在真实 owner 上 MARK，不得把“可忽略”当作已经证明兼容。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        2760
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

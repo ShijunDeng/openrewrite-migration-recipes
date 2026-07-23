@@ -1,0 +1,299 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-go-github-com-stretchr-testify",
+    "catalogPath": "catalog/go/github-com-stretchr-testify",
+    "languageProfile": "go",
+    "rawIdentifiers": [
+      "github.com/stretchr/testify"
+    ],
+    "rawLanguages": [
+      "go"
+    ],
+    "canonicalIdentity": {
+      "value": "github.com/stretchr/testify",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "v1.11.1",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 2383,
+        "sequence": "2382",
+        "software": "github.com/stretchr/testify",
+        "rawLanguage": "go",
+        "source": "v1.7.0",
+        "target": "v1.11.1",
+        "services": "88",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2384,
+        "sequence": "2383",
+        "software": "github.com/stretchr/testify",
+        "rawLanguage": "go",
+        "source": "v1.7.2",
+        "target": "v1.11.1",
+        "services": "88",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2385,
+        "sequence": "2384",
+        "software": "github.com/stretchr/testify",
+        "rawLanguage": "go",
+        "source": "v1.8.0",
+        "target": "v1.11.1",
+        "services": "88",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2386,
+        "sequence": "2385",
+        "software": "github.com/stretchr/testify",
+        "rawLanguage": "go",
+        "source": "v1.8.1",
+        "target": "v1.11.1",
+        "services": "88",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2387,
+        "sequence": "2386",
+        "software": "github.com/stretchr/testify",
+        "rawLanguage": "go",
+        "source": "v1.8.2",
+        "target": "v1.11.1",
+        "services": "88",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2388,
+        "sequence": "2387",
+        "software": "github.com/stretchr/testify",
+        "rawLanguage": "go",
+        "source": "v1.8.3",
+        "target": "v1.11.1",
+        "services": "88",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2389,
+        "sequence": "2388",
+        "software": "github.com/stretchr/testify",
+        "rawLanguage": "go",
+        "source": "v1.8.4",
+        "target": "v1.11.1",
+        "services": "88",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "v1.7.0",
+      "v1.7.2",
+      "v1.8.0",
+      "v1.8.1",
+      "v1.8.2",
+      "v1.8.3",
+      "v1.8.4"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        2383
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        2384
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        2385
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        2386
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        2387
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        2388
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        2389
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}
