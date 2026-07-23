@@ -3,6 +3,7 @@ package com.huawei.clouds.openrewrite.springsecurityweb;
 import org.openrewrite.Cursor;
 import org.openrewrite.groovy.tree.G;
 import org.openrewrite.java.tree.J;
+import org.openrewrite.semver.LatestRelease;
 import org.openrewrite.xml.tree.Xml;
 
 import java.math.BigInteger;
@@ -36,8 +37,12 @@ final class SpringSecurityWebUpgradeSupport {
             "testRuntimeOnly", "testFixturesApi", "testFixturesImplementation", "testFixturesRuntimeOnly",
             "kapt", "ksp");
     private static final Set<String> VARIANT_KEYS = Set.of("classifier", "ext", "type", "variant");
-    private static final Pattern FIXED_NUMERIC =
+    private static final Pattern FIXED_VERSION =
+            Pattern.compile("^[0-9]+(?:\\.[0-9]+)+(?:[.-][A-Za-z0-9]+)*$");
+    private static final Pattern SOURCE_NUMERIC =
             Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(?:[.-][A-Za-z0-9][A-Za-z0-9.-]*)?$");
+    private static final Pattern RELEASE = Pattern.compile("^(\\d+)\\.(\\d+)$");
+    private static final LatestRelease OFFICIAL_VERSION_COMPARATOR = new LatestRelease(null);
     private static final Set<String> GENERATED_DIRECTORIES = Set.of(
             "target", "build", "out", "dist", "generated", "install", ".gradle", ".mvn", ".m2",
             ".idea", "node_modules", "vendor", ".cache", "coverage", "reports", "test-results", "tmp", "temp");
@@ -57,21 +62,42 @@ final class SpringSecurityWebUpgradeSupport {
     }
 
     static boolean fixedVersion(String version) {
-        return version != null && FIXED_NUMERIC.matcher(version).matches();
+        return version != null && FIXED_VERSION.matcher(version).matches();
     }
 
     static boolean targetConflict(String version) {
-        if (version == null) return false;
-        Matcher matcher = FIXED_NUMERIC.matcher(version);
-        if (!matcher.matches()) return false;
-        BigInteger major = new BigInteger(matcher.group(1));
-        BigInteger minor = new BigInteger(matcher.group(2));
-        BigInteger patch = new BigInteger(matcher.group(3));
-        int majorOrder = major.compareTo(BigInteger.valueOf(6));
-        int minorOrder = minor.compareTo(BigInteger.valueOf(5));
-        return majorOrder > 0 ||
-               majorOrder == 0 && minorOrder > 0 ||
-               majorOrder == 0 && minorOrder == 0 && patch.compareTo(BigInteger.valueOf(11)) > 0;
+        if (!fixedVersion(version)) return false;
+        try {
+            return OFFICIAL_VERSION_COMPARATOR.compare(null, version, TARGET) > 0;
+        } catch (NumberFormatException oversizedNumericSegment) {
+            // Core uses long numeric segments. Preserve no-downgrade for
+            // arbitrarily large, still-fixed versions with BigInteger.
+        }
+        String[] candidate = version.split("-", 2)[0].split("\\.");
+        String[] target = TARGET.split("\\.");
+        int length = Math.max(candidate.length, target.length);
+        for (int i = 0; i < length; i++) {
+            String segment = i < candidate.length ? candidate[i] : "0";
+            BigInteger left = new BigInteger(segment.matches("[0-9]+") ? segment : "0");
+            BigInteger right = new BigInteger(i < target.length ? target[i] : "0");
+            int comparison = left.compareTo(right);
+            if (comparison != 0) return comparison > 0;
+        }
+        return false;
+    }
+
+    static boolean requiresMigrationTo(String sourceVersion, String targetRelease) {
+        if (sourceVersion == null || targetRelease == null) return false;
+        Matcher source = SOURCE_NUMERIC.matcher(sourceVersion);
+        Matcher target = RELEASE.matcher(targetRelease);
+        if (!source.matches() || !target.matches()) return false;
+        BigInteger sourceMajor = new BigInteger(source.group(1));
+        BigInteger sourceMinor = new BigInteger(source.group(2));
+        BigInteger targetMajor = new BigInteger(target.group(1));
+        BigInteger targetMinor = new BigInteger(target.group(2));
+        int majorOrder = sourceMajor.compareTo(targetMajor);
+        return majorOrder < 0 ||
+               majorOrder == 0 && sourceMinor.compareTo(targetMinor) < 0;
     }
 
     static boolean isPrimaryDependency(Cursor cursor, Xml.Tag tag) {

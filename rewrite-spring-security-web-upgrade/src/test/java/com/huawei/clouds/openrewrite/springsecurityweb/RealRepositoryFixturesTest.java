@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.maven.Assertions.pomXml;
 
 class RealRepositoryFixturesTest implements RewriteTest {
     @Override
@@ -28,7 +29,7 @@ class RealRepositoryFixturesTest implements RewriteTest {
 
     @Test
     void eugenpJjwtFixtureMigratesJakartaCsrfAuthorizationAndMarksCustomFilter() {
-        rewriteRun(java(fixture("eugenp-jjwt-security.java"),
+        rewriteRun(selectedPom(), java(fixture("eugenp-jjwt-security.java"),
                 source -> source.path("RealJjwtSecurityFixture.java")
                         .after(actual -> actual).afterRecipe(after -> {
                             String printed = after.printAll();
@@ -47,7 +48,7 @@ class RealRepositoryFixturesTest implements RewriteTest {
 
     @Test
     void eugenpHttpClientFixtureMigratesLegacyDslAndMarksFilterAuthentication() {
-        rewriteRun(java(fixture("eugenp-httpclient-security.java"),
+        rewriteRun(selectedPom(), java(fixture("eugenp-httpclient-security.java"),
                 source -> source.path("RealHttpClientSecurityFixture.java")
                         .after(actual -> actual).afterRecipe(after -> {
                             String printed = after.printAll();
@@ -62,7 +63,7 @@ class RealRepositoryFixturesTest implements RewriteTest {
 
     @Test
     void springGuideFixtureKeepsModernDslAndMarksBehaviorBoundaries() {
-        rewriteRun(java(fixture("spring-guide-security.java"),
+        rewriteRun(selectedPom(), java(fixture("spring-guide-security.java"),
                 source -> source.path("RealSpringGuideSecurityFixture.java")
                         .after(actual -> actual).afterRecipe(after -> {
                             String printed = after.printAll();
@@ -77,7 +78,7 @@ class RealRepositoryFixturesTest implements RewriteTest {
 
     @Test
     void officialRememberMeSampleMarksRememberMeAndLoginReview() {
-        rewriteRun(java(fixture("spring-security-sample-remember-me.java"),
+        rewriteRun(selectedPom(), java(fixture("spring-security-sample-remember-me.java"),
                 source -> source.path("RealRememberMeSecurityFixture.java")
                         .after(actual -> actual).afterRecipe(after -> {
                             String printed = after.printAll();
@@ -85,6 +86,11 @@ class RealRepositoryFixturesTest implements RewriteTest {
                             assertTrue(printed.contains(FindSpringSecurityWeb6511SourceRisks.AUTHENTICATION), printed);
                             assertTrue(printed.contains(FindSpringSecurityWeb6511SourceRisks.FILTER_CHAIN), printed);
                         })));
+    }
+
+    private static org.openrewrite.test.SourceSpecs selectedPom() {
+        return pomXml(UpgradeSpringSecurityWebDependencyTest.pom("5.8.16"),
+                source -> source.path("pom.xml").after(actual -> actual));
     }
 
     private static String fixture(String name) {

@@ -22,31 +22,39 @@ recipeList:
   - com.huawei.clouds.openrewrite.springsecurityweb.UpgradeSelectedSpringSecurityWebDependency
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateDeterministicSpringSecurityWeb6
-displayName: Migrate deterministic Spring Security Web 6 APIs
+name: com.huawei.clouds.openrewrite.springsecurityweb.UpgradeSelectedSpringSecurityWebBuildToJava17
+displayName: Upgrade selected Spring Security Web builds to Java 17
 description: >-
-  Compose the source and XML components of the official OpenRewrite Spring
-  Security 5.7, 5.8, 6.0, 6.1 and 6.2 recipes without their broad dependency
-  version recipes. Also reuse the official dependency/package primitives for
-  Jakarta Servlet 6.0.0 instead of the Servlet 5.0.x aggregate.
+  Run the fixed official Java-version build recipe only in a project whose
+  nearest build root owns one exact workbook-approved source version.
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWebProjectFiles
+recipeList:
+  - org.openrewrite.java.migrate.UpgradeJavaVersion:
+      version: 17
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_5_7
+displayName: Apply deterministic Spring Security 5.7 migration leaves
+description: Reuse the source component of the official 5.7 migration without its broad dependency recipe.
 tags:
   - spring
   - security
-  - jakarta
   - source-migration
   - official-openrewrite
 recipeList:
-  - org.openrewrite.java.dependencies.ChangeDependency:
-      oldGroupId: javax.servlet
-      oldArtifactId: javax.servlet-api
-      newGroupId: jakarta.servlet
-      newArtifactId: jakarta.servlet-api
-      newVersion: 6.0.0
-  - org.openrewrite.java.ChangePackage:
-      oldPackageName: javax.servlet
-      newPackageName: jakarta.servlet
-      recursive: true
   - org.openrewrite.java.spring.security5.WebSecurityConfigurerAdapter
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_5_8
+displayName: Apply deterministic Spring Security 5.8 migration leaves
+description: Reuse every official 5.8 source/XML leaf without its broad dependency recipes.
+tags:
+  - spring
+  - security
+  - source-migration
+  - official-openrewrite
+recipeList:
   - org.openrewrite.java.spring.boot2.HttpSecurityLambdaDsl
   - org.openrewrite.java.spring.boot2.ServerHttpSecurityLambdaDsl
   - org.openrewrite.java.spring.boot2.HeadersConfigurerLambdaDsl
@@ -78,6 +86,30 @@ recipeList:
       attributeName: pre-post-enabled
       newValue: null
       oldValue: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_6_0
+displayName: Apply deterministic Spring Security 6.0 and Jakarta Servlet migration leaves
+description: >-
+  Reuse every official 6.0 leaf and the official dependency/package primitives
+  with Jakarta Servlet fixed at 6.0.0 instead of the broad Servlet 5 aggregate.
+tags:
+  - spring
+  - security
+  - jakarta
+  - source-migration
+  - official-openrewrite
+recipeList:
+  - org.openrewrite.java.dependencies.ChangeDependency:
+      oldGroupId: javax.servlet
+      oldArtifactId: javax.servlet-api
+      newGroupId: jakarta.servlet
+      newArtifactId: jakarta.servlet-api
+      newVersion: 6.0.0
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.servlet
+      newPackageName: jakarta.servlet
+      recursive: true
   - org.openrewrite.java.spring.security6.UseSha256InRememberMe
   - org.openrewrite.java.spring.security6.PropagateAuthenticationServiceExceptions
   - org.openrewrite.java.spring.security6.RequireExplicitSavingOfSecurityContextRepository
@@ -95,10 +127,115 @@ recipeList:
       oldValue: true
   - org.openrewrite.java.spring.security6.UpdateEnableReactiveMethodSecurity
   - org.openrewrite.java.spring.security6.RemoveFilterSecurityInterceptorOncePerRequest
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_6_1
+displayName: Apply deterministic Spring Security 6.1 migration leaves
+description: Reuse every official 6.1 source leaf without its broad dependency recipes.
+tags:
+  - spring
+  - security
+  - source-migration
+  - official-openrewrite
+recipeList:
   - org.openrewrite.java.spring.security6.oauth2.client.OAuth2LoginLambdaDsl
   - org.openrewrite.java.spring.security6.oauth2.client.OAuth2ClientLambdaDsl
   - org.openrewrite.java.spring.security6.oauth2.server.resource.OAuth2ResourceServerLambdaDsl
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_6_2
+displayName: Apply deterministic Spring Security 6.2 migration leaves
+description: Reuse the official 6.2 source leaf without its broad dependency recipes.
+tags:
+  - spring
+  - security
+  - source-migration
+  - official-openrewrite
+recipeList:
   - org.openrewrite.java.spring.security6.ApplyToWithLambdaDsl
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateDeterministicSpringSecurityWeb6
+displayName: Migrate deterministic Spring Security Web 6 APIs
+description: >-
+  Compose the source and XML components of the official OpenRewrite Spring
+  Security 5.7, 5.8, 6.0, 6.1 and 6.2 recipes without their broad dependency
+  version recipes. This explicit expert entry is not project-gated.
+tags:
+  - spring
+  - security
+  - jakarta
+  - source-migration
+  - official-openrewrite
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_5_7
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_5_8
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_6_0
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_6_1
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_6_2
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedSpringSecurityWeb_5_7
+displayName: Apply Spring Security 5.7 compatibility leaves to selected 5.x projects
+description: Apply official 5.7 leaves only when the captured exact source version predates 6.0.
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWebMigrationFiles:
+      targetRelease: "6.0"
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_5_7
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedSpringSecurityWeb_5_8
+displayName: Apply Spring Security 5.8 compatibility leaves to selected 5.x projects
+description: Apply official 5.8 leaves only when the captured exact source version predates 6.0.
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWebMigrationFiles:
+      targetRelease: "6.0"
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_5_8
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedSpringSecurityWeb_6_0
+displayName: Migrate selected projects that predate Spring Security 6.0
+description: Apply official 6.0/Jakarta leaves only when the captured exact source version predates 6.0.
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWebMigrationFiles:
+      targetRelease: "6.0"
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_6_0
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedSpringSecurityWeb_6_1
+displayName: Apply Spring Security 6.1 compatibility leaves to selected 5.x projects
+description: Apply official 6.1 leaves only when the captured exact source version predates 6.0.
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWebMigrationFiles:
+      targetRelease: "6.0"
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_6_1
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedSpringSecurityWeb_6_2
+displayName: Apply the Spring Security 6.2 compatibility leaf to pre-6.3 projects
+description: Apply the official 6.2 leaf only when the captured exact source version predates 6.3.
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWebMigrationFiles:
+      targetRelease: "6.3"
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWeb_6_2
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedDeterministicSpringSecurityWeb6
+displayName: Migrate deterministic APIs in exact workbook-selected projects
+description: >-
+  Dispatch fixed official leaves by the exact source version captured before
+  dependency edits; later-source projects never replay historical migrations.
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedSpringSecurityWeb_5_7
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedSpringSecurityWeb_5_8
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedSpringSecurityWeb_6_0
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedSpringSecurityWeb_6_1
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedSpringSecurityWeb_6_2
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11BuildRisks
@@ -148,20 +285,45 @@ recipeList:
   - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6511ConfigurationRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWeb6_5_11SourceRisks
+displayName: Find source risks in selected Spring Security Web projects
+description: >-
+  Run official and custom source searches only under a nearest build root that
+  owned one exact workbook-approved source version before the dependency edit.
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWebProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11SourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWeb6_5_11ConfigurationRisks
+displayName: Find configuration risks in selected Spring Security Web projects
+description: >-
+  Run configuration searches only under a nearest build root that owned one
+  exact workbook-approved source version before the dependency edit.
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWebProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11ConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11
 displayName: Migrate Spring Security Web applications to 6.5.11
 description: >-
-  Strictly upgrade workbook-selected declarations, run deterministic official
-  Spring Security/Jakarta migrations, and mark every remaining 6.5.11 build,
-  source and configuration decision. Higher versions are never downgraded.
+  Capture exact build-root ownership, dispatch fixed official leaves by source
+  release, locate selected source/configuration decisions, then upgrade Java
+  and approved declarations before the final build audit. Higher versions are
+  never downgraded.
 tags:
   - spring
   - security
   - java
   - migration
 recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.MarkSelectedSpringSecurityWebProjects
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedDeterministicSpringSecurityWeb6
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWeb6_5_11SourceRisks
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWeb6_5_11ConfigurationRisks
+  - com.huawei.clouds.openrewrite.springsecurityweb.UpgradeSelectedSpringSecurityWebBuildToJava17
   - com.huawei.clouds.openrewrite.springsecurityweb.UpgradeSpringSecurityWebTo6_5_11
-  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateDeterministicSpringSecurityWeb6
   - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11BuildRisks
-  - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11SourceRisks
-  - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11ConfigurationRisks

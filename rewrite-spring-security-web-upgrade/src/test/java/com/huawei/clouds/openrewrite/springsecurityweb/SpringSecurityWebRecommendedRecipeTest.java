@@ -27,17 +27,22 @@ class SpringSecurityWebRecommendedRecipeTest implements RewriteTest {
     }
 
     @Test
-    void recommendedRecipeComposesAllFivePublicCapabilitiesAndOfficialComponents() {
+    void recommendedRecipeComposesProjectGateAndOfficialComponents() {
         Recipe recipe = environment().activateRecipes(RECIPE);
+        assertTrue(recipe.validateAll().stream().allMatch(validation -> validation.isValid()),
+                () -> recipe.validateAll().toString());
         List<String> direct = recipe.getRecipeList().stream().map(Recipe::getName).toList();
         assertEquals(List.of(
+                "com.huawei.clouds.openrewrite.springsecurityweb.MarkSelectedSpringSecurityWebProjects",
+                "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSelectedDeterministicSpringSecurityWeb6",
+                "com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWeb6_5_11SourceRisks",
+                "com.huawei.clouds.openrewrite.springsecurityweb.FindSelectedSpringSecurityWeb6_5_11ConfigurationRisks",
+                "com.huawei.clouds.openrewrite.springsecurityweb.UpgradeSelectedSpringSecurityWebBuildToJava17",
                 "com.huawei.clouds.openrewrite.springsecurityweb.UpgradeSpringSecurityWebTo6_5_11",
-                "com.huawei.clouds.openrewrite.springsecurityweb.MigrateDeterministicSpringSecurityWeb6",
-                "com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11BuildRisks",
-                "com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11SourceRisks",
-                "com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11ConfigurationRisks"
+                "com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11BuildRisks"
         ), direct);
         List<String> tree = treeNames(recipe);
+        assertTrue(tree.contains("org.openrewrite.java.migrate.UpgradeJavaVersion"), tree.toString());
         assertTrue(tree.contains("org.openrewrite.java.spring.security5.WebSecurityConfigurerAdapter"), tree.toString());
         assertTrue(tree.contains("org.openrewrite.java.spring.security5.AuthorizeHttpRequests"), tree.toString());
         assertTrue(tree.contains("org.openrewrite.java.spring.security6.UseSha256InRememberMe"), tree.toString());
@@ -45,6 +50,7 @@ class SpringSecurityWebRecommendedRecipeTest implements RewriteTest {
                 "org.openrewrite.java.spring.security5.search.FindEncryptorsQueryableTextUses"), tree.toString());
         assertFalse(tree.contains("org.openrewrite.java.dependencies.UpgradeDependencyVersion"), tree.toString());
         assertFalse(tree.stream().anyMatch(name -> name.contains("UpgradeSpringSecurity_")), tree.toString());
+        assertFalse(tree.contains("org.openrewrite.java.migrate.UpgradeToJava17"), tree.toString());
     }
 
     @Test
@@ -77,7 +83,8 @@ class SpringSecurityWebRecommendedRecipeTest implements RewriteTest {
                     assertTrue(printed.contains("<groupId>jakarta.servlet</groupId>"), printed);
                     assertTrue(printed.contains("<artifactId>jakarta.servlet-api</artifactId>"), printed);
                     assertTrue(printed.contains("<version>6.0.0</version>"), printed);
-                    assertTrue(printed.contains(FindSpringSecurityWeb6511BuildRisks.JAVA_BASELINE), printed);
+                    assertTrue(printed.contains("<maven.compiler.release>17</maven.compiler.release>"), printed);
+                    assertFalse(printed.contains(FindSpringSecurityWeb6511BuildRisks.JAVA_BASELINE), printed);
                     assertTrue(printed.contains(FindSpringSecurityWeb6511BuildRisks.PARAMETERS), printed);
                 })),
                 java("""
@@ -114,16 +121,88 @@ class SpringSecurityWebRecommendedRecipeTest implements RewriteTest {
                     assertTrue(printed.contains("<version>7.0.4</version>"), printed);
                     assertFalse(printed.contains("<version>6.5.11</version>"), printed);
                     assertEquals(1, occurrences(printed, SpringSecurityWebUpgradeSupport.TARGET_CONFLICT), printed);
-                })));
+                })),
+                java("""
+                        import javax.servlet.Filter;
+                        import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+                        @EnableGlobalMethodSecurity(prePostEnabled = true)
+                        abstract class SevenXProjectSource implements Filter {
+                        }
+                        """),
+                properties("spring.security.csrf.enabled=false\n",
+                        source -> source.path("application.properties")));
     }
 
     @Test
     void recommendedRecipeIsIdempotentAcrossTwoCycles() {
         rewriteRun(spec -> spec.cycles(2).expectedCyclesThatMakeChanges(1),
+                pomXml(UpgradeSpringSecurityWebDependencyTest.pom("6.5.10"),
+                        source -> source.path("pom.xml").after(actual -> actual)),
                 properties("spring.security.csrf.enabled=false\n",
                         source -> source.path("application.properties").after(actual -> actual).afterRecipe(after ->
                                 assertEquals(1, occurrences(after.printAll(),
                                         FindSpringSecurityWeb6511ConfigurationRisks.CSRF)))));
+    }
+
+    @Test
+    void unrelatedProjectIsCompletelyNoop() {
+        rewriteRun(
+                pomXml("""
+                        <project>
+                          <modelVersion>4.0.0</modelVersion>
+                          <groupId>example</groupId><artifactId>unrelated</artifactId><version>1</version>
+                          <properties><maven.compiler.release>11</maven.compiler.release></properties>
+                        </project>
+                        """),
+                java("""
+                        import javax.servlet.Filter;
+                        import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+                        @EnableGlobalMethodSecurity(prePostEnabled = true)
+                        abstract class UnrelatedSecurity implements Filter {
+                        }
+                        """),
+                properties("spring.security.csrf.enabled=false\n",
+                        source -> source.path("application.properties")));
+    }
+
+    @Test
+    void sixTwoSourceDoesNotReplayFiveXOrJakartaMigration() {
+        rewriteRun(
+                pomXml(UpgradeSpringSecurityWebDependencyTest.pom("6.2.8"),
+                        source -> source.path("pom.xml").after(actual -> actual)),
+                java("""
+                        import javax.servlet.Filter;
+                        import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+                        @EnableGlobalMethodSecurity(prePostEnabled = true)
+                        abstract class LegacyCodeInSixTwoBuild implements Filter {
+                        }
+                        """, source -> source.after(actual -> actual).afterRecipe(after -> {
+                    String printed = after.printAll();
+                    assertTrue(printed.contains("import javax.servlet.Filter;"), printed);
+                    assertFalse(printed.contains("import jakarta.servlet.Filter;"), printed);
+                    assertTrue(printed.contains(
+                            "import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;"),
+                            printed);
+                    assertFalse(printed.contains(
+                            "import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;"),
+                            printed);
+                })));
+    }
+
+    @Test
+    void officialJavaBaselineRecipeNeverDowngradesJava21() {
+        rewriteRun(pomXml(UpgradeSpringSecurityWebDependencyTest.project("""
+                        <properties><maven.compiler.release>21</maven.compiler.release></properties>
+                        <dependencies>%s</dependencies>
+                        """.formatted(UpgradeSpringSecurityWebDependencyTest.dep("6.5.10"))),
+                source -> source.path("pom.xml").after(actual -> actual).afterRecipe(after -> {
+                    String printed = after.printAll();
+                    assertTrue(printed.contains(
+                            "<maven.compiler.release>21</maven.compiler.release>"), printed);
+                    assertTrue(printed.contains("<version>6.5.11</version>"), printed);
+                    assertFalse(printed.contains(
+                            "<maven.compiler.release>17</maven.compiler.release>"), printed);
+                })));
     }
 
     private static List<String> treeNames(Recipe root) {

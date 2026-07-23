@@ -16,6 +16,12 @@
   <url>https://github.com/ShijunDeng/openrewrite-migration-recipes/tree/main/rewrite-spring-security-web-upgrade</url>
 
   <dependencies>
+    <!-- Fixed official Java 17 build primitive; broad Java aggregates stay excluded. -->
+    <dependency>
+      <groupId>org.openrewrite.recipe</groupId>
+      <artifactId>rewrite-migrate-java</artifactId>
+      <version>3.40.0</version>
+    </dependency>
     <dependency>
       <groupId>org.openrewrite.recipe</groupId>
       <artifactId>rewrite-spring</artifactId>
@@ -110,6 +116,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <!-- OpenRewrite 8.87.x binds declarative recipe options by bytecode parameter name. -->
+          <parameters>true</parameters>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

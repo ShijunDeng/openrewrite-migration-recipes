@@ -50,7 +50,10 @@ class UpgradeSpringSecurityWebDependencyTest implements RewriteTest {
     }
 
     @ParameterizedTest(name = "never downgrade {0}")
-    @ValueSource(strings = {"7.0.0", "7.0.4", "6.5.12", "6.6.0", "99.0.0"})
+    @ValueSource(strings = {
+            "7.0.0", "7.0.4", "6.5.12", "6.5.11.1", "6.5.11-sp1",
+            "6.6.0", "99.0.0", "6.5.11.999999999999999999999"
+    })
     void neverDowngradesHigherVersions(String version) {
         rewriteRun(xml(pom(version), source -> source.path("pom.xml")));
     }
@@ -145,8 +148,12 @@ class UpgradeSpringSecurityWebDependencyTest implements RewriteTest {
     @Test
     void higherVersionComparisonUsesUnboundedNumericSegments() {
         assertTrue(SpringSecurityWebUpgradeSupport.targetConflict("6.5.12"));
+        assertTrue(SpringSecurityWebUpgradeSupport.targetConflict("6.5.11.1"));
+        assertTrue(SpringSecurityWebUpgradeSupport.targetConflict("6.5.11-sp1"));
         assertTrue(SpringSecurityWebUpgradeSupport.targetConflict("6.6.0-RC1"));
         assertTrue(SpringSecurityWebUpgradeSupport.targetConflict("999999999999999999999.0.0"));
+        assertTrue(SpringSecurityWebUpgradeSupport.targetConflict(
+                "6.5.11.999999999999999999999"));
         assertFalse(SpringSecurityWebUpgradeSupport.targetConflict("6.5.11"));
         assertFalse(SpringSecurityWebUpgradeSupport.targetConflict("6.5.11-RC1"));
         assertFalse(SpringSecurityWebUpgradeSupport.targetConflict("5.8.16"));

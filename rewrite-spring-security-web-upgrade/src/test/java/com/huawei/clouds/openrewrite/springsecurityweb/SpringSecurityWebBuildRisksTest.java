@@ -20,7 +20,10 @@ class SpringSecurityWebBuildRisksTest implements RewriteTest {
     }
 
     @ParameterizedTest(name = "Maven no-downgrade {0}")
-    @ValueSource(strings = {"7.0.0", "7.0.4", "6.5.12", "6.6.0-M1", "99.0.0"})
+    @ValueSource(strings = {
+            "7.0.0", "7.0.4", "6.5.12", "6.5.11.1", "6.5.11-sp1",
+            "6.6.0-M1", "99.0.0", "6.5.11.999999999999999999999"
+    })
     void marksEveryHigherMavenVersionWithTheExactConflict(String version) {
         rewriteRun(xml(UpgradeSpringSecurityWebDependencyTest.pom(version),
                 source -> source.path(version + "/pom.xml").after(actual -> actual).afterRecipe(after -> {
