@@ -1,0 +1,21 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bson.UpgradeBsonTo5_4_0
+displayName: Upgrade workbook-selected MongoDB BSON dependencies to 5.4.0
+description: >-
+  Upgrade only exact org.mongodb:bson versions 3.12.14 and 4.7.2 in declarations owned by the current
+  Maven project/profile or root Gradle dependencies block.
+recipeList:
+  - com.huawei.clouds.openrewrite.bson.UpgradeSelectedBsonDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bson.MigrateBsonTo5_4_0
+displayName: Migrate MongoDB BSON to 5.4.0
+description: >-
+  Apply the strict workbook dependency upgrade; migrate deterministic ObjectId, record annotation and JSON writer
+  APIs; then mark exact build, byte-format, codec, serialization and reader/writer decisions for review.
+recipeList:
+  - com.huawei.clouds.openrewrite.bson.UpgradeBsonTo5_4_0
+  - com.huawei.clouds.openrewrite.bson.MigrateBson5Java
+  - com.huawei.clouds.openrewrite.bson.FindBson5BuildRisks
+  - com.huawei.clouds.openrewrite.bson.FindBson5SourceRisks
