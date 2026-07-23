@@ -1,0 +1,30 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.orgjson
+packageName: com.huawei.clouds.openrewrite.orgjson
+description: Upgrade JSON-java and automate deterministic compatibility work while marking application policy decisions.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.orgjson.UpgradeOrgJsonTo20250107
+displayName: Upgrade workbook-selected org.json dependencies to 20250107
+description: >-
+  Upgrade only exact org.json:json 20160810, 20180813, 20190722, 20200518, 20220320, 20230227, and 3.11.2
+  dependencies in owned standard Maven and root Gradle declarations; preserve other versions, external owners,
+  variants, nested DSLs and generated files.
+tags: [json-java, org-json, dependency-upgrade]
+recipeList:
+  - com.huawei.clouds.openrewrite.orgjson.UpgradeSelectedOrgJsonDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.orgjson.MigrateOrgJsonTo20250107
+displayName: Migrate JSON-java applications to 20250107
+description: >-
+  Reuse the strict dependency upgrade, replace deprecated XMLParserConfiguration constructors with equivalent
+  immutable builder chains, then precisely mark parsing, numeric, pointer, XML, graph, serialization, ownership,
+  Java baseline and packaging decisions.
+tags: [json-java, org-json, java, source-migration]
+recipeList:
+  - com.huawei.clouds.openrewrite.orgjson.UpgradeOrgJsonTo20250107
+  - com.huawei.clouds.openrewrite.orgjson.MigrateXmlParserConfigurationConstructors
+  - com.huawei.clouds.openrewrite.orgjson.FindOrgJsonJavaRisks
+  - com.huawei.clouds.openrewrite.orgjson.FindOrgJsonBuildRisks

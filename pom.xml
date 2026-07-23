@@ -143,6 +143,7 @@
     <module>rewrite-commons-pool2-upgrade</module>
     <module>rewrite-appium-java-client-upgrade</module>
     <module>rewrite-jakarta-ws-rs-api-upgrade</module>
+    <module>rewrite-org-json-upgrade</module>
   </modules>
 
   <dependencyManagement>
