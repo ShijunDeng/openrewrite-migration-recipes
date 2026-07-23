@@ -1,0 +1,68 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.bcprovjdk18on
+packageName: com.huawei.clouds.openrewrite.bcprovjdk18on
+description: Strictly upgrade bcprov-jdk18on to 1.84, automate source-equivalent API moves, and locate cryptographic compatibility decisions.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bcprovjdk18on.UpgradeBcProvJdk18onTo1_84
+displayName: Upgrade selected bcprov-jdk18on dependencies to 1.84
+description: Upgrade only the six explicitly selected org.bouncycastle:bcprov-jdk18on versions in unambiguously owned standard Maven or root Gradle declarations.
+tags:
+  - bouncycastle
+  - bcprov
+  - java
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.UpgradeSelectedBcProvDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateDeterministicBcProv1_84Java
+displayName: Migrate deterministic Bouncy Castle 1.84 Java API moves
+description: Apply only official source moves and byte-for-byte equivalent API replacements with attributed Bouncy Castle types.
+tags:
+  - bouncycastle
+  - bcprov
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateBcProv184Java
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bcprovjdk18on.FindBcProv1_84BuildRisks
+displayName: Find Bouncy Castle Provider 1.84 build risks
+description: Mark dependency ownership, family skew, provider lineage collisions, variants, BOM/catalog ownership, and signed-provider packaging risks.
+tags:
+  - bouncycastle
+  - bcprov
+  - build
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.FindBcProv184BuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bcprovjdk18on.FindBcProv1_84SourceAndConfigurationRisks
+displayName: Find Bouncy Castle Provider 1.84 source and configuration risks
+description: Mark removed PQC and ASN.1 APIs, provider and algorithm behavior, PKCS12, DER, serialization, crypto parameters, limits, switches, and packaging metadata.
+tags:
+  - bouncycastle
+  - bcprov
+  - cryptography
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.FindBcProv184SourceRisks
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.FindBcProv184ConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateBcProvJdk18onTo1_84
+displayName: Migrate Bouncy Castle Provider applications to 1.84
+description: Strictly upgrade selected dependencies, apply proven-equivalent Java changes, and mark every remaining build, source, provider, encoding, serialization, parameter, and configuration decision.
+tags:
+  - bouncycastle
+  - bcprov
+  - cryptography
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.UpgradeBcProvJdk18onTo1_84
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.MigrateDeterministicBcProv1_84Java
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.FindBcProv1_84BuildRisks
+  - com.huawei.clouds.openrewrite.bcprovjdk18on.FindBcProv1_84SourceAndConfigurationRisks

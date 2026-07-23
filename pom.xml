@@ -154,6 +154,7 @@
     <module>rewrite-spring-webmvc-upgrade</module>
     <module>rewrite-tomcat-embed-core-upgrade</module>
     <module>rewrite-log4j-core-upgrade</module>
+    <module>rewrite-bcprov-jdk18on-upgrade</module>
   </modules>
 
   <dependencyManagement>
