@@ -1,0 +1,22 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jakartawrs.UpgradeJakartaWsRsApiTo4_0_0
+displayName: Upgrade workbook-selected Jakarta REST API dependencies to 4.0.0
+description: >-
+  Upgrade only exact jakarta.ws.rs:jakarta.ws.rs-api versions 2.1.6, 3.0.0, and 3.1.0 in declarations
+  owned by the current Maven project/profile or root Gradle dependencies block.
+recipeList:
+  - com.huawei.clouds.openrewrite.jakartawrs.UpgradeSelectedJakartaWsRsApiDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jakartawrs.MigrateJakartaWsRsApiTo4_0_0
+displayName: Migrate Jakarta REST API to 4.0.0
+description: >-
+  Apply the strict workbook dependency upgrade first, migrate the Javax REST namespace and deterministic
+  resource references, then mark source/build decisions that require application or runtime evidence.
+recipeList:
+  - com.huawei.clouds.openrewrite.jakartawrs.UpgradeJakartaWsRsApiTo4_0_0
+  - com.huawei.clouds.openrewrite.jakartawrs.MigrateJavaxWsRsPackage
+  - com.huawei.clouds.openrewrite.jakartawrs.MigrateJavaxWsRsReferences
+  - com.huawei.clouds.openrewrite.jakartawrs.FindJakartaRest4BuildRisks
+  - com.huawei.clouds.openrewrite.jakartawrs.FindJakartaRest4SourceRisks
