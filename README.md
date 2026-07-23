@@ -84,6 +84,7 @@ README、机器可读 manifest 和禁降级契约，不进入默认 Maven reacto
 | [`rewrite-spring-expression-upgrade`](rewrite-spring-expression-upgrade) | `com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19` | 将 17 个精确 Spring Expression 版本升级到 6.2.19，复用官方 Java 17/参数元数据构建配方，并定位 SpEL 信任边界、accessor/resolver、编译、内部 API 与操作上限风险 |
 | [`rewrite-spring-web-upgrade`](rewrite-spring-web-upgrade) | `com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19` | 将 14 个精确 Spring Web 版本升级到 6.2.19，直接复用官方 MediaType、ResponseStatusException 与 ClientHttpResponse 配方，并定位 Jakarta、HTTP client、URI、multipart、validation 和配置风险 |
 | [`rewrite-logback-core-upgrade`](rewrite-logback-core-upgrade) | `com.huawei.clouds.openrewrite.logbackcore.MigrateLogbackCoreTo1_5_34` | 将 Logback Core 1.2.5/1.2.9 精确升级到 1.5.34，直接复用官方 core/XML 类型、方法和属性配方，并定位 Joran、rolling、DB、receiver、配置安全、JPMS/OSGi 和依赖族风险 |
+| [`rewrite-zookeeper-upgrade`](rewrite-zookeeper-upgrade) | `com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6` | 将 5 个精确 ZooKeeper 低版本升级到 3.8.6，直接复用官方方法、类型和 Properties 配方，并定位持久化、滚动升级、Jute、TLS/SASL、审计、传输和嵌入式服务风险；3.9.x 禁止降级 |
 
 后续迁移应新增独立模块，例如：
 

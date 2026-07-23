@@ -14,11 +14,17 @@
     ],
     "canonicalIdentity": {
       "value": "org.apache.zookeeper:zookeeper",
-      "status": "unverified",
-      "evidence": []
+      "status": "verified",
+      "evidence": [
+        "https://github.com/apache/zookeeper/tree/6df26081269769c160c8c3a24929c60c91cd19c3",
+        "maven-central:jar-sha256:a00943a87b9c83379267ebda487be1ddb83e9997a03e59f9199338a033b71ed7",
+        "maven-central:pom-sha256:9f6033115da6d167f1b4863606dc976c9d7fc873266279d554bbf1e10e749098"
+      ]
     },
     "targetVersion": "3.8.6",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-zookeeper-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -37,9 +43,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和当前高优先级精确原子版本已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -58,7 +64,7 @@
           "relation": "upgrade-candidate",
           "action": "mark",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "该厂商后缀制品不在当前高优先级精确白名单内，且不能用 Apache 上游制品身份替代证明；保持原文并定位实际 owner。"
         }
       },
       {
@@ -75,9 +81,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和当前高优先级精确原子版本已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -96,7 +102,7 @@
           "relation": "upgrade-candidate",
           "action": "mark",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "该厂商后缀制品不在当前高优先级精确白名单内，且不能用 Apache 上游制品身份替代证明；保持原文并定位实际 owner。"
         }
       },
       {
@@ -113,9 +119,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和当前高优先级精确原子版本已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -132,9 +138,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和当前高优先级精确原子版本已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -151,9 +157,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和当前高优先级精确原子版本已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -208,9 +214,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和当前高优先级精确原子版本已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -229,7 +235,7 @@
           "relation": "upgrade-candidate",
           "action": "mark",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "该厂商后缀制品不在当前高优先级精确白名单内，且不能用 Apache 上游制品身份替代证明；保持原文并定位实际 owner。"
         }
       },
       {
@@ -246,9 +252,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和当前高优先级精确原子版本已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -267,7 +273,7 @@
           "relation": "upgrade-candidate",
           "action": "mark",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "该厂商后缀制品不在当前高优先级精确白名单内，且不能用 Apache 上游制品身份替代证明；保持原文并定位实际 owner。"
         }
       },
       {
@@ -284,9 +290,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和当前高优先级精确原子版本已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -303,9 +309,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和当前高优先级精确原子版本已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -322,9 +328,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和当前高优先级精确原子版本已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -367,19 +373,48 @@
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "verified",
+      "sourceVersions": [
+        "3.4.14",
+        "3.6.0",
+        "3.7.1",
+        "3.8.3",
+        "3.8.4"
+      ],
+      "targetVersion": "3.8.6",
+      "relation": "user-supplied-upgrade",
+      "action": "auto",
+      "statement": "用户最新高优先级清单批准五个 Apache 原子低版本升级到 3.8.6；工作簿中的两个厂商后缀版本不在该精确白名单内，继续保持 MARK。"
+    },
+    {
+      "id": "U-002",
+      "status": "verified",
+      "sourceVersions": [
+        "3.9.3",
+        "3.9.4"
+      ],
+      "targetVersion": "3.8.6",
+      "relation": "conflict",
+      "action": "mark",
+      "statement": "用户明确要求整体只升级不回退，因此 3.9.3 与 3.9.4 保持不变并标记目标版本冲突（禁止降级）。"
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "autoSourceWhitelist": [
       "3.4.14",
-      "3.5.6-hw-ei-302002",
       "3.6.0",
-      "3.6.3-hw-ei-312002",
       "3.7.1",
       "3.8.3",
       "3.8.4"
+    ],
+    "upgradeCandidatesPendingEvidence": [
+      "3.5.6-hw-ei-302002",
+      "3.6.3-hw-ei-312002"
     ],
     "noopVersions": [],
     "conflictVersions": [
@@ -391,23 +426,57 @@
   "evidence": [
     {
       "id": "E-001",
-      "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "claim": "当前高优先级 Apache 制品身份、源版本与目标制品身份",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/apache/zookeeper/tree/4c25d480e66aadd371de8bd2fd8da255ac140bcf",
+        "https://github.com/apache/zookeeper/tree/b4c89dc7f6083829e18fae6e446907ae0b1f22d7",
+        "https://github.com/apache/zookeeper/tree/a2fb57c55f8e59cdd76c34b357ad5181df1258d5",
+        "https://github.com/apache/zookeeper/tree/6df26081269769c160c8c3a24929c60c91cd19c3",
+        "maven-central:jar-sha256:a00943a87b9c83379267ebda487be1ddb83e9997a03e59f9199338a033b71ed7",
+        "maven-central:pom-sha256:9f6033115da6d167f1b4863606dc976c9d7fc873266279d554bbf1e10e749098"
+      ],
+      "realFixtures": [
+        "apache/zookeeper@6df26081269769c160c8c3a24929c60c91cd19c3"
+      ]
     },
     {
       "id": "E-002",
-      "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
+      "claim": "迁移边的 API、配置、安全与默认行为变化",
+      "status": "verified",
+      "officialSources": [
+        "https://zookeeper.apache.org/doc/r3.8.6/releasenotes.html",
+        "https://zookeeper.apache.org/security/",
+        "https://github.com/apache/zookeeper/commit/b8eb6a301beceae92a60e8be1a8d716a1109c82f",
+        "https://github.com/apache/zookeeper/commit/85551f9be5b054fa4aee0636597b12bda2ecb2e8",
+        "https://github.com/apache/zookeeper/commit/a5d67c8ffcc18289aa89c892d948ad7c75a317b4"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-003",
       "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-test/src/main/java/org/openrewrite/test"
+      ],
+      "realFixtures": [
+        "apache/zookeeper@b8eb6a301beceae92a60e8be1a8d716a1109c82f",
+        "apache/hbase@872616e4b45bf2994a63092b272987187bf3e161",
+        "apache/nifi@c7c745e8c8dcc7518b9d03720c85879cf29281be",
+        "apache/pinot@86535a9b6b3ec5e959bff9fb2d8cc14f59fc68aa"
+      ]
+    },
+    {
+      "id": "E-004",
+      "claim": "OpenRewrite 官方能力已检索、复用并通过组合测试",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568",
+        "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/ChangeMethodName.java",
+        "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java/src/main/java/org/openrewrite/java/ChangeType.java",
+        "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-properties/src/main/java/org/openrewrite/properties/ChangePropertyValue.java"
+      ],
       "realFixtures": []
     }
   ],
@@ -419,11 +488,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把当前高优先级白名单中的精确 Apache 依赖升级到 3.8.6；直接复用官方方法、类型和 Properties 配方，并对持久化、rolling、Jute、client/quorum、TLS/SASL、logging/audit、transport 与嵌入式服务风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-002",
@@ -432,11 +508,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "treatment": "厂商后缀版本不在当前高优先级精确白名单内，保持原文并 MARK 实际制品身份、版本 owner 和向前升级路径。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-003",
@@ -445,11 +528,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把当前高优先级白名单中的精确 Apache 依赖升级到 3.8.6；直接复用官方方法、类型和 Properties 配方，并对持久化、rolling、Jute、client/quorum、TLS/SASL、logging/audit、transport 与嵌入式服务风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-004",
@@ -458,11 +548,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "treatment": "厂商后缀版本不在当前高优先级精确白名单内，保持原文并 MARK 实际制品身份、版本 owner 和向前升级路径。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-005",
@@ -471,11 +568,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把当前高优先级白名单中的精确 Apache 依赖升级到 3.8.6；直接复用官方方法、类型和 Properties 配方，并对持久化、rolling、Jute、client/quorum、TLS/SASL、logging/audit、transport 与嵌入式服务风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-006",
@@ -484,11 +588,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把当前高优先级白名单中的精确 Apache 依赖升级到 3.8.6；直接复用官方方法、类型和 Properties 配方，并对持久化、rolling、Jute、client/quorum、TLS/SASL、logging/audit、transport 与嵌入式服务风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-007",
@@ -497,11 +608,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把当前高优先级白名单中的精确 Apache 依赖升级到 3.8.6；直接复用官方方法、类型和 Properties 配方，并对持久化、rolling、Jute、client/quorum、TLS/SASL、logging/audit、transport 与嵌入式服务风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-008",
@@ -510,11 +628,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "treatment": "高于目标的 3.9.x 保持原文并标记目标版本冲突（禁止降级）；需要另行批准向前的 3.9 目标。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-009",
@@ -523,11 +648,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "treatment": "高于目标的 3.9.x 保持原文并标记目标版本冲突（禁止降级）；需要另行批准向前的 3.9 目标。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-010",
@@ -536,11 +668,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把当前高优先级白名单中的精确 Apache 依赖升级到 3.8.6；直接复用官方方法、类型和 Properties 配方，并对持久化、rolling、Jute、client/quorum、TLS/SASL、logging/audit、transport 与嵌入式服务风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-011",
@@ -549,11 +688,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "treatment": "厂商后缀版本不在当前高优先级精确白名单内，保持原文并 MARK 实际制品身份、版本 owner 和向前升级路径。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-012",
@@ -562,11 +708,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把当前高优先级白名单中的精确 Apache 依赖升级到 3.8.6；直接复用官方方法、类型和 Properties 配方，并对持久化、rolling、Jute、client/quorum、TLS/SASL、logging/audit、transport 与嵌入式服务风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-013",
@@ -575,11 +728,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "treatment": "厂商后缀版本不在当前高优先级精确白名单内，保持原文并 MARK 实际制品身份、版本 owner 和向前升级路径。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-014",
@@ -588,11 +748,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把当前高优先级白名单中的精确 Apache 依赖升级到 3.8.6；直接复用官方方法、类型和 Properties 配方，并对持久化、rolling、Jute、client/quorum、TLS/SASL、logging/audit、transport 与嵌入式服务风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-015",
@@ -601,11 +768,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把当前高优先级白名单中的精确 Apache 依赖升级到 3.8.6；直接复用官方方法、类型和 Properties 配方，并对持久化、rolling、Jute、client/quorum、TLS/SASL、logging/audit、transport 与嵌入式服务风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-016",
@@ -614,11 +788,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把当前高优先级白名单中的精确 Apache 依赖升级到 3.8.6；直接复用官方方法、类型和 Properties 配方，并对持久化、rolling、Jute、client/quorum、TLS/SASL、logging/audit、transport 与嵌入式服务风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-017",
@@ -627,11 +808,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "treatment": "高于目标的 3.9.x 保持原文并标记目标版本冲突（禁止降级）；需要另行批准向前的 3.9 目标。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     },
     {
       "id": "C-018",
@@ -640,16 +828,23 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "treatment": "高于目标的 3.9.x 保持原文并标记目标版本冲突（禁止降级）；需要另行批准向前的 3.9 目标。",
+      "recipe": "com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6",
+      "tests": [
+        "UpgradeZooKeeperDependencyTest",
+        "FindZooKeeper386BuildRisksTest",
+        "MigrateDeterministicZooKeeperApisTest",
+        "ZooKeeperConfigurationMigrationTest",
+        "FindZooKeeper386SourceRisksTest",
+        "ZooKeeperRecommendedRecipeTest"
+      ]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }

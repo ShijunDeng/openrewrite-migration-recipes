@@ -167,6 +167,7 @@
     <module>rewrite-spring-expression-upgrade</module>
     <module>rewrite-spring-web-upgrade</module>
     <module>rewrite-logback-core-upgrade</module>
+    <module>rewrite-zookeeper-upgrade</module>
   </modules>
 
   <dependencyManagement>

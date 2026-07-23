@@ -1372,7 +1372,7 @@ migration-spec-java-maven-org-apache-xmlbeans-xmlbeans,org.apache.xmlbeans:xmlbe
 migration-spec-java-maven-org-apache-xmlgraphics-batik-svgrasterizer,org.apache.xmlgraphics:batik-svgrasterizer,java,java,1.19,1,4421,complete,pending,catalog-only,
 migration-spec-java-maven-org-apache-xmlgraphics-xmlgraphics-commons,org.apache.xmlgraphics:xmlgraphics-commons,java,java,2.1,2,3808 | 3809,complete,pending,catalog-only,
 migration-spec-java-maven-org-apache-yetus-audience-annotations,org.apache.yetus:audience-annotations,java,java,0.15.0,1,4445,complete,pending,catalog-only,
-migration-spec-java-maven-org-apache-zookeeper-zookeeper,org.apache.zookeeper:zookeeper | zookeeper,java,java,3.8.6,18,3525 | 3526 | 3527 | 3528 | 3529 | 3530 | 3531 | 3532 | 3533 | 4853 | 4854 | 4855 | 4856 | 4857 | 4858 | 4859 | 4860 | 4861,complete,pending,catalog-only,
+migration-spec-java-maven-org-apache-zookeeper-zookeeper,org.apache.zookeeper:zookeeper | zookeeper,java,java,3.8.6,18,3525 | 3526 | 3527 | 3528 | 3529 | 3530 | 3531 | 3532 | 3533 | 4853 | 4854 | 4855 | 4856 | 4857 | 4858 | 4859 | 4860 | 4861,complete,verified,implemented,rewrite-zookeeper-upgrade
 migration-spec-java-maven-org-aspectj-aspectjrt,org.aspectj:aspectjrt,java,java,1.9.25.1,5,3185 | 3186 | 3187 | 3188 | 3189,complete,pending,catalog-only,
 migration-spec-java-maven-org-aspectj-aspectjtools,org.aspectj:aspectjtools,java,java,1.9.25.1,2,4108 | 4109,complete,pending,catalog-only,
 migration-spec-java-maven-org-aspectj-aspectjweaver,org.aspectj:aspectjweaver,java,java,1.9.25.1,8,2534 | 2535 | 2536 | 2537 | 2538 | 2539 | 2540 | 2541,complete,pending,catalog-only,

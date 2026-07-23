@@ -1,0 +1,61 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.zookeeper.UpgradeZooKeeperTo3_8_6
+displayName: Upgrade selected ZooKeeper dependencies to 3.8.6
+description: >-
+  Upgrade only the workbook-approved org.apache.zookeeper:zookeeper versions 3.4.14, 3.6.0,
+  3.7.1, 3.8.3 and 3.8.4 in locally owned Maven or Gradle declarations. ZooKeeper 3.9.x and
+  every fixed version above 3.8.6 remain unchanged and are never downgraded.
+recipeList:
+  - com.huawei.clouds.openrewrite.zookeeper.UpgradeSelectedZooKeeperDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.zookeeper.MigrateDeterministicZooKeeperApis
+displayName: Migrate deterministic ZooKeeper API renames
+description: >-
+  Reuse official type-aware OpenRewrite ChangeMethodName and ChangeType recipes for two ZooKeeper
+  implementation-proven renames, limited to authored source files.
+preconditions:
+  - com.huawei.clouds.openrewrite.zookeeper.FindAuthoredSourceFiles
+recipeList:
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.zookeeper.server.persistence.FileTxnSnapLog getDataDir()
+      newMethodName: getDataLogDir
+      matchOverrides: false
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.zookeeper.audit.Log4jAuditLogger
+      newFullyQualifiedTypeName: org.apache.zookeeper.audit.Slf4jAuditLogger
+      ignoreDefinition: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.zookeeper.MigrateDeterministicZooKeeperConfiguration
+displayName: Migrate deterministic ZooKeeper audit configuration
+description: >-
+  Reuse official OpenRewrite ChangePropertyValue for exact Java Properties values and migrate the
+  structurally equivalent exact YAML value; unrelated values and generated files remain unchanged.
+preconditions:
+  - com.huawei.clouds.openrewrite.zookeeper.FindAuthoredSourceFiles
+recipeList:
+  - org.openrewrite.properties.ChangePropertyValue:
+      propertyKey: zookeeper.audit.impl.class
+      oldValue: org.apache.zookeeper.audit.Log4jAuditLogger
+      newValue: org.apache.zookeeper.audit.Slf4jAuditLogger
+      regex: false
+      relaxedBinding: false
+  - com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperYamlAuditLogger
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.zookeeper.MigrateZooKeeperTo3_8_6
+displayName: Migrate ZooKeeper to 3.8.6
+description: >-
+  Upgrade only approved lower versions, report every would-be downgrade as 目标版本冲突（禁止降级）,
+  apply implementation-proven API/configuration renames, and mark build, source, data, quorum
+  and security decisions that require application and operational evidence.
+recipeList:
+  - com.huawei.clouds.openrewrite.zookeeper.UpgradeSelectedZooKeeperDependency
+  - com.huawei.clouds.openrewrite.zookeeper.FindZooKeeper386BuildRisks
+  - com.huawei.clouds.openrewrite.zookeeper.MigrateDeterministicZooKeeperApis
+  - com.huawei.clouds.openrewrite.zookeeper.MigrateDeterministicZooKeeperConfiguration
+  - com.huawei.clouds.openrewrite.zookeeper.FindZooKeeper386SourceRisks
+  - com.huawei.clouds.openrewrite.zookeeper.FindZooKeeperConfigurationRisks
