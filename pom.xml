@@ -157,6 +157,7 @@
     <module>rewrite-bcprov-jdk18on-upgrade</module>
     <module>rewrite-netty-codec-http-upgrade</module>
     <module>rewrite-netty-codec-http2-upgrade</module>
+    <module>rewrite-spring-webflux-upgrade</module>
   </modules>
 
   <dependencyManagement>

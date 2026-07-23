@@ -1,0 +1,67 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springwebflux
+packageName: com.huawei.clouds.openrewrite.springwebflux
+description: Strictly upgrade Spring WebFlux to 6.2.19, automate proven-equivalent API moves, and locate behavior-sensitive reactive boundaries.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebflux.UpgradeSpringWebFluxTo6_2_19
+displayName: Upgrade selected Spring WebFlux dependencies to 6.2.19
+description: Upgrade only exact workbook-selected org.springframework:spring-webflux versions in locally owned standard Maven or root Gradle declarations.
+tags:
+  - spring
+  - spring-webflux
+  - java
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebflux.UpgradeSelectedSpringWebFluxDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebflux.MigrateDeterministicSpringWebFlux6Java
+displayName: Migrate deterministic Spring WebFlux 6 Java APIs
+description: Move the exact attributed ReactorResourceFactory type and replace the removed ServerWebExchangeContextFilter get alias with its equivalent getExchange API.
+tags:
+  - spring
+  - spring-webflux
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebflux.MigrateSpringWebFluxDeterministicJava
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebflux.FindSpringWebFlux6BuildMigrationRisks
+displayName: Find Spring WebFlux 6.2 build migration risks
+description: Mark dependency ownership, variants, Java and parameter metadata, Spring and Boot ownership, and reactive-stack baseline decisions.
+tags:
+  - spring
+  - spring-webflux
+  - build
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebflux.FindSpringWebFluxBuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebflux.FindSpringWebFlux6SourceAndConfigurationRisks
+displayName: Find Spring WebFlux 6.2 source and configuration risks
+description: Mark exact HttpMethod, controller, response, validation, observability, timeout, coroutine, resource, exception, and structured configuration boundaries.
+tags:
+  - spring
+  - spring-webflux
+  - configuration
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebflux.FindSpringWebFluxSourceRisks
+  - com.huawei.clouds.openrewrite.springwebflux.FindSpringWebFluxConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebflux.MigrateSpringWebFluxTo6_2_19
+displayName: Migrate Spring WebFlux applications to 6.2.19
+description: Strictly upgrade selected declarations, automate only proven-equivalent APIs, and mark remaining build, source, and configuration decisions.
+tags:
+  - spring
+  - spring-webflux
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebflux.UpgradeSpringWebFluxTo6_2_19
+  - com.huawei.clouds.openrewrite.springwebflux.MigrateDeterministicSpringWebFlux6Java
+  - com.huawei.clouds.openrewrite.springwebflux.FindSpringWebFlux6BuildMigrationRisks
+  - com.huawei.clouds.openrewrite.springwebflux.FindSpringWebFlux6SourceAndConfigurationRisks
