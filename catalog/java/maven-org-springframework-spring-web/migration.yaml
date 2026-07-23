@@ -14,11 +14,17 @@
     ],
     "canonicalIdentity": {
       "value": "org.springframework:spring-web",
-      "status": "unverified",
-      "evidence": []
+      "status": "verified",
+      "evidence": [
+        "https://github.com/spring-projects/spring-framework/tree/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522",
+        "maven-central:jar-sha256:ca88e364ecebee61163e2260e8a20584138eca74e28a050d6a2ef6302bad2f2d",
+        "maven-central:pom-sha256:db4b8eaa596332f537a2b5d1cc5a31f50b2b7b7b448490acc7893ea0f9525966"
+      ]
     },
     "targetVersion": "6.2.19",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-spring-web-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -37,9 +43,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -56,9 +62,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -75,9 +81,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -94,9 +100,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -113,9 +119,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -132,9 +138,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -151,9 +157,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -170,9 +176,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -189,9 +195,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -227,9 +233,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -246,9 +252,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -265,9 +271,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -284,9 +290,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -303,9 +309,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -322,9 +328,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -341,9 +347,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -360,9 +366,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -379,29 +385,59 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "verified",
+      "sourceVersions": [
+        "5.2.5.RELEASE",
+        "5.2.9.RELEASE",
+        "5.2.15.RELEASE",
+        "5.2.22.RELEASE",
+        "5.2.24.RELEASE",
+        "5.3.8",
+        "5.3.9",
+        "5.3.18",
+        "5.3.19",
+        "5.3.20",
+        "5.3.21",
+        "5.3.26",
+        "5.3.27",
+        "6.0.11"
+      ],
+      "targetVersion": "6.2.19",
+      "relation": "user-supplied-upgrade",
+      "action": "auto",
+      "statement": "用户补充的 14 个原子版本清单解开了 Excel #1150 的截断聚合显示；只有这些精确版本进入 AUTO，聚合单元格本身仍保持 MARK。"
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "autoSourceWhitelist": [
+      "5.2.5.RELEASE",
+      "5.2.9.RELEASE",
       "5.2.15.RELEASE",
       "5.2.22.RELEASE",
       "5.2.24.RELEASE",
-      "5.2.5.RELEASE",
-      "5.2.9.RELEASE",
+      "5.3.8",
+      "5.3.9",
       "5.3.18",
       "5.3.19",
       "5.3.20",
-      "5.3.21"
+      "5.3.21",
+      "5.3.26",
+      "5.3.27",
+      "6.0.11"
     ],
+    "upgradeCandidatesPendingEvidence": [],
     "noopVersions": [],
     "conflictVersions": [],
     "unresolvedVersions": [
@@ -412,22 +448,54 @@
     {
       "id": "E-001",
       "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-framework/tree/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522",
+        "maven-central:jar-sha256:ca88e364ecebee61163e2260e8a20584138eca74e28a050d6a2ef6302bad2f2d",
+        "maven-central:pom-sha256:db4b8eaa596332f537a2b5d1cc5a31f50b2b7b7b448490acc7893ea0f9525966"
+      ],
+      "realFixtures": [
+        "spring-projects/spring-framework@6214eae8bd02c2ed7ab382bb8d16a9cc6de49522"
+      ]
     },
     {
       "id": "E-002",
       "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-6.1-Release-Notes/723e8e77fbd0ca2cbb3cd90083ba144f89f7425d",
+        "https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-6.2-Release-Notes/0a2f0f586889261c625eae34194978b700f6e46c",
+        "https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-6.x/a4d3c6fc3c91d470dbe2ffff59c6d79c2a1615d9",
+        "https://github.com/spring-projects/spring-framework/blob/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522/framework-platform/framework-platform.gradle"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-003",
       "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite/blob/af06bb1b159249695dc92187093cd0909da6c843/rewrite-test/src/main/java/org/openrewrite/test/RewriteTest.java"
+      ],
+      "realFixtures": [
+        "consiglionazionaledellericerche/sprint-flows@d79ef47b06b0a10916f58c9dcc386af70e8d363d",
+        "yixingjia/flowgate@ed72bffe4b0f8299fb5d8f245def348333b2f789",
+        "chwshuang/web@b70de533fa3a3462f72d5c230bcfc5fb179f4e0e",
+        "TuiQiao/CBoard@67a2e9165bb71c94392f8ba4eab6d8eb7b58b3f3"
+      ]
+    },
+    {
+      "id": "E-004",
+      "claim": "OpenRewrite 官方能力已检索、复用并通过组合测试",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite-spring/tree/d28afcb6661ad413539056de0936c5489ff9d8ee",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/java/org/openrewrite/java/spring/framework/MigrateUtf8MediaTypes.java",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/java/org/openrewrite/java/spring/framework/MigrateResponseStatusExceptionGetRawStatusCodeMethod.java",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/java/org/openrewrite/java/spring/framework/MigrateResponseStatusExceptionGetStatusCodeMethod.java",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/java/org/openrewrite/java/spring/framework/MigrateClientHttpResponseGetRawStatusCodeMethod.java",
+        "https://github.com/openrewrite/rewrite-migrate-java/tree/658481254a6ee678f5f162e51d8d49ee01c75877"
+      ],
       "realFixtures": []
     }
   ],
@@ -439,11 +507,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-002",
@@ -452,11 +525,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-003",
@@ -465,11 +543,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-004",
@@ -478,11 +561,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-005",
@@ -491,11 +579,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-006",
@@ -504,11 +597,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-007",
@@ -517,11 +615,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-008",
@@ -530,11 +633,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-009",
@@ -543,11 +651,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-010",
@@ -556,11 +669,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "treatment": "聚合显示不进入版本 AUTO；配方只接受用户补充的 14 个精确原子版本，并对 Spring Web 构建、源码、配置和禁止降级风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-011",
@@ -569,11 +687,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-012",
@@ -582,11 +705,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-013",
@@ -595,11 +723,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-014",
@@ -608,11 +741,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-015",
@@ -621,11 +759,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-016",
@@ -634,11 +777,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-017",
@@ -647,11 +795,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-018",
@@ -660,11 +813,16 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     },
     {
       "id": "C-019",
@@ -673,16 +831,21 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.2.19；实际复用官方 MediaType、ResponseStatusException 和 ClientHttpResponse 配方，并对 Jakarta、HTTP client、URI、multipart、validation、配置及运行时依赖族风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19",
+      "tests": [
+        "UpgradeSpringWebTest",
+        "SpringWebOfficialRecipeReuseTest",
+        "SpringWebBuildRisksTest",
+        "SpringWebSourceMigrationTest"
+      ]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }

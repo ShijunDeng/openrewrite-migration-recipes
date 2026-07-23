@@ -1,0 +1,70 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springweb
+packageName: com.huawei.clouds.openrewrite.springweb
+description: Strictly upgrade Spring Web to 6.2.19, automate proven-equivalent API changes, and locate behavior-sensitive Spring 6 boundaries.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springweb.UpgradeSpringWebTo6_2_19
+displayName: Upgrade workbook-selected Spring Web dependencies to 6.2.19
+description: Upgrade only exact workbook source versions of org.springframework:spring-web in locally owned standard Maven or root Gradle declarations.
+tags:
+  - spring
+  - spring-web
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.springweb.UpgradeSelectedSpringWebDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springweb.MigrateDeterministicSpringWeb6Java
+displayName: Migrate deterministic Spring Web 6 Java APIs
+description: Migrate type-attributed Jakarta packages and removed aliases whose replacements preserve the old contract.
+tags:
+  - spring
+  - spring-web
+  - jakarta-ee
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springweb.MigrateSpringWebDeterministicJava
+  - com.huawei.clouds.openrewrite.springweb.MigrateRemovedSpringWebCalls
+  - com.huawei.clouds.openrewrite.springweb.ApplyOfficialSpringWebMigrations
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springweb.FindSpringWeb6BuildMigrationRisks
+displayName: Find Spring Web 6.2 build migration risks
+description: Mark dependency ownership, variants, Java 17, Spring family, Boot, Jakarta, HTTP client, Jackson, and container alignment decisions.
+tags:
+  - spring
+  - spring-web
+  - build
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springweb.FindSpringWebBuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springweb.FindSpringWeb6SourceAndConfigurationRisks
+displayName: Find Spring Web 6.2 source and configuration risks
+description: Mark removed APIs and behavior-sensitive HTTP, client, converter, multipart, remoting, status, URI, error, validation, and configuration boundaries.
+tags:
+  - spring
+  - spring-web
+  - configuration
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springweb.FindSpringWebSourceRisks
+  - com.huawei.clouds.openrewrite.springweb.FindSpringWebConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19
+displayName: Migrate Spring Web applications to 6.2.19
+description: Strictly upgrade selected declarations, automate proven-equivalent source changes, and mark every remaining Spring Web 6 build, source, and configuration decision.
+tags:
+  - spring
+  - spring-web
+  - jakarta-ee
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springweb.UpgradeSpringWebTo6_2_19
+  - com.huawei.clouds.openrewrite.springweb.MigrateDeterministicSpringWeb6Java
+  - com.huawei.clouds.openrewrite.springweb.FindSpringWeb6BuildMigrationRisks
+  - com.huawei.clouds.openrewrite.springweb.FindSpringWeb6SourceAndConfigurationRisks

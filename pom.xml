@@ -165,6 +165,7 @@
     <module>rewrite-spring-boot-starter-actuator-upgrade</module>
     <module>rewrite-spring-kafka-upgrade</module>
     <module>rewrite-spring-expression-upgrade</module>
+    <module>rewrite-spring-web-upgrade</module>
   </modules>
 
   <dependencyManagement>

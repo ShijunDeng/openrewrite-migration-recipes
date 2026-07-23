@@ -82,6 +82,7 @@ README、机器可读 manifest 和禁降级契约，不进入默认 Maven reacto
 | [`rewrite-netty-handler-upgrade`](rewrite-netty-handler-upgrade) | `com.huawei.clouds.openrewrite.nettyhandler.MigrateNettyHandlerTo4_1_136` | 精确升级工作簿和用户清单中的 Netty Handler 4.1 版本，直接复用官方参数迁移配方，自动迁移有源码证明的 deprecated API，并定位 TLS、SNI、ALPN、native、pipeline、timeout 与禁降级风险 |
 | [`rewrite-spring-kafka-upgrade`](rewrite-spring-kafka-upgrade) | `com.huawei.clouds.openrewrite.springkafka.MigrateSpringKafkaTo3_3_15` | 将 Spring Kafka 2.8.11/2.9.5 精确升级到 3.3.15，直接复用官方 Future、error handler、Header 与测试工具迁移，并定位 Java 17、JSON、listener、事务/EOS、retry/DLT 和可观测性风险 |
 | [`rewrite-spring-expression-upgrade`](rewrite-spring-expression-upgrade) | `com.huawei.clouds.openrewrite.springexpression.MigrateSpringExpressionTo6_2_19` | 将 17 个精确 Spring Expression 版本升级到 6.2.19，复用官方 Java 17/参数元数据构建配方，并定位 SpEL 信任边界、accessor/resolver、编译、内部 API 与操作上限风险 |
+| [`rewrite-spring-web-upgrade`](rewrite-spring-web-upgrade) | `com.huawei.clouds.openrewrite.springweb.MigrateSpringWebTo6_2_19` | 将 14 个精确 Spring Web 版本升级到 6.2.19，直接复用官方 MediaType、ResponseStatusException 与 ClientHttpResponse 配方，并定位 Jakarta、HTTP client、URI、multipart、validation 和配置风险 |
 
 后续迁移应新增独立模块，例如：
 

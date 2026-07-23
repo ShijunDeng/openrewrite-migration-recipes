@@ -1,9 +1,8 @@
 # org.springframework:spring-web / spring-web 升级规格
 
-> 规格状态：`COMPLETE`；证据状态：`PENDING`；自动化状态：`CATALOG_ONLY`。
-> 本 README 已完成工作簿事实、禁止降级边界、不兼容点分类和后续配方验收契约；
-> 它不声称尚未固定官方证据的具体 API 已得到确认。
-> catalog 本身不包含配方代码；现有候选实现也将在全量规格覆盖完成后逐模块核验和完善。
+> 规格状态：`COMPLETE`；证据状态：`VERIFIED`；自动化状态：`IMPLEMENTED`。
+> 可执行实现位于 [`rewrite-spring-web-upgrade`](../../../rewrite-spring-web-upgrade)，
+> 覆盖精确依赖升级、官方 Spring 配方复用、确定性 API 迁移和风险定位。
 
 ## 模块身份
 
@@ -13,118 +12,138 @@
 | Maven artifactId | `migration-spec-java-maven-org-springframework-spring-web` |
 | groupId | `com.huawei.clouds.openrewrite` |
 | 规范表格标识 | `org.springframework:spring-web`<br>`spring-web` |
-| Catalog canonical identity | `org.springframework:spring-web`（`UNVERIFIED`，只用于避免目录碰撞） |
+| Catalog canonical identity | `org.springframework:spring-web`（`VERIFIED`） |
 | 归一语言类 | `java` |
 | Excel 原始语言 | `java` |
 | 目标版本 | `6.2.19` |
 | Excel 迁移边 | 19 |
 | 涉及微服务数 | 最大可见值 `36`；不同版本行不累加 |
-| 分桶 | `B4_Major单包` |
-| 难度 | `中` |
 | 工作簿 SHA-256 | `17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309` |
-| 候选实现模块 | `NONE`（尚无已识别的顶层实现模块） |
+| 实现模块 | `rewrite-spring-web-upgrade` |
 
 ## Excel 事实快照
 
-本节逐字记录表格，不把自动分桶、难度或备注提升为官方兼容性结论。厂商后缀、
-截断显示、无法解析值和疑似跨发布线目标均原样保留。
+聚合显示逐字保留；用户补充的完整 14 个原子版本通过 `U-001` 单独记账，不把聚合文本
+解释成范围。
 
-| Excel 行 | 序号 | 软件名称 | 原始语言 | 原始版本 | 目标版本 | 微服务数 | 分桶 | 难度 | 保守方向/动作 | 原始备注 |
+| Excel 行 | 序号 | 软件名称 | 原始语言 | 原始版本 | 目标版本 | 微服务数 | 分桶 | 难度 | 动作 | 原始备注 |
 | ---: | ---: | --- | --- | --- | --- | ---: | --- | --- | --- | --- |
-| 1141 | 1140 | `org.springframework:spring-web` | java | `5.2.15.RELEASE` | `6.2.19` | 36 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1142 | 1141 | `org.springframework:spring-web` | java | `5.2.22.RELEASE` | `6.2.19` | 36 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1143 | 1142 | `org.springframework:spring-web` | java | `5.2.24.RELEASE` | `6.2.19` | 36 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1144 | 1143 | `org.springframework:spring-web` | java | `5.2.5.RELEASE` | `6.2.19` | 36 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1145 | 1144 | `org.springframework:spring-web` | java | `5.2.9.RELEASE` | `6.2.19` | 36 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1146 | 1145 | `org.springframework:spring-web` | java | `5.3.18` | `6.2.19` | 36 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1147 | 1146 | `org.springframework:spring-web` | java | `5.3.19` | `6.2.19` | 36 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1148 | 1147 | `org.springframework:spring-web` | java | `5.3.20` | `6.2.19` | 36 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1149 | 1148 | `org.springframework:spring-web` | java | `5.3.21` | `6.2.19` | 36 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 1150 | 1149 | `org.springframework:spring-web` | java | `5.3.26 ... (共14个版本)` | `6.2.19` | 36 | B4_Major单包 | 中 | unknown/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2219 | 2218 | `spring-web` | java | `5.2.15.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2220 | 2219 | `spring-web` | java | `5.2.22.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2221 | 2220 | `spring-web` | java | `5.2.24.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2222 | 2221 | `spring-web` | java | `5.2.5.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2223 | 2222 | `spring-web` | java | `5.2.9.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2224 | 2223 | `spring-web` | java | `5.3.18` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2225 | 2224 | `spring-web` | java | `5.3.19` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2226 | 2225 | `spring-web` | java | `5.3.20` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
-| 2227 | 2226 | `spring-web` | java | `5.3.21` | `6.2.19` | 0 | B4_Major单包 | 中 | upgrade-candidate/mark | 跨1个大版本，需查changelog确认breaking API |
+| 1141 | 1140 | `org.springframework:spring-web` | java | `5.2.15.RELEASE` | `6.2.19` | 36 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1142 | 1141 | `org.springframework:spring-web` | java | `5.2.22.RELEASE` | `6.2.19` | 36 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1143 | 1142 | `org.springframework:spring-web` | java | `5.2.24.RELEASE` | `6.2.19` | 36 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1144 | 1143 | `org.springframework:spring-web` | java | `5.2.5.RELEASE` | `6.2.19` | 36 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1145 | 1144 | `org.springframework:spring-web` | java | `5.2.9.RELEASE` | `6.2.19` | 36 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1146 | 1145 | `org.springframework:spring-web` | java | `5.3.18` | `6.2.19` | 36 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1147 | 1146 | `org.springframework:spring-web` | java | `5.3.19` | `6.2.19` | 36 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1148 | 1147 | `org.springframework:spring-web` | java | `5.3.20` | `6.2.19` | 36 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1149 | 1148 | `org.springframework:spring-web` | java | `5.3.21` | `6.2.19` | 36 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 1150 | 1149 | `org.springframework:spring-web` | java | `5.3.26 ... (共14个版本)` | `6.2.19` | 36 | B4_Major单包 | 中 | mark | 跨1个大版本，需查changelog确认breaking API |
+| 2219 | 2218 | `spring-web` | java | `5.2.15.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2220 | 2219 | `spring-web` | java | `5.2.22.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2221 | 2220 | `spring-web` | java | `5.2.24.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2222 | 2221 | `spring-web` | java | `5.2.5.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2223 | 2222 | `spring-web` | java | `5.2.9.RELEASE` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2224 | 2223 | `spring-web` | java | `5.3.18` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2225 | 2224 | `spring-web` | java | `5.3.19` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2226 | 2225 | `spring-web` | java | `5.3.20` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
+| 2227 | 2226 | `spring-web` | java | `5.3.21` | `6.2.19` | 0 | B4_Major单包 | 中 | auto | 跨1个大版本，需查changelog确认breaking API |
 
 ## 升级方向与禁止降级
 
-- 表格原始源版本记录（不是 AUTO 白名单）：`5.2.15.RELEASE`, `5.2.22.RELEASE`, `5.2.24.RELEASE`, `5.2.5.RELEASE`, `5.2.9.RELEASE`, `5.3.18`, `5.3.19`, `5.3.20`, `5.3.21`, `5.3.26 ... (共14个版本)`。
-- 升级候选边：`5.2.15.RELEASE`, `5.2.22.RELEASE`, `5.2.24.RELEASE`, `5.2.5.RELEASE`, `5.2.9.RELEASE`, `5.3.18`, `5.3.19`, `5.3.20`, `5.3.21`；在 E-001～E-003 完成前仍保持 `MARK`。
-- 相同版本 NOOP：`NONE`。
-- 潜在降级冲突：`NONE`。
-- 截断、聚合或无法可靠比较：`5.3.26 ... (共14个版本)`。
-- 任何高于目标的版本、更新发布线或无法可靠比较的厂商版本必须保持字节级不变，并在
-  真实依赖 owner 上标记 `目标版本冲突（禁止降级）`；本项目不存在回退路径。
-- 表外低版本、动态版本、范围、变量、BOM/platform、parent、catalog、workspace、
-  constraints 和锁文件不能被猜测式改写；应定位并迁移真正的版本 owner。
-- 若同一模块列出多个坐标或别名，配方必须分别证明身份；在官方 relocation 证据固定前，
-  不得因为 artifact 名相同而跨 group、生态或发行渠道改坐标。
-
+- AUTO 白名单仅包含 `5.2.5.RELEASE`、`5.2.9.RELEASE`、`5.2.15.RELEASE`、
+  `5.2.22.RELEASE`、`5.2.24.RELEASE`、`5.3.8`、`5.3.9`、`5.3.18`、
+  `5.3.19`、`5.3.20`、`5.3.21`、`5.3.26`、`5.3.27`、`6.0.11`。
+- 目标固定为 `6.2.19`；已是目标时 NOOP。`6.2.20+`、6.3、7.x 和未来发布线保持
+  原文，并在真实 owner 标记 `目标版本冲突（禁止降级）`。
+- 聚合单元格保持 MARK，不参与版本比较；表外低版本、动态/范围、共享或歧义属性、
+  BOM/platform/parent/catalog、constraint 和非标准制品不做猜测式修改。
+- Maven/Gradle 的 scope、optional、exclusions、闭包、相邻注释和其他元数据必须保留。
 
 ## 不兼容点规格
 
-| ID | 维度 | 适用迁移边 | Excel 提示 | 官方确认事实 | 处置契约 |
-| --- | --- | --- | --- | --- | --- |
-| C-001 | 公开 API / 配置 / 默认行为 / 运行时 | Excel #1141 5.2.15.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1142 5.2.22.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1143 5.2.24.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1144 5.2.5.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1145 5.2.9.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1146 5.3.18 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1147 5.3.19 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1148 5.3.20 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1149 5.3.21 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1150 5.3.26 ... (共14个版本) [unknown/mark: 源版本单元格是截断或聚合显示，不是可执行配方的原子版本白名单。]<br>Excel #2219 5.2.15.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2220 5.2.22.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2221 5.2.24.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2222 5.2.5.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2223 5.2.9.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2224 5.3.18 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2225 5.3.19 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2226 5.3.20 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2227 5.3.21 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。] → `6.2.19` | 跨1个大版本，需查changelog确认breaking API | `UNVERIFIED` | 建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。 |
+| ID | 维度 | 已验证不兼容点 | OpenRewrite 处置 |
+| --- | --- | --- | --- |
+| C-001 | Java / Jakarta | Spring 6 要求 Java 17，并从 `javax.servlet` 等 EE API 迁到 Jakarta | 对有类型归属的五个 Web 相关包复用 core `ChangePackage`；依赖 owner、descriptor、provider 和 Java 基线 MARK |
+| C-002 | HTTP method/status | `HttpRequest.getMethodValue`、`HttpMethod.resolve`、raw status 与 `HttpStatusCode` 发生 API 变化 | 确定性调用 AUTO；动态 method、自定义实现、switch/EnumSet 和非标准 status MARK |
+| C-003 | ResponseStatus | `ResponseStatusException`、`RestClientResponseException` 与 `ClientHttpResponse` 的 raw/status API 变化 | 显式接收者直接复用 3 个官方配方；只为已复现的隐式接收者上游空指针保留窄 fallback |
+| C-004 | MediaType | 四个 UTF-8 JSON 常量被替代 | 直接复用官方 `MigrateUtf8MediaTypes`，只改有类型归属的 Spring 常量 |
+| C-005 | HTTP client | AsyncRestTemplate、旧 client factory、Apache HttpClient 4、buffering/timeout 和 connector 生命周期变化 | 可证明的类型/方法改写 AUTO；连接池、TLS、proxy、timeout、取消和资源关闭 MARK |
+| C-006 | URI / forwarded / CORS | URI parser、forwarded trust 与 CORS 配置涉及输入、副作用和代理信任边界 | 仅稳定 identifier 形态 AUTO；副作用表达式、动态 URI 和信任策略保持并 MARK |
+| C-007 | remoting / multipart | HTTP Invoker、Hessian、Commons/Synchronoss multipart 等旧路径被移除或替代 | 精确标记类型、bean 和配置；协议、安全、上传限制、临时文件及清理由业务迁移 |
+| C-008 | validation / converters | 内建 method validation、参数默认值、converter/error handler 与 media negotiation 行为变化 | 对具体注解、类型、调用和配置 MARK，要求错误响应、泛型、charset 和 body 回归 |
+| C-009 | observability / HTTP interface | Micrometer observation、HTTP interface timeout、RestClient terminal operation 与 advice 协商变化 | 精确定位 API/config；cardinality、retry、阻塞超时、response 关闭和 advice 顺序人工验收 |
 
-`UNVERIFIED` 表示 Excel 提示已进入规格，但尚未用不可变的官方 tag/commit、发布说明和
-制品元数据完成验证。此时允许 README 和精确 MARK 设计，不允许据此发明 API AUTO。
+`VERIFIED` 只覆盖固定源码、发布说明和目标制品支持的事实。代理信任、凭据编码、
+连接池生命周期、错误契约、multipart 限制和生产回滚仍属于业务决策。
 
 ### `java` 生态最低核查项
 
-- 确认规范 Maven 坐标、relocation 关系，以及 parent/BOM/property/platform 的真实版本 owner。
-- 覆盖 Maven 与 Gradle；核查 JDK/字节码基线、包名和公开 API、反射、注解处理与 ServiceLoader。
-- 核查 JPMS/OSGi、shade/native-image、序列化/缓存/数据库数据，以及配置文件和框架联动。
+- Java 17+ 重新编译，统一 Spring Framework/Boot、Jakarta、Jackson、HttpClient、Netty、
+  Jetty 与 Micrometer 依赖族。
+- 覆盖 method/status 扩展、URI/forwarded/CORS、JSON/media negotiation、validation、
+  multipart、timeout/TLS/pool、buffering 和 observation。
+- 在真实 Servlet/Reactive client、代理和容器环境执行集成、安全、容量与回滚测试。
 
 ## 证据台账
 
-| Claim ID | 待证明事项 | 状态 | 固定官方证据 | 形成 AUTO 的条件 |
-| --- | --- | --- | --- | --- |
-| E-001 | 包/坐标身份、源版本和目标制品身份 | `UNVERIFIED` | 后续固定官网、registry/repository 元数据与 SHA | 身份无歧义且目标确为升级 |
-| E-002 | 每条迁移边的 API、配置和默认行为变化 | `UNVERIFIED` | 后续固定 release notes、迁移指南、tag/commit diff | 存在一一对应且语义等价的变换 |
-| E-003 | 真实工程中的用法和负例 | `UNVERIFIED` | 后续固定真实仓库 commit、路径、许可证与裁剪说明 | 正例、负例和上下文边界均可复现 |
+| Claim ID | 状态 | 固定证据 |
+| --- | --- | --- |
+| E-001 制品身份 | `VERIFIED` | Spring Framework `6.2.19` commit [`6214eae8`](https://github.com/spring-projects/spring-framework/tree/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522)；Maven Central JAR SHA-256 `ca88e364...2f2d`、POM SHA-256 `db4b8eaa...5966` |
+| E-002 API/配置/行为 | `VERIFIED` | 固定的 [6.1 release notes](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-6.1-Release-Notes/723e8e77fbd0ca2cbb3cd90083ba144f89f7425d)、[6.2 release notes](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-6.2-Release-Notes/0a2f0f586889261c625eae34194978b700f6e46c) 与目标源码 |
+| E-003 真实用法 | `VERIFIED` | sprint-flows `d79ef47b`、flowgate `ed72bffe`、chwshuang/web `b70de533`、CBoard `67a2e916` 固定 fixture |
+| E-004 官方能力复用 | `VERIFIED` | rewrite-spring `6.35.0` 固定提交 [`d28afcb6`](https://github.com/openrewrite/rewrite-spring/tree/d28afcb6661ad413539056de0936c5489ff9d8ee)；四个实际 delegate 与组合测试 |
 
-真实仓库只能证明“用法存在”，不能替代官方兼容性证据。推断必须显式标为
-`INFERENCE`；只有固定上游证据支持的事实才能改为 `VERIFIED`。
+真实仓库只能证明调用形态存在；兼容性结论由 Spring 固定源码、发布说明和目标制品支持。
+
+## 官方能力复用审计
+
+- 直接复用官方 `MigrateUtf8MediaTypes`、
+  `MigrateResponseStatusExceptionGetRawStatusCodeMethod`、
+  `MigrateResponseStatusExceptionGetStatusCodeMethod` 和
+  `MigrateClientHttpResponseGetRawStatusCodeMethod`。
+- 参数化复用 core `ChangePackage`、`ChangeType` 和 `ChangeMethodName` 处理有类型归属的
+  Jakarta 包、Reactor resource 类型及 response wrapper alias。
+- 组合测试实例化真实 delegate class，执行 media/status/RestClient 子类/client response
+  before/after、generated 路径排除、顺序和两周期幂等。
+- 官方两个 ResponseStatus 配方在隐式接收者上可复现 null-select 空指针；本地 fallback
+  严格限定 `select == null`，常规显式路径仍交给官方配方。
+- 官方 `UpgradeSpringFramework_6_2` 会宽泛升级整个 Spring 依赖族；
+  `JakartaEE10` 会修改额外 EE 依赖、插件和 XML；官方 URI 配方会复制 request AST，
+  使带副作用表达式求值两次。三者均超出本模块精确 artifact/白名单/语义边界，不组合。
 
 ## 后续 OpenRewrite 配方契约
 
 ### AUTO
 
-- 当前阶段 AUTO 白名单为空；只有 E-001～E-003 变为 `VERIFIED` 后，升级候选边才可逐项进入；
-- 只处理经验证的原子源版本、明确坐标和当前文件拥有的标准依赖声明；
-- 更高版本永不降级，表外版本、变体和外部 owner 永不猜测；
-- 只实现有官方源码证明、上下文无歧义、行为等价且可幂等运行的 AST/配置修改；
-- 保留 scope、classifier/type、optional、exclusions、workspace/profile 和相邻内容。
+- 只把 14 个精确源版本的、当前文件明确拥有的标准 Maven/Gradle JAR 声明改为 `6.2.19`。
+- 只执行官方或固定源码证明等价的类型/方法迁移；每项变换要求类型归属、generated 排除
+  和两周期幂等。
+- 不自动替换 `BasicAuthorizationInterceptor`：新类型的字符集与已有 Authorization
+  header 行为不同，裸 `ChangeType` 会改变语义。
 
 ### MARK
 
-- 在具体依赖、属性、BOM/platform、调用、类型、配置键或资源节点标记未决事项；
-- marker 必须说明业务 owner 需要作出的决定、所需证据和验收方法；
-- 不用文件级泛化告警代替精确定位，也不把 README 文字伪装成已执行迁移。
+- 在具体依赖、属性、类型、调用、注解和配置节点标记 owner/JDK/依赖族、HTTP method/
+  status、client、URI/forwarded/CORS、remoting、multipart、validation、converter、
+  observability 和 connector 风险。
+- 高版本 marker 必须包含精确短语 `目标版本冲突（禁止降级）`。
 
 ### MANUAL
 
-- 运行时流量、安全策略、数据和 wire format、集群滚动策略、原生 ABI、性能容量、
-  外部服务兼容性与回滚均由业务证据决定；
-- 无法通过静态上下文证明安全的语义变换保持原样。
+- 代理信任、URI parser、凭据字符集、连接池/TLS/timeout、上传策略、错误响应、指标标签、
+  容器部署和回滚由业务证据决定；无法静态证明语义等价的代码与配置保持原样。
 
 ## 测试与真实用例验收
 
-- 每个经验证的升级候选源版本才要求 AUTO 正例；目标/相同行为 NOOP；
-- 冲突、未知、截断和聚合版本保持不变并 MARK；所有更高版本和更高发布线验证禁止降级；
-- 覆盖对应生态的直接声明、共享 owner、BOM/platform/workspace、动态值、范围、锁文件和变体；
-- 覆盖同名业务符号、相似坐标、注释/字符串、生成目录、缓存和安装产物负例；
-- 每项 AUTO 有 before/after、类型或结构归因、两轮幂等和 aggregate 顺序测试；
-- 固定真实仓库 commit 与文件路径，记录裁剪内容；真实夹具不能取代官方差异证据；
-- 最终执行编译、单元/集成、行为、安全、性能、数据兼容、部署和回滚门禁。
+- 164 个测试覆盖 14 个源版本的 Maven/Gradle Groovy/Kotlin 矩阵、owner/profile/
+  dependencyManagement、catalog/platform/variant、目标 NOOP、表外和所有高版本禁止降级。
+- 覆盖四个官方 class 的 runtime 组合与实际 AST 变换、隐式接收者上游缺口、
+  generated 排除、推荐组合顺序和两周期幂等。
+- 覆盖 Jakarta、status/method/forwarded AUTO，构建/源码/config MARK，同名/重载/
+  side-effect 负例，以及四个固定真实仓库用法。
+- 业务最低门禁包括 Java 17 编译、HTTP/代理/容器集成、安全、性能、容量、部署和回滚。
 
 ## 当前阶段结论
 
-本模块的不兼容点文档规格已经建立；官方证据、真实仓库夹具和可执行配方属于下一阶段。
-在 E-001～E-003 完成前，除严格版本所有权和禁止降级守卫外，不批准猜测式 AUTO。
+该模块的规格、固定证据和可执行实现均已完成。确定性迁移尽可能交给官方配方；只有已
+复现且被严格限定的官方缺口使用本地实现。所有高版本保持不变，绝不降级。
