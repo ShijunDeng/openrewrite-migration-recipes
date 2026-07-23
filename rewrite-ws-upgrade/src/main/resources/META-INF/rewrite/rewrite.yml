@@ -1,0 +1,35 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.ws
+packageName: com.huawei.clouds.openrewrite.ws
+description: Upgrade workbook-selected ws declarations and expose protocol, event-order, resource, compression, security, stream, and shutdown migration work.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ws.UpgradeWsTo8_21_0
+displayName: Upgrade ws to 8.21.0
+description: Update only exact, caret, or tilde direct ws 8.5.0, 8.16.0, 8.18.3, and 8.20.0 declarations to 8.21.0 while preserving the operator.
+tags:
+  - ws
+  - websocket
+  - javascript
+  - nodejs
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.ws.UpgradeSelectedWsDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.ws.MigrateWsTo8_21_0
+displayName: Migrate ws to 8.21.0
+description: Run the strict public upgrade, preserve the 8.16 asynchronous-event default from its original-version marker where ownership is provable, and mark exact manifest and source compatibility decisions.
+tags:
+  - ws
+  - websocket
+  - javascript
+  - typescript
+  - nodejs
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.ws.UpgradeWsTo8_21_0
+  - com.huawei.clouds.openrewrite.ws.PreserveWs816EventScheduling
+  - com.huawei.clouds.openrewrite.ws.FindWsManifestRisks
+  - com.huawei.clouds.openrewrite.ws.FindWsJavaScriptRisks
