@@ -14,11 +14,17 @@
     ],
     "canonicalIdentity": {
       "value": "org.springframework.security:spring-security-core",
-      "status": "unverified",
-      "evidence": []
+      "status": "verified",
+      "evidence": [
+        "https://github.com/spring-projects/spring-security/tree/73b077790fcb04ac3712033d3e939daf42264545",
+        "maven-central:jar-sha256:26ac26527cc015c5c71f3832add705a2410129a8f8de847054f2bc3b1d2e4465",
+        "maven-central:pom-sha256:0574e823b5f84ca6c111dd6e0abd9941a3da2193590256f37b39a8095cd52a7a"
+      ]
     },
     "targetVersion": "6.5.11",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-spring-security-core-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -37,9 +43,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -56,9 +62,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -75,9 +81,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -94,9 +100,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -113,9 +119,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -132,9 +138,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -151,9 +157,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -170,9 +176,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -189,9 +195,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -208,9 +214,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -227,9 +233,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -246,9 +252,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -265,9 +271,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       },
       {
@@ -284,19 +290,36 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向与精确原子源版本已由固定证据验证；只允许执行受最近构建根、所有权和禁止降级守卫约束的 AUTO。"
         }
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "verified",
+      "sourceVersions": [
+        "5.3.10.RELEASE",
+        "5.7.1",
+        "5.8.5",
+        "6.4.10",
+        "6.4.4",
+        "6.4.6",
+        "6.5.1"
+      ],
+      "targetVersion": "6.5.11",
+      "relation": "user-supplied-upgrade",
+      "action": "auto",
+      "statement": "用户最新高优先级清单批准这 7 个精确 Spring Security Core 版本升级到 6.5.11；AUTO 仍受最近构建根、单一源版本、所有权与禁止降级守卫约束。"
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "autoSourceWhitelist": [
       "5.3.10.RELEASE",
       "5.7.1",
       "5.8.5",
@@ -305,6 +328,7 @@
       "6.4.6",
       "6.5.1"
     ],
+    "upgradeCandidatesPendingEvidence": [],
     "noopVersions": [],
     "conflictVersions": [],
     "unresolvedVersions": []
@@ -312,213 +336,219 @@
   "evidence": [
     {
       "id": "E-001",
-      "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "claim": "Spring Security Core 源版本、目标版本与 Maven 制品身份",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-security/tree/73b077790fcb04ac3712033d3e939daf42264545",
+        "https://github.com/spring-projects/spring-security/blob/73b077790fcb04ac3712033d3e939daf42264545/gradle.properties",
+        "maven-central:jar-sha256:26ac26527cc015c5c71f3832add705a2410129a8f8de847054f2bc3b1d2e4465",
+        "maven-central:pom-sha256:0574e823b5f84ca6c111dd6e0abd9941a3da2193590256f37b39a8095cd52a7a"
+      ],
+      "realFixtures": [
+        "spring-projects/spring-security@73b077790fcb04ac3712033d3e939daf42264545"
+      ]
     },
     {
       "id": "E-002",
-      "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
+      "claim": "Java 17、密码编码、方法安全、认证授权、SecurityContext 与依赖族变化",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-security/blob/73b077790fcb04ac3712033d3e939daf42264545/build.gradle",
+        "https://github.com/spring-projects/spring-security/blob/73b077790fcb04ac3712033d3e939daf42264545/gradle/libs.versions.toml",
+        "https://docs.spring.io/spring-security/reference/6.5/prerequisites.html",
+        "https://docs.spring.io/spring-security/reference/6.5/servlet/authorization/method-security.html",
+        "https://docs.spring.io/spring-security/reference/6.5/features/authentication/password-storage.html",
+        "https://docs.spring.io/spring-security/reference/6.5/migration-7/authorization.html",
+        "https://spring.io/blog/2026/06/09/spring-security-releases-2026-06/"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-003",
-      "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
-      "officialSources": [],
+      "claim": "真实工程用法、负例、构建根隔离与幂等性验收",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite-spring/tree/d28afcb6661ad413539056de0936c5489ff9d8ee/src/test/java/org/openrewrite/java/spring"
+      ],
+      "realFixtures": [
+        "CognizantOpenSource/Cognizant-Customer-Experience-Assurance-Viewer@11882ec234370e72b353b28879a04eaee45aa76c",
+        "apache/fineract@c29a2af2af6d737ad82dca962bdd78f715d705c8",
+        "iamprassana/URL-Shortener-Backend@a62277266238f0543cba53aa52063967308e9a32"
+      ]
+    },
+    {
+      "id": "E-004",
+      "claim": "OpenRewrite 官方能力已检索、复用并通过运行时配方树审计",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite-spring/tree/d28afcb6661ad413539056de0936c5489ff9d8ee",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-security-57.yml",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-security-58.yml",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-security-60.yml",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-security-65.yml"
+      ],
       "realFixtures": []
     }
   ],
   "incompatibilities": [
     {
       "id": "C-001",
-      "edgeRows": [
-        1848
-      ],
+      "edgeRows": [1848],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "仅在最近构建根拥有单一精确源版本时升级到 6.5.11；复用官方密码编码器、方法安全、响应式方法安全与 queryableText 检测，并对 Java 17、认证授权、密码存储、SecurityContext 和依赖族风险精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-002",
-      "edgeRows": [
-        1849
-      ],
+      "edgeRows": [1849],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "仅在最近构建根拥有单一精确源版本时升级到 6.5.11；复用官方密码编码器、方法安全、响应式方法安全与 queryableText 检测，并对 Java 17、认证授权、密码存储、SecurityContext 和依赖族风险精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-003",
-      "edgeRows": [
-        1850
-      ],
+      "edgeRows": [1850],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "仅在最近构建根拥有单一精确源版本时升级到 6.5.11；复用官方密码编码器、方法安全、响应式方法安全与 queryableText 检测，并对 Java 17、认证授权、密码存储、SecurityContext 和依赖族风险精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-004",
-      "edgeRows": [
-        2267
-      ],
+      "edgeRows": [2267],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "仅在最近构建根拥有单一精确源版本时升级到 6.5.11；复用官方密码编码器、方法安全、响应式方法安全与 queryableText 检测，并对 Java 17、认证授权、密码存储、SecurityContext 和依赖族风险精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-005",
-      "edgeRows": [
-        2268
-      ],
+      "edgeRows": [2268],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "仅在最近构建根拥有单一精确源版本时升级到 6.5.11；复用官方密码编码器、方法安全、响应式方法安全与 queryableText 检测，并对 Java 17、认证授权、密码存储、SecurityContext 和依赖族风险精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-006",
-      "edgeRows": [
-        2269
-      ],
+      "edgeRows": [2269],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "仅在最近构建根拥有单一精确源版本时升级到 6.5.11；复用官方密码编码器、方法安全、响应式方法安全与 queryableText 检测，并对 Java 17、认证授权、密码存储、SecurityContext 和依赖族风险精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-007",
-      "edgeRows": [
-        3996
-      ],
+      "edgeRows": [3996],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "精确依赖版本 AUTO；官方确定性 Core API 叶子继续执行，Java 17、-parameters、密码兼容、方法授权、上下文传播和 Spring Security/Spring/Micrometer 依赖族由具体节点 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-008",
-      "edgeRows": [
-        3997
-      ],
+      "edgeRows": [3997],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "精确依赖版本 AUTO；官方确定性 Core API 叶子继续执行，Java 17、-parameters、密码兼容、方法授权、上下文传播和 Spring Security/Spring/Micrometer 依赖族由具体节点 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-009",
-      "edgeRows": [
-        3998
-      ],
+      "edgeRows": [3998],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "精确依赖版本 AUTO；官方确定性 Core API 叶子继续执行，Java 17、-parameters、密码兼容、方法授权、上下文传播和 Spring Security/Spring/Micrometer 依赖族由具体节点 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-010",
-      "edgeRows": [
-        3999
-      ],
+      "edgeRows": [3999],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "精确升级到 6.5.11；保留认证授权、密码哈希、SecurityContext 和补丁安全行为回归门禁，目标版/表外版 NOOP，任何高版本只标记目标版本冲突（禁止降级）。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreRealRepositoryTest", "SpringSecurityCoreBuildRisksTest"]
     },
     {
       "id": "C-011",
-      "edgeRows": [
-        4873
-      ],
+      "edgeRows": [4873],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "精确依赖版本 AUTO；官方确定性 Core API 叶子继续执行，Java 17、-parameters、密码兼容、方法授权、上下文传播和 Spring Security/Spring/Micrometer 依赖族由具体节点 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-012",
-      "edgeRows": [
-        4874
-      ],
+      "edgeRows": [4874],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "精确依赖版本 AUTO；官方确定性 Core API 叶子继续执行，Java 17、-parameters、密码兼容、方法授权、上下文传播和 Spring Security/Spring/Micrometer 依赖族由具体节点 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-013",
-      "edgeRows": [
-        4875
-      ],
+      "edgeRows": [4875],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "精确依赖版本 AUTO；官方确定性 Core API 叶子继续执行，Java 17、-parameters、密码兼容、方法授权、上下文传播和 Spring Security/Spring/Micrometer 依赖族由具体节点 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreOfficialMigrationTest", "SpringSecurityCoreBuildRisksTest", "SpringSecurityCoreSourceRisksTest"]
     },
     {
       "id": "C-014",
-      "edgeRows": [
-        4876
-      ],
+      "edgeRows": [4876],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "精确升级到 6.5.11；保留认证授权、密码哈希、SecurityContext 和补丁安全行为回归门禁，目标版/表外版 NOOP，任何高版本只标记目标版本冲突（禁止降级）。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11",
+      "tests": ["UpgradeSpringSecurityCoreDependencyTest", "SpringSecurityCoreSelectedProjectGateTest", "SpringSecurityCoreRealRepositoryTest", "SpringSecurityCoreBuildRisksTest"]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }

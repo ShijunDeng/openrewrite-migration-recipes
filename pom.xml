@@ -172,6 +172,7 @@
     <module>rewrite-logback-core-upgrade</module>
     <module>rewrite-zookeeper-upgrade</module>
     <module>rewrite-spring-security-web-upgrade</module>
+    <module>rewrite-spring-security-core-upgrade</module>
     <module>rewrite-spring-retry-upgrade</module>
   </modules>
 

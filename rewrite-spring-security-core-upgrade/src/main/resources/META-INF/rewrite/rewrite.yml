@@ -1,0 +1,184 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springsecuritycore
+packageName: com.huawei.clouds.openrewrite.springsecuritycore
+description: Strict Spring Security Core 6.5.11 dependency, API, and risk recipes.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.UpgradeSpringSecurityCoreTo6_5_11
+displayName: Upgrade workbook-selected Spring Security Core dependencies to 6.5.11
+description: >-
+  Upgrade only 5.3.10.RELEASE, 5.7.1, 5.8.5, 6.4.4, 6.4.6, 6.4.10,
+  and 6.5.1 in unambiguously owned standard Maven or root Gradle declarations.
+  Every other version remains unchanged.
+tags:
+  - spring
+  - security
+  - dependency-upgrade
+  - no-downgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecuritycore.MarkSelectedSpringSecurityCoreProjects
+  - com.huawei.clouds.openrewrite.springsecuritycore.UpgradeSelectedSpringSecurityCoreDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.MigrateDeterministicSpringSecurityCore6
+displayName: Migrate deterministic Spring Security Core 6 APIs
+description: >-
+  Directly compose only applicable deterministic leaves from the fixed
+  rewrite-spring Security 5.8/6.0 catalog. Broad Security/Spring/Boot
+  dependency aggregates are deliberately excluded.
+tags:
+  - spring
+  - security
+  - source-migration
+  - official-openrewrite
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindAuthoredSourceFiles
+recipeList:
+  - org.openrewrite.java.spring.security5.UpdatePbkdf2PasswordEncoder
+  - org.openrewrite.java.spring.security5.UpdateSCryptPasswordEncoder
+  - org.openrewrite.java.spring.security5.UpdateArgon2PasswordEncoder
+  - org.openrewrite.java.spring.security5.ReplaceGlobalMethodSecurityWithMethodSecurity
+  - com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityMethodSecurityXml
+  - org.openrewrite.java.spring.security6.UpdateEnableReactiveMethodSecurity
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.MigrateOfficialUnprefixedSpringSecurityMethodSecurityXml
+displayName: Migrate namespace-safe unprefixed method-security XML
+description: >-
+  Reuse the official Spring Security XML migration only when every unprefixed
+  tag it can match resolves to the Spring Security namespace.
+tags:
+  - spring
+  - security
+  - xml
+  - official-openrewrite
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindOfficialSpringSecurityMethodSecurityXmlFiles
+recipeList:
+  - org.openrewrite.java.spring.security5.ReplaceGlobalMethodSecurityWithMethodSecurityXml
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityMethodSecurityXml
+displayName: Migrate namespace-safe Spring Security method-security XML
+description: >-
+  Reuse the official unprefixed recipe and fill only its prefixed namespace gap
+  with a namespace-aware local visitor.
+tags:
+  - spring
+  - security
+  - xml
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecuritycore.MigrateOfficialUnprefixedSpringSecurityMethodSecurityXml
+  - com.huawei.clouds.openrewrite.springsecuritycore.MigratePrefixedSpringSecurityMethodSecurityXml
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.MigrateSelectedDeterministicSpringSecurityCore6
+displayName: Migrate deterministic APIs only in selected Spring Security Core projects
+description: >-
+  Apply the audited official composition only below a build root that proved
+  one exact, non-conflicting workbook source version before dependency edits.
+tags:
+  - spring
+  - security
+  - source-version-gate
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSelectedSpringSecurityCoreProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecuritycore.MigrateDeterministicSpringSecurityCore6
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.FindSpringSecurityCore6_5_11BuildRisks
+displayName: Find Spring Security Core 6.5.11 build risks
+description: >-
+  Mark no-downgrade conflicts, unresolved owners, unsupported variants,
+  Java 17 and -parameters requirements, and dependency-family alignment.
+tags:
+  - spring
+  - security
+  - build
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSpringSecurityCore6511BuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.FindSelectedSpringSecurityCore6_5_11BuildRisks
+displayName: Find Spring Security Core build risks only in selected projects
+description: >-
+  Run Java baseline, owner and dependency-family risk searches only below a
+  build root that proved one exact, non-conflicting workbook source version.
+tags:
+  - spring
+  - security
+  - source-version-gate
+  - search
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSelectedSpringSecurityCoreProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSpringSecurityCore6_5_11BuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.FindSpringSecurityCore6_5_11DowngradeConflicts
+displayName: Find Spring Security Core 6.5.11 downgrade conflicts
+description: >-
+  Preserve visible fixed spring-security-core versions newer than 6.5.11 and
+  attach exactly the no-downgrade marker without touching other declarations.
+tags:
+  - spring
+  - security
+  - no-downgrade
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSpringSecurityCore6511DowngradeConflicts
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.FindSpringSecurityCore6_5_11SourceRisks
+displayName: Find Spring Security Core 6.5.11 source risks
+description: >-
+  Reuse the official queryableText search and locate password storage,
+  authentication, method authorization, context propagation, and legacy
+  extension-point decisions in authored Java sources.
+tags:
+  - spring
+  - security
+  - source
+  - search
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindAuthoredSourceFiles
+recipeList:
+  - org.openrewrite.java.spring.security5.search.FindEncryptorsQueryableTextUses
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSpringSecurityCore6511SourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.FindSelectedSpringSecurityCore6_5_11SourceRisks
+displayName: Find Spring Security Core source risks only in selected projects
+description: >-
+  Run source risk searches only below a build root that proved one exact,
+  non-conflicting workbook source version before dependency edits.
+tags:
+  - spring
+  - security
+  - source-version-gate
+  - search
+preconditions:
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSelectedSpringSecurityCoreProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSpringSecurityCore6_5_11SourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecuritycore.MigrateSpringSecurityCoreTo6_5_11
+displayName: Migrate Spring Security Core applications to 6.5.11
+description: >-
+  Strictly upgrade workbook-selected dependency declarations, apply only
+  deterministic official API leaves, and mark all remaining build and source
+  decisions. Higher versions are preserved and marked as no-downgrade conflicts.
+tags:
+  - spring
+  - security
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecuritycore.UpgradeSpringSecurityCoreTo6_5_11
+  - com.huawei.clouds.openrewrite.springsecuritycore.MigrateSelectedDeterministicSpringSecurityCore6
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSpringSecurityCore6_5_11DowngradeConflicts
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSelectedSpringSecurityCore6_5_11BuildRisks
+  - com.huawei.clouds.openrewrite.springsecuritycore.FindSelectedSpringSecurityCore6_5_11SourceRisks
