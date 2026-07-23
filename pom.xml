@@ -144,6 +144,7 @@
     <module>rewrite-appium-java-client-upgrade</module>
     <module>rewrite-jakarta-ws-rs-api-upgrade</module>
     <module>rewrite-org-json-upgrade</module>
+    <module>rewrite-junit-platform-launcher-upgrade</module>
   </modules>
 
   <dependencyManagement>

@@ -1,0 +1,22 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitplatform.UpgradeJUnitPlatformLauncherTo6_0_1
+displayName: Upgrade workbook-selected JUnit Platform Launcher dependencies to 6.0.1
+description: >-
+  Upgrade only exact org.junit.platform:junit-platform-launcher 1.7.2 and 1.8.2 declarations owned by the
+  current Maven or root Gradle build, preserving unsupported versions, external owners, variants, nested DSL,
+  and generated files.
+recipeList:
+  - com.huawei.clouds.openrewrite.junitplatform.UpgradeSelectedJUnitPlatformLauncherDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitplatform.MigrateJUnitPlatformLauncherTo6_0_1
+displayName: Migrate JUnit Platform Launcher 1.7.2/1.8.2 to 6.0.1
+description: >-
+  Reuse the public strict dependency upgrade, migrate deterministic removed Launcher APIs, then mark source and
+  build decisions that require ownership, Java baseline, test-provider, artifact-shape, or semantic review.
+recipeList:
+  - com.huawei.clouds.openrewrite.junitplatform.UpgradeJUnitPlatformLauncherTo6_0_1
+  - com.huawei.clouds.openrewrite.junitplatform.MigrateJUnitPlatform6Java
+  - com.huawei.clouds.openrewrite.junitplatform.FindJUnitPlatform6SourceRisks
+  - com.huawei.clouds.openrewrite.junitplatform.FindJUnitPlatform6BuildRisks
