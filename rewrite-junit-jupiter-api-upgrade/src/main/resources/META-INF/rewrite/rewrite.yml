@@ -3,20 +3,76 @@ type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.junitjupiter.UpgradeJUnitJupiterApiTo6_0_1
 displayName: Upgrade workbook-selected JUnit Jupiter API dependencies to 6.0.1
 description: >-
-  Upgrade only exact org.junit.jupiter:junit-jupiter-api 5.7.1, 5.8.2, and 5.9.3 declarations owned by the
-  current Maven or root Gradle build, preserving external owners, variants, ranges, dynamic versions, and generated files.
+  Capture an exact non-conflicting source-version project before edits, use the official unified Maven/Gradle
+  UpgradeDependencyVersion first, and retain the strict raw-syntax visitor as a fallback for unresolved build models.
 recipeList:
+  - com.huawei.clouds.openrewrite.junitjupiter.MarkSelectedJUnitJupiterProjects
+  - com.huawei.clouds.openrewrite.junitjupiter.UpgradeSelectedJUnitJupiterApiDependencyWithOfficialFallback
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiter.UpgradeSelectedJUnitJupiterApiDependencyWithOfficialFallback
+displayName: Upgrade the selected JUnit Jupiter API dependency
+description: >-
+  Upgrade only files whose nearest build root proved one exact workbook source version; the official model-aware
+  recipe runs first and the existing strict visitor handles raw Maven or Gradle syntax that has no dependency model.
+preconditions:
+  - com.huawei.clouds.openrewrite.junitjupiter.FindSelectedJUnitJupiterSourceFiles
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.junit.jupiter
+      artifactId: junit-jupiter-api
+      newVersion: 6.0.1
   - com.huawei.clouds.openrewrite.junitjupiter.UpgradeSelectedJUnitJupiterApiDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiter.MigrateDeterministicJUnitJupiter6Java
+displayName: Migrate deterministic JUnit Jupiter 6 Java APIs
+description: >-
+  Reuse the official Store method rename and MethodOrderer migration, then apply only the custom body-preserving
+  interceptor adaptation that the official remove-method recipe cannot safely provide.
+preconditions:
+  - com.huawei.clouds.openrewrite.junitjupiter.FindAuthoredJUnitJupiterSourceFiles
+recipeList:
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.junit.jupiter.api.extension.ExtensionContext$Store getOrComputeIfAbsent(..)
+      newMethodName: computeIfAbsent
+      matchOverrides: true
+      ignoreDefinition: true
+  - org.openrewrite.java.testing.junit6.MigrateMethodOrdererAlphanumeric
+  - com.huawei.clouds.openrewrite.junitjupiter.RepairMethodOrdererTypeMetadata
+  - com.huawei.clouds.openrewrite.junitjupiter.MigrateJUnitJupiter6Java
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiter.MigrateSelectedJUnitJupiter6Java
+displayName: Migrate Java only in workbook-selected JUnit Jupiter projects
+description: >-
+  Apply deterministic source changes only below a build root that proved one exact, non-conflicting workbook
+  source version before dependency edits.
+preconditions:
+  - com.huawei.clouds.openrewrite.junitjupiter.FindSelectedJUnitJupiterSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.junitjupiter.MigrateDeterministicJUnitJupiter6Java
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.junitjupiter.FindSelectedJUnitJupiter6SourceAndConfigurationRisks
+displayName: Find JUnit Jupiter 6 risks only in selected projects
+description: >-
+  Mark source and configuration decisions only below a build root that proved one exact, non-conflicting workbook
+  source version before dependency edits.
+preconditions:
+  - com.huawei.clouds.openrewrite.junitjupiter.FindSelectedJUnitJupiterSourceFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.junitjupiter.FindJUnitJupiter6SourceRisks
+  - com.huawei.clouds.openrewrite.junitjupiter.FindJUnitJupiter6ConfigurationRisks
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.junitjupiter.MigrateJUnitJupiterApiTo6_0_1
 displayName: Migrate JUnit Jupiter API 5.7.1/5.8.2/5.9.3 to 6.0.1
 description: >-
-  Reuse the public strict dependency upgrade, migrate deterministic Jupiter APIs, and then mark source, configuration,
-  baseline, dependency-alignment, removed-module, provider, and runtime behavior decisions for explicit review.
+  Capture exact source-version eligibility, reuse the official dependency and source leaves, preserve interceptor
+  bodies with the local gap recipe, and mark build plus selected-project source/configuration decisions for review.
 recipeList:
   - com.huawei.clouds.openrewrite.junitjupiter.UpgradeJUnitJupiterApiTo6_0_1
-  - com.huawei.clouds.openrewrite.junitjupiter.MigrateJUnitJupiter6Java
-  - com.huawei.clouds.openrewrite.junitjupiter.FindJUnitJupiter6SourceRisks
-  - com.huawei.clouds.openrewrite.junitjupiter.FindJUnitJupiter6ConfigurationRisks
+  - com.huawei.clouds.openrewrite.junitjupiter.MigrateSelectedJUnitJupiter6Java
   - com.huawei.clouds.openrewrite.junitjupiter.FindJUnitJupiter6BuildRisks
+  - com.huawei.clouds.openrewrite.junitjupiter.FindSelectedJUnitJupiter6SourceAndConfigurationRisks

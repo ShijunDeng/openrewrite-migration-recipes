@@ -7,6 +7,7 @@ import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.xml.Assertions.xml;
 
@@ -23,7 +24,7 @@ class RecommendedJUnitJupiterMigrationTest implements RewriteTest {
     @Test
     void upgradesDependencyAndMigratesOpenJmlOrdererShapeTogether() {
         rewriteRun(
-                xml(UpgradeJUnitJupiterApiDependencyTest.pom("5.7.1"),
+                pomXml(UpgradeJUnitJupiterApiDependencyTest.pom("5.7.1"),
                         UpgradeJUnitJupiterApiDependencyTest.pom("6.0.1"), source -> source.path("pom.xml")),
                 java(
                         """
@@ -70,7 +71,11 @@ class RecommendedJUnitJupiterMigrationTest implements RewriteTest {
 
     @Test
     void adaptsOldDynamicInterceptorWithoutDiscardingItsBody() {
-        rewriteRun(java(
+        rewriteRun(
+                xml(UpgradeJUnitJupiterApiDependencyTest.pom("5.9.3"),
+                        UpgradeJUnitJupiterApiDependencyTest.pom("6.0.1"),
+                        source -> source.path("pom.xml")),
+                java(
                 """
                   import org.junit.jupiter.api.extension.ExtensionContext;
                   import org.junit.jupiter.api.extension.InvocationInterceptor;
@@ -97,7 +102,11 @@ class RecommendedJUnitJupiterMigrationTest implements RewriteTest {
 
     @Test
     void combinesAutomaticMigrationWithSourceReviewMarkers() {
-        rewriteRun(java(
+        rewriteRun(
+                xml(UpgradeJUnitJupiterApiDependencyTest.pom("5.7.1"),
+                        UpgradeJUnitJupiterApiDependencyTest.pom("6.0.1"),
+                        source -> source.path("pom.xml")),
+                java(
                 """
                   import org.junit.jupiter.api.MethodOrderer;
                   import org.junit.jupiter.api.Nested;

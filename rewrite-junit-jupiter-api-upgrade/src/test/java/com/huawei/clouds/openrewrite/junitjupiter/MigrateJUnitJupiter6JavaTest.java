@@ -1,6 +1,7 @@
 package com.huawei.clouds.openrewrite.junitjupiter;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.config.Environment;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.java.tree.J;
@@ -15,7 +16,14 @@ class MigrateJUnitJupiter6JavaTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion().dependsOn(JUnitJupiterTestApi.sources()))
-                .recipe(new MigrateJUnitJupiter6Java());
+                .recipe(Environment.builder()
+                        .scanRuntimeClasspath(
+                                "com.huawei.clouds.openrewrite.junitjupiter",
+                                "org.openrewrite.java",
+                                "org.openrewrite.java.testing.junit6")
+                        .build()
+                        .activateRecipes(
+                                "com.huawei.clouds.openrewrite.junitjupiter.MigrateDeterministicJUnitJupiter6Java"));
     }
 
     @Test
@@ -110,7 +118,8 @@ class MigrateJUnitJupiter6JavaTest implements RewriteTest {
                   import org.junit.jupiter.api.TestMethodOrder;
                   @TestMethodOrder(org.junit.jupiter.api.MethodOrderer.MethodName.class)
                   class AllTests {}
-                  """));
+                  """, source -> source.afterRecipe(
+                        MigrateJUnitJupiter6JavaTest::assertMethodNameTypeMetadata)));
     }
 
     @Test
@@ -127,19 +136,8 @@ class MigrateJUnitJupiter6JavaTest implements RewriteTest {
                   import org.junit.jupiter.api.TestMethodOrder;
                   @TestMethodOrder(MethodName.class)
                   class OrderedTests {}
-                  """, source -> source.afterRecipe(after -> {
-                    boolean[] typed = {false};
-                    new JavaIsoVisitor<boolean[]>() {
-                        @Override
-                        public J.Identifier visitIdentifier(J.Identifier identifier, boolean[] p) {
-                            J.Identifier visited = super.visitIdentifier(identifier, p);
-                            if ("MethodName".equals(visited.getSimpleName()) && TypeUtils.isOfClassType(
-                                    visited.getType(), "org.junit.jupiter.api.MethodOrderer.MethodName")) p[0] = true;
-                            return visited;
-                        }
-                    }.visitNonNull(after, typed);
-                    assertTrue(typed[0], "The migrated nested type must carry the JUnit 6 MethodName type");
-                })));
+                  """, source -> source.afterRecipe(
+                        MigrateJUnitJupiter6JavaTest::assertMethodNameTypeMetadata)));
     }
 
     @Test
@@ -154,10 +152,10 @@ class MigrateJUnitJupiter6JavaTest implements RewriteTest {
                   """
                   import static org.junit.jupiter.api.MethodOrderer.MethodName;
                   import org.junit.jupiter.api.TestMethodOrder;
-
                   @TestMethodOrder(MethodName.class)
                   class OrderedTests {}
-                  """));
+                  """, source -> source.afterRecipe(
+                        MigrateJUnitJupiter6JavaTest::assertMethodNameTypeMetadata)));
     }
 
     @Test
@@ -251,5 +249,21 @@ class MigrateJUnitJupiter6JavaTest implements RewriteTest {
                   class Extension { Object value(ExtensionContext.Store store) { return store.computeIfAbsent(Value.class); } }
                   class Value {}
                   """));
+    }
+
+    private static void assertMethodNameTypeMetadata(J.CompilationUnit after) {
+        boolean[] typed = {false};
+        new JavaIsoVisitor<boolean[]>() {
+            @Override
+            public J.Identifier visitIdentifier(J.Identifier identifier, boolean[] p) {
+                J.Identifier visited = super.visitIdentifier(identifier, p);
+                if ("MethodName".equals(visited.getSimpleName()) && TypeUtils.isOfClassType(
+                        visited.getType(), "org.junit.jupiter.api.MethodOrderer.MethodName")) {
+                    p[0] = true;
+                }
+                return visited;
+            }
+        }.visitNonNull(after, typed);
+        assertTrue(typed[0], "The official rename must be followed by valid JUnit 6 type metadata");
     }
 }
