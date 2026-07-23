@@ -148,7 +148,10 @@ def validate_manifest(
                 errors,
                 f"{path}: Excel #{expected.excel_row} relation mismatch",
             )
-        if direction.get("action") != action:
+        actual_action = direction.get("action")
+        if actual_action != action and not (
+            relation == "upgrade-candidate" and actual_action == "auto"
+        ):
             error(
                 errors,
                 f"{path}: Excel #{expected.excel_row} action mismatch",
@@ -213,6 +216,35 @@ def validate_manifest(
             errors,
             f"{path}: catalog-only automation but AUTO whitelist is nonempty",
         )
+    auto_edges = {
+        edge.get("source")
+        for edge in actual_edges
+        if edge.get("direction", {}).get("action") == "auto"
+    }
+    if not auto_edges.issubset(categories["autoSourceWhitelist"]):
+        error(
+            errors,
+            f"{path}: AUTO edge missing from whitelist: "
+            f"edges={sorted(auto_edges)}, "
+            f"whitelist={sorted(categories['autoSourceWhitelist'])}",
+        )
+    candidate_sources = {
+        edge.get("source")
+        for edge in actual_edges
+        if edge.get("direction", {}).get("relation")
+        == "upgrade-candidate"
+    }
+    if not categories["autoSourceWhitelist"].issubset(candidate_sources):
+        error(errors, f"{path}: AUTO whitelist contains a non-candidate edge")
+    if categories["autoSourceWhitelist"] and status.get(
+        "automation"
+    ) != "implemented":
+        error(errors, f"{path}: AUTO whitelist requires automation=implemented")
+    if categories["autoSourceWhitelist"] and any(
+        claim.get("status") != "verified"
+        for claim in document.get("evidence", [])
+    ):
+        error(errors, f"{path}: AUTO whitelist requires verified evidence claims")
     if status.get("evidence") == "pending":
         for claim in document.get("evidence", []):
             if claim.get("status") == "verified":
@@ -238,13 +270,22 @@ def validate_readme(
             error(errors, f"{path}: missing section {section!r}")
     for phrase in (
         "规格状态：`COMPLETE`",
-        "证据状态：`PENDING`",
-        "自动化状态：`CATALOG_ONLY`",
         "目标版本冲突（禁止降级）",
-        "`UNVERIFIED`",
     ):
         if phrase not in content:
             error(errors, f"{path}: missing required phrase {phrase!r}")
+    documented_status = (
+        "证据状态：`PENDING`" in content
+        and "自动化状态：`CATALOG_ONLY`" in content
+        and "`UNVERIFIED`" in content
+    )
+    implemented_status = (
+        "证据状态：`VERIFIED`" in content
+        and "自动化状态：`IMPLEMENTED`" in content
+        and "`VERIFIED`" in content
+    )
+    if not documented_status and not implemented_status:
+        error(errors, f"{path}: invalid evidence/automation status pairing")
     for edge in spec.edges:
         pattern = rf"^\|\s*{edge.excel_row}\s*\|"
         if not re.search(pattern, content, flags=re.MULTILINE):

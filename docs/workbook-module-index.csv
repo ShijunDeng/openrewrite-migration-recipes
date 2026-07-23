@@ -1884,7 +1884,7 @@ migration-spec-other-other-tinylog,tinylog,other,other,1.6,2,4172 | 4173,complet
 migration-spec-nodejs-tinymce,tinymce,nodejs,nodejs,6.8.6,1,2171,complete,pending,catalog-only,
 migration-spec-java-maven-tk-mybatis-mapper,tk.mybatis:mapper,java,java,4.3.2,2,2851 | 2852,complete,pending,catalog-only,
 migration-spec-java-maven-tk-mybatis-mapper-spring-boot-starter,tk.mybatis:mapper-spring-boot-starter,java,java,6.0.0,2,443 | 444,complete,pending,catalog-only,
-migration-spec-java-bare-tomcat-catalina,tomcat-catalina,java,java,10.1.56,8,2236 | 2237 | 2238 | 2239 | 4839 | 4840 | 4841 | 4842,complete,pending,catalog-only,
+migration-spec-java-bare-tomcat-catalina,org.apache.tomcat:tomcat-catalina,java,java,10.1.56,8,2236 | 2237 | 2238 | 2239 | 4839 | 4840 | 4841 | 4842,complete,verified,implemented,rewrite-tomcat-catalina-upgrade
 migration-spec-other-other-toml11,toml11,other,other,3.7.1,1,4752,complete,pending,catalog-only,
 migration-spec-python-pypi-tomli,tomli,python,python,2.4.0,1,4192,complete,pending,catalog-only,
 migration-spec-java-maven-tools-profiler-async-profiler,tools.profiler:async-profiler,java,java,4.4,1,865,complete,pending,catalog-only,

@@ -12,12 +12,18 @@
       "java"
     ],
     "canonicalIdentity": {
-      "value": "tomcat-catalina",
-      "status": "unverified",
-      "evidence": []
+      "value": "org.apache.tomcat:tomcat-catalina",
+      "status": "verified",
+      "evidence": [
+        "https://github.com/apache/tomcat/tree/59f3f1ab4f905f94c9c99cad579d6afb3a935b66",
+        "maven-central:jar-sha256:8271c90a0a147ee53639cade2fab3b079b53184949e982464052a468efcce3f5",
+        "maven-central:pom-sha256:a00ef0ef028138027541a0853101f41420e9dc7cd19d193929710be84ade92d8"
+      ]
     },
     "targetVersion": "10.1.56",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-tomcat-catalina-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -36,9 +42,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "坐标、源版本、目标制品和兼容边界已由固定官方证据验证；仅此精确源版本进入 AUTO。"
         }
       },
       {
@@ -55,9 +61,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "坐标、源版本、目标制品和兼容边界已由固定官方证据验证；仅此精确源版本进入 AUTO。"
         }
       },
       {
@@ -74,9 +80,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "坐标、源版本、目标制品和兼容边界已由固定官方证据验证；仅此精确源版本进入 AUTO。"
         }
       },
       {
@@ -93,9 +99,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "坐标、源版本、目标制品和兼容边界已由固定官方证据验证；仅此精确源版本进入 AUTO。"
         }
       },
       {
@@ -112,9 +118,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "坐标、源版本、目标制品和兼容边界已由固定官方证据验证；仅此精确源版本进入 AUTO。"
         }
       },
       {
@@ -131,9 +137,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "坐标、源版本、目标制品和兼容边界已由固定官方证据验证；仅此精确源版本进入 AUTO。"
         }
       },
       {
@@ -150,9 +156,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "坐标、源版本、目标制品和兼容边界已由固定官方证据验证；仅此精确源版本进入 AUTO。"
         }
       },
       {
@@ -169,19 +175,29 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "坐标、源版本、目标制品和兼容边界已由固定官方证据验证；仅此精确源版本进入 AUTO。"
         }
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "official_security_advisory",
+      "sourceVersions": [
+        "10.1.57"
+      ],
+      "relation": "higher-approved-target",
+      "action": "mark",
+      "statement": "Apache reports that CVE-2026-59083 and CVE-2026-59084 affect the requested 10.1.56 target and are fixed in 10.1.57. The recipe preserves the workbook target, marks 10.1.56 as interim, and never lowers 10.1.57 or another higher version."
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "autoSourceWhitelist": [
       "10.1.40",
       "10.1.47",
       "10.1.48",
@@ -191,6 +207,7 @@
       "9.0.117",
       "9.0.98"
     ],
+    "upgradeCandidatesPendingEvidence": [],
     "noopVersions": [],
     "conflictVersions": [],
     "unresolvedVersions": []
@@ -199,134 +216,99 @@
     {
       "id": "E-001",
       "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/apache/tomcat/tree/f892e52577feef83aff57d34c2b4be61a5a68524",
+        "https://github.com/apache/tomcat/tree/59f3f1ab4f905f94c9c99cad579d6afb3a935b66",
+        "maven-central:jar-sha256:8271c90a0a147ee53639cade2fab3b079b53184949e982464052a468efcce3f5",
+        "maven-central:pom-sha256:a00ef0ef028138027541a0853101f41420e9dc7cd19d193929710be84ade92d8"
+      ],
+      "realFixtures": [
+        "apache/tomcat@ca8720d41f3be917dc3fcdd03fcca8d3152a13fb"
+      ]
     },
     {
       "id": "E-002",
       "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "status": "verified",
+      "officialSources": [
+        "https://tomcat.apache.org/migration-10.html",
+        "https://tomcat.apache.org/migration-10.1.html",
+        "https://tomcat.apache.org/tomcat-10.1-doc/changelog.html",
+        "https://tomcat.apache.org/security-10.html",
+        "https://jakarta.ee/specifications/servlet/6.0/",
+        "https://github.com/apache/tomcat/tree/5da21b1c24a6443bca5c10dc80a69a76042ca337"
+      ],
+      "realFixtures": [
+        "apache/tomcat@ca8720d41f3be917dc3fcdd03fcca8d3152a13fb"
+      ]
     },
     {
       "id": "E-003",
       "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite/blob/fb933bdb74f2f4dc10ec79387e29aa8f5a8a9503/rewrite-test/src/main/java/org/openrewrite/test/RewriteTest.java",
+        "https://github.com/openrewrite/rewrite/blob/fb933bdb74f2f4dc10ec79387e29aa8f5a8a9503/rewrite-java-test/src/test/java/org/openrewrite/java/ChangePackageTest.java"
+      ],
+      "realFixtures": [
+        "jfinal/jfinal@a0e9e8b99dc793bcf0cd40ca7feba005ba0c5349",
+        "yona-projects/yona@60a5ac40689fc36ee5b55eddedd345fc34878190",
+        "Jahia/jahia@5e201521576ec5814b58321845915c3a984892d8",
+        "apache/tomcat@ca8720d41f3be917dc3fcdd03fcca8d3152a13fb"
+      ]
     }
   ],
   "incompatibilities": [
     {
       "id": "C-001",
       "edgeRows": [
-        2236
-      ],
-      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
-      "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
-    },
-    {
-      "id": "C-002",
-      "edgeRows": [
-        2237
-      ],
-      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
-      "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
-    },
-    {
-      "id": "C-003",
-      "edgeRows": [
-        2238
-      ],
-      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
-      "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
-    },
-    {
-      "id": "C-004",
-      "edgeRows": [
+        2236,
+        2237,
+        2238,
         2239
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "八个精确源版本可以 AUTO 到目标；类型归因下迁移 javax.servlet/javax.el、确定性 Servlet/EL API 与已删除 listener 属性，其余运行时、配置、内部 API、APR、集群与协议风险定位到 owner 后 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalinaTo10_1_56",
+      "tests": [
+        "UpgradeSelectedTomcatCatalinaDependencyTest",
+        "MigrateTomcat9JakartaNamespacesTest",
+        "MigrateTomcatCatalina101JavaTest",
+        "MigrateTomcatCatalina101ConfigurationTest",
+        "TomcatCatalinaRealRepositoryFixtureTest",
+        "TomcatCatalinaAggregateRecipeTest"
+      ]
     },
     {
-      "id": "C-005",
+      "id": "C-002",
       "edgeRows": [
-        4839
-      ],
-      "dimension": "补丁行为 / 安全 / 回归",
-      "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
-    },
-    {
-      "id": "C-006",
-      "edgeRows": [
-        4840
-      ],
-      "dimension": "补丁行为 / 安全 / 回归",
-      "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
-    },
-    {
-      "id": "C-007",
-      "edgeRows": [
-        4841
-      ],
-      "dimension": "补丁行为 / 安全 / 回归",
-      "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
-    },
-    {
-      "id": "C-008",
-      "edgeRows": [
+        4839,
+        4840,
+        4841,
         4842
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "精确版本 AUTO；强 ETag、HTTP method、URI、EncryptInterceptor、DIGEST 与目标 10.1.56 的 interim security 状态分别 MARK。所有高于目标的固定版本保持字节级不变并标记目标版本冲突（禁止降级）。",
+      "recipe": "com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalinaTo10_1_56",
+      "tests": [
+        "UpgradeSelectedTomcatCatalinaDependencyTest",
+        "FindTomcatCatalinaBranchTransitionRisksTest",
+        "FindTomcatCatalinaBuildRisksTest",
+        "FindTomcatCatalinaConfigurationRisksTest",
+        "TomcatCatalinaAggregateRecipeTest"
+      ]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }

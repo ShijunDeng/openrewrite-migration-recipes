@@ -159,6 +159,7 @@
     <module>rewrite-netty-codec-http2-upgrade</module>
     <module>rewrite-spring-webflux-upgrade</module>
     <module>rewrite-bcpkix-jdk18on-upgrade</module>
+    <module>rewrite-tomcat-catalina-upgrade</module>
   </modules>
 
   <dependencyManagement>

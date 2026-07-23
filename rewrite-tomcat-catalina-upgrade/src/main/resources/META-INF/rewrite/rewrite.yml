@@ -1,0 +1,27 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.tomcatcatalina.UpgradeTomcatCatalinaTo10_1_56
+displayName: Upgrade workbook-selected Tomcat Catalina dependencies to 10.1.56
+description: >-
+  Upgrade only the eight workbook-approved Tomcat 9.0/10.1 org.apache.tomcat:tomcat-catalina versions.
+  Every fixed version above 10.1.56 remains unchanged with an exact no-downgrade marker.
+recipeList:
+  - com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaBranchTransitionRisks
+  - com.huawei.clouds.openrewrite.tomcatcatalina.UpgradeSelectedTomcatCatalinaDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalinaTo10_1_56
+displayName: Migrate Tomcat Catalina to 10.1.56
+description: >-
+  Apply the strict dependency upgrade, rewrite only documented equivalent Servlet/EL APIs and obsolete listener
+  attributes, then mark build, source, protocol, security, clustering, and configuration decisions requiring evidence,
+  including the fact that Apache has superseded the supplied 10.1.56 security target.
+recipeList:
+  - com.huawei.clouds.openrewrite.tomcatcatalina.UpgradeTomcatCatalinaTo10_1_56
+  - com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Java
+  - com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaNamespaces
+  - com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Configuration
+  - com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaBuildRisks
+  - com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaJavaRisks
+  - com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaConfigurationRisks
+  - com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaResourceRisks

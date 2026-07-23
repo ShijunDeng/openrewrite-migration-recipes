@@ -1907,7 +1907,7 @@
 | [migration-spec-nodejs-tinymce](../catalog/nodejs/tinymce/README.md) | `tinymce` | `nodejs` (nodejs) | `6.8.6` | 1 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
 | [migration-spec-java-maven-tk-mybatis-mapper](../catalog/java/maven-tk-mybatis-mapper/README.md) | `tk.mybatis:mapper` | `java` (java) | `4.3.2` | 2 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
 | [migration-spec-java-maven-tk-mybatis-mapper-spring-boot-starter](../catalog/java/maven-tk-mybatis-mapper-spring-boot-starter/README.md) | `tk.mybatis:mapper-spring-boot-starter` | `java` (java) | `6.0.0` | 2 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
-| [migration-spec-java-bare-tomcat-catalina](../catalog/java/bare-tomcat-catalina/README.md) | `tomcat-catalina` | `java` (java) | `10.1.56` | 8 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
+| [migration-spec-java-bare-tomcat-catalina](../catalog/java/bare-tomcat-catalina/README.md) | `org.apache.tomcat:tomcat-catalina` | `java` (java) | `10.1.56` | 8 | `COMPLETE/VERIFIED/IMPLEMENTED` | `rewrite-tomcat-catalina-upgrade` |
 | [migration-spec-other-other-toml11](../catalog/other/other-toml11/README.md) | `toml11` | `other` (other) | `3.7.1` | 1 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
 | [migration-spec-python-pypi-tomli](../catalog/python/pypi-tomli/README.md) | `tomli` | `python` (python) | `2.4.0` | 1 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
 | [migration-spec-java-maven-tools-profiler-async-profiler](../catalog/java/maven-tools-profiler-async-profiler/README.md) | `tools.profiler:async-profiler` | `java` (java) | `4.4` | 1 | `COMPLETE/PENDING/CATALOG_ONLY` | `NONE` |
