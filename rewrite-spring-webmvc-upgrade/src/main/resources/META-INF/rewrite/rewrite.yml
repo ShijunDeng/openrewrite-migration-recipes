@@ -1,0 +1,69 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springwebmvc
+packageName: com.huawei.clouds.openrewrite.springwebmvc
+description: Strictly upgrade Spring Web MVC to 6.2.19, automate proven-equivalent source changes, and locate behavior-sensitive Spring 6 boundaries.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebmvc.UpgradeSpringWebMvcTo6_2_19
+displayName: Upgrade workbook-selected Spring Web MVC dependencies to 6.2.19
+description: Upgrade only exact visible workbook source versions of org.springframework:spring-webmvc in locally owned, standard Maven or root Gradle declarations.
+tags:
+  - spring
+  - spring-webmvc
+  - java
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebmvc.UpgradeSelectedSpringWebMvcDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebmvc.MigrateDeterministicSpringWebMvc6Java
+displayName: Migrate deterministic Spring Web MVC 6 Java APIs
+description: Migrate type-attributed javax.servlet APIs and direct removed MVC adapter subclasses where inherited behavior is provably unused.
+tags:
+  - spring
+  - spring-webmvc
+  - jakarta-ee
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebmvc.MigrateSpringWebMvcDeterministicJava
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6BuildMigrationRisks
+displayName: Find Spring Web MVC 6.2 build migration risks
+description: Mark Java 17, dependency owner, variant, Spring family, Boot, Jakarta, Servlet container, Tiles, multipart, and WebJars alignment decisions.
+tags:
+  - spring
+  - spring-webmvc
+  - build
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6BuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6SourceAndConfigurationRisks
+displayName: Find Spring Web MVC 6.2 source and configuration risks
+description: Mark removed APIs and route, controller, validation, exception, interceptor, resource, streaming, Jakarta, properties, YAML, and XML behavior boundaries.
+tags:
+  - spring
+  - spring-webmvc
+  - configuration
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6SourceRisks
+  - com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6ConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springwebmvc.MigrateSpringWebMvcTo6_2_19
+displayName: Migrate Spring Web MVC applications to 6.2.19
+description: Strictly upgrade selected declarations, automate proven-equivalent Servlet and adapter changes, and mark every remaining Spring 6 build, source, and configuration decision.
+tags:
+  - spring
+  - spring-webmvc
+  - jakarta-ee
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springwebmvc.UpgradeSpringWebMvcTo6_2_19
+  - com.huawei.clouds.openrewrite.springwebmvc.MigrateDeterministicSpringWebMvc6Java
+  - com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6BuildMigrationRisks
+  - com.huawei.clouds.openrewrite.springwebmvc.FindSpringWebMvc6SourceAndConfigurationRisks
