@@ -19,13 +19,31 @@ recipeList:
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springwebflux.MigrateDeterministicSpringWebFlux6Java
 displayName: Migrate deterministic Spring WebFlux 6 Java APIs
-description: Move the exact attributed ReactorResourceFactory type and replace the removed ServerWebExchangeContextFilter get alias with its equivalent getExchange API.
+description: Reuse audited OpenRewrite core and rewrite-spring components for exact Spring WebFlux 6 source incompatibilities without activating full-framework or Boot aggregates.
 tags:
   - spring
   - spring-webflux
   - source-migration
+preconditions:
+  - com.huawei.clouds.openrewrite.springwebflux.IsSpringWebFluxNonGeneratedSource
 recipeList:
-  - com.huawei.clouds.openrewrite.springwebflux.MigrateSpringWebFluxDeterministicJava
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.http.client.reactive.ReactorResourceFactory
+      newFullyQualifiedTypeName: org.springframework.http.client.ReactorResourceFactory
+  - org.openrewrite.java.spring.framework.MigrateResponseStatusException
+  - org.openrewrite.java.spring.framework.MigrateHandlerResultHasExceptionHandlerMethod
+  - org.openrewrite.java.spring.framework.MigrateHandlerResultSetExceptionHandlerMethod
+  - org.openrewrite.java.spring.framework.MigrateResourceHttpMessageWriterAddHeadersMethod
+  - org.openrewrite.java.spring.framework.MigrateWebExchangeBindExceptionResolveErrorMethod
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.springframework.web.reactive.function.client.ClientHttpObservationDocumentation.HighCardinalityKeyNames.CLIENT_NAME
+      fullyQualifiedConstantName: org.springframework.web.reactive.function.client.ClientHttpObservationDocumentation.LowCardinalityKeyNames.CLIENT_NAME
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.springframework.web.filter.reactive.ServerWebExchangeContextFilter get(reactor.util.context.Context)
+      newMethodName: getExchange
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.springframework.web.reactive.function.client.support.WebClientAdapter forClient(org.springframework.web.reactive.function.client.WebClient)
+      newMethodName: create
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.springwebflux.FindSpringWebFlux6BuildMigrationRisks

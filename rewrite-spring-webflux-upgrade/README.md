@@ -1,6 +1,6 @@
 # Spring WebFlux 6.2.19 迁移模块
 
-本模块把 `org.springframework:spring-webflux` 的指定 5.2、5.3、6.0、6.1、6.2 版本升级到 `6.2.19`，并把跨版本不兼容点实现为可执行的 OpenRewrite 配方。README 是迁移规格；AUTO 只执行可由固定上游源码证明等价的修改，无法证明业务语义的变化由 MARK 在对应 AST 节点留下 `SearchResult`。
+本模块把 `org.springframework:spring-webflux` 的指定 5.2、5.3、6.0、6.1、6.2 版本升级到 `6.2.19`，并把跨版本不兼容点实现为可执行的 OpenRewrite 配方。README 是迁移规格；AUTO 只执行由固定上游源码或经过审计的 OpenRewrite 官方配方支持、且输入与输出唯一的修改，仍需业务决策的变化由 MARK 在对应 AST 节点留下 `SearchResult`。
 
 本模块遵守一个不可破坏的全局约束：**只升级，绝不降级**。比 `6.2.19` 更新或属于更高主版本的声明保持不变，并标记 `目标版本冲突（禁止降级）`；它们不是通往较低目标的迁移路径。
 
@@ -10,7 +10,7 @@
 | --- | --- |
 | `com.huawei.clouds.openrewrite.springwebflux.MigrateSpringWebFluxTo6_2_19` | 推荐入口：严格依赖升级、确定性 Java AUTO、构建/源码/配置 MARK |
 | `com.huawei.clouds.openrewrite.springwebflux.UpgradeSpringWebFluxTo6_2_19` | 只执行严格依赖升级 |
-| `com.huawei.clouds.openrewrite.springwebflux.MigrateDeterministicSpringWebFlux6Java` | 只执行两个可证明等价的类型归属 Java API 迁移 |
+| `com.huawei.clouds.openrewrite.springwebflux.MigrateDeterministicSpringWebFlux6Java` | 执行经过审计的 OpenRewrite Core / `rewrite-spring` 精确 WebFlux Java API 迁移 |
 | `com.huawei.clouds.openrewrite.springwebflux.FindSpringWebFlux6BuildMigrationRisks` | 只扫描依赖所有权、Java/参数元数据、Spring/Boot 与 reactive stack 基线 |
 | `com.huawei.clouds.openrewrite.springwebflux.FindSpringWebFlux6SourceAndConfigurationRisks` | 只扫描 Java/Kotlin、properties、YAML、XML 的行为边界 |
 
@@ -53,14 +53,42 @@ mvn rewrite:run \
 - classifier、非 JAR type、ext/variant、四段坐标、范围、变量/GString、version catalog、platform/BOM、无版本声明、buildscript、custom DSL、嵌套 `project` 均不自动覆盖。
 - `target`、`build`、`generated*`、`install*`、`.gradle`、`.m2`、`node_modules`、`vendor` 等生成/缓存路径完全跳过。
 
-### 两个可证明等价的 Java API 迁移
+### 经过审计的确定性 Java API 迁移
 
-| AUTO | 前置条件 | 证明 |
+所有节点都要求 Java AST 具有对应 Spring/Reactor 类型归属；同名业务类型、其他 overload、注释、普通字符串和未归属代码不匹配。统一的非生成源码前置条件会跳过 `target`、`build`、`generated*` 等目录。
+
+| AUTO | 输出 | 固定依据 |
 | --- | --- | --- |
-| `org.springframework.http.client.reactive.ReactorResourceFactory` → `org.springframework.http.client.ReactorResourceFactory` | Java AST 有旧 Spring 类型归属；同名业务类不匹配 | 6.1.13 的[旧类](https://github.com/spring-projects/spring-framework/blob/f083962fd8d96a46f89d11e375e50a14ea0243fc/spring-web/src/main/java/org/springframework/http/client/reactive/ReactorResourceFactory.java)仅继承[新包实现](https://github.com/spring-projects/spring-framework/blob/f083962fd8d96a46f89d11e375e50a14ea0243fc/spring-web/src/main/java/org/springframework/http/client/ReactorResourceFactory.java)，没有附加状态或覆盖行为 |
-| `ServerWebExchangeContextFilter.get(Context)` → `getExchange(ContextView)` | 方法归属和参数类型都精确；同名业务方法及其他 overload 不匹配 | 6.1.13 [源码](https://github.com/spring-projects/spring-framework/blob/f083962fd8d96a46f89d11e375e50a14ea0243fc/spring-web/src/main/java/org/springframework/web/filter/reactive/ServerWebExchangeContextFilter.java)中两者都调用 `getOrEmpty` 读取同一 context key；目标 [6.2.19](https://github.com/spring-projects/spring-framework/blob/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522/spring-web/src/main/java/org/springframework/web/filter/reactive/ServerWebExchangeContextFilter.java)只保留 `getExchange(ContextView)` |
+| `ReactorResourceFactory` 旧包迁移 | `org.springframework.http.client.reactive` → `org.springframework.http.client` | 6.1.13 的[旧类](https://github.com/spring-projects/spring-framework/blob/f083962fd8d96a46f89d11e375e50a14ea0243fc/spring-web/src/main/java/org/springframework/http/client/reactive/ReactorResourceFactory.java)仅继承[新包实现](https://github.com/spring-projects/spring-framework/blob/f083962fd8d96a46f89d11e375e50a14ea0243fc/spring-web/src/main/java/org/springframework/http/client/ReactorResourceFactory.java)，没有附加状态或覆盖行为 |
+| `ResponseStatusException.getRawStatusCode()` | `getStatusCode().value()` | `rewrite-spring` 官方 `MigrateResponseStatusException` 子配方 |
+| `ResponseStatusException.getStatus()` | `getStatusCode()`，并把使用点类型迁移到 `HttpStatusCode` | `rewrite-spring` 官方 `MigrateResponseStatusException` 子配方 |
+| `HandlerResult.hasExceptionHandler()` | `getExceptionHandler() != null` | 目标 API 删除布尔查询方法；官方配方保留原 null 判定 |
+| `HandlerResult.setExceptionHandler(Function)` | `setExceptionHandler((exchange, ex) -> handler.apply(ex))` | 官方配方适配双参数 handler；旧 API 本来不接收 exchange，因此显式忽略该参数 |
+| `ResourceHttpMessageWriter.addHeaders(...)` | `addDefaultHeaders(...).block()` | 6.1.13 实现正是对该 reactive 方法执行 `block()` 的兼容入口 |
+| `WebExchangeBindException.resolveErrorMessages(...)` | `BindErrorUtils.resolve(exception.getAllErrors(), ...)` | 官方配方迁移到目标静态 API，并保留原 error 列表 |
+| reactive client observation `HighCardinalityKeyNames.CLIENT_NAME` | `LowCardinalityKeyNames.CLIENT_NAME` | `rewrite-spring` 6.2 官方声明中的精确常量替换 |
+| `ServerWebExchangeContextFilter.get(Context)` | `getExchange(ContextView)` | 6.1.13 [源码](https://github.com/spring-projects/spring-framework/blob/f083962fd8d96a46f89d11e375e50a14ea0243fc/spring-web/src/main/java/org/springframework/web/filter/reactive/ServerWebExchangeContextFilter.java)中两者读取同一 context key；目标 [6.2.19](https://github.com/spring-projects/spring-framework/blob/6214eae8bd02c2ed7ab382bb8d16a9cc6de49522/spring-web/src/main/java/org/springframework/web/filter/reactive/ServerWebExchangeContextFilter.java)只保留 `getExchange(ContextView)` |
+| `WebClientAdapter.forClient(WebClient)` | `create(WebClient)` | `rewrite-spring` 6.2 官方声明中的精确方法重命名 |
 
-这里使用 OpenRewrite `ChangeType` / `ChangeMethodName` 的类型归属能力，不执行字符串替换，也不改注释、普通字符串或未归属代码。
+### OpenRewrite 官方能力复用审计
+
+审计版本固定，避免“当前最新版”漂移：
+
+| 组件 | 固定版本与源码 | 本地 artifact SHA-256 | 复用结论 |
+| --- | --- | --- | --- |
+| OpenRewrite Core | `8.87.5`，commit [`b3008cc4`](https://github.com/openrewrite/rewrite/tree/b3008cc4a1f0c43f562da16e5933a2a56d9bc568) | `rewrite-core`: `a7ff59eebc8072353ec5c3aee3e2033bc69a844b3c9ce2e9be8d4adaec10cbf8`；`rewrite-java`: `a378253fe0c0865ab39d1743e468fe3d2557d7760e0a6897de294ca18ea90043` | 直接声明 `ChangeType`、`ChangeMethodName`、`ReplaceConstantWithAnotherConstant`；删除重复的本地 Java 包装实现 |
+| `rewrite-spring` | `6.35.0`，commit [`d28afcb6`](https://github.com/openrewrite/rewrite-spring/tree/d28afcb6661ad413539056de0936c5489ff9d8ee) | `27df444210c8bfee7e9d0f04d6d6f7986d2bee36bcd472d8307912613e93e98b` | 直接复用五个精确 Framework 入口（`ResponseStatusException` 再展开为两个 accessor 子配方），以及官方 6.2 声明中的三个 WebFlux Core 节点参数 |
+
+官方声明来源固定到 [`spring-framework-60.yml`](https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-framework-60.yml) 和 [`spring-framework-62.yml`](https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-framework-62.yml)。实现与用例审计覆盖官方 [`HandlerResult.has`](https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/test/java/org/openrewrite/java/spring/framework/MigrateHandlerResultHasExceptionHandlerMethodTest.java)、[`HandlerResult.set`](https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/test/java/org/openrewrite/java/spring/framework/MigrateHandlerResultSetExceptionHandlerMethodTest.java)、[`ResourceHttpMessageWriter`](https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/test/java/org/openrewrite/java/spring/framework/MigrateResourceHttpMessageWriterAddHeadersMethodTest.java)、[`WebExchangeBindException`](https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/test/java/org/openrewrite/java/spring/framework/MigrateWebExchangeBindExceptionResolveErrorMethodTest.java) 和 [`ResponseStatusException`](https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/test/java/org/openrewrite/java/spring/framework/MigrateResponseStatusExceptionTest.java) 测试。
+
+只抽取与本模块坐标和目标 API 精确相关的叶子能力，明确不激活：
+
+- `UpgradeSpringFramework_5_3` / `_6_0` / `_6_1` / `_6_2`、Jakarta EE 10 和通配 Spring 依赖升级：它们会越过 `spring-webflux` 精确坐标白名单与本模块的禁止降级规则；
+- Spring Boot 聚合、`MaintainTrailingSlashURLMappings`、`AddRouteTrailingSlash`、`AddSetUseTrailingSlashMatch`：路由兼容策略属于业务、安全和 SEO 决策；
+- `JettyWebSocketClient` → `StandardWebSocketClient`：会替换 WebSocket 引擎及其运行行为，不是机械 API 改名；
+- blocking `ClientHttpResponse`、HttpComponents、Spring Assert、MVC `MethodArgumentNotValidException` 等共享或非 WebFlux 节点：超出模块边界。
+
+`SpringWebFluxOfficialRecipeReuseTest` 会展开运行时 recipe tree，锁定上述精确直接节点、`ResponseStatusException` 的两个嵌套 accessor 节点和排除清单，防止依赖升级后悄然引入全框架或 Boot 聚合。
 
 ## 自动标记（MARK）
 
@@ -105,12 +133,13 @@ mvn rewrite:run \
 - [`DispatcherHandler`](https://github.com/spring-projects/spring-framework/blob/f083962fd8d96a46f89d11e375e50a14ea0243fc/spring-webflux/src/main/java/org/springframework/web/reactive/DispatcherHandler.java) 默认走 no-handler 404；精确 setter 使用会标记，要求验证自定义 `WebExceptionHandler`、ProblemDetail 与观测指标。
 - HTTP interface client 不再对 blocking signature 强制五秒默认 timeout。`@HttpExchange`、`HttpServiceProxyFactory.createClient` 和显式 `setBlockTimeout` 会标记；timeout 属于底层客户端/SLA 决策，不能自动填值。
 - reactive `ServerHttpObservationFilter` 已弃用，改由 `WebHttpHandlerBuilder` 直接 instrumentation。精确 import/new/method owner 会标记，要求验证 error、cancel、tag 与 filter ordering。
-- `ReactorResourceFactory` 包迁移和 `ServerWebExchangeContextFilter` alias 删除由 AUTO 处理。
+- `ReactorResourceFactory` 包迁移、`ResponseStatusException` accessor 删除和 `ServerWebExchangeContextFilter` alias 删除由 AUTO 处理。
 - Kotlin coroutine context、`CoWebFilter`、`coRouter` filter/context、suspending `@ModelAttribute` 与 `awaitSingle` 使用经过修订；只在同一 Kotlin/Java 单元确定使用 WebFlux 时标记相关精确 import。
 - 参数名不再从 local-variable table 获取；controller、exception handler、constructor binding 依赖名称时必须启用 `-parameters` 并保留 Kotlin metadata。
 
 ### Spring Framework 6.2 边界
 
+- `HandlerResult` exception handler、`ResourceHttpMessageWriter` headers、`WebExchangeBindException` message resolution、reactive client observation key 和 `WebClientAdapter` factory 的已删除 API 由 AUTO 处理。
 - mapped handler 内精确归属的 `Mono.empty()` 会标记：6.2 不再为 empty response 写 `Content-Type`。下游客户端和 contract test 若断言该 header，需要显式调整。
 - reactive `ResourceHandlerRegistration.addResourceLocations` 和 `WebJarsResourceResolver` 会标记。字符串 static location 会补尾 `/`；`webjars-locator-core` / `WebJarsResourceResolver` 已由 locator-lite / `LiteWebJarsResourceResolver` 取代。
 - 每个精确 `@ExceptionHandler` 都会标记，因为 6.2 在异常处理阶段支持 content negotiation；需要测试 Accept-specific handler 选择、media type、status/header/body 和 fallback。
@@ -135,7 +164,7 @@ mvn rewrite:run \
 - [`ranarula/handleInterceptor@bbcc400` 的 `AuthenticationAspect`](https://github.com/ranarula/handleInterceptor/blob/bbcc400cf4a19a616fbb2138b9a51a242dcb16e4/src/main/java/com/example/demo/aop/AuthenticationAspect.java)：真实 `ServerWebExchangeContextFilter.get(context)`，验证精确方法别名迁移；
 - 活跃上游 [`spring-projects/spring-boot@533df5e` 的 `JsonController`](https://github.com/spring-projects/spring-boot/blob/533df5e2f4de3f5dda677ed557290a63f4402bd6/module/spring-boot-webflux-test/src/test/java/org/springframework/boot/webflux/test/autoconfigure/JsonController.java)：`@RestController` + `Mono.just` 的真实负例，验证不会把普通 Mono handler 误标成 empty-response 变化。
 
-测试结构参考 OpenRewrite 固定 commit `af06bb1b` 的官方 [`ChangeTypeTest`](https://github.com/openrewrite/rewrite/blob/af06bb1b159249695dc92187093cd0909da6c843/rewrite-java-test/src/test/java/org/openrewrite/java/ChangeTypeTest.java)、[`ChangeMethodNameTest`](https://github.com/openrewrite/rewrite/blob/af06bb1b159249695dc92187093cd0909da6c843/rewrite-java-test/src/test/java/org/openrewrite/java/ChangeMethodNameTest.java) 和 [`RewriteTest`](https://github.com/openrewrite/rewrite/blob/af06bb1b159249695dc92187093cd0909da6c843/rewrite-test/src/main/java/org/openrewrite/test/RewriteTest.java)。
+测试结构参考 OpenRewrite Core `8.87.5` 固定 commit `b3008cc4` 的官方 [`ChangeTypeTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java-test/src/test/java/org/openrewrite/java/ChangeTypeTest.java)、[`ChangeMethodNameTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java-test/src/test/java/org/openrewrite/java/ChangeMethodNameTest.java)、[`ReplaceConstantWithAnotherConstantTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-java-test/src/test/java/org/openrewrite/java/ReplaceConstantWithAnotherConstantTest.java) 和 [`RewriteTest`](https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-test/src/main/java/org/openrewrite/test/RewriteTest.java)，并镜像上节固定 `rewrite-spring` 官方用例的 before/after 结构。
 
 ## 固定官方规格
 
@@ -152,14 +181,16 @@ mvn rewrite:run \
 mvn -f rewrite-spring-webflux-upgrade/pom.xml clean verify
 ```
 
-当前测试套件执行 120 个 JUnit case，覆盖：
+当前测试套件执行 130 个 JUnit case，覆盖：
 
 - 12 个源版本在 Maven、Gradle Groovy、Gradle Kotlin 的完整矩阵；
 - Maven root/profile/dependencyManagement、独占/共享/重复/attribute 引用/profile 遮蔽属性；
 - Gradle string/map、GString、catalog/platform、variant、root/nested/buildscript scope；
 - 低版本白名单外、目标、未来和更高主版本的 NOOP/OUTSIDE/目标冲突分流；
 - Java 17、`-parameters`、Spring family、Boot owner、Reactor/Netty/Jackson/Kotlin/Validation/WebJars MARK；
-- 两项类型归属 AUTO、同名/overload 负例、真实仓库 fixture、generated path 与幂等；
+- 九类确定性 Java AUTO、同名/overload 负例、真实仓库 fixture、generated path 与幂等；
+- `rewrite-spring` 6.35.0 / Core 8.87.5 运行时 recipe tree、嵌套 accessor 与宽泛聚合排除断言；
+- Spring WebFlux 6.1.13、Spring Context/Core、Reactor 和 Micrometer 真实 artifact parser classpath 上的代表性 before/after；
 - HttpMethod、controller、Flux、Mono.empty、validation/defaultValue、404、observability、HTTP interface、coroutine、resource、exception negotiation；
 - properties/YAML/XML 精确 key/value、lookalike、aggregate ordering/parity。
 
