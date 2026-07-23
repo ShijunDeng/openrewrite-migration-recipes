@@ -4,6 +4,14 @@
 
 基于 OpenRewrite 的软件迁移配方集合。工程采用 Maven 多模块结构，统一管理依赖、插件版本与 CI，同时让每种迁移保持独立发布、独立测试和按需引入。
 
+## Workbook migration catalog
+
+Excel 全量迁移清单已拆分为
+[`catalog/`](catalog/README.md) 下的 1,967 个文档规格模块；完整行级映射见
+[`docs/workbook-module-index.md`](docs/workbook-module-index.md)。catalog 模块只承载
+README、机器可读 manifest 和禁降级契约，不进入默认 Maven reactor；配方代码仍按下表
+逐模块核验、完善和提交。
+
 ## Modules
 
 | Module | Recipe | Description |

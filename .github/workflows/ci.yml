@@ -15,6 +15,16 @@ permissions:
   contents: read
 
 jobs:
+  catalog:
+    name: Migration Catalog / Offline Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Validate documentation-first catalog
+        run: python3 scripts/validate_workbook_module_specs.py --offline
+
   verify:
     name: Maven / Java ${{ matrix.java }}
     runs-on: ubuntu-latest

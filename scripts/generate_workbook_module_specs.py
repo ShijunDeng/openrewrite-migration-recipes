@@ -1088,7 +1088,7 @@ def render_index(
 
 def write_csv(path: Path, specs: Iterable[ModuleSpec]) -> None:
     with path.open("w", encoding="utf-8", newline="") as output:
-        writer = csv.writer(output)
+        writer = csv.writer(output, lineterminator="\n")
         writer.writerow(
             [
                 "module",
