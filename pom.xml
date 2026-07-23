@@ -135,6 +135,7 @@
     <module>rewrite-snakeyaml-upgrade</module>
     <module>rewrite-angular-elements-upgrade</module>
     <module>rewrite-ws-upgrade</module>
+    <module>rewrite-commons-cli-upgrade</module>
   </modules>
 
   <dependencyManagement>

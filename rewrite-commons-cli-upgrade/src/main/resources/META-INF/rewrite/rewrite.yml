@@ -1,0 +1,36 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.commonscli
+packageName: com.huawei.clouds.openrewrite.commonscli
+description: Upgrade Apache Commons CLI and automate the source and module-path changes that are safe to infer.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonscli.UpgradeCommonsCliTo1_9_0
+displayName: Upgrade workbook-selected Commons CLI dependency to 1.9.0
+description: >-
+  Upgrade only the exact commons-cli:commons-cli 1.5.0 row selected by the workbook in owned Maven and root
+  Gradle dependency declarations; preserve other versions, external owners, variants, and generated files.
+tags:
+  - apache-commons
+  - commons-cli
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.commonscli.UpgradeSelectedCommonsCliDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonscli.MigrateCommonsCliTo1_9_0
+displayName: Migrate Apache Commons CLI 1.5.0 applications to 1.9.0
+description: >-
+  Reuse the public strict upgrade, replace complete deprecated OptionBuilder chains, update the deterministic JPMS
+  module name, and precisely mark parser, conversion, help, Java-baseline, ownership, shading, and native-image decisions.
+tags:
+  - apache-commons
+  - commons-cli
+  - java
+  - source-migration
+recipeList:
+  - com.huawei.clouds.openrewrite.commonscli.UpgradeCommonsCliTo1_9_0
+  - com.huawei.clouds.openrewrite.commonscli.MigrateOptionBuilderChains
+  - com.huawei.clouds.openrewrite.commonscli.MigrateCommonsCliModuleName
+  - com.huawei.clouds.openrewrite.commonscli.FindCommonsCliJavaRisks
+  - com.huawei.clouds.openrewrite.commonscli.FindCommonsCliBuildRisks
