@@ -1,0 +1,399 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-nodejs-angular-cdk",
+    "catalogPath": "catalog/nodejs/angular-cdk",
+    "languageProfile": "nodejs",
+    "rawIdentifiers": [
+      "@angular/cdk"
+    ],
+    "rawLanguages": [
+      "nodejs"
+    ],
+    "canonicalIdentity": {
+      "value": "@angular/cdk",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "20.2.14",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 142,
+        "sequence": "141",
+        "software": "@angular/cdk",
+        "rawLanguage": "nodejs",
+        "source": "10.2.6",
+        "target": "20.2.14",
+        "services": "125",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Angular跨多个大版本(10.2.6->20.2.14)，模板/装饰器/依赖注入大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 143,
+        "sequence": "142",
+        "software": "@angular/cdk",
+        "rawLanguage": "nodejs",
+        "source": "10.2.7",
+        "target": "20.2.14",
+        "services": "125",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Angular跨多个大版本(10.2.7->20.2.14)，模板/装饰器/依赖注入大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 144,
+        "sequence": "143",
+        "software": "@angular/cdk",
+        "rawLanguage": "nodejs",
+        "source": "11.2.13",
+        "target": "20.2.14",
+        "services": "125",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Angular跨多个大版本(11.2.13->20.2.14)，模板/装饰器/依赖注入大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 145,
+        "sequence": "144",
+        "software": "@angular/cdk",
+        "rawLanguage": "nodejs",
+        "source": "12.2.10",
+        "target": "20.2.14",
+        "services": "125",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Angular跨多个大版本(12.2.10->20.2.14)，模板/装饰器/依赖注入大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 146,
+        "sequence": "145",
+        "software": "@angular/cdk",
+        "rawLanguage": "nodejs",
+        "source": "12.2.13",
+        "target": "20.2.14",
+        "services": "125",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Angular跨多个大版本(12.2.13->20.2.14)，模板/装饰器/依赖注入大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 147,
+        "sequence": "146",
+        "software": "@angular/cdk",
+        "rawLanguage": "nodejs",
+        "source": "13.1.3",
+        "target": "20.2.14",
+        "services": "125",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Angular跨多个大版本(13.1.3->20.2.14)，模板/装饰器/依赖注入大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 148,
+        "sequence": "147",
+        "software": "@angular/cdk",
+        "rawLanguage": "nodejs",
+        "source": "13.3.1",
+        "target": "20.2.14",
+        "services": "125",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Angular跨多个大版本(13.3.1->20.2.14)，模板/装饰器/依赖注入大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 149,
+        "sequence": "148",
+        "software": "@angular/cdk",
+        "rawLanguage": "nodejs",
+        "source": "13.3.9",
+        "target": "20.2.14",
+        "services": "125",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Angular跨多个大版本(13.3.9->20.2.14)，模板/装饰器/依赖注入大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 150,
+        "sequence": "149",
+        "software": "@angular/cdk",
+        "rawLanguage": "nodejs",
+        "source": "14.0.6",
+        "target": "20.2.14",
+        "services": "125",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Angular跨多个大版本(14.0.6->20.2.14)，模板/装饰器/依赖注入大改",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 151,
+        "sequence": "150",
+        "software": "@angular/cdk",
+        "rawLanguage": "nodejs",
+        "source": "14.2.0 ... (共17个版本)",
+        "target": "20.2.14",
+        "services": "125",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "Angular跨多个大版本(14.2.0 ... (共17个版本)->20.2.14)，模板/装饰器/依赖注入大改",
+        "sourceAtomic": false,
+        "direction": {
+          "relation": "unknown",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "源版本单元格是截断或聚合显示，不是可执行配方的原子版本白名单。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "10.2.6",
+      "10.2.7",
+      "11.2.13",
+      "12.2.10",
+      "12.2.13",
+      "13.1.3",
+      "13.3.1",
+      "13.3.9",
+      "14.0.6"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": [
+      "14.2.0 ... (共17个版本)"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        142
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        143
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        144
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        145
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        146
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        147
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        148
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-008",
+      "edgeRows": [
+        149
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-009",
+      "edgeRows": [
+        150
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-010",
+      "edgeRows": [
+        151
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

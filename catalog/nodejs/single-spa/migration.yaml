@@ -1,0 +1,200 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-nodejs-single-spa",
+    "catalogPath": "catalog/nodejs/single-spa",
+    "languageProfile": "nodejs",
+    "rawIdentifiers": [
+      "single-spa"
+    ],
+    "rawLanguages": [
+      "nodejs"
+    ],
+    "canonicalIdentity": {
+      "value": "single-spa",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "6.0.3",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 1044,
+        "sequence": "1043",
+        "software": "single-spa",
+        "rawLanguage": "nodejs",
+        "source": "5.8.2",
+        "target": "6.0.3",
+        "services": "59",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1045,
+        "sequence": "1044",
+        "software": "single-spa",
+        "rawLanguage": "nodejs",
+        "source": "5.9.3",
+        "target": "6.0.3",
+        "services": "59",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1046,
+        "sequence": "1045",
+        "software": "single-spa",
+        "rawLanguage": "nodejs",
+        "source": "5.9.4",
+        "target": "6.0.3",
+        "services": "59",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1047,
+        "sequence": "1046",
+        "software": "single-spa",
+        "rawLanguage": "nodejs",
+        "source": "5.9.5",
+        "target": "6.0.3",
+        "services": "59",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "5.8.2",
+      "5.9.3",
+      "5.9.4",
+      "5.9.5"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        1044
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        1045
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        1046
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        1047
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-nodejs-ngx-translate-core",
+    "catalogPath": "catalog/nodejs/ngx-translate-core",
+    "languageProfile": "nodejs",
+    "rawIdentifiers": [
+      "@ngx-translate/core"
+    ],
+    "rawLanguages": [
+      "nodejs"
+    ],
+    "canonicalIdentity": {
+      "value": "@ngx-translate/core",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "17.0.0",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 9,
+        "sequence": "8",
+        "software": "@ngx-translate/core",
+        "rawLanguage": "nodejs",
+        "source": "11.0.1",
+        "target": "17.0.0",
+        "services": "270",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "ngx-translate跨多个大版本(11.0.1->17.0.0)，翻译API变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 10,
+        "sequence": "9",
+        "software": "@ngx-translate/core",
+        "rawLanguage": "nodejs",
+        "source": "13.0.0",
+        "target": "17.0.0",
+        "services": "270",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "ngx-translate跨多个大版本(13.0.0->17.0.0)，翻译API变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 11,
+        "sequence": "10",
+        "software": "@ngx-translate/core",
+        "rawLanguage": "nodejs",
+        "source": "14.0.0",
+        "target": "17.0.0",
+        "services": "270",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "ngx-translate跨多个大版本(14.0.0->17.0.0)，翻译API变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 12,
+        "sequence": "11",
+        "software": "@ngx-translate/core",
+        "rawLanguage": "nodejs",
+        "source": "15.0.0",
+        "target": "17.0.0",
+        "services": "270",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "ngx-translate跨多个大版本(15.0.0->17.0.0)，翻译API变更",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "11.0.1",
+      "13.0.0",
+      "14.0.0",
+      "15.0.0"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        9
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        10
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        11
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        12
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

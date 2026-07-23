@@ -1,0 +1,398 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-nodejs-rxjs",
+    "catalogPath": "catalog/nodejs/rxjs",
+    "languageProfile": "nodejs",
+    "rawIdentifiers": [
+      "rxjs"
+    ],
+    "rawLanguages": [
+      "nodejs"
+    ],
+    "canonicalIdentity": {
+      "value": "rxjs",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "7.8.2",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 2,
+        "sequence": "1",
+        "software": "rxjs",
+        "rawLanguage": "nodejs",
+        "source": "6.5.5",
+        "target": "7.8.2",
+        "services": "360",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "rxjs 6->7 响应式API全面重构",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 3,
+        "sequence": "2",
+        "software": "rxjs",
+        "rawLanguage": "nodejs",
+        "source": "6.6.7",
+        "target": "7.8.2",
+        "services": "360",
+        "bucket": "B8_语义不兼容",
+        "difficulty": "高",
+        "note": "rxjs 6->7 响应式API全面重构",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2276,
+        "sequence": "2275",
+        "software": "rxjs",
+        "rawLanguage": "nodejs",
+        "source": "7.3.0",
+        "target": "7.8.2",
+        "services": "360",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2277,
+        "sequence": "2276",
+        "software": "rxjs",
+        "rawLanguage": "nodejs",
+        "source": "7.4.0",
+        "target": "7.8.2",
+        "services": "360",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2278,
+        "sequence": "2277",
+        "software": "rxjs",
+        "rawLanguage": "nodejs",
+        "source": "7.5.5",
+        "target": "7.8.2",
+        "services": "360",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2279,
+        "sequence": "2278",
+        "software": "rxjs",
+        "rawLanguage": "nodejs",
+        "source": "7.5.6",
+        "target": "7.8.2",
+        "services": "360",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2280,
+        "sequence": "2279",
+        "software": "rxjs",
+        "rawLanguage": "nodejs",
+        "source": "7.5.7",
+        "target": "7.8.2",
+        "services": "360",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2281,
+        "sequence": "2280",
+        "software": "rxjs",
+        "rawLanguage": "nodejs",
+        "source": "7.6.0",
+        "target": "7.8.2",
+        "services": "360",
+        "bucket": "B2_Minor单包",
+        "difficulty": "低",
+        "note": "同大版本内minor升级，通常向后兼容",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2282,
+        "sequence": "2281",
+        "software": "rxjs",
+        "rawLanguage": "nodejs",
+        "source": "7.8.0",
+        "target": "7.8.2",
+        "services": "360",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 2283,
+        "sequence": "2282",
+        "software": "rxjs",
+        "rawLanguage": "nodejs",
+        "source": "7.8.1",
+        "target": "7.8.2",
+        "services": "360",
+        "bucket": "B1_Patch直升",
+        "difficulty": "低",
+        "note": "仅patch变更，无breaking change",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "6.5.5",
+      "6.6.7",
+      "7.3.0",
+      "7.4.0",
+      "7.5.5",
+      "7.5.6",
+      "7.5.7",
+      "7.6.0",
+      "7.8.0",
+      "7.8.1"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        2
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        3
+      ],
+      "dimension": "行为契约 / 语义 / 真实用例",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "必须固定官方源码或发布说明并建立行为契约；语义敏感项默认 MARK/MANUAL，只有上下文无歧义且可证明等价的修改才能 AUTO。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        2276
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        2277
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        2278
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        2279
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        2280
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-008",
+      "edgeRows": [
+        2281
+      ],
+      "dimension": "弃用 / 默认值 / 配置 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-009",
+      "edgeRows": [
+        2282
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-010",
+      "edgeRows": [
+        2283
+      ],
+      "dimension": "补丁行为 / 安全 / 回归",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}

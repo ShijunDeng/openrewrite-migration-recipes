@@ -1,0 +1,398 @@
+{
+  "$schema": "../../schema/migration.schema.json",
+  "schemaVersion": 1,
+  "module": {
+    "id": "migration-spec-nodejs-swiper",
+    "catalogPath": "catalog/nodejs/swiper",
+    "languageProfile": "nodejs",
+    "rawIdentifiers": [
+      "swiper"
+    ],
+    "rawLanguages": [
+      "nodejs"
+    ],
+    "canonicalIdentity": {
+      "value": "swiper",
+      "status": "unverified",
+      "evidence": []
+    },
+    "targetVersion": "12.1.2",
+    "candidateImplementationModules": []
+  },
+  "workbook": {
+    "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
+    "edges": [
+      {
+        "excelRow": 317,
+        "sequence": "316",
+        "software": "swiper",
+        "rawLanguage": "nodejs",
+        "source": "3.4.2",
+        "target": "12.1.2",
+        "services": "20",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 318,
+        "sequence": "317",
+        "software": "swiper",
+        "rawLanguage": "nodejs",
+        "source": "6.8.1",
+        "target": "12.1.2",
+        "services": "20",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 319,
+        "sequence": "318",
+        "software": "swiper",
+        "rawLanguage": "nodejs",
+        "source": "6.8.4",
+        "target": "12.1.2",
+        "services": "20",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 320,
+        "sequence": "319",
+        "software": "swiper",
+        "rawLanguage": "nodejs",
+        "source": "7.2.0",
+        "target": "12.1.2",
+        "services": "20",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 321,
+        "sequence": "320",
+        "software": "swiper",
+        "rawLanguage": "nodejs",
+        "source": "8.3.1",
+        "target": "12.1.2",
+        "services": "20",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 322,
+        "sequence": "321",
+        "software": "swiper",
+        "rawLanguage": "nodejs",
+        "source": "8.4.7",
+        "target": "12.1.2",
+        "services": "20",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 323,
+        "sequence": "322",
+        "software": "swiper",
+        "rawLanguage": "nodejs",
+        "source": "9.1.0",
+        "target": "12.1.2",
+        "services": "20",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 324,
+        "sequence": "323",
+        "software": "swiper",
+        "rawLanguage": "nodejs",
+        "source": "9.2.0",
+        "target": "12.1.2",
+        "services": "20",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 325,
+        "sequence": "324",
+        "software": "swiper",
+        "rawLanguage": "nodejs",
+        "source": "9.4.1",
+        "target": "12.1.2",
+        "services": "20",
+        "bucket": "B6_Multi-major单包",
+        "difficulty": "高",
+        "note": "跨2+个大版本，breaking change概率极高，需API迁移",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      },
+      {
+        "excelRow": 1325,
+        "sequence": "1324",
+        "software": "swiper",
+        "rawLanguage": "nodejs",
+        "source": "11.2.5",
+        "target": "12.1.2",
+        "services": "20",
+        "bucket": "B4_Major单包",
+        "difficulty": "中",
+        "note": "跨1个大版本，需查changelog确认breaking API",
+        "sourceAtomic": true,
+        "direction": {
+          "relation": "upgrade-candidate",
+          "action": "mark",
+          "comparator": "conservative-numeric-prefix-v1",
+          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+        }
+      }
+    ]
+  },
+  "taskDirectives": [],
+  "policy": {
+    "allowDowngrade": false,
+    "conflictMarker": "目标版本冲突（禁止降级）",
+    "autoSourceWhitelist": [],
+    "upgradeCandidatesPendingEvidence": [
+      "11.2.5",
+      "3.4.2",
+      "6.8.1",
+      "6.8.4",
+      "7.2.0",
+      "8.3.1",
+      "8.4.7",
+      "9.1.0",
+      "9.2.0",
+      "9.4.1"
+    ],
+    "noopVersions": [],
+    "conflictVersions": [],
+    "unresolvedVersions": []
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "claim": "制品身份、源版本与目标制品身份",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-002",
+      "claim": "迁移边的 API、配置与默认行为变化",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    },
+    {
+      "id": "E-003",
+      "claim": "真实工程用法、负例与行为验收",
+      "status": "unverified",
+      "officialSources": [],
+      "realFixtures": []
+    }
+  ],
+  "incompatibilities": [
+    {
+      "id": "C-001",
+      "edgeRows": [
+        317
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-002",
+      "edgeRows": [
+        318
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-003",
+      "edgeRows": [
+        319
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-004",
+      "edgeRows": [
+        320
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-005",
+      "edgeRows": [
+        321
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-006",
+      "edgeRows": [
+        322
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-007",
+      "edgeRows": [
+        323
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-008",
+      "edgeRows": [
+        324
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-009",
+      "edgeRows": [
+        325
+      ],
+      "dimension": "多主版本 API / 数据 / 协议 / 工具链",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
+      "recipe": null,
+      "tests": []
+    },
+    {
+      "id": "C-010",
+      "edgeRows": [
+        1325
+      ],
+      "dimension": "公开 API / 配置 / 默认行为 / 运行时",
+      "excelNoteStatus": "table_fact",
+      "evidenceStatus": "unverified",
+      "disposition": "mark",
+      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
+      "recipe": null,
+      "tests": []
+    }
+  ],
+  "status": {
+    "spec": "complete",
+    "evidence": "pending",
+    "automation": "catalog-only"
+  }
+}
