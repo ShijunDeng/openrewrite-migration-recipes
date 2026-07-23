@@ -1,0 +1,21 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.feignhttpclient.UpgradeFeignHttpClientTo13_6
+displayName: Upgrade workbook-selected Feign Apache HttpClient dependencies to 13.6
+description: >-
+  Upgrade only io.github.openfeign:feign-httpclient versions explicitly selected by the workbook,
+  preserving external version owners, unsupported ranges, variants, and unrelated declarations.
+recipeList:
+  - com.huawei.clouds.openrewrite.feignhttpclient.UpgradeSelectedFeignHttpClientDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.feignhttpclient.MigrateFeignHttpClientTo13_6
+displayName: Migrate Feign Apache HttpClient 10/12 to 13.6
+description: >-
+  Reuse the strict public dependency upgrade, perform type-attributed equivalent Feign API renames,
+  and mark exact HC4/HC5, lifecycle, timeout, redirect, TLS, proxy, compression, body, and build review points.
+recipeList:
+  - com.huawei.clouds.openrewrite.feignhttpclient.UpgradeFeignHttpClientTo13_6
+  - com.huawei.clouds.openrewrite.feignhttpclient.MigrateFeignHttpClient13Apis
+  - com.huawei.clouds.openrewrite.feignhttpclient.FindFeignHttpClient13SourceRisks
+  - com.huawei.clouds.openrewrite.feignhttpclient.FindFeignHttpClient13BuildRisks
