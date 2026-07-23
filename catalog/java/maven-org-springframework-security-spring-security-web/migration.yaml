@@ -14,11 +14,17 @@
     ],
     "canonicalIdentity": {
       "value": "org.springframework.security:spring-security-web",
-      "status": "unverified",
-      "evidence": []
+      "status": "verified",
+      "evidence": [
+        "https://github.com/spring-projects/spring-security/tree/73b077790fcb04ac3712033d3e939daf42264545",
+        "maven-central:jar-sha256:50df9fc76162d33cf8b5410cf7a7a969abd42a5ecddb284aab4f453cb5512306",
+        "maven-central:pom-sha256:d0ff3f67692d7e0009efb3eb787bc5000b6dc269e773e3585a3554c1ad524d37"
+      ]
     },
     "targetVersion": "6.5.11",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-spring-security-web-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -37,9 +43,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -56,9 +62,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -75,9 +81,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -94,9 +100,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -113,9 +119,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -132,9 +138,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -151,9 +157,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -170,9 +176,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -189,9 +195,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -227,9 +233,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -246,9 +252,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -265,9 +271,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -284,9 +290,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -303,9 +309,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -322,9 +328,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -341,9 +347,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -360,9 +366,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       },
       {
@@ -379,31 +385,96 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "制品身份、迁移方向和用户补充的精确原子版本白名单已由固定证据验证；允许执行受所有权守卫约束的 AUTO。"
         }
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "verified",
+      "sourceVersions": [
+        "5.1.5.RELEASE",
+        "5.6.12",
+        "5.7.14",
+        "5.8.3",
+        "5.8.6",
+        "5.8.7",
+        "5.8.8",
+        "5.8.11",
+        "5.8.15",
+        "5.8.16",
+        "6.2.2",
+        "6.2.3",
+        "6.2.6",
+        "6.2.7",
+        "6.2.8",
+        "6.3.4",
+        "6.4.4",
+        "6.4.6",
+        "6.4.10",
+        "6.4.11",
+        "6.4.13",
+        "6.5.1",
+        "6.5.9",
+        "6.5.10"
+      ],
+      "targetVersion": "6.5.11",
+      "relation": "user-supplied-upgrade",
+      "action": "auto",
+      "statement": "用户补充的完整原子版本清单解开了 Excel #1562 的截断聚合显示；只有 24 个低于目标的精确版本进入 AUTO，聚合单元格本身仍保持 MARK。"
+    },
+    {
+      "id": "U-002",
+      "status": "verified",
+      "sourceVersions": [
+        "7.0.0",
+        "7.0.4"
+      ],
+      "targetVersion": "6.5.11",
+      "relation": "conflict",
+      "action": "mark",
+      "statement": "用户明确要求整体只升级不回退，因此 7.0.0 与 7.0.4 保持不变并标记目标版本冲突（禁止降级）。"
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "autoSourceWhitelist": [
       "5.1.5.RELEASE",
       "5.6.12",
       "5.7.14",
+      "5.8.3",
+      "5.8.6",
+      "5.8.7",
+      "5.8.8",
       "5.8.11",
       "5.8.15",
       "5.8.16",
-      "5.8.3",
-      "5.8.6",
-      "5.8.7"
+      "6.2.2",
+      "6.2.3",
+      "6.2.6",
+      "6.2.7",
+      "6.2.8",
+      "6.3.4",
+      "6.4.4",
+      "6.4.6",
+      "6.4.10",
+      "6.4.11",
+      "6.4.13",
+      "6.5.1",
+      "6.5.9",
+      "6.5.10"
     ],
+    "upgradeCandidatesPendingEvidence": [],
     "noopVersions": [],
-    "conflictVersions": [],
+    "conflictVersions": [
+      "7.0.0",
+      "7.0.4"
+    ],
     "unresolvedVersions": [
       "5.8.8 ... (共26个版本)"
     ]
@@ -412,22 +483,57 @@
     {
       "id": "E-001",
       "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-security/tree/73b077790fcb04ac3712033d3e939daf42264545",
+        "https://github.com/spring-projects/spring-security/tree/1e694b1304a801bc401aee15849130a5e0b702f8",
+        "https://github.com/spring-projects/spring-security/tree/9bd793ffe65082f36305f6e285643fbb28f926e3",
+        "maven-central:jar-sha256:50df9fc76162d33cf8b5410cf7a7a969abd42a5ecddb284aab4f453cb5512306",
+        "maven-central:pom-sha256:d0ff3f67692d7e0009efb3eb787bc5000b6dc269e773e3585a3554c1ad524d37"
+      ],
+      "realFixtures": [
+        "spring-projects/spring-security@73b077790fcb04ac3712033d3e939daf42264545"
+      ]
     },
     {
       "id": "E-002",
-      "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
+      "claim": "迁移边的 API、配置、安全与默认行为变化",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-security/blob/73b077790fcb04ac3712033d3e939daf42264545/docs/modules/ROOT/pages/migration/index.adoc",
+        "https://github.com/spring-projects/spring-security/blob/73b077790fcb04ac3712033d3e939daf42264545/docs/modules/ROOT/pages/migration/servlet/authentication.adoc",
+        "https://github.com/spring-projects/spring-security/blob/73b077790fcb04ac3712033d3e939daf42264545/docs/modules/ROOT/pages/migration/servlet/authorization.adoc",
+        "https://github.com/spring-projects/spring-security/blob/73b077790fcb04ac3712033d3e939daf42264545/docs/modules/ROOT/pages/migration/servlet/exploits.adoc",
+        "https://github.com/spring-projects/spring-security/blob/73b077790fcb04ac3712033d3e939daf42264545/docs/modules/ROOT/pages/migration/servlet/session-management.adoc"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-003",
       "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite-spring/tree/d28afcb6661ad413539056de0936c5489ff9d8ee/src/test/java/org/openrewrite/java/spring/security5"
+      ],
+      "realFixtures": [
+        "eugenp/tutorials@5e4114a9482d68b6766ca738c087f0f9a87a7bd2",
+        "spring-guides/gs-securing-web@299296be54569a14ef8e67b25f6193936385e6bf",
+        "spring-projects/spring-security-samples@472a9b7cb683e854bc9d9781875b2df72faad7a5"
+      ]
+    },
+    {
+      "id": "E-004",
+      "claim": "OpenRewrite 官方能力已检索、复用并通过组合测试",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite-spring/tree/d28afcb6661ad413539056de0936c5489ff9d8ee",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-security-57.yml",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-security-58.yml",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-security-60.yml",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-security-61.yml",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-security-62.yml",
+        "https://github.com/openrewrite/rewrite-migrate-java/tree/658481254a6ee678f5f162e51d8d49ee01c75877"
+      ],
       "realFixtures": []
     }
   ],
@@ -439,11 +545,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-002",
@@ -452,11 +566,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-003",
@@ -465,11 +587,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-004",
@@ -478,11 +608,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-005",
@@ -491,11 +629,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-006",
@@ -504,11 +650,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-007",
@@ -517,11 +671,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-008",
@@ -530,11 +692,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-009",
@@ -543,11 +713,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-010",
@@ -556,11 +734,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "treatment": "聚合显示不进入版本 AUTO；配方只接受用户补充的 24 个精确低版本，7.x 保持并禁止降级，同时对安全语义和配置边界执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-011",
@@ -569,11 +755,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-012",
@@ -582,11 +776,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-013",
@@ -595,11 +797,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-014",
@@ -608,11 +818,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-015",
@@ -621,11 +839,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-016",
@@ -634,11 +860,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-017",
@@ -647,11 +881,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-018",
@@ -660,11 +902,19 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     },
     {
       "id": "C-019",
@@ -673,16 +923,24 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
-      "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
+      "treatment": "把精确且本地拥有的依赖升级到 6.5.11；实际组合官方 5.7→6.2 确定性迁移与 Jakarta Servlet 能力，并对 Java/依赖族、授权、filter chain、session/context、CSRF、协议登录、SPI、配置及 observation 风险执行精确 MARK。",
+      "recipe": "com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11",
+      "tests": [
+        "UpgradeSpringSecurityWebDependencyTest",
+        "SpringSecurityOfficialMigrationTest",
+        "SpringSecurityWebBuildRisksTest",
+        "SpringSecurityWebSourceRisksTest",
+        "SpringSecurityWebConfigurationRisksTest",
+        "SpringSecurityWebRecommendedRecipeTest",
+        "RealRepositoryFixturesTest"
+      ]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }

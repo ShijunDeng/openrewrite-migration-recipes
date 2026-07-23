@@ -1,0 +1,167 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springsecurityweb
+packageName: com.huawei.clouds.openrewrite.springsecurityweb
+description: Strictly upgrade workbook-selected Spring Security Web declarations to 6.5.11, reuse deterministic official migrations, and locate behavior-sensitive boundaries.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.UpgradeSpringSecurityWebTo6_5_11
+displayName: Upgrade workbook-selected Spring Security Web dependencies to 6.5.11
+description: >-
+  Upgrade only the 24 exact org.springframework.security:spring-security-web
+  versions below 6.5.11 from the workbook in unambiguously owned standard
+  Maven or root Gradle declarations. Versions 7.0.0, 7.0.4 and every other
+  higher version remain unchanged.
+tags:
+  - spring
+  - security
+  - java
+  - dependency-upgrade
+  - no-downgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.UpgradeSelectedSpringSecurityWebDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateDeterministicSpringSecurityWeb6
+displayName: Migrate deterministic Spring Security Web 6 APIs
+description: >-
+  Compose the source and XML components of the official OpenRewrite Spring
+  Security 5.7, 5.8, 6.0, 6.1 and 6.2 recipes without their broad dependency
+  version recipes. Also reuse the official dependency/package primitives for
+  Jakarta Servlet 6.0.0 instead of the Servlet 5.0.x aggregate.
+tags:
+  - spring
+  - security
+  - jakarta
+  - source-migration
+  - official-openrewrite
+recipeList:
+  - org.openrewrite.java.dependencies.ChangeDependency:
+      oldGroupId: javax.servlet
+      oldArtifactId: javax.servlet-api
+      newGroupId: jakarta.servlet
+      newArtifactId: jakarta.servlet-api
+      newVersion: 6.0.0
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.servlet
+      newPackageName: jakarta.servlet
+      recursive: true
+  - org.openrewrite.java.spring.security5.WebSecurityConfigurerAdapter
+  - org.openrewrite.java.spring.boot2.HttpSecurityLambdaDsl
+  - org.openrewrite.java.spring.boot2.ServerHttpSecurityLambdaDsl
+  - org.openrewrite.java.spring.boot2.HeadersConfigurerLambdaDsl
+  - org.openrewrite.java.spring.security5.AuthorizeHttpRequests
+  - org.openrewrite.java.spring.security5.ConvertSecurityMatchersToSecurityMatcher
+  - org.openrewrite.java.spring.security5.UseNewRequestMatchers
+  - org.openrewrite.java.spring.security5.UseNewSecurityMatchers
+  - org.openrewrite.java.spring.security5.UpdatePbkdf2PasswordEncoder
+  - org.openrewrite.java.spring.security5.UpdateSCryptPasswordEncoder
+  - org.openrewrite.java.spring.security5.UpdateArgon2PasswordEncoder
+  - org.openrewrite.java.spring.security5.RenameNimbusdsJsonObjectPackageName
+  - org.openrewrite.java.spring.security5.ReplaceGlobalMethodSecurityWithMethodSecurity
+  - org.openrewrite.java.spring.security5.ReplaceGlobalMethodSecurityWithMethodSecurityXml
+  # The upstream XML recipe matches the unqualified tag. Reuse the same
+  # official primitives for the two conventional namespace prefixes.
+  - org.openrewrite.xml.ChangeTagName:
+      elementName: security:global-method-security
+      newName: security:method-security
+  - org.openrewrite.xml.ChangeTagAttribute:
+      elementName: security:method-security
+      attributeName: pre-post-enabled
+      newValue: null
+      oldValue: true
+  - org.openrewrite.xml.ChangeTagName:
+      elementName: sec:global-method-security
+      newName: sec:method-security
+  - org.openrewrite.xml.ChangeTagAttribute:
+      elementName: sec:method-security
+      attributeName: pre-post-enabled
+      newValue: null
+      oldValue: true
+  - org.openrewrite.java.spring.security6.UseSha256InRememberMe
+  - org.openrewrite.java.spring.security6.PropagateAuthenticationServiceExceptions
+  - org.openrewrite.java.spring.security6.RequireExplicitSavingOfSecurityContextRepository
+  - org.openrewrite.java.spring.security6.UpdateRequestCache
+  - org.openrewrite.java.spring.security6.RemoveUseAuthorizationManager
+  - org.openrewrite.xml.ChangeTagAttribute:
+      elementName: security:websocket-message-broker
+      attributeName: use-authorization-manager
+      newValue: null
+      oldValue: true
+  - org.openrewrite.xml.ChangeTagAttribute:
+      elementName: sec:websocket-message-broker
+      attributeName: use-authorization-manager
+      newValue: null
+      oldValue: true
+  - org.openrewrite.java.spring.security6.UpdateEnableReactiveMethodSecurity
+  - org.openrewrite.java.spring.security6.RemoveFilterSecurityInterceptorOncePerRequest
+  - org.openrewrite.java.spring.security6.oauth2.client.OAuth2LoginLambdaDsl
+  - org.openrewrite.java.spring.security6.oauth2.client.OAuth2ClientLambdaDsl
+  - org.openrewrite.java.spring.security6.oauth2.server.resource.OAuth2ResourceServerLambdaDsl
+  - org.openrewrite.java.spring.security6.ApplyToWithLambdaDsl
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11BuildRisks
+displayName: Find Spring Security Web 6.5.11 build risks
+description: >-
+  Mark no-downgrade conflicts, unresolved owners, variants, Java 17 and
+  -parameters requirements, Security/Spring/Jakarta/Micrometer alignment,
+  Boot-owned versions and the independent Authorization Server release line.
+tags:
+  - spring
+  - security
+  - build
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6511BuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11SourceRisks
+displayName: Find Spring Security Web 6.5.11 source risks
+description: >-
+  Reuse the official Encryptors.queryableText search and mark filter-chain,
+  authorization, authentication, context/session, CSRF, headers/CORS, custom
+  filter order, remember-me, logout, protocol, observation, method-security,
+  Jakarta and extension-SPI decisions.
+tags:
+  - spring
+  - security
+  - java
+  - search
+recipeList:
+  - org.openrewrite.java.spring.security5.search.FindEncryptorsQueryableTextUses
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6511SourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11ConfigurationRisks
+displayName: Find Spring Security Web 6.5.11 configuration risks
+description: >-
+  Mark exact filter, authentication, session/context, CSRF, headers/CORS,
+  protocol and observation properties/YAML paths plus Spring Security XML and
+  web.xml boundaries.
+tags:
+  - spring
+  - security
+  - configuration
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6511ConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springsecurityweb.MigrateSpringSecurityWebTo6_5_11
+displayName: Migrate Spring Security Web applications to 6.5.11
+description: >-
+  Strictly upgrade workbook-selected declarations, run deterministic official
+  Spring Security/Jakarta migrations, and mark every remaining 6.5.11 build,
+  source and configuration decision. Higher versions are never downgraded.
+tags:
+  - spring
+  - security
+  - java
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springsecurityweb.UpgradeSpringSecurityWebTo6_5_11
+  - com.huawei.clouds.openrewrite.springsecurityweb.MigrateDeterministicSpringSecurityWeb6
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11BuildRisks
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11SourceRisks
+  - com.huawei.clouds.openrewrite.springsecurityweb.FindSpringSecurityWeb6_5_11ConfigurationRisks

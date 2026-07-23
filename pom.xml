@@ -168,6 +168,7 @@
     <module>rewrite-spring-web-upgrade</module>
     <module>rewrite-logback-core-upgrade</module>
     <module>rewrite-zookeeper-upgrade</module>
+    <module>rewrite-spring-security-web-upgrade</module>
   </modules>
 
   <dependencyManagement>
