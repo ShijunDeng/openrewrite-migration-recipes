@@ -1,0 +1,21 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.appium.UpgradeAppiumJavaClientTo9_2_3
+displayName: Upgrade workbook-selected Appium Java Client dependencies to 9.2.3
+description: >-
+  Upgrade only exact io.appium:java-client:7.5.1 declarations owned by the current Maven or root Gradle build,
+  preserving unsupported versions, external owners, artifact variants, nested DSL, and generated files.
+recipeList:
+  - com.huawei.clouds.openrewrite.appium.UpgradeSelectedAppiumDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.appium.MigrateAppiumJavaClientTo9_2_3
+displayName: Migrate Appium Java Client 7.5.1 to 9.2.3
+description: >-
+  Reuse the public strict dependency upgrade, migrate deterministic W3C locator, element, and driver APIs,
+  then mark protocol, gesture, lifecycle, routing, version-owner, Selenium, and Java 11 decisions.
+recipeList:
+  - com.huawei.clouds.openrewrite.appium.UpgradeAppiumJavaClientTo9_2_3
+  - com.huawei.clouds.openrewrite.appium.MigrateAppium9Java
+  - com.huawei.clouds.openrewrite.appium.FindAppium9SourceRisks
+  - com.huawei.clouds.openrewrite.appium.FindAppium9BuildRisks
