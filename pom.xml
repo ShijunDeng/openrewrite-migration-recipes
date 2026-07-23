@@ -132,6 +132,7 @@
     <module>rewrite-spring-cloud-context-upgrade</module>
     <module>rewrite-postgresql-upgrade</module>
     <module>rewrite-fast-glob-upgrade</module>
+    <module>rewrite-snakeyaml-upgrade</module>
   </modules>
 
   <dependencyManagement>

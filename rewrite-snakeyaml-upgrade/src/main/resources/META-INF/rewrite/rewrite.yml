@@ -1,0 +1,21 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.snakeyaml.UpgradeSnakeYamlTo2_5
+displayName: Upgrade workbook-selected SnakeYAML dependencies to 2.5
+description: >-
+  Upgrade only the seven exact SnakeYAML versions selected by the workbook while preserving external owners,
+  unsupported ranges, variants, generated files, and nested Gradle DSL.
+recipeList:
+  - com.huawei.clouds.openrewrite.snakeyaml.UpgradeSelectedSnakeYamlDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.snakeyaml.MigrateSnakeYamlTo2_5
+displayName: Migrate SnakeYAML 1.x/2.0 to 2.5
+description: >-
+  Reuse the public strict dependency upgrade, add required LoaderOptions/DumperOptions constructor arguments,
+  and mark exact security, schema, custom extension, dump, build-owner, engine-mixing, and Java baseline decisions.
+recipeList:
+  - com.huawei.clouds.openrewrite.snakeyaml.UpgradeSnakeYamlTo2_5
+  - com.huawei.clouds.openrewrite.snakeyaml.MigrateSnakeYaml2Constructors
+  - com.huawei.clouds.openrewrite.snakeyaml.FindSnakeYaml25SourceRisks
+  - com.huawei.clouds.openrewrite.snakeyaml.FindSnakeYaml25BuildRisks
