@@ -1,0 +1,22 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonscodec.UpgradeCommonsCodecTo1_22_0
+displayName: Upgrade workbook-selected Apache Commons Codec dependencies to 1.22.0
+description: >-
+  Upgrade only exact commons-codec:commons-codec versions 1.11, 1.13, 1.14, 1.15, and 1.16.0 in declarations
+  owned by the current Maven project/profile or root Gradle dependencies block.
+recipeList:
+  - com.huawei.clouds.openrewrite.commonscodec.UpgradeSelectedCommonsCodecDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.commonscodec.MigrateCommonsCodecTo1_22_0
+displayName: Migrate Apache Commons Codec to 1.22.0
+description: >-
+  Apply the strict workbook dependency upgrade first, migrate documented equivalent APIs, then mark source,
+  build, algorithm-output, error-policy, and OSGi decisions that require application evidence.
+recipeList:
+  - com.huawei.clouds.openrewrite.commonscodec.UpgradeCommonsCodecTo1_22_0
+  - com.huawei.clouds.openrewrite.commonscodec.MigrateDeprecatedCommonsCodecApis
+  - com.huawei.clouds.openrewrite.commonscodec.FindCommonsCodecBuildRisks
+  - com.huawei.clouds.openrewrite.commonscodec.FindCommonsCodecJavaRisks
+  - com.huawei.clouds.openrewrite.commonscodec.FindCommonsCodecResourceRisks

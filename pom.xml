@@ -145,6 +145,7 @@
     <module>rewrite-jakarta-ws-rs-api-upgrade</module>
     <module>rewrite-org-json-upgrade</module>
     <module>rewrite-junit-platform-launcher-upgrade</module>
+    <module>rewrite-commons-codec-upgrade</module>
   </modules>
 
   <dependencyManagement>
