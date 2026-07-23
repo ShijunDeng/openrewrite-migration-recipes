@@ -14,11 +14,17 @@
     ],
     "canonicalIdentity": {
       "value": "org.springframework.boot:spring-boot-starter-actuator",
-      "status": "unverified",
-      "evidence": []
+      "status": "verified",
+      "evidence": [
+        "https://github.com/spring-projects/spring-boot/tree/c069bce9fb096f7e146695459d69bf653dece1e6",
+        "maven-central:jar-sha256:78217f3ba6bd9960585a5dde9444291a274cf8e0f05875898a4c503f0db2c53b",
+        "maven-central:pom-sha256:190df99cc4b05379f27228526282c50d0938316ac5ab063029d0e354b4bd9e2b"
+      ]
     },
     "targetVersion": "3.5.15",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-spring-boot-starter-actuator-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -386,22 +392,52 @@
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "verified",
+      "sourceVersions": [
+        "2.2.6.RELEASE",
+        "2.6.6",
+        "2.7.9",
+        "2.7.10",
+        "2.7.12",
+        "2.7.16",
+        "2.7.17",
+        "2.7.18",
+        "3.4.0",
+        "3.4.3",
+        "3.4.5",
+        "3.4.6",
+        "3.4.9",
+        "3.4.12"
+      ],
+      "targetVersion": "3.5.15",
+      "relation": "user-supplied-upgrade",
+      "action": "auto",
+      "statement": "用户补充的原子版本清单解开了 Excel #3069 的截断聚合显示；只有这 14 个精确版本进入 AUTO，聚合单元格本身仍保持 MARK。"
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "autoSourceWhitelist": [
       "2.2.6.RELEASE",
       "2.6.6",
+      "2.7.9",
       "2.7.10",
       "2.7.12",
       "2.7.16",
       "2.7.17",
       "2.7.18",
-      "2.7.9",
-      "3.4.0"
+      "3.4.0",
+      "3.4.3",
+      "3.4.5",
+      "3.4.6",
+      "3.4.9",
+      "3.4.12"
     ],
+    "upgradeCandidatesPendingEvidence": [],
     "noopVersions": [],
     "conflictVersions": [],
     "unresolvedVersions": [
@@ -412,22 +448,53 @@
     {
       "id": "E-001",
       "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-boot/tree/c069bce9fb096f7e146695459d69bf653dece1e6",
+        "maven-central:jar-sha256:78217f3ba6bd9960585a5dde9444291a274cf8e0f05875898a4c503f0db2c53b",
+        "maven-central:pom-sha256:190df99cc4b05379f27228526282c50d0938316ac5ab063029d0e354b4bd9e2b"
+      ],
+      "realFixtures": [
+        "spring-projects/spring-boot@c069bce9fb096f7e146695459d69bf653dece1e6"
+      ]
     },
     {
       "id": "E-002",
       "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide/eeac9539123659067e2918b9c225fb7798a46857",
+        "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.4-Release-Notes/914b118934e73d0c2d6ed21c0a7c02417f502403",
+        "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.5-Release-Notes/7ba79e6015545ec4e835daa93c07164e6e9e19cb",
+        "https://github.com/spring-projects/spring-boot/blob/c069bce9fb096f7e146695459d69bf653dece1e6/spring-boot-project/spring-boot-actuator-autoconfigure/src/main/resources/META-INF/additional-spring-configuration-metadata.json"
+      ],
+      "realFixtures": [
+        "spring-projects/spring-boot@c069bce9fb096f7e146695459d69bf653dece1e6"
+      ]
     },
     {
       "id": "E-003",
       "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-test/src/main/java/org/openrewrite/test/RewriteTest.java",
+        "https://github.com/openrewrite/rewrite/blob/b3008cc4a1f0c43f562da16e5933a2a56d9bc568/rewrite-yaml/src/test/java/org/openrewrite/yaml/ChangePropertyKeyTest.java"
+      ],
+      "realFixtures": [
+        "gla-rad/ServiceRegistry@82cc3faa6a576d572f28e27380f3fe375f0a9373",
+        "navikt/veilarbportefolje@1ac718267c890ed878484d136556a0289db1a46a"
+      ]
+    },
+    {
+      "id": "E-004",
+      "claim": "OpenRewrite 官方能力已检索、复用并通过组合测试",
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/openrewrite/rewrite-spring/tree/d28afcb6661ad413539056de0936c5489ff9d8ee",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/java/org/openrewrite/java/spring/ChangeSpringPropertyKey.java",
+        "https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/src/main/resources/META-INF/rewrite/spring-boot-34-properties.yml",
+        "maven-central:jar-sha256:27df444210c8bfee7e9d0f04d6d6f7986d2bee36bcd472d8307912613e93e98b"
+      ],
       "realFixtures": []
     }
   ],
@@ -439,11 +506,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-002",
@@ -452,11 +519,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-003",
@@ -465,11 +532,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-004",
@@ -478,11 +545,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-005",
@@ -491,11 +558,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-006",
@@ -504,11 +571,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-007",
@@ -517,11 +584,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-008",
@@ -530,11 +597,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-009",
@@ -543,11 +610,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-010",
@@ -556,11 +623,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-011",
@@ -569,11 +636,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-012",
@@ -582,11 +649,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-013",
@@ -595,11 +662,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-014",
@@ -608,11 +675,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-015",
@@ -621,11 +688,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-016",
@@ -634,11 +701,11 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-017",
@@ -647,11 +714,11 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-018",
@@ -660,11 +727,11 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     },
     {
       "id": "C-019",
@@ -673,16 +740,16 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
-      "disposition": "mark",
+      "evidenceStatus": "verified",
+      "disposition": "auto+mark",
       "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15",
+      "tests": ["UpgradeActuatorTest", "ActuatorConfigurationTest", "ActuatorSourceMigrationTest", "ActuatorBuildRisksTest"]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }

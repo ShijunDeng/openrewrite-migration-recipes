@@ -78,6 +78,7 @@ README、机器可读 manifest 和禁降级契约，不进入默认 Maven reacto
 | [`rewrite-jul-to-slf4j-upgrade`](rewrite-jul-to-slf4j-upgrade) | `com.huawei.clouds.openrewrite.jultoslf4j.MigrateJulToSlf4jTo2_0_17` | 将 JUL-to-SLF4J 1.7.30/1.7.32/1.7.36 升级到 2.0.17，迁移 provider/binder 兼容点，并检测双向桥和旧 binding 风险 |
 | [`rewrite-swiper-upgrade`](rewrite-swiper-upgrade) | `com.huawei.clouds.openrewrite.swiper.MigrateSwiperTo12_1_2` | 将 Swiper 3/6/7/8/9 升级到 12.1.2，自动迁移可证明的包入口、模块 import、样式路径和容器类，并标记 framework/参数/loop/lazy/event 风险 |
 | [`rewrite-tomcat-catalina-upgrade`](rewrite-tomcat-catalina-upgrade) | `com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalinaTo10_1_56` | 精确升级工作簿列出的 Tomcat Catalina 9.0/10.1 版本，自动迁移确定性的 Servlet/EL/Jakarta API 与配置，并标记 Java 11、内部 API、协议、集群和目标版本安全风险；所有更高版本禁止降级 |
+| [`rewrite-spring-boot-starter-actuator-upgrade`](rewrite-spring-boot-starter-actuator-upgrade) | `com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15` | 精确升级 Spring Boot Actuator 到 3.5.15，自动迁移 Jakarta 和确定性 Actuator 配置，并定位 Java 17、endpoint access/exposure、health、security、Jackson 与 Micrometer 风险 |
 
 后续迁移应新增独立模块，例如：
 
@@ -120,6 +121,7 @@ mvn -pl rewrite-fastjson2-to-jackson -am clean verify
 - Java package 使用 `com.huawei.clouds.openrewrite.<domain>`。
 - 迁移类 artifact ID 使用 `rewrite-<source>-to-<target>`，原地升级类使用 `rewrite-<software>-upgrade`。
 - 每个模块独立声明公开 recipe；推荐入口使用 `Migrate...` 复合配方，组合严格版本升级、确定性源码/配置改写和精准风险检测。
+- 实现前必须检索 OpenRewrite 官方 catalog 和源码；官方已支持的能力优先直接组合或复用官方 recipe/class，自定义代码只补严格版本边界、业务语义和官方未覆盖的缺口，并在模块 README 的“官方能力复用审计”中记录证据、取舍与组合测试。
 - README 是迁移 spec：每个不兼容点必须映射到配方行为、自动化状态和测试；README 的说明不能代替配方实现。
 - 仅修改依赖版本的 `Upgrade...` 可以作为底层配方，但不视为完整迁移模块；无法安全自动修复的点必须生成精确 `SearchResult`，并明确标注“检测”而非“已迁移”。
 - 测试必须包含真实公开仓库固定 commit 的实际 before/after 或风险 marker，同时覆盖错误坐标、未列版本、已迁移状态和相似语法等安全回退。

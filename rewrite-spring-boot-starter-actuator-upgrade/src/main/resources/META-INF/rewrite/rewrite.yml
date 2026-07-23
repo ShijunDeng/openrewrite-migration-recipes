@@ -1,0 +1,135 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.springbootactuator
+packageName: com.huawei.clouds.openrewrite.springbootactuator
+description: Strictly upgrade Spring Boot Actuator to 3.5.15, automate proven configuration and Jakarta moves, and locate behavior-sensitive monitoring boundaries.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springbootactuator.UpgradeSpringBootActuatorTo3_5_15
+displayName: Upgrade selected Spring Boot Actuator declarations to 3.5.15
+description: Upgrade only exact workbook-selected starter versions and unambiguous locally owned Boot parent, BOM, or platform declarations.
+tags:
+  - spring-boot
+  - actuator
+  - java
+  - dependency-upgrade
+recipeList:
+  - com.huawei.clouds.openrewrite.springbootactuator.UpgradeSelectedActuatorDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorConfiguration
+displayName: Migrate deterministic Spring Boot Actuator configuration
+description: Move metrics exporter, probes, JMX, and observations properties and convert endpoint-enabled booleans to the Boot 3.4 access model.
+tags:
+  - spring-boot
+  - actuator
+  - configuration
+preconditions:
+  - com.huawei.clouds.openrewrite.springbootactuator.FindAuthoredSourceFiles
+recipeList:
+  # These are the official Spring-aware primitives used by
+  # org.openrewrite.java.spring.boot3.SpringBootProperties_3_0. Keeping the
+  # product prefixes here avoids pulling unrelated Boot properties into this
+  # Actuator-focused module while retaining Properties, YAML, and annotation support.
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.appoptics
+      newPropertyKey: management.appoptics.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.atlas
+      newPropertyKey: management.atlas.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.datadog
+      newPropertyKey: management.datadog.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.defaults
+      newPropertyKey: management.defaults.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.dynatrace
+      newPropertyKey: management.dynatrace.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.elastic
+      newPropertyKey: management.elastic.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.ganglia
+      newPropertyKey: management.ganglia.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.graphite
+      newPropertyKey: management.graphite.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.humio
+      newPropertyKey: management.humio.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.influx
+      newPropertyKey: management.influx.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.jmx
+      newPropertyKey: management.jmx.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.kairos
+      newPropertyKey: management.kairos.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.newrelic
+      newPropertyKey: management.newrelic.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.prometheus
+      newPropertyKey: management.prometheus.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.signalfx
+      newPropertyKey: management.signalfx.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.simple
+      newPropertyKey: management.simple.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.stackdriver
+      newPropertyKey: management.stackdriver.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.metrics.export.statsd
+      newPropertyKey: management.statsd.metrics.export
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.health.probes.enabled
+      newPropertyKey: management.endpoint.health.probes.enabled
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: management.endpoints.jmx.unique-names
+      newPropertyKey: spring.jmx.unique-names
+  - org.openrewrite.java.spring.ChangeSpringPropertyKey:
+      oldPropertyKey: micrometer.observations.annotations.enabled
+      newPropertyKey: management.observations.annotations.enabled
+  - org.openrewrite.java.spring.boot3.SpringBootProperties_3_4_EnabledToAccess
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBoot3JakartaPackages
+displayName: Migrate deterministic Spring Boot 3 Jakarta packages
+description: Move unambiguous Java EE source packages to Jakarta EE without rewriting Java SE javax namespaces.
+tags:
+  - spring-boot
+  - jakarta
+  - java
+recipeList:
+  - com.huawei.clouds.openrewrite.springbootactuator.MigrateBoot3JakartaPackages
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springbootactuator.FindSpringBootActuator3_5Risks
+displayName: Find Spring Boot Actuator 3.5 migration risks
+description: Mark build ownership and runtime-sensitive Actuator source and configuration decisions that require application context.
+tags:
+  - spring-boot
+  - actuator
+  - search
+recipeList:
+  - com.huawei.clouds.openrewrite.springbootactuator.FindActuatorBuildRisks
+  - com.huawei.clouds.openrewrite.springbootactuator.FindActuatorSourceRisks
+  - com.huawei.clouds.openrewrite.springbootactuator.FindActuatorConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorTo3_5_15
+displayName: Migrate Spring Boot Actuator applications to 3.5.15
+description: Strictly upgrade selected owners, migrate proven configuration and Jakarta namespaces, and mark all remaining Actuator behavior decisions.
+tags:
+  - spring-boot
+  - actuator
+  - migration
+recipeList:
+  - com.huawei.clouds.openrewrite.springbootactuator.UpgradeSpringBootActuatorTo3_5_15
+  - com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBootActuatorConfiguration
+  - com.huawei.clouds.openrewrite.springbootactuator.MigrateSpringBoot3JakartaPackages
+  - com.huawei.clouds.openrewrite.springbootactuator.FindSpringBootActuator3_5Risks

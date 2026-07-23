@@ -1,9 +1,8 @@
 # org.springframework.boot:spring-boot-starter-actuator / spring-boot-starter-actuator 升级规格
 
-> 规格状态：`COMPLETE`；证据状态：`PENDING`；自动化状态：`CATALOG_ONLY`。
-> 本 README 已完成工作簿事实、禁止降级边界、不兼容点分类和后续配方验收契约；
-> 它不声称尚未固定官方证据的具体 API 已得到确认。
-> catalog 本身不包含配方代码；现有候选实现也将在全量规格覆盖完成后逐模块核验和完善。
+> 规格状态：`COMPLETE`；证据状态：`VERIFIED`；自动化状态：`IMPLEMENTED`。
+> 可执行实现位于 `rewrite-spring-boot-starter-actuator-upgrade`，覆盖精确依赖与
+> 本地平台 owner 升级、Jakarta/Actuator 配置迁移、风险定位和禁降级守卫。
 
 ## 模块身份
 
@@ -13,7 +12,7 @@
 | Maven artifactId | `migration-spec-java-maven-org-springframework-boot-spring-boot-starter-actuator` |
 | groupId | `com.huawei.clouds.openrewrite` |
 | 规范表格标识 | `org.springframework.boot:spring-boot-starter-actuator`<br>`spring-boot-starter-actuator` |
-| Catalog canonical identity | `org.springframework.boot:spring-boot-starter-actuator`（`UNVERIFIED`，只用于避免目录碰撞） |
+| Catalog canonical identity | `org.springframework.boot:spring-boot-starter-actuator`（`VERIFIED`） |
 | 归一语言类 | `java` |
 | Excel 原始语言 | `java` |
 | 目标版本 | `3.5.15` |
@@ -22,7 +21,7 @@
 | 分桶 | `B2_Minor单包`, `B4_Major单包` |
 | 难度 | `中`, `低` |
 | 工作簿 SHA-256 | `17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309` |
-| 候选实现模块 | `NONE`（尚无已识别的顶层实现模块） |
+| 实现模块 | `rewrite-spring-boot-starter-actuator-upgrade` |
 
 ## Excel 事实快照
 
@@ -54,7 +53,10 @@
 ## 升级方向与禁止降级
 
 - 表格原始源版本记录（不是 AUTO 白名单）：`2.2.6.RELEASE`, `2.6.6`, `2.7.10`, `2.7.12`, `2.7.16`, `2.7.17`, `2.7.18`, `2.7.9`, `3.4.0`, `3.4.12 ... (共14个版本)`。
-- 升级候选边：`2.2.6.RELEASE`, `2.6.6`, `2.7.10`, `2.7.12`, `2.7.16`, `2.7.17`, `2.7.18`, `2.7.9`, `3.4.0`；在 E-001～E-003 完成前仍保持 `MARK`。
+- AUTO 精确白名单：`2.2.6.RELEASE`, `2.6.6`, `2.7.9`, `2.7.10`, `2.7.12`, `2.7.16`, `2.7.17`, `2.7.18`, `3.4.0`, `3.4.3`, `3.4.5`, `3.4.6`, `3.4.9`, `3.4.12`。
+- Excel #3069 的 `3.4.12 ... (共14个版本)` 仍是不可执行的原始聚合事实；上述
+  14 个原子版本来自用户明确补充的升级清单，机器 manifest 以 `U-001` 单独记录，
+  不从截断文本猜测版本。
 - 相同版本 NOOP：`NONE`。
 - 潜在降级冲突：`NONE`。
 - 截断、聚合或无法可靠比较：`3.4.12 ... (共14个版本)`。
@@ -70,11 +72,11 @@
 
 | ID | 维度 | 适用迁移边 | Excel 提示 | 官方确认事实 | 处置契约 |
 | --- | --- | --- | --- | --- | --- |
-| C-001 | 弃用 / 默认值 / 配置 / 运行时 | Excel #3068 3.4.0 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #3069 3.4.12 ... (共14个版本) [unknown/mark: 源版本单元格是截断或聚合显示，不是可执行配方的原子版本白名单。]<br>Excel #4836 3.4.0 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。] → `3.5.15` | 同大版本内minor升级，通常向后兼容 | `UNVERIFIED` | 同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。 |
-| C-002 | 公开 API / 配置 / 默认行为 / 运行时 | Excel #1393 2.2.6.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1394 2.6.6 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1395 2.7.10 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1396 2.7.12 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1397 2.7.16 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1398 2.7.17 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1399 2.7.18 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #1400 2.7.9 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2228 2.2.6.RELEASE [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2229 2.6.6 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2230 2.7.10 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2231 2.7.12 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2232 2.7.16 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2233 2.7.17 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2234 2.7.18 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。]<br>Excel #2235 2.7.9 [upgrade-candidate/mark: 表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。] → `3.5.15` | 跨1个大版本，需查changelog确认breaking API | `UNVERIFIED` | 建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。 |
+| C-001 | 弃用 / 默认值 / 配置 / 运行时 | Excel #3068、#3069、#4836 → `3.5.15` | 表格提示同主版本 minor 升级 | `VERIFIED`：固定 3.4/3.5 release notes、目标 tag 与制品 SHA | 精确版本和本地 owner AUTO；endpoint access、heapdump、Pushgateway、Micrometer/Jackson、exposure/security 等行为风险精确 MARK。 |
+| C-002 | 公开 API / 配置 / 默认行为 / 运行时 | Excel #1393～#1400、#2228～#2235 → `3.5.15` | 表格提示跨主版本 | `VERIFIED`：固定 Boot 3 migration guide、目标源码与配置 metadata | 精确版本 AUTO；Jakarta 与有唯一替代的配置 AUTO；Java 17、httptrace、security/health/metrics/platform 等上下文风险精确 MARK。 |
 
-`UNVERIFIED` 表示 Excel 提示已进入规格，但尚未用不可变的官方 tag/commit、发布说明和
-制品元数据完成验证。此时允许 README 和精确 MARK 设计，不允许据此发明 API AUTO。
+`VERIFIED` 只覆盖实现 README 证据台账中逐项固定的事实；监控后端、安全策略、
+endpoint 内容、流量和生产运行时兼容性仍保持 MARK/MANUAL。
 
 ### `java` 生态最低核查项
 
@@ -86,9 +88,10 @@
 
 | Claim ID | 待证明事项 | 状态 | 固定官方证据 | 形成 AUTO 的条件 |
 | --- | --- | --- | --- | --- |
-| E-001 | 包/坐标身份、源版本和目标制品身份 | `UNVERIFIED` | 后续固定官网、registry/repository 元数据与 SHA | 身份无歧义且目标确为升级 |
-| E-002 | 每条迁移边的 API、配置和默认行为变化 | `UNVERIFIED` | 后续固定 release notes、迁移指南、tag/commit diff | 存在一一对应且语义等价的变换 |
-| E-003 | 真实工程中的用法和负例 | `UNVERIFIED` | 后续固定真实仓库 commit、路径、许可证与裁剪说明 | 正例、负例和上下文边界均可复现 |
+| E-001 | 包/坐标身份、源版本和目标制品身份 | `VERIFIED` | Spring Boot `c069bce…`；目标 JAR/POM SHA-256 见实现 README | 坐标、14 个原子源版本与目标已固定 |
+| E-002 | 每条迁移边的 API、配置和默认行为变化 | `VERIFIED` | 固定 Boot 3 migration guide、3.4/3.5 release notes 与目标配置 metadata | 只有有唯一等价替代的变换进入 AUTO |
+| E-003 | 真实工程中的用法和负例 | `VERIFIED` | ServiceRegistry、veilarbportefolje 固定 commit；146 项测试 | 正例、负例、owner、marker 和幂等边界可复现 |
+| E-004 | OpenRewrite 官方能力复用 | `VERIFIED` | `rewrite-spring` 6.35.0 / `d28afcb6`、`ChangeSpringPropertyKey`、`SpringBootProperties_3_4_EnabledToAccess` | 运行时 recipe tree 与组合测试证明官方配方被实际激活；自定义代码仅补严格白名单、owner、禁降级、路径和风险 marker |
 
 真实仓库只能证明“用法存在”，不能替代官方兼容性证据。推断必须显式标为
 `INFERENCE`；只有固定上游证据支持的事实才能改为 `VERIFIED`。
@@ -97,7 +100,10 @@
 
 ### AUTO
 
-- 当前阶段 AUTO 白名单为空；只有 E-001～E-003 变为 `VERIFIED` 后，升级候选边才可逐项进入；
+- AUTO 仅包含 `U-001` 的 14 个精确源版本，以及实现 README 列出的确定性
+  Jakarta/Actuator 配置变换；
+- 实现前先检索并组合 OpenRewrite 官方能力；配置键和 endpoint access 直接复用
+  `rewrite-spring`，只有官方总配方会突破精确目标或无法完成值语义时才保留自定义边界；
 - 只处理经验证的原子源版本、明确坐标和当前文件拥有的标准依赖声明；
 - 更高版本永不降级，表外版本、变体和外部 owner 永不猜测；
 - 只实现有官方源码证明、上下文无歧义、行为等价且可幂等运行的 AST/配置修改；
@@ -127,5 +133,6 @@
 
 ## 当前阶段结论
 
-本模块的不兼容点文档规格已经建立；官方证据、真实仓库夹具和可执行配方属于下一阶段。
-在 E-001～E-003 完成前，除严格版本所有权和禁止降级守卫外，不批准猜测式 AUTO。
+本模块已进入 `IMPLEMENTED`：实现、官方证据、真实仓库夹具和 146 项测试均已建立。
+任何高于 `3.5.15` 的版本保持原样并标记 `目标版本冲突（禁止降级）`；聚合 Excel
+单元格不直接执行，只有用户明确补充并固定的 14 个原子版本进入 AUTO。

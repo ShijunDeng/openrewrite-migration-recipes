@@ -234,8 +234,33 @@ def validate_manifest(
         if edge.get("direction", {}).get("relation")
         == "upgrade-candidate"
     }
-    if not categories["autoSourceWhitelist"].issubset(candidate_sources):
-        error(errors, f"{path}: AUTO whitelist contains a non-candidate edge")
+    directive_sources: set[str] = set()
+    for directive in document.get("taskDirectives", []):
+        if (
+            directive.get("relation") == "user-supplied-upgrade"
+            and directive.get("action") == "auto"
+            and directive.get("status") == "verified"
+        ):
+            if directive.get("targetVersion") != module.get("targetVersion"):
+                error(errors, f"{path}: user directive target mismatch")
+            for source in directive.get("sourceVersions", []):
+                if not isinstance(source, str) or any(
+                    token in source for token in ("...", "…", "（共", "(共")
+                ):
+                    error(errors, f"{path}: user directive source is not atomic")
+                else:
+                    directive_sources.add(source)
+    allowed_auto_sources = candidate_sources | directive_sources
+    if not categories["autoSourceWhitelist"].issubset(
+        allowed_auto_sources
+    ):
+        error(
+            errors,
+            f"{path}: AUTO whitelist contains neither a candidate edge "
+            "nor a verified user-supplied source",
+        )
+    if not directive_sources.issubset(categories["autoSourceWhitelist"]):
+        error(errors, f"{path}: verified user directive missing from AUTO")
     if categories["autoSourceWhitelist"] and status.get(
         "automation"
     ) != "implemented":

@@ -24,6 +24,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <rewrite.version>8.87.5</rewrite.version>
     <rewrite.java.dependencies.version>1.59.0</rewrite.java.dependencies.version>
+    <rewrite.spring.version>6.35.0</rewrite.spring.version>
     <jackson.version>2.22.1</jackson.version>
     <fastjson.version>1.2.83</fastjson.version>
     <fastjson2.version>2.0.62</fastjson2.version>
@@ -160,6 +161,7 @@
     <module>rewrite-spring-webflux-upgrade</module>
     <module>rewrite-bcpkix-jdk18on-upgrade</module>
     <module>rewrite-tomcat-catalina-upgrade</module>
+    <module>rewrite-spring-boot-starter-actuator-upgrade</module>
   </modules>
 
   <dependencyManagement>
@@ -198,6 +200,11 @@
         <groupId>org.openrewrite.recipe</groupId>
         <artifactId>rewrite-java-dependencies</artifactId>
         <version>${rewrite.java.dependencies.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.openrewrite.recipe</groupId>
+        <artifactId>rewrite-spring</artifactId>
+        <version>${rewrite.spring.version}</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
