@@ -1425,7 +1425,7 @@ migration-spec-java-maven-org-eclipse-angus-angus-activation,org.eclipse.angus:a
 migration-spec-java-maven-org-eclipse-angus-angus-mail,org.eclipse.angus:angus-mail,java,java,2.0.5,1,4470,complete,pending,catalog-only,
 migration-spec-java-maven-org-eclipse-jdt-ecj,org.eclipse.jdt:ecj,java,java,3.41.0,1,4469,complete,pending,catalog-only,
 migration-spec-java-maven-org-eclipse-jetty-jetty-client,org.eclipse.jetty:jetty-client,java,java,12.1.8,1,789,complete,pending,catalog-only,
-migration-spec-java-maven-org-eclipse-jetty-jetty-http,jetty-http | org.eclipse.jetty:jetty-http,java,java,12.0.34,19,785 | 786 | 787 | 788 | 885 | 886 | 887 | 2087 | 2271 | 4464 | 4465 | 4466 | 4467 | 4468 | 4881 | 4882 | 4883 | 4884 | 4885,complete,pending,catalog-only,
+migration-spec-java-maven-org-eclipse-jetty-jetty-http,jetty-http | org.eclipse.jetty:jetty-http,java,java,12.0.34,19,785 | 786 | 787 | 788 | 885 | 886 | 887 | 2087 | 2271 | 4464 | 4465 | 4466 | 4467 | 4468 | 4881 | 4882 | 4883 | 4884 | 4885,complete,verified,implemented,rewrite-jetty-http-upgrade
 migration-spec-java-maven-org-eclipse-jetty-jetty-io,org.eclipse.jetty:jetty-io,java,java,12.0.34,1,784,complete,pending,catalog-only,
 migration-spec-java-maven-org-eclipse-jetty-jetty-proxy,org.eclipse.jetty:jetty-proxy,java,java,12.1.8,2,354 | 355,complete,pending,catalog-only,
 migration-spec-java-maven-org-eclipse-jetty-jetty-server,org.eclipse.jetty:jetty-server,java,java,12.1.8,5,666 | 667 | 4089 | 4090 | 4091,complete,pending,catalog-only,

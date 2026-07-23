@@ -14,11 +14,17 @@
     ],
     "canonicalIdentity": {
       "value": "org.eclipse.jetty:jetty-http",
-      "status": "unverified",
-      "evidence": []
+      "status": "verified",
+      "evidence": [
+        "https://github.com/jetty/jetty.project/tree/57e7adb250592bd15f573e7820be9b64632c6637",
+        "maven-central:jar-sha256:63890ecc5bb8bf26c4dd0952ef2d0d3dd3f7434b37b21e51f7ea8dfbe96b9dc0",
+        "maven-central:pom-sha256:7fac85de86c1b07569fec73fdb2196952f9831da495cff4c9007ed44c44faaef"
+      ]
     },
     "targetVersion": "12.0.34",
-    "candidateImplementationModules": []
+    "candidateImplementationModules": [
+      "rewrite-jetty-http-upgrade"
+    ]
   },
   "workbook": {
     "sha256": "17020a54165808d7a90801b56cf6c7dff428f3b6dfa931b089e84f9946104309",
@@ -37,9 +43,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -56,9 +62,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -75,9 +81,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -113,9 +119,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -132,9 +138,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -151,9 +157,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -170,9 +176,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -189,9 +195,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -208,9 +214,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -227,9 +233,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -246,9 +252,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -265,9 +271,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -303,9 +309,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -322,9 +328,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -341,9 +347,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -360,9 +366,9 @@
         "sourceAtomic": true,
         "direction": {
           "relation": "upgrade-candidate",
-          "action": "mark",
+          "action": "auto",
           "comparator": "conservative-numeric-prefix-v1",
-          "reason": "表格方向看似升级，但制品身份和官方兼容证据未固定；当前仅作为候选边。"
+          "reason": "用户最高优先级精确白名单已批准该原子版本；实现只迁移明确 owner，源码、配置和官方 API 叶子均受升级前最近构建根门控，高版本及冲突工程保持原文并精确 MARK。"
         }
       },
       {
@@ -386,21 +392,55 @@
       }
     ]
   },
-  "taskDirectives": [],
+  "taskDirectives": [
+    {
+      "id": "U-001",
+      "status": "verified",
+      "sourceVersions": [
+        "9.4.39.v20210325",
+        "9.4.53.v20231009",
+        "9.4.54.v20240208",
+        "9.4.57.v20241219",
+        "9.4.58.v20250814",
+        "11.0.20",
+        "12.0.12",
+        "12.0.15",
+        "12.0.16",
+        "12.0.25"
+      ],
+      "targetVersion": "12.0.34",
+      "relation": "user-supplied-upgrade",
+      "action": "auto",
+      "statement": "用户最高优先级清单批准十个精确 Jetty HTTP 源版本升级到 12.0.34；实现仅修改明确 owner，源码、配置和官方 API 叶子只在升级前最近构建根证明唯一白名单版本时执行。"
+    },
+    {
+      "id": "U-002",
+      "status": "verified",
+      "sourceVersions": [
+        "9.4.57.v20241219 ... (共11个版本)"
+      ],
+      "targetVersion": "12.0.34",
+      "relation": "workbook-aggregate",
+      "action": "mark",
+      "statement": "Excel 行 788 是截断聚合事实，不是原子版本；其中用户明确给出的 9.4.57.v20241219 和 9.4.58.v20250814 进入精确 AUTO 白名单，原聚合文本保持 MARK。"
+    }
+  ],
   "policy": {
     "allowDowngrade": false,
     "conflictMarker": "目标版本冲突（禁止降级）",
-    "autoSourceWhitelist": [],
-    "upgradeCandidatesPendingEvidence": [
+    "autoSourceWhitelist": [
+      "9.4.39.v20210325",
+      "9.4.53.v20231009",
+      "9.4.54.v20240208",
+      "9.4.57.v20241219",
+      "9.4.58.v20250814",
       "11.0.20",
       "12.0.12",
       "12.0.15",
       "12.0.16",
-      "12.0.25",
-      "9.4.39.v20210325",
-      "9.4.53.v20231009",
-      "9.4.54.v20240208"
+      "12.0.25"
     ],
+    "upgradeCandidatesPendingEvidence": [],
     "noopVersions": [],
     "conflictVersions": [
       "12.1.0"
@@ -413,23 +453,38 @@
     {
       "id": "E-001",
       "claim": "制品身份、源版本与目标制品身份",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://github.com/jetty/jetty.project/tree/57e7adb250592bd15f573e7820be9b64632c6637",
+        "maven-central:jar-sha256:63890ecc5bb8bf26c4dd0952ef2d0d3dd3f7434b37b21e51f7ea8dfbe96b9dc0",
+        "maven-central:pom-sha256:7fac85de86c1b07569fec73fdb2196952f9831da495cff4c9007ed44c44faaef"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-002",
       "claim": "迁移边的 API、配置与默认行为变化",
-      "status": "unverified",
-      "officialSources": [],
+      "status": "verified",
+      "officialSources": [
+        "https://jetty.org/docs/jetty/12/programming-guide/migration/11-to-12.html",
+        "https://github.com/jetty/jetty.project/blob/922f8dc188f7011e60d0361de585fd4ac4d63064/jetty-http/src/main/java/org/eclipse/jetty/http/HttpContent.java",
+        "https://github.com/jetty/jetty.project/blob/57e7adb250592bd15f573e7820be9b64632c6637/jetty-core/jetty-http/src/main/java/org/eclipse/jetty/http/content/HttpContent.java"
+      ],
       "realFixtures": []
     },
     {
       "id": "E-003",
       "claim": "真实工程用法、负例与行为验收",
-      "status": "unverified",
-      "officialSources": [],
-      "realFixtures": []
+      "status": "verified",
+      "officialSources": [
+        "https://jetty.org/docs/jetty/12/operations-guide/start/index.html",
+        "https://jetty.org/docs/jetty/12/operations-guide/deploy/index.html"
+      ],
+      "realFixtures": [
+        "https://github.com/jetty/jetty.project/blob/8f1440587e9e4ae7db3d74cf205643f3d707148d/jetty-http/src/test/java/org/eclipse/jetty/http/HttpFieldsTest.java",
+        "https://github.com/jetty/jetty.project/blob/8f1440587e9e4ae7db3d74cf205643f3d707148d/jetty-http/src/test/java/org/eclipse/jetty/http/HttpURITest.java",
+        "https://github.com/dropwizard/dropwizard/blob/6660674f7a81543a8a29c50d69f228fb382caaa6/dropwizard-request-logging/src/test/java/io/dropwizard/request/logging/LogbackAccessRequestLogTest.java"
+      ]
     }
   ],
   "incompatibilities": [
@@ -440,11 +495,18 @@
       ],
       "dimension": "多主版本 API / 数据 / 协议 / 工具链",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-002",
@@ -453,11 +515,18 @@
       ],
       "dimension": "多主版本 API / 数据 / 协议 / 工具链",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-003",
@@ -466,11 +535,18 @@
       ],
       "dimension": "多主版本 API / 数据 / 协议 / 工具链",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-004",
@@ -479,11 +555,18 @@
       ],
       "dimension": "多主版本 API / 数据 / 协议 / 工具链",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-005",
@@ -492,11 +575,18 @@
       ],
       "dimension": "多主版本 API / 数据 / 协议 / 工具链",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-006",
@@ -505,11 +595,18 @@
       ],
       "dimension": "多主版本 API / 数据 / 协议 / 工具链",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-007",
@@ -518,11 +615,18 @@
       ],
       "dimension": "多主版本 API / 数据 / 协议 / 工具链",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "按每个中间主版本逐跳建立证据和回归门禁，不把多跳升级伪装成一次兼容升级；需要分阶段处理源码、配置、数据、协议、运行时与回滚。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-008",
@@ -531,11 +635,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-009",
@@ -544,11 +655,18 @@
       ],
       "dimension": "公开 API / 配置 / 默认行为 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "建立跨主版本兼容矩阵；覆盖删除或重命名 API、配置键和默认值、运行时基线、模块系统、数据格式与回滚，AUTO 仅限已证明等价的确定性修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-010",
@@ -557,11 +675,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-011",
@@ -570,11 +695,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-012",
@@ -583,11 +715,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-013",
@@ -596,11 +735,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-014",
@@ -609,11 +755,18 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-015",
@@ -622,11 +775,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-016",
@@ -635,11 +795,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-017",
@@ -648,11 +815,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-018",
@@ -661,11 +835,18 @@
       ],
       "dimension": "补丁行为 / 安全 / 回归",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "固定官方补丁说明和制品身份后才允许版本 AUTO；仍需验证安全修复、默认行为、序列化与协议回归。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     },
     {
       "id": "C-019",
@@ -674,16 +855,23 @@
       ],
       "dimension": "弃用 / 默认值 / 配置 / 运行时",
       "excelNoteStatus": "table_fact",
-      "evidenceStatus": "unverified",
+      "evidenceStatus": "verified",
       "disposition": "mark",
       "treatment": "同一主版本不等于绝对兼容；核查弃用删除、默认值、运行时基线、传递依赖和配置，只自动处理有固定上游证据的一一对应修改。",
-      "recipe": null,
-      "tests": []
+      "recipe": "com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34",
+      "tests": [
+        "UpgradeJettyHttpDependencyTest",
+        "JettyHttpProjectGateTest",
+        "JettyHttpSourceMigrationTest",
+        "JettyHttpConfigurationRisksTest",
+        "JettyHttpOfficialRecipeAuditTest",
+        "JettyHttpRealRepositoryFixtureTest"
+      ]
     }
   ],
   "status": {
     "spec": "complete",
-    "evidence": "pending",
-    "automation": "catalog-only"
+    "evidence": "verified",
+    "automation": "implemented"
   }
 }

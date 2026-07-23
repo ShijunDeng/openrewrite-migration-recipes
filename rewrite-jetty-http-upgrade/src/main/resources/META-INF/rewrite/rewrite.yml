@@ -1,0 +1,159 @@
+---
+type: specs.openrewrite.org/v1beta/category
+name: com.huawei.clouds.openrewrite.jettyhttp
+packageName: com.huawei.clouds.openrewrite.jettyhttp
+description: Strictly migrate workbook-selected org.eclipse.jetty:jetty-http versions to 12.0.34.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.UpgradeJettyHttpBuildToJava17
+displayName: Upgrade selected Jetty HTTP builds to Java 17
+description: >-
+  Run the fixed official Java 17 build migration only when an authored build file
+  contains an exact, locally resolved workbook-approved jetty-http source version.
+preconditions:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindJettyHttpSelectedBuildFiles
+recipeList:
+  - org.openrewrite.java.migrate.UpgradeJavaVersion:
+      version: 17
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.UpgradeJettyHttpTo12_0_34
+displayName: Upgrade workbook-selected Jetty HTTP dependencies to 12.0.34
+description: >-
+  Upgrade only ten exact org.eclipse.jetty:jetty-http source versions in locally
+  owned standard Maven or root Gradle declarations. Jetty 12.1.0 is never downgraded.
+recipeList:
+  - com.huawei.clouds.openrewrite.jettyhttp.UpgradeSelectedJettyHttpDependency
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttp12ContentBufferAccess
+displayName: Migrate deterministic Jetty 12 HTTP content buffer access
+description: >-
+  Reuse fixed OpenRewrite Core ChangeMethodName leaves for the two removed
+  HttpContent ByteBuffer accessors that converge on Jetty 12 getByteBuffer().
+  The later content risk marker keeps directness and lifecycle review visible.
+preconditions:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindAuthoredJettyJava
+recipeList:
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.eclipse.jetty.http.HttpContent getDirectBuffer()
+      newMethodName: getByteBuffer
+      matchOverrides: true
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.eclipse.jetty.http.HttpContent getIndirectBuffer()
+      newMethodName: getByteBuffer
+      matchOverrides: true
+      ignoreDefinition: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.MigrateSelectedJettyHttp12ContentBufferAccess
+displayName: Migrate Jetty 12 content buffer access in selected projects
+description: >-
+  Run the fixed official buffer accessor renames only on authored Java whose
+  nearest build root owned one unambiguous, exact workbook source version.
+preconditions:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindSelectedJettyHttpProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttp12ContentBufferAccess
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttp12TypeRelocations
+displayName: Migrate deterministic Jetty 12 HTTP content type relocations
+description: >-
+  Reuse fixed OpenRewrite Core ChangeType leaves for the three public jetty-http
+  content types whose Jetty 12 names are deterministic. Changed methods remain marked.
+preconditions:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindAuthoredJettyJava
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.eclipse.jetty.http.HttpContent
+      newFullyQualifiedTypeName: org.eclipse.jetty.http.content.HttpContent
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.eclipse.jetty.http.ResourceHttpContent
+      newFullyQualifiedTypeName: org.eclipse.jetty.http.content.ResourceHttpContent
+      ignoreDefinition: true
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.eclipse.jetty.http.PrecompressedHttpContent
+      newFullyQualifiedTypeName: org.eclipse.jetty.http.content.PreCompressedHttpContent
+      ignoreDefinition: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.MigrateSelectedJettyHttp12TypeRelocations
+displayName: Migrate deterministic Jetty 12 HTTP types in selected projects
+description: >-
+  Run the fixed official content type relocations only on authored Java whose
+  nearest build root was scanned before dependency edits and proved to own one
+  unambiguous, exact workbook-approved Jetty HTTP source version.
+preconditions:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindSelectedJettyHttpProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttp12TypeRelocations
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.FindJettyHttp12_0_34BuildRisks
+displayName: Find Jetty HTTP 12.0.34 build risks
+description: >-
+  Mark no-downgrade conflicts, versions outside the exact whitelist, unresolved
+  owners, variants, Java baselines, Jetty family skew and repackaging.
+recipeList:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindJettyHttpBuildRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.FindJettyHttp12SourceRisks
+displayName: Find Jetty 12 HTTP source incompatibilities
+description: >-
+  Mark removed HTTP types, mutable headers and URI construction, cookie builders,
+  parser/generator/compliance behavior, content lifecycle and JPMS/service boundaries.
+recipeList:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindJettyHttpSourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.FindSelectedJettyHttp12SourceRisks
+displayName: Find Jetty 12 HTTP source incompatibilities in selected projects
+description: >-
+  Mark source incompatibilities only under the nearest build root that owned one
+  unambiguous, exact workbook-approved Jetty HTTP source version before upgrade.
+preconditions:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindSelectedJettyHttpProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindJettyHttp12SourceRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.FindJettyHttp12ConfigurationRisks
+displayName: Find Jetty 12 configuration incompatibilities
+description: >-
+  Mark Jetty start modules, XML/reflection class names, EE environments, HTTP/URI/
+  cookie compliance, header limits, logging and deployment configuration.
+recipeList:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindJettyHttpConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.FindSelectedJettyHttp12ConfigurationRisks
+displayName: Find Jetty 12 configuration incompatibilities in selected projects
+description: >-
+  Mark configuration incompatibilities only under the nearest build root that
+  owned one unambiguous, exact workbook-approved Jetty HTTP source version.
+preconditions:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindSelectedJettyHttpProjectFiles
+recipeList:
+  - com.huawei.clouds.openrewrite.jettyhttp.FindJettyHttp12ConfigurationRisks
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.jettyhttp.MigrateJettyHttpTo12_0_34
+displayName: Migrate Jetty HTTP to 12.0.34
+description: >-
+  Preserve and mark forbidden downgrades, upgrade the selected build to Java 17,
+  strictly update only the approved dependency versions, apply deterministic official
+  content API and type migrations, and mark remaining build, source, configuration
+  and runtime decisions.
+recipeList:
+  - com.huawei.clouds.openrewrite.jettyhttp.MarkSelectedJettyHttpProjects
+  - com.huawei.clouds.openrewrite.jettyhttp.FindJettyHttp12_0_34BuildRisks
+  - com.huawei.clouds.openrewrite.jettyhttp.UpgradeJettyHttpBuildToJava17
+  - com.huawei.clouds.openrewrite.jettyhttp.UpgradeJettyHttpTo12_0_34
+  - com.huawei.clouds.openrewrite.jettyhttp.MigrateSelectedJettyHttp12ContentBufferAccess
+  - com.huawei.clouds.openrewrite.jettyhttp.MigrateSelectedJettyHttp12TypeRelocations
+  - com.huawei.clouds.openrewrite.jettyhttp.FindSelectedJettyHttp12SourceRisks
+  - com.huawei.clouds.openrewrite.jettyhttp.FindSelectedJettyHttp12ConfigurationRisks
