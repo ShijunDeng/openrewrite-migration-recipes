@@ -31,8 +31,14 @@ class FindTomcatCatalinaBranchTransitionRisksTest implements RewriteTest {
     @ValueSource(strings = {"10.1.57", "11.0.18", "11.0.21"})
     void marksAndPreservesEveryHigherTargetConflict(String version) {
         rewriteRun(xml(UpgradeTomcatCatalinaDependencyTest.pom(version), source -> source.path("pom.xml")
-                .after(actual -> actual).afterRecipe(after ->
-                        assertTrue(after.printAll().contains(FindTomcatCatalinaBranchTransitionRisks.TARGET_CONFLICT), after::printAll))));
+                .after(actual -> actual).afterRecipe(after -> {
+                    assertTrue(after.printAll().contains(
+                            FindTomcatCatalinaBranchTransitionRisks.TARGET_CONFLICT), after::printAll);
+                    assertTrue(after.printAll().contains(
+                            "<version>" + version + "</version>"), after::printAll);
+                    assertFalse(after.printAll().contains(
+                            "<version>10.1.56</version>"), after::printAll);
+                })));
     }
 
     @Test

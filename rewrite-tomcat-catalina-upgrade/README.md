@@ -8,8 +8,9 @@ This module migrates `org.apache.tomcat:tomcat-catalina` to `10.1.56`. It is del
 | --- | --- | --- |
 | `com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaBranchTransitionRisks` | MARK | Preserves the Tomcat 9 namespace boundary and reports every fixed source above 10.1.56 as `目标版本冲突（禁止降级）`; higher versions are never edited. |
 | `com.huawei.clouds.openrewrite.tomcatcatalina.UpgradeTomcatCatalinaTo10_1_56` | AUTO/MARK | Strict approved-version dependency upgrade plus the branch-transition guard. |
-| `com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Java` | AUTO | Rewrites documented direct-equivalent Servlet 5 calls and `MethodExpression.isParmetersProvided()`; reorders the removed `ServletContext.log(Exception,String)` overload. |
-| `com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaNamespaces` | AUTO | Migrates type-attributed `javax.servlet`/`javax.el` Java source to Jakarta, while refusing to manufacture removed Servlet 6 types. |
+| `com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaApiDependencies` | AUTO | Directly composes the official dependency leaves for `javax.servlet-api`→`jakarta.servlet-api:6.0.0` and `javax.el-api`→`jakarta.el-api:5.0.1`; newer Jakarta API lines are never lowered. |
+| `com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaNamespaces` | AUTO | Directly composes two official Core `ChangePackage` leaves for type-attributed Servlet/EL Java source, while refusing to manufacture removed Servlet 6 types. |
+| `com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Java` | AUTO | Reuses the safe leaves from the official Servlet 6 recipe plus the official EL 5 and RFC 6265 recipes; the return-type-unsafe `getValueNames()` aggregate step is deliberately excluded. |
 | `com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Configuration` | AUTO | Removes six obsolete `JreMemoryLeakPreventionListener` attributes whose Java-8 leak workarounds disappeared on the Java-11 baseline. |
 | `com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaBuildRisks` | MARK | Marks unresolved/external versions, variants, Java below 11, Catalina-family misalignment and the now-interim 10.1.56 security target. |
 | `com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaJavaRisks` | MARK | Marks removed Servlet APIs, obsolete overrides, internal/ APR APIs, cookie assumptions and case-insensitive HTTP-method logic. |
@@ -45,6 +46,8 @@ AUTO ownership rules are also strict:
 
 | Old source/configuration | New source/configuration | Reason the edit is safe |
 | --- | --- | --- |
+| `javax.servlet:javax.servlet-api` | `jakarta.servlet:jakarta.servlet-api:6.0.0` | Official dependency relocation with the exact Tomcat 10.1 Servlet baseline. |
+| `javax.el:javax.el-api` | `jakarta.el:jakarta.el-api:5.0.1` | Official dependency relocation with the exact Tomcat 10.1 EL baseline. |
 | Type-attributed `javax.servlet.*` / `javax.el.*` Java types | `jakarta.servlet.*` / `jakarta.el.*` | Tomcat 9→10 is the Java EE→Jakarta EE namespace transition; comments and string literals are not rewritten. |
 | `HttpServletRequest.isRequestedSessionIdFromUrl()` | `isRequestedSessionIdFromURL()` | The removed method was the deprecated spelling of the same API. |
 | `HttpServletResponse.encodeUrl(s)` | `encodeURL(s)` | Direct non-deprecated equivalent. |
@@ -52,11 +55,26 @@ AUTO ownership rules are also strict:
 | `HttpSession.getValue(k)` | `getAttribute(k)` | Servlet compatibility delegate. |
 | `HttpSession.putValue(k,v)` | `setAttribute(k,v)` | Servlet compatibility delegate with the same binding-listener contract. |
 | `HttpSession.removeValue(k)` | `removeAttribute(k)` | Servlet compatibility delegate. |
+| `HttpServletResponse.setStatus(code,message)` | `setStatus(code)` | Servlet 6 removed reason phrases; the status code is preserved and the obsolete argument is deleted. |
+| `ServletRequest.getRealPath(path)` | `getServletContext().getRealPath(path)` | Official migration preserves the ServletContext-owned path lookup. |
 | `ServletContext.log(exception,message)` | `log(message,exception)` | Servlet 5 exposed both overloads; Servlet 6 removed the deprecated argument order. |
+| `UnavailableException(servlet,message)` / `(seconds,servlet,message)` | `(message)` / `(message,seconds)` | Official recipe removes obsolete retained-Servlet state while preserving the message and unavailable period. |
 | `MethodExpression.isParmetersProvided()` | `isParametersProvided()` | Correctly-spelled method already existed and the typo was removed by EL 5. |
+| Removed `Cookie` / `SessionCookieConfig` comment and version invocations | Statement removed | Servlet 6 aligns with RFC 6265; setters have no effect and getters return fixed values. |
 | Six removed `JreMemoryLeakPreventionListener` XML attributes | Attribute removed | Their setters and Java-8 workarounds were removed; there is no replacement setting on Java 11. |
 
-Rewrites require OpenRewrite type attribution. A same-named business method is never rewritten. Obsolete interface implementations are marked instead of blindly renamed because a class normally already implements the replacement method and a rename could create a duplicate declaration.
+These Java edits reuse the safe runtime-expanded leaves of the official
+`RemovalsServletJakarta10` recipe and directly activate the official
+`RemovedIsParmetersProvidedMethod` and `ServletCookieBehaviorChangeRFC6265`
+recipes; this module no longer maintains duplicate local visitors for them.
+The broad Servlet aggregate itself is not activated: its
+`getValueNames()`→`getAttributeNames()` step changes `String[]` to
+`Enumeration<String>` without rewriting callers, so a mechanical rename can make
+previously valid code fail compilation. Rewrites require OpenRewrite type
+attribution. A same-named business method is never rewritten. Obsolete interface
+implementations are marked instead of blindly renamed because a class normally
+already implements the replacement method and a rename could create a duplicate
+declaration.
 
 For Tomcat 9 source, a compilation unit using `SingleThreadModel`, `HttpSessionContext`, or `HttpUtils` is intentionally not namespace-rewritten. Those types do not exist in Servlet 6; the risk recipe marks them, the developer replaces the behavior, and a later recipe cycle can safely migrate the rest of that unit. This prevents an apparently successful edit from creating nonexistent `jakarta.*` types.
 
@@ -64,7 +82,7 @@ For Tomcat 9 source, a compilation unit using `SingleThreadModel`, `HttpSessionC
 
 - Java 11 is a hard runtime baseline; AUTO cannot know every CI image, test worker, container base image or launch script.
 - Tomcat 9→10.1 crosses Servlet 4→6 and Java EE→Jakarta EE. The Java namespace is automated where type-safe; explicit `javax.servlet`/`javax.el` dependencies, descriptors, service providers, reflection strings, JSP/WebSocket libraries and framework integrations are marked for coordinated migration.
-- Servlet 6 removed other deprecated types and methods (`SingleThreadModel`, `HttpUtils`, `HttpSessionContext`, `getValueNames`, the two-argument `setStatus`, old `UnavailableException` state, and more). Their replacements depend on data shape or error policy.
+- Servlet 6 removed deprecated types and interface declarations that do not have a safe syntax-only replacement, including `SingleThreadModel`, `HttpUtils`, `HttpSessionContext`, `getSessionContext()`, `getValueNames()` and obsolete implementations of removed methods. In particular, `getValueNames()` returned `String[]`, while `getAttributeNames()` returns `Enumeration<String>`; adapting iteration, ordering and array consumers requires owner review. Safe official call-site leaves run first; declarations and return-type-changing behavior remain MARK.
 - Tomcat's `org.apache.catalina`, `org.apache.coyote` and `org.apache.tomcat` internals are broadly but not binary compatible. Custom Valves, Realms, Connectors, class loaders and embedded-container extensions require JavaDoc/API review.
 - The APR connector and most legacy JNI surface were removed. NIO/NIO2 selection plus OpenSSL/Tomcat Native is an operational migration, not a class-name substitution.
 - Connector `maxParameterCount` default fell from 10,000 to 1,000 in 10.1.8. Restoring 10,000 automatically would erase a security control.
@@ -84,7 +102,7 @@ Build and test this module:
 mvn -f rewrite-tomcat-catalina-upgrade/pom.xml clean verify
 ```
 
-The module currently executes 279 tests with zero failures. They include every approved source literal in direct Maven, exclusive-property Maven, Gradle Groovy and Gradle Kotlin forms; higher-patch and higher-major no-downgrade guards; real-repository fixtures; positive, negative, lookalike, owner, overload, generated-path, marker-survival, aggregate-order and two-cycle idempotence cases.
+The module currently executes 301 tests with zero failures. They include every approved source literal in direct Maven, exclusive-property Maven, Gradle Groovy and Gradle Kotlin forms; exact Servlet/EL dependency relocation; higher-patch and higher-major no-downgrade guards; runtime expansion of adopted and rejected official recipe trees; pinned artifact hashes; real-repository fixtures; positive, negative, lookalike, owner, overload, generated-path, marker-survival, aggregate-order and two-cycle idempotence cases.
 
 After publishing the recipe artifact on the OpenRewrite runtime classpath, activate:
 
@@ -105,6 +123,48 @@ Primary fixed sources used for the specification and tests:
 - [`tomcat-catalina` 9.0.117 source tag](https://github.com/apache/tomcat/tree/f892e52577feef83aff57d34c2b4be61a5a68524), [10.0.27 source tag](https://github.com/apache/tomcat/tree/ca8720d41f3be917dc3fcdd03fcca8d3152a13fb), [10.1.56 target tag](https://github.com/apache/tomcat/tree/59f3f1ab4f905f94c9c99cad579d6afb3a935b66), and [10.1.57 superseding tag](https://github.com/apache/tomcat/tree/5da21b1c24a6443bca5c10dc80a69a76042ca337): namespace, API, configuration and security-boundary comparisons. Tag commits are pinned so later default-branch changes cannot alter the evidence.
 - Maven Central target artifacts: `tomcat-catalina-10.1.56.jar` SHA-256 `8271c90a0a147ee53639cade2fab3b079b53184949e982464052a468efcce3f5`; target POM SHA-256 `a00ef0ef028138027541a0853101f41420e9dc7cd19d193929710be84ade92d8`.
 - [Jakarta Servlet 6.0 specification](https://jakarta.ee/specifications/servlet/6.0/): normative target API.
+
+### Fixed OpenRewrite audit
+
+The official catalog is audited from fixed runtime artifacts, not from mutable
+documentation or a recipe name inferred from the current default branch.
+`TomcatCatalinaOfficialRecipeReuseTest` verifies each JAR file name, manifest
+`Full-Change`, SHA-256, direct composition options and the fully expanded runtime
+tree:
+
+| Artifact | Fixed commit | JAR SHA-256 | Audit use |
+| --- | --- | --- | --- |
+| `rewrite-java:8.87.5` | [`91e23c2858176877428ddc03e146d2bb023217a8`](https://github.com/openrewrite/rewrite/commit/91e23c2858176877428ddc03e146d2bb023217a8) | `a378253fe0c0865ab39d1743e468fe3d2557d7760e0a6897de294ca18ea90043` | Core `ChangePackage`, method/type/argument leaves and test harness behavior. |
+| `rewrite-maven:8.87.5` | [`b3008cc4a1f0c43f562da16e5933a2a56d9bc568`](https://github.com/openrewrite/rewrite/commit/b3008cc4a1f0c43f562da16e5933a2a56d9bc568) | `d7d4a38376a87e9de2a27f43dfe522abba6a8e20ca3429587ec349fcde23db4c` | Maven model/parser used by dependency fixtures. |
+| `rewrite-migrate-java:3.40.0` | [`658481254a6ee678f5f162e51d8d49ee01c75877`](https://github.com/openrewrite/rewrite-migrate-java/commit/658481254a6ee678f5f162e51d8d49ee01c75877) | `8c00217ff2cf4dc9c139a1eff49ed1403fe20e010e42295f5aeb1dd9a5872dc6` | Precise Servlet 6, EL 5 and Cookie leaves plus the broad-aggregate comparison tree. |
+| `rewrite-java-dependencies:1.59.0` | [`decb8dbb2b5b726f8815efc51c85c34a60268bb0`](https://github.com/openrewrite/rewrite-java-dependencies/commit/decb8dbb2b5b726f8815efc51c85c34a60268bb0) | `b5c5ffaa0aea06cbbb8ae110ed138261bce621806c789f14ea0f3fe92cf95550` | Exact Servlet/EL dependency relocation leaves. |
+| `rewrite-spring:6.35.0` | [`d28afcb6661ad413539056de0936c5489ff9d8ee`](https://github.com/openrewrite/rewrite-spring/commit/d28afcb6661ad413539056de0936c5489ff9d8ee) | `27df444210c8bfee7e9d0f04d6d6f7986d2bee36bcd472d8307912613e93e98b` | Test-scope catalog audit proving there is no standalone Tomcat Catalina 10.1 recipe. |
+
+License boundary: the Core
+[`rewrite-java`/`rewrite-maven`](https://github.com/openrewrite/rewrite/blob/91e23c2858176877428ddc03e146d2bb023217a8/LICENSE)
+artifacts and
+[`rewrite-java-dependencies`](https://github.com/openrewrite/rewrite-java-dependencies/blob/decb8dbb2b5b726f8815efc51c85c34a60268bb0/LICENSE)
+are Apache-2.0; the fixed
+[`rewrite-migrate-java`](https://github.com/openrewrite/rewrite-migrate-java/blob/658481254a6ee678f5f162e51d8d49ee01c75877/LICENSE.md)
+Jakarta implementation and test-scope
+[`rewrite-spring`](https://github.com/openrewrite/rewrite-spring/blob/d28afcb6661ad413539056de0936c5489ff9d8ee/LICENSE.md)
+catalog are distributed under the Moderne Source Available License. This module
+loads those published recipe artifacts at runtime and copies no upstream source.
+
+The adoption boundary is intentionally narrower than the official Jakarta
+platform recipes:
+
+| Official capability | Decision | Reason |
+| --- | --- | --- |
+| Core `ChangePackage(javax.servlet→jakarta.servlet, recursive=true)` and `ChangePackage(javax.el→jakarta.el, recursive=true)` | Adopt directly | Exact type-attributed namespace leaves; removed-type and generated-path preconditions are local policy only. |
+| `ChangeDependency` / `UpgradeDependencyVersion` for the two Servlet/EL API coordinates | Adopt directly | Exact `6.0.0` / `5.0.1` targets; runtime tests prove newer API lines are not lowered. |
+| Safe nested leaves of `RemovalsServletJakarta10` | Adopt directly | Nine method renames, four argument deletions, two argument reorders and `UpdateGetRealPath` are copied as recipe composition options from the pinned official runtime tree, not reimplemented as visitors. |
+| `RemovalsServletJakarta10` aggregate | Exclude as a whole | Its `HttpSession.getValueNames()`→`getAttributeNames()` leaf changes `String[]` to `Enumeration<String>` without adapting callers; tests prove that leaf is absent and the original call receives a MARK finding. |
+| `RemovedIsParmetersProvidedMethod`, `ServletCookieBehaviorChangeRFC6265` | Adopt directly | Precise official EL 5 and RFC 6265 call-site recipes; their nested Core leaves are runtime-audited. |
+| `JakartaEE10`, `JavaxMigrationToJakarta`, `JavaxServletToJakartaServlet`, `JavaxElToJakartaEl` | Exclude | Broad Java EE/Jakarta migration families modify unrelated APIs, plugins, Jetty, Faces, CDI and other frameworks. |
+| `MigrationToJakarta10Apis` | Exclude | Runtime tree contains at least twenty platform-wide range selectors such as `jakarta.persistence:3.1.x` and `jakarta.jms:3.1.x`, outside the two approved API coordinates. |
+| Spring framework/Boot aggregates | Exclude | The fixed Spring catalog has no standalone Catalina 10.1 leaf; an aggregate would couple unrelated Spring and Jakarta changes. |
+| Generic/wildcard Tomcat dependency selector | Exclude | The primary coordinate remains the exact eight-version custom whitelist; no official selector is allowed to broaden it or lower Tomcat 11/10.1.57. |
 
 Reduced real-repository fixtures retain the relevant expression and are pinned to immutable commits:
 

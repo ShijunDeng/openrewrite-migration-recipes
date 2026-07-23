@@ -10,6 +10,152 @@ recipeList:
   - com.huawei.clouds.openrewrite.tomcatcatalina.UpgradeSelectedTomcatCatalinaDependency
 ---
 type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaApiDependencies
+displayName: Migrate Tomcat 9 Servlet and EL API dependencies to Jakarta EE 10
+description: >-
+  Reuse the official dependency migration building blocks with the exact
+  Tomcat 10.1 API baselines: Jakarta Servlet 6.0.0 and Jakarta EL 5.0.1.
+  Broad Jakarta EE aggregates and generic platform-wide version selectors
+  are intentionally not activated.
+preconditions:
+  - com.huawei.clouds.openrewrite.tomcatcatalina.IsTomcatNonGeneratedSource
+recipeList:
+  - org.openrewrite.java.dependencies.ChangeDependency:
+      oldGroupId: javax.servlet
+      oldArtifactId: javax.servlet-api
+      newGroupId: jakarta.servlet
+      newArtifactId: jakarta.servlet-api
+      newVersion: 6.0.0
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: jakarta.servlet
+      artifactId: jakarta.servlet-api
+      newVersion: 6.0.0
+  - org.openrewrite.java.dependencies.ChangeDependency:
+      oldGroupId: javax.el
+      oldArtifactId: javax.el-api
+      newGroupId: jakarta.el
+      newArtifactId: jakarta.el-api
+      newVersion: 5.0.1
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: jakarta.el
+      artifactId: jakarta.el-api
+      newVersion: 5.0.1
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaNamespaces
+displayName: Migrate Tomcat 9 Servlet and EL source namespaces to Jakarta
+description: >-
+  Reuse official Core ChangePackage leaves for type-attributed javax.servlet
+  and javax.el source. Compilation units using Servlet 6 removed types are
+  left intact for precise risk markers.
+preconditions:
+  - com.huawei.clouds.openrewrite.tomcatcatalina.IsTomcatNonGeneratedSource
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: javax.servlet.SingleThreadModel
+      includeImplicit: true
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: javax.servlet.http.HttpSessionContext
+      includeImplicit: true
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: javax.servlet.http.HttpUtils
+      includeImplicit: true
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.servlet
+      newPackageName: jakarta.servlet
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.el
+      newPackageName: jakarta.el
+      recursive: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Java
+displayName: Migrate deterministic Jakarta Servlet 6 and EL 5 APIs
+description: >-
+  Reuse the safe official Jakarta EE 10 Servlet leaves, EL spelling correction,
+  and RFC 6265 Cookie migration. The broad Servlet removal aggregate is not
+  activated because its getValueNames rename changes String[] to Enumeration.
+  Generated sources and compilation units containing removed Servlet types
+  remain for precise risk markers.
+preconditions:
+  - com.huawei.clouds.openrewrite.tomcatcatalina.IsTomcatNonGeneratedSource
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: javax.servlet.SingleThreadModel
+      includeImplicit: true
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: javax.servlet.http.HttpSessionContext
+      includeImplicit: true
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: javax.servlet.http.HttpUtils
+      includeImplicit: true
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: jakarta.servlet.SingleThreadModel
+      includeImplicit: true
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: jakarta.servlet.http.HttpSessionContext
+      includeImplicit: true
+  - org.openrewrite.java.search.DoesNotUseType:
+      fullyQualifiedTypeName: jakarta.servlet.http.HttpUtils
+      includeImplicit: true
+recipeList:
+  # These options are the safe leaves from the fixed official
+  # RemovalsServletJakarta10 runtime tree. Keep them explicit: the omitted
+  # getValueNames() -> getAttributeNames() rename changes the return type.
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletRequest  isRequestedSessionIdFromUrl()
+      newMethodName: isRequestedSessionIdFromURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletRequestWrapper  isRequestedSessionIdFromUrl()
+      newMethodName: isRequestedSessionIdFromURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletResponse encodeUrl(String)
+      newMethodName: encodeURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletResponseWrapper encodeUrl(String)
+      newMethodName: encodeURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletResponse encodeRedirectUrl(String)
+      newMethodName: encodeRedirectURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpServletResponseWrapper encodeRedirectUrl(String)
+      newMethodName: encodeRedirectURL
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpSession getValue(String)
+      newMethodName: getAttribute
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpSession putValue(String, Object)
+      newMethodName: setAttribute
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: jakarta.servlet.http.HttpSession removeValue(String)
+      newMethodName: removeAttribute
+  - org.openrewrite.java.DeleteMethodArgument:
+      methodPattern: jakarta.servlet.http.HttpServletResponse setStatus(int, String)
+      argumentIndex: 1
+  - org.openrewrite.java.DeleteMethodArgument:
+      methodPattern: jakarta.servlet.http.HttpServletResponseWrapper setStatus(int, String)
+      argumentIndex: 1
+  - org.openrewrite.java.ReorderMethodArguments:
+      methodPattern: jakarta.servlet.ServletContext log(Exception, String)
+      newParameterNames: [ ex, str ]
+      oldParameterNames: [ str, ex ]
+      matchOverrides: true
+  - org.openrewrite.java.migrate.jakarta.UpdateGetRealPath
+  - org.openrewrite.java.DeleteMethodArgument:
+      methodPattern: jakarta.servlet.UnavailableException <constructor>(jakarta.servlet.Servlet, String)
+      argumentIndex: 0
+  - org.openrewrite.java.DeleteMethodArgument:
+      methodPattern: jakarta.servlet.UnavailableException <constructor>(int, jakarta.servlet.Servlet, String)
+      argumentIndex: 1
+  - org.openrewrite.java.ReorderMethodArguments:
+      methodPattern: jakarta.servlet.UnavailableException <constructor>(int, String)
+      oldParameterNames: [ in, str ]
+      newParameterNames: [ str, in ]
+      matchOverrides: true
+  - org.openrewrite.java.migrate.jakarta.RemovedIsParmetersProvidedMethod
+  - org.openrewrite.java.migrate.jakarta.ServletCookieBehaviorChangeRFC6265
+---
+type: specs.openrewrite.org/v1beta/recipe
 name: com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalinaTo10_1_56
 displayName: Migrate Tomcat Catalina to 10.1.56
 description: >-
@@ -18,8 +164,9 @@ description: >-
   including the fact that Apache has superseded the supplied 10.1.56 security target.
 recipeList:
   - com.huawei.clouds.openrewrite.tomcatcatalina.UpgradeTomcatCatalinaTo10_1_56
-  - com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Java
+  - com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaApiDependencies
   - com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaNamespaces
+  - com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Java
   - com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Configuration
   - com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaBuildRisks
   - com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaJavaRisks

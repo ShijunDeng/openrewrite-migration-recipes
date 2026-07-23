@@ -1,6 +1,7 @@
 package com.huawei.clouds.openrewrite.tomcatcatalina;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.config.Environment;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -10,7 +11,8 @@ import static org.openrewrite.java.Assertions.java;
 class MigrateTomcat9JakartaNamespacesTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new MigrateTomcat9JakartaNamespaces())
+        spec.recipe(environment().activateRecipes(
+                        "com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaNamespaces"))
                 .parser(JavaParser.fromJavaVersion().dependsOn(TomcatCatalinaTestApi.sources()));
     }
 
@@ -42,5 +44,11 @@ class MigrateTomcat9JakartaNamespacesTest implements RewriteTest {
         rewriteRun(specification -> specification.cycles(2).expectedCyclesThatMakeChanges(1), java(
                 "import javax.servlet.http.HttpSession; class T { HttpSession session; }",
                 "import jakarta.servlet.http.HttpSession; class T { HttpSession session; }"));
+    }
+
+    private static Environment environment() {
+        return Environment.builder()
+                .scanRuntimeClasspath("com.huawei.clouds.openrewrite.tomcatcatalina")
+                .build();
     }
 }

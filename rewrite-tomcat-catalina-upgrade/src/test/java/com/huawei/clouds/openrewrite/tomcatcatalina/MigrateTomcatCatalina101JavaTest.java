@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.openrewrite.config.Environment;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -15,7 +16,8 @@ import static org.openrewrite.java.Assertions.java;
 class MigrateTomcatCatalina101JavaTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new MigrateTomcatCatalina101Java())
+        spec.recipe(environment().activateRecipes(
+                        "com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Java"))
                 .parser(JavaParser.fromJavaVersion().dependsOn(TomcatCatalinaTestApi.sources()));
     }
 
@@ -36,6 +38,12 @@ class MigrateTomcatCatalina101JavaTest implements RewriteTest {
                 Arguments.of("redirect URL spelling",
                         "import jakarta.servlet.http.HttpServletResponse; class T { String x(HttpServletResponse r){return r.encodeRedirectUrl(\"/x\");} }",
                         "import jakarta.servlet.http.HttpServletResponse; class T { String x(HttpServletResponse r){return r.encodeRedirectURL(\"/x\");} }"),
+                Arguments.of("request wrapper URL spelling",
+                        "import jakarta.servlet.http.HttpServletRequestWrapper; class T { boolean x(HttpServletRequestWrapper r){return r.isRequestedSessionIdFromUrl();} }",
+                        "import jakarta.servlet.http.HttpServletRequestWrapper; class T { boolean x(HttpServletRequestWrapper r){return r.isRequestedSessionIdFromURL();} }"),
+                Arguments.of("response wrapper URL spelling",
+                        "import jakarta.servlet.http.HttpServletResponseWrapper; class T { String x(HttpServletResponseWrapper r){return r.encodeUrl(\"/x\");} }",
+                        "import jakarta.servlet.http.HttpServletResponseWrapper; class T { String x(HttpServletResponseWrapper r){return r.encodeURL(\"/x\");} }"),
                 Arguments.of("session get",
                         "import jakarta.servlet.http.HttpSession; class T { Object x(HttpSession s){return s.getValue(\"user\");} }",
                         "import jakarta.servlet.http.HttpSession; class T { Object x(HttpSession s){return s.getAttribute(\"user\");} }"),
@@ -73,12 +81,101 @@ class MigrateTomcatCatalina101JavaTest implements RewriteTest {
     }
 
     @Test
-    void overloadsAndSameNamedBusinessMethodsAreNoop() {
+    void unaffectedOverloadsAndSameNamedBusinessMethodsAreNoop() {
         rewriteRun(
                 java("class BusinessSession { Object getValue(String key){return null;} } class BusinessCalls { Object x(BusinessSession s){return s.getValue(\"x\");} }"),
-                java("import jakarta.servlet.ServletContext; class LogCalls { void x(ServletContext c){c.log(\"ok\");} }"),
-                java("import jakarta.servlet.http.HttpServletResponse; class StatusCalls { void x(HttpServletResponse r){r.setStatus(404,\"missing\");} }")
+                java("import jakarta.servlet.ServletContext; class LogCalls { void x(ServletContext c){c.log(\"ok\");} }")
         );
+    }
+
+    @Test
+    void valueNamesReturnTypeChangeIsNotAutomated() {
+        rewriteRun(java(
+                "import jakarta.servlet.http.HttpSession; class T { String[] x(HttpSession s){return s.getValueNames();} }"));
+    }
+
+    @Test
+    void removesStatusReasonPhraseFromResponseAndWrapper() {
+        rewriteRun(java(
+                """
+                  import jakarta.servlet.http.HttpServletResponse;
+                  import jakarta.servlet.http.HttpServletResponseWrapper;
+                  class T {
+                      void x(HttpServletResponse response, HttpServletResponseWrapper wrapper) {
+                          response.setStatus(404, "missing");
+                          wrapper.setStatus(503, "unavailable");
+                      }
+                  }
+                  """,
+                """
+                  import jakarta.servlet.http.HttpServletResponse;
+                  import jakarta.servlet.http.HttpServletResponseWrapper;
+                  class T {
+                      void x(HttpServletResponse response, HttpServletResponseWrapper wrapper) {
+                          response.setStatus(404);
+                          wrapper.setStatus(503);
+                      }
+                  }
+                  """));
+    }
+
+    @Test
+    void migratesRequestRealPathThroughServletContext() {
+        rewriteRun(java(
+                "import jakarta.servlet.ServletRequest; class T { String x(ServletRequest request){return request.getRealPath(\"/WEB-INF\");} }",
+                "import jakarta.servlet.ServletRequest; class T { String x(ServletRequest request){return request.getServletContext().getRealPath(\"/WEB-INF\");} }"));
+    }
+
+    @Test
+    void migratesUnavailableExceptionConstructors() {
+        rewriteRun(java(
+                """
+                  import jakarta.servlet.Servlet;
+                  import jakarta.servlet.UnavailableException;
+                  class T {
+                      void x(Servlet servlet) {
+                          new UnavailableException(servlet, "offline");
+                          new UnavailableException(30, servlet, "offline");
+                      }
+                  }
+                  """,
+                """
+                  import jakarta.servlet.Servlet;
+                  import jakarta.servlet.UnavailableException;
+                  class T {
+                      void x(Servlet servlet) {
+                          new UnavailableException("offline");
+                          new UnavailableException("offline", 30);
+                      }
+                  }
+                  """));
+    }
+
+    @Test
+    void removesObsoleteCookieAndSessionCookieStatements() {
+        rewriteRun(java(
+                """
+                  import jakarta.servlet.SessionCookieConfig;
+                  import jakarta.servlet.http.Cookie;
+                  class T {
+                      void x(Cookie cookie, SessionCookieConfig config) {
+                          cookie.setComment("legacy");
+                          cookie.getComment();
+                          cookie.setVersion(1);
+                          cookie.getVersion();
+                          config.setComment("legacy");
+                          config.getComment();
+                      }
+                  }
+                  """,
+                """
+                  import jakarta.servlet.SessionCookieConfig;
+                  import jakarta.servlet.http.Cookie;
+                  class T {
+                      void x(Cookie cookie, SessionCookieConfig config) {
+                      }
+                  }
+                  """));
     }
 
     @Test
@@ -105,5 +202,12 @@ class MigrateTomcatCatalina101JavaTest implements RewriteTest {
         rewriteRun(specification -> specification.cycles(2).expectedCyclesThatMakeChanges(1), java(
                 "import jakarta.servlet.http.HttpServletResponse; class T { String x(HttpServletResponse r){return r.encodeRedirectUrl(\"/x\");} }",
                 "import jakarta.servlet.http.HttpServletResponse; class T { String x(HttpServletResponse r){return r.encodeRedirectURL(\"/x\");} }"));
+    }
+
+    private static Environment environment() {
+        return Environment.builder()
+                .scanRuntimeClasspath("com.huawei.clouds.openrewrite.tomcatcatalina",
+                                      "org.openrewrite.java.migrate.jakarta")
+                .build();
     }
 }

@@ -48,7 +48,7 @@ class RecommendedTomcatCatalinaMigrationTest implements RewriteTest {
     }
 
     @Test
-    void unsafeRemovedApiRemainsVisibleAfterSafeAutoChanges() {
+    void unsafeRemovedApiRemainsVisibleAfterSafeOfficialLeaves() {
         rewriteRun(java(
                 "import jakarta.servlet.http.*; class T { Object x(HttpSession s,HttpServletResponse r){ r.encodeUrl(\"/\"); return s.getValueNames(); } }",
                 "import jakarta.servlet.http.*; class T { Object x(HttpSession s,HttpServletResponse r){ r.encodeURL(\"/\"); return /*~~(Servlet 6 removed this deprecated Servlet 5 API and there is no syntax-only behavior-preserving replacement; choose the replacement from request/session/error-handling semantics and rebuild against Servlet 6)~~>*/s.getValueNames(); } }"));
@@ -83,10 +83,11 @@ class RecommendedTomcatCatalinaMigrationTest implements RewriteTest {
     @Test
     void recommendedCompositionOrderIsExact() {
         var recipe = environment().activateRecipes(RECIPE);
-                assertEquals(List.of(
+        assertEquals(List.of(
                         "com.huawei.clouds.openrewrite.tomcatcatalina.UpgradeTomcatCatalinaTo10_1_56",
-                        "com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Java",
+                        "com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaApiDependencies",
                         "com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcat9JakartaNamespaces",
+                        "com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Java",
                         "com.huawei.clouds.openrewrite.tomcatcatalina.MigrateTomcatCatalina101Configuration",
                         "com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaBuildRisks",
                         "com.huawei.clouds.openrewrite.tomcatcatalina.FindTomcatCatalinaJavaRisks",
@@ -103,6 +104,7 @@ class RecommendedTomcatCatalinaMigrationTest implements RewriteTest {
                         UpgradeSelectedTomcatCatalinaDependency.class.getName()),
                 publicUpgrade.getRecipeList().stream().map(org.openrewrite.Recipe::getName).toList());
         assertEquals(SetHolder.SOURCES, UpgradeSelectedTomcatCatalinaDependency.SOURCE_VERSIONS);
+        assertEquals("10.1.56", UpgradeSelectedTomcatCatalinaDependency.TARGET);
     }
 
     @Test
@@ -145,7 +147,10 @@ class RecommendedTomcatCatalinaMigrationTest implements RewriteTest {
     }
 
     private static Environment environment() {
-        return Environment.builder().scanRuntimeClasspath("com.huawei.clouds.openrewrite.tomcatcatalina").build();
+        return Environment.builder()
+                .scanRuntimeClasspath("com.huawei.clouds.openrewrite.tomcatcatalina",
+                                      "org.openrewrite.java.migrate.jakarta")
+                .build();
     }
 
     private static final class SetHolder {
